@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Plot.ly for scientific visualization – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a986a95301e671fce2c6472dffc862a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#links" id="toc-links" class="nav-link active" data-scroll-target="#links">Links</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#displaying-plotly-figures" id="toc-displaying-plotly-figures" class="nav-link" data-scroll-target="#displaying-plotly-figures">Displaying Plotly figures</a></li>
+  <li><a href="#plotly-express-data-exploration-library" id="toc-plotly-express-data-exploration-library" class="nav-link" data-scroll-target="#plotly-express-data-exploration-library">Plotly Express (data exploration) library</a></li>
+  <li><a href="#plotting-via-graph-objects" id="toc-plotting-via-graph-objects" class="nav-link" data-scroll-target="#plotting-via-graph-objects">Plotting via Graph Objects</a>
+  <ul class="collapse">
+  <li><a href="#scatter-plots" id="toc-scatter-plots" class="nav-link" data-scroll-target="#scatter-plots">Scatter plots</a></li>
+  <li><a href="#bar-plots" id="toc-bar-plots" class="nav-link" data-scroll-target="#bar-plots">Bar plots</a></li>
+  <li><a href="#heatmaps" id="toc-heatmaps" class="nav-link" data-scroll-target="#heatmaps">Heatmaps</a></li>
+  <li><a href="#contour-maps" id="toc-contour-maps" class="nav-link" data-scroll-target="#contour-maps">Contour maps</a></li>
+  <li><a href="#download-data" id="toc-download-data" class="nav-link" data-scroll-target="#download-data">Download data</a></li>
+  <li><a href="#geographical-scatterplot" id="toc-geographical-scatterplot" class="nav-link" data-scroll-target="#geographical-scatterplot">Geographical scatterplot</a></li>
+  <li><a href="#d-topographic-elevation" id="toc-d-topographic-elevation" class="nav-link" data-scroll-target="#d-topographic-elevation">3D Topographic elevation</a></li>
+  <li><a href="#elevated-2d-functions" id="toc-elevated-2d-functions" class="nav-link" data-scroll-target="#elevated-2d-functions">Elevated 2D functions</a></li>
+  <li><a href="#lighting-control" id="toc-lighting-control" class="nav-link" data-scroll-target="#lighting-control">Lighting control</a></li>
+  <li><a href="#d-parametric-plots" id="toc-d-parametric-plots" class="nav-link" data-scroll-target="#d-parametric-plots">3D parametric plots</a></li>
+  <li><a href="#d-scatter-plots" id="toc-d-scatter-plots" class="nav-link" data-scroll-target="#d-scatter-plots">3D scatter plots</a></li>
+  <li><a href="#d-graphs" id="toc-d-graphs" class="nav-link" data-scroll-target="#d-graphs">3D graphs</a></li>
+  <li><a href="#d-functions" id="toc-d-functions" class="nav-link" data-scroll-target="#d-functions">3D functions</a></li>
+  </ul></li>
+  <li><a href="#dash-library-for-making-interactive-web-applications" id="toc-dash-library-for-making-interactive-web-applications" class="nav-link" data-scroll-target="#dash-library-for-making-interactive-web-applications">Dash library for making interactive web applications</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Plot.ly for scientific visualization</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><br> <img src="./fig/plotlyQR.png" title="https://wgpages.netlify.app/plotly" class="img-fluid" style="width:40.0%"> <br><br></p>
+<!-- URLs = ["", ""] -->
+<!-- `~/training/paraviewWorkshop/hidden/solutions.md` on presenter's laptop -->
+<ul>
+<li>Developed by a Montreal-based company https://plotly.com</li>
+<li>Open-source scientific plotting Python library for Python, R, MATLAB, Perl, Julia</li>
+<li>Front end uses JavaScript/HTML/CSS and D3.js visualization library, with Plotly JavaScript library on top</li>
+<li>Supports over 40 unique chart types</li>
+</ul>
+<!-- * files are hosted on Amazon S3 -->
+<!-- Generated plots can be -->
+<!-- 1. browsed online -->
+<!-- 1. stored as offline html5 files -->
+<!-- 1. displayed inside a Jupyter notebook -->
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ol type="1">
+<li><a href="https://plotly.com/python">Online gallery</a> with code examples by category</li>
+<li><a href="https://plotly.com/python/plotly-express">Plotly Express tutorial</a>, also plotly.express</li>
+<li><a href="https://community.plotly.com">Plotly Community Forum</a></li>
+<li><a href="https://plot.ly/python/reference">Keyword index</a></li>
+<li><a href="https://plot.ly/python/getting-started">Getting started guide</a></li>
+<li><a href="https://www.fabi.ai/blog/plotly-vs-matplotlib-a-quick-comparison-with-visual-guides">Plotly vs matplotlib</a> (with video)</li>
+<li><a href="https://plot.ly/python/offline">Displaying Figures</a> (including offscreen into a file)</li>
+<li><a href="https://plot.ly/python/static-image-export">Saving static images (PNG, PDF, etc)</a></li>
+<li><a href="https://plot.ly/ipython-notebooks">Plotly and IPython / Jupyter notebook</a> with additional plotting examples</li>
+</ol>
+<!-- 1. [Code examples](https://plot.ly/create) -->
+<!-- 1. [Community feed with gallery](https://plot.ly/feed) -->
+<!-- 1. [Creating HTML or PDF reports in Python](https://plot.ly/python/#report-generation) -->
+<!-- 1. [Connecting to databases](https://plot.ly/python/#databases) -->
+<!-- 1. [Creating dashboards](https://plot.ly/python/dashboard) with Dash Enterprise -->
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<ul>
+<li>You will need Python 3, along with <em>some</em> Python package manager</li>
+<li>Use your favourite installer:</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install plotly</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> uv pip install plotly</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda install <span class="at">-c</span> conda-forge plotly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Other recommended libraries to install for today’s session: <code>jupyter</code>, <code>numpy</code>, <code>pandas</code>, <code>networkx</code>, <code>scikit-image</code>, <code>kaleido</code></li>
+</ul>
+</section>
+<section id="displaying-plotly-figures" class="level2">
+<h2 class="anchored" data-anchor-id="displaying-plotly-figures">Displaying Plotly figures</h2>
+<!-- ```sh -->
+<!-- uv pip install kaleido   # to save PNG -->
+<!-- ``` -->
+<p>With Plotly, you can: 1. work inside a Python shell, 2. save your script into a *.py file and then run it, or 3. run code inside a Jupyter Notebook (start a notebook with <code>jupyter notebook</code> or even better <code>jupyter lab</code>).</p>
+<p>Plotly supports a number of renderers, and it will attempt to choose an appropriate renderer automatically (in my experience, not very successfully). You can examine the selected default renderer with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pio.renderers   <span class="co"># show default and available renderers</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can overwrite the default by setting it manually inside your session or inside your code, e.g.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'browser'</span>    <span class="co"># open each plot in a new browser tab</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'notebook'</span>   <span class="co"># plot inside a Jupyter notebook</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you want to have this setting persistent across sessions (and not set it manually or in the code), you can create a file <code>~/.plotly_startup.py</code> with the following:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    pio.renderers.default <span class="op">=</span> <span class="st">"browser"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and set <code>export PYTHONSTARTUP=~/.plotly_startup.py</code> in your <code>~/.bashrc</code> file.</p>
+<!-- 'iframe'               Shows plot inline (only in Jupyter) -->
+<!-- 'notebook_connected'   Full interactivity in Jupyter -->
+<!-- png_renderer = pio.renderers["png"] -->
+<!-- png_renderer.width = 500 -->
+<!-- png_renderer.height = 500 -->
+<p>Let’s create a simple line plot:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>line <span class="op">=</span> go.Scatter(x<span class="op">=</span>x, y<span class="op">=</span>y, mode<span class="op">=</span><span class="st">'lines+markers'</span>, name<span class="op">=</span><span class="st">'sin(1/x)'</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([line])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fig.show()   <span class="co"># should open in your browser</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig.write_image(<span class="st">"/Users/razoumov/tmp/lines.png"</span>, scale<span class="op">=</span><span class="dv">2</span>)   <span class="co"># static, supports svg, png, jpg/jpeg, webp, pdf</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig.write_html(<span class="st">"/Users/razoumov/tmp/lines.html"</span>)            <span class="co"># interactive</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig.write_json(<span class="st">"/Users/razoumov/tmp/2007.json"</span>)             <span class="co"># for further editing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In general, use <code>fig.show()</code> when working outside of a Jupyter Notebook, or when you want to save your plot to a file. If you want to display plots inline inside a Jupyter notebook, set <code>pio.renderers.default = 'notebook'</code> and use the command</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>that should display plots right inside the notebook, without a need for <code>fig.show()</code>.</p>
+<p>You can find more details at https://plotly.com/python/renderers .</p>
+</section>
+<section id="plotly-express-data-exploration-library" class="level2">
+<h2 class="anchored" data-anchor-id="plotly-express-data-exploration-library">Plotly Express (data exploration) library</h2>
+<p>Normally, in this workshop I would teach <code>plotly.graph_objs</code> (Graph Objects) which is the standard module in Plotly.py – you saw its example in the previous section.</p>
+<p><a href="https://plotly.com/python/plotly-express">Plotly Express</a> is a higher-level interface to Plotly.py that sits on top of Graph Objects and provides 30+ functions for creating different types of figures in a single function call. It works with NumPy arrays, Xarrays, Pandas dataframes, basic Python iterables, etc.</p>
+<!-- video tutorial https://plotly.com/python/plotly-express -->
+<p>Here is one way to create a line plot from above in Plotly Express, using just NumPy arrays:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can also use feed a dataframe into the plotting function:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'col1'</span>: x, <span class="st">'col2'</span>: sin(<span class="dv">1</span><span class="op">/</span>x)})</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(df, x<span class="op">=</span><span class="st">'col1'</span>, y<span class="op">=</span><span class="st">'col2'</span>, markers<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Or you can feed a dictionary:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> {<span class="st">'key1'</span>: x, <span class="st">'key2'</span>: sin(<span class="dv">1</span><span class="op">/</span>x)}</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(d, x<span class="op">=</span><span class="st">'key1'</span>, y<span class="op">=</span><span class="st">'key2'</span>, markers<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To see Plotly Express really shine, we should play with a slightly larger dataset containing several variables. The module <code>px.data</code> comes with several datasets included. Let’s take a look at the Gapminder data that contains one row per country per year.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.gapminder().query(<span class="st">"year==2007"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>px.line(df, x<span class="op">=</span><span class="st">"gdpPercap"</span>, y<span class="op">=</span><span class="st">"lifeExp"</span>, markers<span class="op">=</span><span class="va">True</span>)   <span class="co"># this should be familiar</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. replace df with df.sort_values(by='gdpPercap')</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. add log_x=True</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. change line to scatter, remove markers=True</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. don't actually need to sort now, with no markers</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. add hover_name="country"</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. add size="pop"</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. add size_max=60</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 8. add color="continent" - can now turn continents off/on</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>px.strip(df, x<span class="op">=</span><span class="st">"lifeExp"</span>)   <span class="co"># single-axis scatter plot</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. add hover_name="country"</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. add color="continent"</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. change strip to histogram</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. can turn continents off/on in the legend</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. add marginal="rug" to show countries in a rug plot</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 6. add y="pop" to switch from country count to population along the vertical axis</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># 7. add facet_col="continent" to break continents into facet columns</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>px.bar(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, x<span class="op">=</span><span class="st">"pop"</span>, y<span class="op">=</span><span class="st">"continent"</span>, hover_name<span class="op">=</span><span class="st">"country"</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>px.sunburst(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, values<span class="op">=</span><span class="st">"pop"</span>, path<span class="op">=</span>[<span class="st">"continent"</span>, <span class="st">"country"</span>],</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>            hover_name<span class="op">=</span><span class="st">"country"</span>, height<span class="op">=</span><span class="dv">800</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>px.treemap(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, values<span class="op">=</span><span class="st">"pop"</span>, path<span class="op">=</span>[<span class="st">"continent"</span>, <span class="st">"country"</span>],</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>           hover_name<span class="op">=</span><span class="st">"country"</span>, height<span class="op">=</span><span class="dv">500</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>px.choropleth(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, locations<span class="op">=</span><span class="st">"iso_alpha"</span>, hover_name<span class="op">=</span><span class="st">"country"</span>, height<span class="op">=</span><span class="dv">580</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- - gridded data => heatmaps -->
+<!-- - polar plots -->
+<!-- - multivariate or categorical => parallel coordinates plot -->
+<!-- - ternary plots (below) -->
+<!-- - 3D data -->
+<p>Here is an ternary plot example with Montreal elections data (58 electoral districts, 3 candidates):</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.election()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>px.scatter_ternary(df, a<span class="op">=</span><span class="st">"Joly"</span>, b<span class="op">=</span><span class="st">"Coderre"</span>, c<span class="op">=</span><span class="st">"Bergeron"</span>, color<span class="op">=</span><span class="st">"winner"</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   size<span class="op">=</span><span class="st">"total"</span>, hover_name<span class="op">=</span><span class="st">"district"</span>, size_max<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                   color_discrete_map<span class="op">=</span>{<span class="st">"Joly"</span>: <span class="st">"blue"</span>, <span class="st">"Bergeron"</span>: <span class="st">"green"</span>, <span class="st">"Coderre"</span>: <span class="st">"red"</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="plotting-via-graph-objects" class="level2">
+<h2 class="anchored" data-anchor-id="plotting-via-graph-objects">Plotting via Graph Objects</h2>
+<p>While Plotly Express is excellent for quick data exploration, it has some limitations: it supports fewer plot types and does not allow combining different plot types directly in a single figure. Plotly Graph Objects, on the other hand, is a lower-level library that offers greater functionality and customization with layouts. In this section, we’ll explore Graph Objects, starting with 2D plots.</p>
+<p>Graph Objects supports many plot types:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">dir</span>(go)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>['AngularAxis', 'Annotation', 'Annotations', 'Bar', 'Barpolar', 'Box', 'Candlestick', 'Carpet', 'Choropleth', 'Choroplethmap', 'Choroplethmapbox', 'ColorBar', 'Cone', 'Contour', 'Contourcarpet', 'Contours', 'Data', 'Densitymap', 'Densitymapbox', 'ErrorX', 'ErrorY', 'ErrorZ', 'Figure', 'FigureWidget', 'Font', 'Frame', 'Frames', 'Funnel', 'Funnelarea', 'Heatmap', 'Histogram', 'Histogram2d', 'Histogram2dContour', 'Histogram2dcontour', 'Icicle', 'Image', 'Indicator', 'Isosurface', 'Layout', 'Legend', 'Line', 'Margin', 'Marker', 'Mesh3d', 'Ohlc', 'Parcats', 'Parcoords', 'Pie', 'RadialAxis', 'Sankey', 'Scatter', 'Scatter3d', 'Scattercarpet', 'Scattergeo', 'Scattergl', 'Scattermap', 'Scattermapbox', 'Scatterpolar', 'Scatterpolargl', 'Scattersmith', 'Scatterternary', 'Scene', 'Splom', 'Stream', 'Streamtube', 'Sunburst', 'Surface', 'Table', 'Trace', 'Treemap', 'Violin', 'Volume', 'Waterfall', 'XAxis', 'XBins', 'YAxis', 'YBins', 'ZAxis', 'bar', 'barpolar', 'box', 'candlestick', 'carpet', 'choropleth', 'choroplethmap', 'choroplethmapbox', 'cone', 'contour', 'contourcarpet', 'densitymap', 'densitymapbox', 'funnel', 'funnelarea', 'heatmap', 'histogram', 'histogram2d', 'histogram2dcontour', 'icicle', 'image', 'indicator', 'isosurface', 'layout', 'mesh3d', 'ohlc', 'parcats', 'parcoords', 'pie', 'sankey', 'scatter', 'scatter3d', 'scattercarpet', 'scattergeo', 'scattergl', 'scattermap', 'scattermapbox', 'scatterpolar', 'scatterpolargl', 'scattersmith', 'scatterternary', 'splom', 'streamtube', 'sunburst', 'surface', 'table', 'treemap', 'violin', 'volume', 'waterfall']</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="scatter-plots" class="level3">
+<h3 class="anchored" data-anchor-id="scatter-plots">Scatter plots</h3>
+<p>We already saw an example of a Scatter plot with Graph Objects:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>line <span class="op">=</span> go.Scatter(x<span class="op">=</span>x, y<span class="op">=</span>y, mode<span class="op">=</span><span class="st">'lines+markers'</span>, name<span class="op">=</span><span class="st">'sin(1/x)'</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s print the dataset <code>line</code>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(line)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(line)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It is a plotly object which is actually a Python dictionary, with all elements clearly identified (plot type, x numpy array, y numpy array, line type, legend line name). So, <code>go.Scatter</code> simply creates a dictionary with the corresponding <code>type</code> element. <strong>This variable/dataset <code>line</code> completely describes our plot!</strong>* Then we create a list of such objects and pass it to the plotting routine.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pass a list of two objects to the plotting routine with <code>data = [line1,line2]</code>. Let the second dataset <code>line2</code> contain another mathematical function. The idea is to have multiple objects in the plot.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Hovering over each data point will reveal their coordinates. Use the toolbar at the top. Double-clicking on the plot will reset it.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Add a bunch of dots to the plot with <code>dots = go.Scatter(x=[.2,.4,.6,.8], y=[2,1.5,2,1.2])</code>. What is default scatter mode?</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Change line colour and width by adding the dictionary <code>line=dict(color=('rgb(10,205,24)'),width=4)</code> to <code>dots</code>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 3b
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Create a scatter plot of 300 random filled blue circles inside a unit square. Their random opacity must anti-correlate with their size (bigger circles should be more transparent) – see the plot below.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="bar-plots" class="level3">
+<h3 class="anchored" data-anchor-id="bar-plots">Bar plots</h3>
+<p>Let’s try a Bar plot, constructing <code>data</code> directly in one line from the dictionary:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>bar <span class="op">=</span> go.Bar(x<span class="op">=</span>[<span class="st">'Vancouver'</span>, <span class="st">'Calgary'</span>, <span class="st">'Toronto'</span>, <span class="st">'Montreal'</span>, <span class="st">'Halifax'</span>],</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>               y<span class="op">=</span>[<span class="dv">2463431</span>, <span class="dv">1392609</span>, <span class="dv">5928040</span>, <span class="dv">4098927</span>, <span class="dv">403131</span>])</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar])</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s plot inner city population vs.&nbsp;greater metro area for each city:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> [<span class="st">'Vancouver'</span>, <span class="st">'Calgary'</span>, <span class="st">'Toronto'</span>, <span class="st">'Montreal'</span>, <span class="st">'Halifax'</span>]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>proper <span class="op">=</span> [<span class="dv">662_248</span>, <span class="dv">1_306_784</span>, <span class="dv">2_794_356</span>, <span class="dv">1_762_949</span>, <span class="dv">439_819</span>]</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>metro <span class="op">=</span> [<span class="dv">3_108_926</span>, <span class="dv">1_688_000</span>, <span class="dv">6_491_000</span>, <span class="dv">4_615_154</span>, <span class="dv">530_167</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>bar1 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>proper, name<span class="op">=</span><span class="st">'inner city'</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>bar2 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>metro, name<span class="op">=</span><span class="st">'greater area'</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar1,bar2])</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s now do a stacked plot, with <em>outer city</em> population on top of <em>inner city</em> population:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>outside <span class="op">=</span> [m<span class="op">-</span>p <span class="cf">for</span> p,m <span class="kw">in</span> <span class="bu">zip</span>(proper,metro)]   <span class="co"># need to subtract</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>bar1 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>proper, name<span class="op">=</span><span class="st">'inner city'</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>bar2 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>outside, name<span class="op">=</span><span class="st">'outer city'</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar1,bar2], layout<span class="op">=</span>go.Layout(barmode<span class="op">=</span><span class="st">'stack'</span>))   <span class="co"># new element!</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>What else can we modify in the layout?</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(go.Layout)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>There are many attributes!</p>
+</section>
+<section id="heatmaps" class="level3">
+<h3 class="anchored" data-anchor-id="heatmaps">Heatmaps</h3>
+<ul>
+<li>go.Area() for plotting <strong>wind rose charts</strong></li>
+<li>go.Box() for <strong>basic box plots</strong></li>
+</ul>
+<p>Let’s plot a heatmap of monthly temperatures at the South Pole:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>months <span class="op">=</span> [<span class="st">'Jan'</span>, <span class="st">'Feb'</span>, <span class="st">'Mar'</span>, <span class="st">'Apr'</span>, <span class="st">'May'</span>, <span class="st">'Jun'</span>, <span class="st">'Jul'</span>, <span class="st">'Aug'</span>, <span class="st">'Sep'</span>, <span class="st">'Oct'</span>, <span class="st">'Nov'</span>, <span class="st">'Dec'</span>, <span class="st">'Year'</span>]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>recordHigh <span class="op">=</span> [<span class="op">-</span><span class="fl">14.4</span>,<span class="op">-</span><span class="fl">20.6</span>,<span class="op">-</span><span class="fl">26.7</span>,<span class="op">-</span><span class="fl">27.8</span>,<span class="op">-</span><span class="fl">25.1</span>,<span class="op">-</span><span class="fl">28.8</span>,<span class="op">-</span><span class="fl">33.9</span>,<span class="op">-</span><span class="fl">32.8</span>,<span class="op">-</span><span class="fl">29.3</span>,<span class="op">-</span><span class="fl">25.1</span>,<span class="op">-</span><span class="fl">18.9</span>,<span class="op">-</span><span class="fl">12.3</span>,<span class="op">-</span><span class="fl">12.3</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>averageHigh <span class="op">=</span> [<span class="op">-</span><span class="fl">26.0</span>,<span class="op">-</span><span class="fl">37.9</span>,<span class="op">-</span><span class="fl">49.6</span>,<span class="op">-</span><span class="fl">53.0</span>,<span class="op">-</span><span class="fl">53.6</span>,<span class="op">-</span><span class="fl">54.5</span>,<span class="op">-</span><span class="fl">55.2</span>,<span class="op">-</span><span class="fl">54.9</span>,<span class="op">-</span><span class="fl">54.4</span>,<span class="op">-</span><span class="fl">48.4</span>,<span class="op">-</span><span class="fl">36.2</span>,<span class="op">-</span><span class="fl">26.3</span>,<span class="op">-</span><span class="fl">45.8</span>]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>dailyMean <span class="op">=</span> [<span class="op">-</span><span class="fl">28.4</span>,<span class="op">-</span><span class="fl">40.9</span>,<span class="op">-</span><span class="fl">53.7</span>,<span class="op">-</span><span class="fl">57.8</span>,<span class="op">-</span><span class="fl">58.0</span>,<span class="op">-</span><span class="fl">58.9</span>,<span class="op">-</span><span class="fl">59.8</span>,<span class="op">-</span><span class="fl">59.7</span>,<span class="op">-</span><span class="fl">59.1</span>,<span class="op">-</span><span class="fl">51.6</span>,<span class="op">-</span><span class="fl">38.2</span>,<span class="op">-</span><span class="fl">28.0</span>,<span class="op">-</span><span class="fl">49.5</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>averageLow <span class="op">=</span> [<span class="op">-</span><span class="fl">29.6</span>,<span class="op">-</span><span class="fl">43.1</span>,<span class="op">-</span><span class="fl">56.8</span>,<span class="op">-</span><span class="fl">60.9</span>,<span class="op">-</span><span class="fl">61.5</span>,<span class="op">-</span><span class="fl">62.8</span>,<span class="op">-</span><span class="fl">63.4</span>,<span class="op">-</span><span class="fl">63.2</span>,<span class="op">-</span><span class="fl">61.7</span>,<span class="op">-</span><span class="fl">54.3</span>,<span class="op">-</span><span class="fl">40.1</span>,<span class="op">-</span><span class="fl">29.1</span>,<span class="op">-</span><span class="fl">52.2</span>]</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>recordLow <span class="op">=</span> [<span class="op">-</span><span class="fl">41.1</span>,<span class="op">-</span><span class="fl">58.9</span>,<span class="op">-</span><span class="fl">71.1</span>,<span class="op">-</span><span class="fl">75.0</span>,<span class="op">-</span><span class="fl">78.3</span>,<span class="op">-</span><span class="fl">82.8</span>,<span class="op">-</span><span class="fl">80.6</span>,<span class="op">-</span><span class="fl">79.3</span>,<span class="op">-</span><span class="fl">79.4</span>,<span class="op">-</span><span class="fl">72.0</span>,<span class="op">-</span><span class="fl">55.0</span>,<span class="op">-</span><span class="fl">41.1</span>,<span class="op">-</span><span class="fl">82.8</span>]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [recordHigh, averageHigh, dailyMean, averageLow, recordLow]</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>yticks <span class="op">=</span> [<span class="st">'record high'</span>, <span class="st">'aver.high'</span>, <span class="st">'daily mean'</span>, <span class="st">'aver.low'</span>, <span class="st">'record low'</span>]</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>heatmap <span class="op">=</span> go.Heatmap(z<span class="op">=</span>data, x<span class="op">=</span>months, y<span class="op">=</span>yticks)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([heatmap])</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 3c
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Try a few different colourmaps, e.g.&nbsp;‘Viridis’, ‘Jet’, ‘Rainbow’. What colourmaps are available?</p>
+</div>
+</div>
+</div>
+</section>
+<section id="contour-maps" class="level3">
+<h3 class="anchored" data-anchor-id="contour-maps">Contour maps</h3>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pretend that our heatmap is defined over a 2D domain and plot the same temperature data as a contour map. Remove the <code>Year</code> data (last column) and use <code>go.Contour</code> to plot the 2D contour map.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="download-data" class="level3">
+<h3 class="anchored" data-anchor-id="download-data">Download data</h3>
+<p>Open a terminal window inside Jupyter (New | Terminal) and run these commands:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://tinyurl.com/pvzip <span class="at">-O</span> paraview.zip</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> paraview.zip</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> data/<span class="pp">*</span>.<span class="dt">{csv</span><span class="op">,</span><span class="dt">nc}</span> .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="geographical-scatterplot" class="level3">
+<h3 class="anchored" data-anchor-id="geographical-scatterplot">Geographical scatterplot</h3>
+<p>Go back to your Python Jupyter Notebook. Now let’s do a scatterplot on top of a geographical map:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> log10</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'cities.csv'</span>)   <span class="co"># lists name,pop,lat,lon for 254 Canadian cities and towns</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'text'</span>] <span class="op">=</span> df[<span class="st">'name'</span>] <span class="op">+</span> <span class="st">'&lt;br&gt;Population '</span> <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>             (df[<span class="st">'pop'</span>]<span class="op">/</span><span class="fl">1e6</span>).astype(<span class="bu">str</span>) <span class="op">+</span><span class="st">' million'</span> <span class="co"># add new column for mouse-over</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>largest, smallest <span class="op">=</span> df[<span class="st">'pop'</span>].<span class="bu">max</span>(), df[<span class="st">'pop'</span>].<span class="bu">min</span>()</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize(x):</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> log10(x<span class="op">/</span>smallest)<span class="op">/</span>log10(largest<span class="op">/</span>smallest)   <span class="co"># x scaled into [0,1]</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'logsize'</span>] <span class="op">=</span> <span class="bu">round</span>(df[<span class="st">'pop'</span>].<span class="bu">apply</span>(normalize)<span class="op">*</span><span class="dv">255</span>)   <span class="co"># new column</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> go.Scattergeo(</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    lon <span class="op">=</span> df[<span class="st">'lon'</span>], lat <span class="op">=</span> df[<span class="st">'lat'</span>], text <span class="op">=</span> df[<span class="st">'text'</span>],</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>    marker <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>        size <span class="op">=</span> df[<span class="st">'pop'</span>]<span class="op">/</span><span class="dv">5000</span>,</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> df[<span class="st">'logsize'</span>],</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>        colorscale <span class="op">=</span> <span class="st">'Viridis'</span>,</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        showscale <span class="op">=</span> <span class="va">True</span>,   <span class="co"># show the colourbar</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        line <span class="op">=</span> <span class="bu">dict</span>(width<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">'rgb(40,40,40)'</span>),</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        sizemode <span class="op">=</span> <span class="st">'area'</span>))</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title <span class="op">=</span> <span class="st">'City populations'</span>,</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>                       showlegend <span class="op">=</span> <span class="va">False</span>,   <span class="co"># do not show legend for first plot</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>                       geo <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>                           scope <span class="op">=</span> <span class="st">'north america'</span>,</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>                           resolution <span class="op">=</span> <span class="dv">50</span>,   <span class="co"># base layer resolution of km/mm</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>                           lonaxis <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">130</span>,<span class="op">-</span><span class="dv">55</span>]), lataxis <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">44</span>,<span class="dv">70</span>]), <span class="co"># plot range</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>                           showland <span class="op">=</span> <span class="va">True</span>, landcolor <span class="op">=</span> <span class="st">'rgb(217,217,217)'</span>,</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>                           showrivers <span class="op">=</span> <span class="va">True</span>, rivercolor <span class="op">=</span> <span class="st">'rgb(153,204,255)'</span>,</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>                           showlakes <span class="op">=</span> <span class="va">True</span>, lakecolor <span class="op">=</span> <span class="st">'rgb(153,204,255)'</span>,</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>                           subunitwidth <span class="op">=</span> <span class="dv">1</span>, subunitcolor <span class="op">=</span> <span class="st">"rgb(255,255,255)"</span>,   <span class="co"># province border</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>                           countrywidth <span class="op">=</span> <span class="dv">2</span>, countrycolor <span class="op">=</span> <span class="st">"rgb(255,255,255)"</span>))  <span class="co"># country border</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[cities], layout<span class="op">=</span>layout)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 5
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Modify the code to display only 10 largest cities.</p>
+</div>
+</div>
+</div>
+<p>Recall how we combined several scatter plots in one figure before. You can combine several plots on top of a single map – let’s <strong>combine scattergeo + choropleth</strong>:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'cities.csv'</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'text'</span>] <span class="op">=</span> df[<span class="st">'name'</span>] <span class="op">+</span> <span class="st">'&lt;br&gt;Population '</span> <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>             (df[<span class="st">'pop'</span>]<span class="op">/</span><span class="fl">1e6</span>).astype(<span class="bu">str</span>)<span class="op">+</span><span class="st">' million'</span> <span class="co"># add new column for mouse-over</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> go.Scattergeo(lon <span class="op">=</span> df[<span class="st">'lon'</span>],</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                       lat <span class="op">=</span> df[<span class="st">'lat'</span>],</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                       text <span class="op">=</span> df[<span class="st">'text'</span>],</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                       marker <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>                           size <span class="op">=</span> df[<span class="st">'pop'</span>]<span class="op">/</span><span class="dv">5000</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>                           color <span class="op">=</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>                           line <span class="op">=</span> <span class="bu">dict</span>(width<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">'rgb(40,40,40)'</span>),</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                           sizemode <span class="op">=</span> <span class="st">'area'</span>))</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>gdp <span class="op">=</span> pd.read_csv(<span class="st">'gdp.csv'</span>)   <span class="co"># read name, gdp, code for 222 countries</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>c1 <span class="op">=</span> [<span class="dv">0</span>,<span class="st">"rgb(5, 10, 172)"</span>]     <span class="co"># define colourbar from top (0) to bottom (1)</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>c2, c3 <span class="op">=</span> [<span class="fl">0.35</span>,<span class="st">"rgb(40, 60, 190)"</span>], [<span class="fl">0.5</span>,<span class="st">"rgb(70, 100, 245)"</span>]</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>c4, c5 <span class="op">=</span> [<span class="fl">0.6</span>,<span class="st">"rgb(90, 120, 245)"</span>], [<span class="fl">0.7</span>,<span class="st">"rgb(106, 137, 247)"</span>]</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>c6 <span class="op">=</span> [<span class="dv">1</span>,<span class="st">"rgb(220, 220, 220)"</span>]</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>countries <span class="op">=</span> go.Choropleth(locations <span class="op">=</span> gdp[<span class="st">'CODE'</span>],</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>                          z <span class="op">=</span> gdp[<span class="st">'GDP (BILLIONS)'</span>],</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>                          text <span class="op">=</span> gdp[<span class="st">'COUNTRY'</span>],</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>                          colorscale <span class="op">=</span> [c1,c2,c3,c4,c5,c6],</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>                          autocolorscale <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>                          reversescale <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>                          marker <span class="op">=</span> <span class="bu">dict</span>(line <span class="op">=</span> <span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgb(180,180,180)'</span>,width <span class="op">=</span> <span class="fl">0.5</span>)),</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a>                          zmin <span class="op">=</span> <span class="dv">0</span>,</span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>                          colorbar <span class="op">=</span> <span class="bu">dict</span>(tickprefix <span class="op">=</span> <span class="st">'$'</span>,title <span class="op">=</span> <span class="st">'GDP&lt;br&gt;Billions US$'</span>))</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(hovermode <span class="op">=</span> <span class="st">"x"</span>, showlegend <span class="op">=</span> <span class="va">False</span>)  <span class="co"># do not show legend for first plot</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[cities,countries], layout<span class="op">=</span>layout)</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="d-topographic-elevation" class="level3">
+<h3 class="anchored" data-anchor-id="d-topographic-elevation">3D Topographic elevation</h3>
+<p>Let’s plot some tabulated topographic elevation data:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> pd.read_csv(<span class="st">'mt_bruno_elevation.csv'</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>surface <span class="op">=</span> go.Surface(z<span class="op">=</span>table.values)  <span class="co"># use 2D numpy array format</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title<span class="op">=</span><span class="st">'Mt Bruno Elevation'</span>,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                   width<span class="op">=</span><span class="dv">1200</span>, height<span class="op">=</span><span class="dv">1200</span>,    <span class="co"># image size</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>                   margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">65</span>, r<span class="op">=</span><span class="dv">10</span>, b<span class="op">=</span><span class="dv">65</span>, t<span class="op">=</span><span class="dv">90</span>))   <span class="co"># margins around the plot</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([surface], layout<span class="op">=</span>layout)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercise 6
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Plot a 2D function f(x,y) = (1−y) sin(πx) + y sin^2(2πx), where x,y ∈ [0,1] on a 100^2 grid.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="elevated-2d-functions" class="level3">
+<h3 class="anchored" data-anchor-id="elevated-2d-functions">Elevated 2D functions</h3>
+<p>Let’s define a different colourmap by adding <code>colorscale='Viridis'</code> inside <code>go.Surface()</code>. This is our current code:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span>   <span class="co"># plot resolution</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="dv">0</span>,<span class="dv">1</span>,n)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> linspace(<span class="dv">0</span>,<span class="dv">1</span>,n)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>Y, X <span class="op">=</span> meshgrid(x, y)   <span class="co"># meshgrid() returns two 2D arrays storing x/y respectively at each mesh point</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> (<span class="dv">1</span><span class="op">-</span>Y)<span class="op">*</span>sin(pi<span class="op">*</span>X) <span class="op">+</span> Y<span class="op">*</span>(sin(<span class="dv">2</span><span class="op">*</span>pi<span class="op">*</span>X))<span class="op">**</span><span class="dv">2</span>   <span class="co"># array operation</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> go.Surface(z<span class="op">=</span>F, colorscale<span class="op">=</span><span class="st">'Viridis'</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(width<span class="op">=</span><span class="dv">1000</span>, height<span class="op">=</span><span class="dv">1000</span>, scene<span class="op">=</span>go.layout.Scene(zaxis<span class="op">=</span>go.layout.scene.ZAxis(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>,<span class="dv">2</span>])))<span class="op">;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[data], layout<span class="op">=</span>layout)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="lighting-control" class="level3">
+<h3 class="anchored" data-anchor-id="lighting-control">Lighting control</h3>
+<p>Let’s change the default light in the room by adding <code>lighting=dict(ambient=0.1)</code> inside <code>go.Surface()</code>. Now our plot is much darker!</p>
+<ul>
+<li><code>ambient</code> controls the light in the room (default = 0.8)</li>
+<li><code>roughness</code> controls amount of light scattered (default = 0.5)</li>
+<li><code>diffuse</code> controls the reflection angle width (default = 0.8)</li>
+<li><code>fresnel</code> controls light washout (default = 0.2)</li>
+<li><code>specular</code> induces bright spots (default = 0.05)</li>
+</ul>
+<p>Let’s try <code>lighting=dict(ambient=0.1,specular=0.3)</code> – now we have lots of specular light!</p>
+</section>
+<section id="d-parametric-plots" class="level3">
+<h3 class="anchored" data-anchor-id="d-parametric-plots">3D parametric plots</h3>
+<p>In plotly documentation you can find quite a lot of <a href="https://plot.ly/python/3d-charts">different 3D plot types</a>. Here is something visually very different, but it still uses <code>go.Surface(x,y,z)</code>:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> pi, sin, cos, mgrid</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>dphi, dtheta <span class="op">=</span> pi<span class="op">/</span><span class="dv">250</span>, pi<span class="op">/</span><span class="dv">250</span>    <span class="co"># 0.72 degrees</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>[phi, theta] <span class="op">=</span> mgrid[<span class="dv">0</span>:pi<span class="op">+</span>dphi<span class="op">*</span><span class="fl">1.5</span>:dphi, <span class="dv">0</span>:<span class="dv">2</span><span class="op">*</span>pi<span class="op">+</span>dtheta<span class="op">*</span><span class="fl">1.5</span>:dtheta]</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># define two 2D grids: both phi and theta are (252,502) numpy arrays</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> sin(<span class="dv">4</span><span class="op">*</span>phi)<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> cos(<span class="dv">2</span><span class="op">*</span>phi)<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> sin(<span class="dv">6</span><span class="op">*</span>theta)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> cos(<span class="dv">6</span><span class="op">*</span>theta)<span class="op">**</span><span class="dv">4</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> r<span class="op">*</span>sin(phi)<span class="op">*</span>cos(theta)   <span class="co"># x is also (252,502)</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> r<span class="op">*</span>cos(phi)              <span class="co"># y is also (252,502)</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> r<span class="op">*</span>sin(phi)<span class="op">*</span>sin(theta)   <span class="co"># z is also (252,502)</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>surface <span class="op">=</span> go.Surface(x<span class="op">=</span>x, y<span class="op">=</span>y, z<span class="op">=</span>z, colorscale<span class="op">=</span><span class="st">'Viridis'</span>)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title<span class="op">=</span><span class="st">'parametric plot'</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[surface], layout<span class="op">=</span>layout)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="d-scatter-plots" class="level3">
+<h3 class="anchored" data-anchor-id="d-scatter-plots">3D scatter plots</h3>
+<p>Let’s take a look at a 3D scatter plot using the <code>country index</code> data from http://www.prosperity.com for 142 countries:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'legatum2015.csv'</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>spheres <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>df.economy,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                       y<span class="op">=</span>df.entrepreneurshipOpportunity,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                       z<span class="op">=</span>df.governance,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                       text<span class="op">=</span>df.country,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                       mode<span class="op">=</span><span class="st">'markers'</span>,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                       marker<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>                           sizemode <span class="op">=</span> <span class="st">'diameter'</span>,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                           sizeref <span class="op">=</span> <span class="fl">0.3</span>,   <span class="co"># max(safetySecurity+5.5) / 32</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                           size <span class="op">=</span> df.safetySecurity<span class="op">+</span><span class="fl">5.5</span>,</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>                           color <span class="op">=</span> df.education,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>                           colorscale <span class="op">=</span> <span class="st">'Viridis'</span>,</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                           colorbar <span class="op">=</span> <span class="bu">dict</span>(title <span class="op">=</span> <span class="st">'Education'</span>),</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>                           line <span class="op">=</span> <span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgb(140, 140, 170)'</span>)))   <span class="co"># sphere edge</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(height<span class="op">=</span><span class="dv">900</span>, width<span class="op">=</span><span class="dv">900</span>,</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>                   title<span class="op">=</span><span class="st">'Each sphere is a country sized by safetySecurity'</span>,</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>                   scene <span class="op">=</span> <span class="bu">dict</span>(xaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'economy'</span>),</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>                                yaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'entrepreneurshipOpportunity'</span>),</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>                                zaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'governance'</span>)))</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[spheres], layout<span class="op">=</span>layout)</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="d-graphs" class="level3">
+<h3 class="anchored" data-anchor-id="d-graphs">3D graphs</h3>
+<p>We can plot 3D graphs. Consider a Dorogovtsev-Goltsev-Mendes graph: <em>in each subsequent generation, every edge from the previous generation yields a new node, and the new graph can be made by connecting together three previous-generation graphs</em>.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>generation <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> nx.dorogovtsev_goltsev_mendes_graph(generation)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(H.number_of_nodes(), <span class="st">'nodes and'</span>, H.number_of_edges(), <span class="st">'edges'</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Force Atlas 2 graph layout from https://github.com/tpoisot/nxfa2.git</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> nx.spectral_layout(H,scale<span class="op">=</span><span class="dv">1</span>,dim<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> [pos[i][<span class="dv">0</span>] <span class="cf">for</span> i <span class="kw">in</span> pos]   <span class="co"># x-coordinates of all nodes</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>Yn <span class="op">=</span> [pos[i][<span class="dv">1</span>] <span class="cf">for</span> i <span class="kw">in</span> pos]   <span class="co"># y-coordinates of all nodes</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>Zn <span class="op">=</span> [pos[i][<span class="dv">2</span>] <span class="cf">for</span> i <span class="kw">in</span> pos]   <span class="co"># z-coordinates of all nodes</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>Xe, Ye, Ze <span class="op">=</span> [], [], []</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> edge <span class="kw">in</span> H.edges():</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    Xe <span class="op">+=</span> [pos[edge[<span class="dv">0</span>]][<span class="dv">0</span>], pos[edge[<span class="dv">1</span>]][<span class="dv">0</span>], <span class="va">None</span>]   <span class="co"># x-coordinates of all edge ends</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    Ye <span class="op">+=</span> [pos[edge[<span class="dv">0</span>]][<span class="dv">1</span>], pos[edge[<span class="dv">1</span>]][<span class="dv">1</span>], <span class="va">None</span>]   <span class="co"># y-coordinates of all edge ends</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    Ze <span class="op">+=</span> [pos[edge[<span class="dv">0</span>]][<span class="dv">2</span>], pos[edge[<span class="dv">1</span>]][<span class="dv">2</span>], <span class="va">None</span>]   <span class="co"># z-coordinates of all edge ends</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>degree <span class="op">=</span> [deg[<span class="dv">1</span>] <span class="cf">for</span> deg <span class="kw">in</span> H.degree()]   <span class="co"># list of degrees of all nodes</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="bu">str</span>(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(H.number_of_nodes())]</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>Xe, y<span class="op">=</span>Ye, z<span class="op">=</span>Ze,</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>                     mode<span class="op">=</span><span class="st">'lines'</span>,</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>                     marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">12</span>,line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgba(217, 217, 217, 0.14)'</span>,width<span class="op">=</span><span class="fl">0.5</span>)),</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>                     hoverinfo<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>nodes <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>Xn, y<span class="op">=</span>Yn, z<span class="op">=</span>Zn,</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>                     mode<span class="op">=</span><span class="st">'markers'</span>,</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>                     marker<span class="op">=</span><span class="bu">dict</span>(sizemode <span class="op">=</span> <span class="st">'area'</span>,</span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>                                 sizeref <span class="op">=</span> <span class="fl">0.01</span>, size<span class="op">=</span>degree,</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>                                 color<span class="op">=</span>degree, colorscale<span class="op">=</span><span class="st">'Viridis'</span>,</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>                                 line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgb(50,50,50)'</span>, width<span class="op">=</span><span class="fl">0.5</span>)),</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>                     text<span class="op">=</span>labels, hoverinfo<span class="op">=</span><span class="st">'text'</span>)</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>axis <span class="op">=</span> <span class="bu">dict</span>(showline<span class="op">=</span><span class="va">False</span>, zeroline<span class="op">=</span><span class="va">False</span>, showgrid<span class="op">=</span><span class="va">False</span>, showticklabels<span class="op">=</span><span class="va">False</span>, title<span class="op">=</span><span class="st">''</span>)</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span> <span class="bu">str</span>(generation) <span class="op">+</span> <span class="st">"-generation Dorogovtsev-Goltsev-Mendes graph"</span>,</span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">1000</span>, height<span class="op">=</span><span class="dv">1000</span>,</span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>    showlegend<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>    scene<span class="op">=</span><span class="bu">dict</span>(xaxis<span class="op">=</span>go.layout.scene.XAxis(axis),</span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>               yaxis<span class="op">=</span>go.layout.scene.YAxis(axis),</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>               zaxis<span class="op">=</span>go.layout.scene.ZAxis(axis)),</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span>go.layout.Margin(t<span class="op">=</span><span class="dv">100</span>))</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[edges,nodes], layout<span class="op">=</span>layout)</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="d-functions" class="level3">
+<h3 class="anchored" data-anchor-id="d-functions">3D functions</h3>
+<p>Let’s create an isosurface of a <code>decoCube</code> function at f=0.03. Isosurfaces are returned as a list of polygons, and for plotting polygons in plotly we need to use <code>plotly.figure_factory.create_trisurf()</code> which replaces <code>plotly.graph_objs.Figure()</code>:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotly <span class="im">import</span> figure_factory <span class="im">as</span> FF</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> mgrid</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> measure</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>X,Y,Z <span class="op">=</span> mgrid[<span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>, <span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>, <span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>] <span class="co"># three 30^3 grids, each side [-1.2,1.2] in 30 steps</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> ((X<span class="op">*</span>X<span class="op">+</span>Y<span class="op">*</span>Y<span class="op">-</span><span class="fl">0.64</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (Z<span class="op">*</span>Z<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> <span class="op">\</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    ((Y<span class="op">*</span>Y<span class="op">+</span>Z<span class="op">*</span>Z<span class="op">-</span><span class="fl">0.64</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (X<span class="op">*</span>X<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> <span class="op">\</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    ((Z<span class="op">*</span>Z<span class="op">+</span>X<span class="op">*</span>X<span class="op">-</span><span class="fl">0.64</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (Y<span class="op">*</span>Y<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>vertices, triangles, normals, values <span class="op">=</span> measure.marching_cubes(F, <span class="fl">0.03</span>)  <span class="co"># create an isosurface</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>x,y,z <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span>vertices)   <span class="co"># zip(*...) is opposite of zip(...): unzips a list of tuples</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> FF.create_trisurf(x<span class="op">=</span>x, y<span class="op">=</span>y, z<span class="op">=</span>z, plot_edges<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                        simplices<span class="op">=</span>triangles, title<span class="op">=</span><span class="st">"Isosurface"</span>, height<span class="op">=</span><span class="dv">1200</span>, width<span class="op">=</span><span class="dv">1200</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Try switching <code>plot_edges=False</code> to <code>plot_edges=True</code> – you’ll see individual polygons!</p>
+<!-- ### NetCDF data -->
+<!-- #### 2D slices through a 3D dataset -->
+<!-- How about processing real data? -->
+<!-- ```py -->
+<!-- import plotly.offline as py -->
+<!-- py.init_notebook_mode(connected=True) -->
+<!-- import plotly.graph_objs as go -->
+<!-- from netCDF4 import Dataset    # Note: need netCDF4 installed -->
+<!-- dataset = Dataset('sineEnvelope.nc') -->
+<!-- name = list(dataset.variables.keys())[0]   # variable name -->
+<!-- print(name) -->
+<!-- var = dataset.variables[name] -->
+<!-- print(var.shape) -->
+<!-- image = go.Heatmap(z=var[:,:,49])   # use layer 50 (in the middle) -->
+<!-- layout = go.Layout(width=800, height=800, margin=dict(l=65,r=10,b=65,t=90)) -->
+<!-- fig = go.Figure(data=[image], layout=layout) -->
+<!-- py.iplot(fig,auto_open=False) -->
+<!-- ``` -->
+<!-- > ## Exercise 7 -->
+<!-- > Use the last two codes to plot an isosurface of `sineEnvelope.nc` dataset at f=0.5. -->
+<!-- #### Orthogonal 2D slices -->
+<!-- Let's do three orthogonal slices through our dataset: -->
+<!-- ```py -->
+<!-- import numpy as np -->
+<!-- import plotly.offline as py -->
+<!-- py.init_notebook_mode(connected=True) -->
+<!-- import plotly.graph_objs as go -->
+<!-- from netCDF4 import Dataset -->
+<!-- dataset = Dataset('sineEnvelope.nc') -->
+<!-- name = list(dataset.variables.keys())[0]   # variable name -->
+<!-- var = dataset.variables[name]   # dataset variable -->
+<!-- vmin, vmax = np.min(var), np.max(var)   # global dataset min/max -->
+<!-- x, y, z = np.linspace(0.005,0.995,100), np.linspace(0.005,0.995,100), np.linspace(0.005,0.995,100) -->
+<!-- slicePosition = [0,0,0]   # indices 0..99 -->
+<!-- print('slices through the point', x[slicePosition[0]], y[slicePosition[1]], z[slicePosition[2]]) -->
+<!-- # --- create the XY-slice -->
+<!-- X, Y = np.meshgrid(x,y)   # each is a 100x100 mesh covering [0,1] in each dimension -->
+<!-- Z = z[slicePosition[2]] * np.ones((100,100))   # 100x100 array of constant value -->
+<!-- surfz = var[:,:,slicePosition[2]]   # 100x100 array of function values -->
+<!-- slicez = go.Surface(x=X, y=Y, z=Z, surfacecolor=surfz, cmin=vmin, cmax=vmax, showscale=False) -->
+<!-- # --- create the YZ-slice -->
+<!-- Y, Z = np.meshgrid(y,z)   # each is a 100x100 mesh covering [0,1] in each dimension -->
+<!-- X = x[slicePosition[0]] * np.ones((100,100))   # 100x100 array of constant value -->
+<!-- surfx = var[slicePosition[0],:,:]   # 100x100 array of function values -->
+<!-- slicex = go.Surface(x=X, y=Y, z=Z, surfacecolor=surfx, cmin=vmin, cmax=vmax, showscale=True) -->
+<!-- # --- create the XZ-slice -->
+<!-- X, Z = np.meshgrid(x,z) -->
+<!-- Y = y[slicePosition[1]] * np.ones((100,100))   # 100x100 array of constant value -->
+<!-- surfy = var[:,slicePosition[1],:] -->
+<!-- slicey = go.Surface(x=X, y=Y, z=Z, surfacecolor=surfy, cmin=vmin, cmax=vmax, showscale=False) -->
+<!-- # --- plot the three slices -->
+<!-- axis = dict(showbackground=True,  backgroundcolor="rgb(230, 230,230)", -->
+<!--             gridcolor="rgb(255, 255, 255)", zerolinecolor="rgb(255, 255, 255)") -->
+<!-- layout = go.Layout(title='Orthogonal slices through volumetric data',  -->
+<!--                    width=900, height=900, -->
+<!--                    scene=go.Scene(xaxis=go.XAxis(axis), -->
+<!--                                yaxis=go.YAxis(axis),  -->
+<!--                                zaxis=go.ZAxis(axis),  -->
+<!--                                aspectratio=dict(x=1, y=1, z=1))) -->
+<!-- fig = go.Figure(data=[slicez,slicey,slicex], layout=layout) -->
+<!-- py.iplot(fig,auto_open=False) -->
+<!-- ``` -->
+<!-- ## Animation -->
+<!-- For animations, you need to pass the third (`frames`) argument to `go.Figure()`: -->
+<!-- ```py -->
+<!-- import plotly.offline as py -->
+<!-- py.init_notebook_mode(connected=True) -->
+<!-- import plotly.graph_objs as go -->
+<!-- import numpy as np -->
+<!-- t = np.linspace(0,10,100) -->
+<!-- x, y = t/3*np.cos(t), t/3*np.sin(t) -->
+<!-- line1 = go.Scatter(x=x, y=y, mode='lines', line=dict(width=10, color='blue')) -->
+<!-- line2 = go.Scatter(x=x, y=y, mode='lines', line=dict(width=2, color='blue')) -->
+<!-- layout = go.Layout(title='Moving dot', -->
+<!--                    xaxis=dict(range=[-10,10]), -->
+<!--                    yaxis=dict(scaleanchor="x", scaleratio=1),   # 1:1 aspect ratio -->
+<!--                    showlegend = False, -->
+<!--                    updatemenus= [{'type': 'buttons', -->
+<!--                                   'buttons': [{'label': 'Replay', -->
+<!--                                                'method': 'animate', -->
+<!--                                                'args': [None]}]}]) -->
+<!-- nframes = 20 -->
+<!-- s = np.linspace(0,10,nframes) -->
+<!-- xdot, ydot = s/3*np.cos(s), s/3*np.sin(s) -->
+<!-- frames = [dict(data=[go.Scatter(x=[xdot[k]], y=[ydot[k]], -->
+<!--                                 mode='markers', marker=dict(color='red', size=30))]) -->
+<!--           for k in range(nframes)] -->
+<!-- # line1 will be shown before the first frame, line2 will be shown in each frame -->
+<!-- fig = go.Figure(data=[line1,line2], layout=layout, frames=frames) -->
+<!-- py.iplot(fig,auto_open=False) -->
+<!-- ``` -->
+<!-- I could not find how to control the animation speed. Obviously, it should be via a keyword to either -->
+<!-- `go.Figure()` or `py.iplot`. -->
+</section>
+</section>
+<section id="dash-library-for-making-interactive-web-applications" class="level2">
+<h2 class="anchored" data-anchor-id="dash-library-for-making-interactive-web-applications">Dash library for making interactive web applications</h2>
+<p><a href="https://github.com/plotly/dash">Plotly Dash</a> library is a framework for making interactive data applications.</p>
+<ol type="1">
+<li>Dash Python User Guide https://dash.plotly.com</li>
+<li>https://dash.gallery/Portal has ~100 app examples</li>
+</ol>
+<ul>
+<li>can create a dropdown to select data to plot</li>
+<li>can enter a value into a box to select or interpolate data to plot</li>
+<li>selection in one plot shows in the other plot</li>
+<li>mix and match these into a single web app</li>
+<li>can create different tabs inside the app, with the render switching between them</li>
+<li>can make entire website with user guides, plots, code examples, etc.</li>
+</ul>
+<!-- video tutorial https://plotly.com/python/plotly-express -->
+<p>&nbsp;</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

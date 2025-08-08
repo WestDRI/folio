@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Hands-on with ParaView’s Programmable Filter &amp; Source for scientific visualization – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a986a95301e671fce2c6472dffc862a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#paraview" id="toc-paraview" class="nav-link active" data-scroll-target="#paraview">ParaView</a>
+  <ul class="collapse">
+  <li><a href="#python-scripting" id="toc-python-scripting" class="nav-link" data-scroll-target="#python-scripting">Python scripting</a></li>
+  <li><a href="#vtk-data-types" id="toc-vtk-data-types" class="nav-link" data-scroll-target="#vtk-data-types">VTK data types</a></li>
+  <li><a href="#programmable-filter-workflow" id="toc-programmable-filter-workflow" class="nav-link" data-scroll-target="#programmable-filter-workflow">Programmable Filter workflow</a></li>
+  <li><a href="#programmable-source-workflow" id="toc-programmable-source-workflow" class="nav-link" data-scroll-target="#programmable-source-workflow">Programmable Source workflow</a></li>
+  </ul></li>
+  <li><a href="#simple-programmable-filter-example" id="toc-simple-programmable-filter-example" class="nav-link" data-scroll-target="#simple-programmable-filter-example">Simple Programmable Filter example</a></li>
+  <li><a href="#programmable-source" id="toc-programmable-source" class="nav-link" data-scroll-target="#programmable-source">Programmable Source</a>
+  <ul class="collapse">
+  <li><a href="#build-a-custom-reader" id="toc-build-a-custom-reader" class="nav-link" data-scroll-target="#build-a-custom-reader">Build a custom reader</a></li>
+  <li><a href="#exercise-reveal-the-data-in-the-cube" id="toc-exercise-reveal-the-data-in-the-cube" class="nav-link" data-scroll-target="#exercise-reveal-the-data-in-the-cube">Exercise: reveal the data in the cube</a></li>
+  <li><a href="#write-a-3d-function-directly-into-cartesian-mesh-numpy-vtk" id="toc-write-a-3d-function-directly-into-cartesian-mesh-numpy-vtk" class="nav-link" data-scroll-target="#write-a-3d-function-directly-into-cartesian-mesh-numpy-vtk">Write a 3D function directly into Cartesian mesh: numpy → VTK</a></li>
+  <li><a href="#single-helix-source-example-from-paraview-docs" id="toc-single-helix-source-example-from-paraview-docs" class="nav-link" data-scroll-target="#single-helix-source-example-from-paraview-docs">Single helix source example from ParaView docs</a></li>
+  <li><a href="#programmatically-generated-point-cloud" id="toc-programmatically-generated-point-cloud" class="nav-link" data-scroll-target="#programmatically-generated-point-cloud">Programmatically generated point cloud</a></li>
+  </ul></li>
+  <li><a href="#projection-to-a-plane-numpy-vtk" id="toc-projection-to-a-plane-numpy-vtk" class="nav-link" data-scroll-target="#projection-to-a-plane-numpy-vtk">Projection to a plane: numpy → VTK</a></li>
+  <li><a href="#exercise-plotting-spherical-dataset-as-3d-mollweide-map" id="toc-exercise-plotting-spherical-dataset-as-3d-mollweide-map" class="nav-link" data-scroll-target="#exercise-plotting-spherical-dataset-as-3d-mollweide-map">Exercise: plotting spherical dataset as 3D Mollweide map</a>
+  <ul class="collapse">
+  <li><a href="#playing-with-the-dataset-in-standalone-python" id="toc-playing-with-the-dataset-in-standalone-python" class="nav-link" data-scroll-target="#playing-with-the-dataset-in-standalone-python">Playing with the dataset in standalone Python</a></li>
+  <li><a href="#back-to-paraview" id="toc-back-to-paraview" class="nav-link" data-scroll-target="#back-to-paraview">Back to ParaView</a></li>
+  </ul></li>
+  <li><a href="#saving-workflow" id="toc-saving-workflow" class="nav-link" data-scroll-target="#saving-workflow">Saving workflow</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Hands-on with ParaView’s Programmable Filter &amp; Source for scientific visualization</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>November 14<sup>th</sup>, 10am-noon Pacific Time</strong></p>
+<p><strong>Instructor</strong>: Alex Razoumov (SFU)</p>
+<p><strong>Software</strong>: To participate in the course exercises, you will need to <a href="https://www.paraview.org/download">install ParaView</a> on your computer and <a href="https://bit.ly/programmableZip">download this ZIP file</a> (27MB). Unpack it to find the following data files: <em>cube.txt</em>, <em>tabulatedGrid.csv</em>, <em>compact150.nc</em>, and <em>sineEnvelope.nc</em>.</p>
+<section id="paraview" class="level2">
+<h2 class="anchored" data-anchor-id="paraview">ParaView</h2>
+<p><img src="./fig/programmable/paraview.jpg" class="img-fluid"></p>
+<ul>
+<li><a href="http://www.paraview.org" target="_blank">http://www.paraview.org</a></li>
+<li>Started in 2000 as a collaboration between Los Alamos National Lab and Kitware Inc., later joined by Sandia National Labs and other partners; first public release in 2002</li>
+<li>Source code available <a href="https://github.com/Kitware/ParaView" target="_blank">on GitHub</a>, or can be downloaded as a <a href="https://www.paraview.org/download" target="_blank">pre-compiled binary for Linux/Mac/Windows</a></li>
+<li>To visualize extremely large datasets on distributed memory machines</li>
+<li>Both interactive and Python scripting</li>
+<li>Client-server for remote interactive visualization</li>
+<li>Uses MPI for distributed-memory parallelism on HPC clusters</li>
+<li>ParaView is based on VTK (Visualization Toolkit)
+<ul>
+<li>not the only VTK-based open-source scientific renderer, e.g.&nbsp;<a href="https://visit-dav.github.io/visit-website" target="_blank">VisIt</a>, MayaVi (Python + numpy + scipy + VTK), an of course a number of Kitware’s own tools besides ParaView are based on VTK</li>
+<li>VTK can be used as a standalone renderer from C++, Python, and now JavaScript</li>
+</ul></li>
+</ul>
+<p>We teach both beginner’s (typically full-day) ParaView workshops and additional, more advanced topics:</p>
+<p>🔵 VTK programming (overlap with today’s topic)<br>
+✅ Web-based 3D scientific visualization: ParaViewWeb, VTK.js, ParaView Glance, ParaView Lite, Visualizer<br>
+✅ ParaView Cinema<br>
+✅ Catalyst in-situ visualization library<br>
+🔵 AMR (multi-resolution) &amp; multi-block datasets<br>
+✅ CPU-based ray tracing and photorealistic rendering with OSPRay<br>
+✏️ Ray tracing on CUDA-supported cards with Nvidia OptiX ✏️ Scalable 3D volumetric visualization on GPU clusters with NVIDIA IndeX<br>
+✅ Remote and parallel interactive visualization<br>
+✅ Batch visualization<br>
+✅ Advanced scripting<br>
+✅ <strong>Programmable Filter &amp; Source in ParaView</strong><br>
+🔵 Writing ParaView plugins<br>
+✅ Advanced animation<br>
+✅ Topological data analysis<br>
+✏️ Using ParaView with special hardware: HMDs, stereo projectors, Looking Glass</p>
+<p>You can watch some of these webinar recordings at <a href="https://bit.ly/vispages" target="_blank">https://bit.ly/vispages</a>.</p>
+<section id="python-scripting" class="level3">
+<h3 class="anchored" data-anchor-id="python-scripting">Python scripting</h3>
+<p>Inside ParaView you can use Python scripting in several places:</p>
+<ul>
+<li>Any ParaView workflow can be saved as a Python script (Tools | Start/Stop Trace)
+<ul>
+<li>run via <code>pvpython</code>, or <code>pvbatch</code> (especially useful for batch visualization)</li>
+<li>run via View | Python Shell</li>
+</ul></li>
+<li>Any ParaView state can be saved as a Python script (File | Save State)
+<ul>
+<li>run via File | Load State</li>
+</ul></li>
+<li>Filters | Python Calculator</li>
+<li>Filters | Programmable Filter / Source</li>
+</ul>
+<p>Why would you want to use the Programmable Filter / Source? Fundamentally, these tools let you create custom VTK objects directly from ParaView. Let’s say we want to plot a projection of a cubic dataset along one of its principal axes, or do some other transformation for which there is no filter.</p>
+<p><img src="./fig/programmable/projection1.png" class="img-fluid" style="width:80.0%"></p>
+<p>Calculator / Python Calculator filter cannot modify the geometry …</p>
+</section>
+<section id="vtk-data-types" class="level3">
+<h3 class="anchored" data-anchor-id="vtk-data-types">VTK data types</h3>
+<p><img src="./fig/programmable/vtkDataTypes.png" title="from the VTK Textbook" class="img-fluid" style="width:80.0%"></p>
+<p>In today’s examples we will create datasets in the following formats:</p>
+<ol type="1">
+<li>vtkImageData,</li>
+<li>vtkPolyData, and</li>
+<li>vtkStructuredGrid.</li>
+</ol>
+<p>For simplicity, we will skip the examples with Output Data Set Type = <strong>vtkUnstructuredGrid</strong> – that would produce the most versatile object, but with any unstructured cells you will have to describe the connections between their points needed to form these cells. You can find a couple of examples of creating vtkUnstructuredGrid in a <a href="https://training.westdri.ca/tools/visualization#programmable" target="_blank">2021 webinar</a>.</p>
+</section>
+<section id="programmable-filter-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="programmable-filter-workflow">Programmable Filter workflow</h3>
+<ol type="1">
+<li>Apply <strong>Programmable Filter</strong> to a ParaView pipeline object</li>
+<li>Select Output Data Set Type: either Same as Input, or one of the VTK data types from above</li>
+<li>In the Script box, write Python code: <strong>input</strong> from a pipeline object → <strong>output</strong></li>
+</ol>
+<ul>
+<li>use <code>inputs[0].Points[:,0:3]</code> and/or <code>inputs[0].PointData['array name']</code> and/or <code>inputs[0].CellData['array name']</code> to compute your <strong>output</strong>: points, cells, and data arrays</li>
+<li>some objects take/pass multiple <code>inputs[:]</code></li>
+</ul>
+<!-- - either use the default **output** for your selected Output Data Set Type, or create your own custom -->
+<!--   **output** object -->
+<ol start="4" type="1">
+<li>Depending on <strong>output</strong>’s type, might need to describe it in the RequestInformation Script box</li>
+<li>Hit Apply</li>
+</ol>
+</section>
+<section id="programmable-source-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="programmable-source-workflow">Programmable Source workflow</h3>
+<p>Same as Programmable Filter but without an input.</p>
+<ol type="1">
+<li>build an object programmatically</li>
+<li>read and process data from a file</li>
+</ol>
+</section>
+</section>
+<section id="simple-programmable-filter-example" class="level2">
+<h2 class="anchored" data-anchor-id="simple-programmable-filter-example">Simple Programmable Filter example</h2>
+<p>Start with a very simple example. Let’s create a 2D Gaussian</p>
+<p><span class="math display">\[f(\vec r)=e^{-\frac{|\vec r-\vec r_0|^2}{2\sigma^2}},\quad\vec r\in\mathbb{R}^2\]</span></p>
+<p>centered at (0,0).</p>
+<ol type="1">
+<li>Apply Sources | <strong>Plane</strong> at <span class="math inline">\(100^2\)</span> resolution</li>
+<li>Apply <strong>Programmable Filter</strong></li>
+</ol>
+<ul>
+<li>set Output Data Set Type = Same as Input</li>
+<li>this will create the same discretization (vtkPolyData) as its input, without the fields (PointData)</li>
+</ul>
+<ol start="3" type="1">
+<li>Let’s print some info</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(output))   <span class="co"># paraview.vtk.numpy_interface.dataset_adapter.PolyData</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">dir</span>(output))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.Points.shape)   <span class="co"># actually a 3D dataset</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.Points)         <span class="co"># but all z-coordinates are 0s</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>Paste into Script</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> inputs[<span class="dv">0</span>].Points[:,<span class="dv">0</span>]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> inputs[<span class="dv">0</span>].Points[:,<span class="dv">1</span>]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>output.Points[:,<span class="dv">2</span>] <span class="op">=</span> <span class="fl">0.5</span><span class="op">*</span>exp(<span class="op">-</span>(x<span class="op">**</span><span class="dv">2</span><span class="op">+</span>y<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>(<span class="dv">2</span><span class="op">*</span><span class="fl">0.02</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dataArray <span class="op">=</span> <span class="fl">0.3</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>output.Points[:,<span class="dv">2</span>]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>output.PointData.append(dataArray, <span class="st">"pnew"</span>)   <span class="co"># add the new data array to our output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>Display in 3D, colour with <code>pnew</code></li>
+</ol>
+<p><img src="./fig/programmable/gaussian.png" class="img-fluid" style="width:60.0%"></p>
+<!-- ```py -->
+<!-- numPoints = inputs[0].GetNumberOfPoints() -->
+<!-- numCells = inputs[0].GetNumberOfCells() -->
+<!-- print(numPoints, numCells) -->
+<!-- ``` -->
+<ul>
+<li>A scalar field is stored as a flat, 1D array over 3D points</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.PointData[<span class="st">"pnew"</span>].shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Multiple ways to access data, e.g.&nbsp;these two lines point to the same array</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.PointData[<span class="st">"pnew"</span>])</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.GetPointData().GetArray(<span class="st">"pnew"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>The same for points</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.GetNumberOfPoints())</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.GetPoint(<span class="dv">1005</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(output.Points[<span class="dv">1005</span>,:])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="programmable-source" class="level2">
+<h2 class="anchored" data-anchor-id="programmable-source">Programmable Source</h2>
+<p>Let’s switch to the Programmable Source. It has no input, so we will need to set its Output Data Set Type to one of the VTK data types.</p>
+<section id="build-a-custom-reader" class="level3">
+<h3 class="anchored" data-anchor-id="build-a-custom-reader">Build a custom reader</h3>
+<p>A common use of Programmable Source is to <em>prototype readers</em>. Let’s quickly create our own reader for a CSV file with 3D data on a grid.</p>
+<p>We will start with a conventional approach to reading CSV files:</p>
+<ol type="1">
+<li>File | Open, navigate to <code>tabulatedGrid.csv</code>, select CSV Reader</li>
+<li>Pass tabular data through <strong>Table To Structured Grid</strong></li>
+</ol>
+<ul>
+<li>set data extent in each dimension</li>
+<li>specify <code>x/y/z</code> columns</li>
+<li>colour with <code>scalar</code></li>
+</ul>
+<p>Now let’s replace this with reading the CSV file directly to the Cartesian mesh, without using the File | Open dialogue. Reset your ParaView and then:</p>
+<ol type="1">
+<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkImageData</li>
+<li>Into Script paste this code: <!-- output = self.GetOutput() --></li>
+</ol>
+<div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> np.genfromtxt(<span class="st">"/Users/razoumov/programmableFilter/tabulatedGrid.csv"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                     dtype<span class="op">=</span><span class="va">None</span>, names<span class="op">=</span><span class="va">True</span>, delimiter<span class="op">=</span><span class="st">','</span>, autostrip<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>nx <span class="op">=</span> <span class="bu">len</span>(<span class="bu">set</span>(data[<span class="st">'x'</span>]))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ny <span class="op">=</span> <span class="bu">len</span>(<span class="bu">set</span>(data[<span class="st">'y'</span>]))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>nz <span class="op">=</span> <span class="bu">len</span>(<span class="bu">set</span>(data[<span class="st">'z'</span>]))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>output.SetDimensions(nx,ny,nz)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>output.SetExtent(<span class="dv">0</span>,nx<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,ny<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,nz<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>output.SetOrigin(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>output.SetSpacing(<span class="fl">.1</span>,<span class="fl">.1</span>,<span class="fl">.1</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>output.AllocateScalars(vtk.VTK_FLOAT,<span class="dv">1</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>vtk_data_array <span class="op">=</span> vtk.util.numpy_support.numpy_to_vtk(num_array<span class="op">=</span>data[<span class="st">'scalar'</span>], array_type<span class="op">=</span>vtk.VTK_FLOAT)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>vtk_data_array.SetNumberOfComponents(<span class="dv">1</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>vtk_data_array.SetName(<span class="st">"density"</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>output.GetPointData().SetScalars(vtk_data_array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>The Image (Uniform Rectilinear Grid) array is properly created (check the Information tab!), but nothing shows up …</li>
+</ol>
+<p>We need to tell the ParaView pipeline about the dimensionality of our vtkImageData!</p>
+<ol start="4" type="1">
+<li>Into Request Information paste this code:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> paraview <span class="im">import</span> util</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>nx, ny, nz <span class="op">=</span> <span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">10</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>util.SetOutputWholeExtent(<span class="va">self</span>, [<span class="dv">0</span>,nx<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,ny<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,nz<span class="op">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="exercise-reveal-the-data-in-the-cube" class="level3">
+<h3 class="anchored" data-anchor-id="exercise-reveal-the-data-in-the-cube">Exercise: reveal the data in the cube</h3>
+<p>The file <code>cube.txt</code> has 125,000 integers that were computed and printed with this Julia code: - 50 lines - each line contains 2500 integers</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">50</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>            <span class="fu">print</span>(data[i,j,k], <span class="st">" "</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">end</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You need to modify the previous Programmable Source to read this data.</p>
+<!-- Solution is in `~/Documents/11-programmableFilterData/solutions.md` -->
+</section>
+<section id="write-a-3d-function-directly-into-cartesian-mesh-numpy-vtk" class="level3">
+<h3 class="anchored" data-anchor-id="write-a-3d-function-directly-into-cartesian-mesh-numpy-vtk">Write a 3D function directly into Cartesian mesh: numpy → VTK</h3>
+<p>Similar to using a Source to read data from a file, you can use a Source to create a discretized version of a 3D function.</p>
+<ol type="1">
+<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkImageData</li>
+<li>Into Script paste this code:</li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin, sqrt</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span>   <span class="co"># the size of our grid</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>output.SetDimensions(n,n,n)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>output.SetOrigin(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>output.SetSpacing(<span class="fl">.1</span>,<span class="fl">.1</span>,<span class="fl">.1</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>output.SetExtent(<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>output.AllocateScalars(vtk.VTK_FLOAT,<span class="dv">1</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="op">-</span><span class="fl">7.5</span>,<span class="fl">7.5</span>,n)   <span class="co"># three orthogonal discretization vectors</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x.reshape(n,<span class="dv">1</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> x.reshape(n,<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> ((sin(sqrt(y<span class="op">*</span>y<span class="op">+</span>x<span class="op">*</span>x)))<span class="op">**</span><span class="dv">2</span><span class="op">-</span><span class="fl">0.5</span>)<span class="op">/</span>(<span class="fl">0.001</span><span class="op">*</span>(y<span class="op">*</span>y<span class="op">+</span>x<span class="op">*</span>x)<span class="op">+</span><span class="fl">1.</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    ((sin(sqrt(z<span class="op">*</span>z<span class="op">+</span>y<span class="op">*</span>y)))<span class="op">**</span><span class="dv">2</span><span class="op">-</span><span class="fl">0.5</span>)<span class="op">/</span>(<span class="fl">0.001</span><span class="op">*</span>(z<span class="op">*</span>z<span class="op">+</span>y<span class="op">*</span>y)<span class="op">+</span><span class="fl">1.</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="fl">1.</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>vtk_data_array <span class="op">=</span> vtk.util.numpy_support.numpy_to_vtk(</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    num_array<span class="op">=</span>data.ravel(), deep<span class="op">=</span><span class="va">False</span>, array_type<span class="op">=</span>vtk.VTK_FLOAT)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>vtk_data_array.SetNumberOfComponents(<span class="dv">1</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>vtk_data_array.SetName(<span class="st">"density"</span>)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>output.GetPointData().SetScalars(vtk_data_array)   <span class="co"># use it as a scalar field in the output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>Into Request Information paste this code:</li>
+</ol>
+<div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> paraview <span class="im">import</span> util</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>util.SetOutputWholeExtent(<span class="va">self</span>, [<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./fig/programmable/envelope.png" class="img-fluid" style="width:80.0%"></p>
+</section>
+<section id="single-helix-source-example-from-paraview-docs" class="level3">
+<h3 class="anchored" data-anchor-id="single-helix-source-example-from-paraview-docs">Single helix source example from ParaView docs</h3>
+<p>Let’s create from scratch a Polygonal Data object.</p>
+<ol type="1">
+<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkPolyData</li>
+<li>Paste this code: <!-- # No `output = self.GetOutput()` here as that would give vtkmodules.vtkCommonDataModel.vtkPolyData which has no --> <!-- # 'PointData' attribute. Instead we are using the default output which has type --> <!-- # paraview.vtk.numpy_interface.dataset_adapter.PolyData. --></li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> vtk.numpy_interface.algorithms <span class="im">as</span> alg</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>numPoints, length, rounds <span class="op">=</span> <span class="dv">300</span>, <span class="fl">8.0</span>, <span class="dv">5</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>index <span class="op">=</span> np.arange(<span class="dv">0</span>, numPoints, dtype<span class="op">=</span>np.int32)   <span class="co"># 0, ..., numPoints-1</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> rounds <span class="op">*</span> <span class="dv">2</span> <span class="op">*</span> np.pi <span class="op">*</span> index <span class="op">/</span> numPoints</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>x, y, z <span class="op">=</span> index <span class="op">*</span> length <span class="op">/</span> numPoints, np.sin(phi), np.cos(phi)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>coordinates <span class="op">=</span> alg.make_vector(x, y, z)   <span class="co"># numpy array (numPoints,3)</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>output.Points <span class="op">=</span> coordinates             <span class="co"># set point coordinates</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>output.PointData.append(phi, <span class="st">'angle'</span>)   <span class="co"># append a scalar field on points</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>pointIds <span class="op">=</span> vtk.vtkIdList()</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>pointIds.SetNumberOfIds(numPoints)</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(numPoints):   <span class="co"># define a single polyline connecting all the points in order</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>   pointIds.SetId(i, i)      <span class="co"># point i in the line is formed from point i in vtkPoints</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>output.Allocate(<span class="dv">1</span>)     <span class="co"># allocate space for one vtkPolyLine 'cell' to the vtkPolyData object</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>output.InsertNextCell(vtk.VTK_POLY_LINE, pointIds)   <span class="co"># add this 'cell' to the vtkPolyData object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./fig/programmable/helix.png" class="img-fluid" style="width:95.0%"></p>
+<!-- Double helix source example from ParaView docs -->
+</section>
+<section id="programmatically-generated-point-cloud" class="level3">
+<h3 class="anchored" data-anchor-id="programmatically-generated-point-cloud">Programmatically generated point cloud</h3>
+<p>Here we use exactly the same technique (use Source to create a vtkPolyData object, add a bunch of points, create a single cell) with a very different looking result.</p>
+<ol type="1">
+<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkPolyData</li>
+<li>Paste this code: <!-- # programmatically generated point cloud --> <!-- # https://youtu.be/aPKVrrzYGdo?t=1202 --> <!-- # Programmable Source --> <!-- # vtkPolyData --></li>
+</ol>
+<div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> <span class="bu">abs</span>, random, sin, cos, pi, arcsin</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>numPoints <span class="op">=</span> <span class="dv">1_000_000</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="bu">abs</span>(random.randn(numPoints))               <span class="co"># 1D array drawn from a normal (Gaussian) distribution</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> arcsin(<span class="fl">2.</span><span class="op">*</span>random.rand(numPoints)<span class="op">-</span><span class="fl">1.</span>)   <span class="co"># use 1D array drawn from a uniform [0,1) distribution</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">2.</span><span class="op">*</span>pi<span class="op">*</span>random.rand(numPoints)             <span class="co"># use 1D array drawn from a uniform [0,1) distribution</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> r<span class="op">*</span>cos(theta)<span class="op">*</span>sin(phi)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> r<span class="op">*</span>cos(theta)<span class="op">*</span>cos(phi)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> r<span class="op">*</span>sin(theta)</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>coordinates <span class="op">=</span> vtk.numpy_interface.algorithms.make_vector(x, y, z)   <span class="co"># numpy array (numPoints,3)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>output.Points <span class="op">=</span> coordinates              <span class="co"># set point coordinates</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>output.PointData.append(r, <span class="st">"r"</span>)          <span class="co"># append a scalar field on points</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>output.PointData.append(phi, <span class="st">"phi"</span>)      <span class="co"># append another scalar field on points</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="3" type="1">
+<li>Points are not visible in ParaView ⇨ either (a) switch to Point Gaussian representation, or (b) in Script’s <strong>output</strong> create a single cell without connections</li>
+</ol>
+<div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pointIds <span class="op">=</span> vtk.vtkIdList()</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>pointIds.SetNumberOfIds(numPoints)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> <span class="bu">range</span>(numPoints):</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    pointIds.SetId(p, p)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>output.Allocate(<span class="dv">1</span>)     <span class="co"># allocate space for a single cell</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>output.InsertNextCell(vtk.VTK_POLY_VERTEX, pointIds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./fig/programmable/cloud1.png" class="img-fluid" style="width:80.0%"></p>
+<ol start="4" type="1">
+<li>Colour by radius</li>
+<li>Apply <strong>Clip</strong> (need the cell for that)</li>
+<li>Optionally switch back to Point Gaussian representation</li>
+</ol>
+<p><img src="./fig/programmable/cloud2.png" class="img-fluid" style="width:80.0%"></p>
+<!-- output.Points = coordinates -->
+<!-- # ------ -->
+<!-- points = vtk.vtkPoints() -->
+<!-- points.SetData(vtk.numpy_interface.dataset_adapter. -->
+<!--                numpyTovtkDataArray(coordinates, 'Points')) # set coordinates -->
+<!-- output.SetPoints(points)    # add these points to vtkPolyData -->
+</section>
+</section>
+<section id="projection-to-a-plane-numpy-vtk" class="level2">
+<h2 class="anchored" data-anchor-id="projection-to-a-plane-numpy-vtk">Projection to a plane: numpy → VTK</h2>
+<ol type="1">
+<li>Load <code>sineEnvelope.nc</code></li>
+<li>Apply <strong>Programmable Filter</strong>, set Output Data Set Type = vtkImageData</li>
+<li>Into Script paste this code: <!-- # output = self.GetOutput() --></li>
+</ol>
+<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>numPoints <span class="op">=</span> inputs[<span class="dv">0</span>].GetNumberOfPoints()</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>side <span class="op">=</span> <span class="bu">round</span>(numPoints<span class="op">**</span>(<span class="fl">1.</span><span class="op">/</span><span class="fl">3.</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>layer <span class="op">=</span> side<span class="op">*</span>side</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>rho <span class="op">=</span> inputs[<span class="dv">0</span>].PointData[<span class="st">'density'</span>]</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>output.SetOrigin(inputs[<span class="dv">0</span>].GetPoint(<span class="dv">0</span>)[<span class="dv">0</span>], inputs[<span class="dv">0</span>].GetPoint(<span class="dv">0</span>)[<span class="dv">1</span>], <span class="op">-</span><span class="fl">20.</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>output.SetSpacing(<span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>output.SetDimensions(side, side, <span class="dv">1</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>output.SetExtent(<span class="dv">0</span>,<span class="dv">99</span>,<span class="dv">0</span>,<span class="dv">99</span>,<span class="dv">0</span>,<span class="dv">1</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>output.AllocateScalars(vtk.VTK_FLOAT, <span class="dv">1</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>rho3D <span class="op">=</span> rho.reshape(side, side, side)</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>vtk_data_array <span class="op">=</span> vtk.util.numpy_support.numpy_to_vtk(rho3D.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">2</span>).ravel(),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                       deep<span class="op">=</span><span class="va">False</span>, array_type<span class="op">=</span>vtk.VTK_FLOAT)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>vtk_data_array.SetNumberOfComponents(<span class="dv">1</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>vtk_data_array.SetName(<span class="st">"projection"</span>)</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>output.GetPointData().SetScalars(vtk_data_array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="4" type="1">
+<li>Into Request Information paste this code:</li>
+</ol>
+<div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> paraview <span class="im">import</span> util</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>util.SetOutputWholeExtent(<span class="va">self</span>, [<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="./fig/programmable/projection3.png" class="img-fluid" style="width:80.0%"></p>
+</section>
+<section id="exercise-plotting-spherical-dataset-as-3d-mollweide-map" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-plotting-spherical-dataset-as-3d-mollweide-map">Exercise: plotting spherical dataset as 3D Mollweide map</h2>
+<!-- Mollweide projection mantle convection -->
+<!-- ~/Documents/visualizeThis/ieee2021/submissions/lucasTemor/vis21g-sub1007-i5.mp4 -->
+<ul>
+<li><a href="https://scivis2021.netlify.app" target="_blank">Spherical dataset animation</a>: the traditional view</li>
+<li><a href="https://scivis2021.netlify.app/results#best-cover-visualization" target="_blank">Best Cover Visualization submission</a> with the 3D Mollweide projection</li>
+<li>On presenter’s laptop watch the full video <code>open $(fd vis21g-sub1007-i5.mp4 ~/Documents)</code></li>
+</ul>
+<section id="playing-with-the-dataset-in-standalone-python" class="level3">
+<h3 class="anchored" data-anchor-id="playing-with-the-dataset-in-standalone-python">Playing with the dataset in standalone Python</h3>
+<div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xarray <span class="im">as</span> xr</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> xr.open_dataset(<span class="st">'/Users/razoumov/programmableFilter/compact150.nc'</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data)                      <span class="co"># show all variables inside this dataset</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data.r)                    <span class="co"># radial discretization</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data.temperature.values)   <span class="co"># this is a 180x201x360 numpy array</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>data[<span class="st">"temperature anomaly"</span>].shape</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data.lon.values)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data.lat.values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Although the Mollweide projection is available in packages like <code>matplotlib</code>, we need a standalone implementation that takes the geographical coordinates and returns the Cartesian coordinates in the projection. I used the formulae from the <a href="https://en.wikipedia.org/wiki/Mollweide_projection">wiki page</a> to write my own function:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> sin, cos, pi, sqrt, radians</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> mollweide(lon, lat):</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">    lon: input longitude in degrees</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">    lat: input latitude in degrees</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    lam, phi <span class="op">=</span> radians(lon), radians(lat)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    lam0 <span class="op">=</span> radians(<span class="dv">180</span>)   <span class="co"># central meridian</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    tolerance <span class="op">=</span> <span class="fl">1.0e-5</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">abs</span>(<span class="bu">abs</span>(phi)<span class="op">-</span>pi<span class="op">/</span><span class="fl">2.</span>) <span class="op">&lt;</span> tolerance:</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        theta <span class="op">=</span> phi</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        theta, dtheta <span class="op">=</span> phi, <span class="fl">1e3</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="bu">abs</span>(dtheta) <span class="op">&gt;</span> tolerance:</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>            twotheta <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> theta</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            dtheta <span class="op">=</span> theta</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>            theta <span class="op">=</span> theta <span class="op">-</span> (twotheta <span class="op">+</span> sin(twotheta) <span class="op">-</span> pi<span class="op">*</span>sin(phi))<span class="op">/</span>(<span class="dv">2</span> <span class="op">+</span> <span class="dv">2</span><span class="op">*</span>cos(twotheta))</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>            dtheta <span class="op">-=</span> theta</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    s2 <span class="op">=</span> sqrt(<span class="dv">2</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> s2<span class="op">/</span>pi <span class="op">*</span> (lam<span class="op">-</span>lam0) <span class="op">*</span> cos(theta)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> s2 <span class="op">*</span> sin(theta)</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (x,y)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>lam <span class="op">=</span> data.lon.values[<span class="dv">100</span>]</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> data.lat.values[<span class="dv">50</span>]</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>mollweide(lam,phi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="back-to-paraview" class="level3">
+<h3 class="anchored" data-anchor-id="back-to-paraview">Back to ParaView</h3>
+<p>Our goal is to create something like this: <img src="./fig/programmable/convection.png" class="img-fluid" style="width:80.0%"></p>
+<ol type="1">
+<li>load <code>compact150.nc</code>, uncheck Spherical Coordinates</li>
+<li>apply Programmable Filter, set Output Data Set Type = vtkStructuredGrid</li>
+<li>let’s start playing with the data in the Script dialogue:</li>
+</ol>
+<div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inputs[<span class="dv">0</span>].GetNumberOfPoints())         <span class="co"># 13024800 = 360*201*180</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>pointIndex <span class="op">=</span> <span class="dv">0</span>   <span class="co"># any inteteger between 0 and 13024799</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inputs[<span class="dv">0</span>].GetPoint(pointIndex)[<span class="dv">0</span>:<span class="dv">3</span>])   <span class="co"># (0.0, 3485.0, 90.0)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inputs[<span class="dv">0</span>].PointData[<span class="st">'temperature'</span>])</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inputs[<span class="dv">0</span>].PointData[<span class="st">"temperature"</span>].GetValue(pointIndex))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can paste the entire <code>mollweide(lon, lat)</code> function definition into the Programmable Filter, or – to shorten the code inside the filter – we can load it from a file. Let’s save it in <code>mollweide.py</code> and then test it from a standalone Python shell:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>, <span class="st">"/Users/razoumov/programmableFilter"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mollweide <span class="im">import</span> mollweide</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>mollweide(<span class="dv">100</span>,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here is what our filter will look like:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> sin, cos, pi, sqrt, radians</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>sys.path.insert(<span class="dv">0</span>, <span class="st">"/Users/razoumov/programmableFilter"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mollweide <span class="im">import</span> mollweide</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>temp_in <span class="op">=</span> inputs[<span class="dv">0</span>].PointData[<span class="st">"temperature"</span>]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>nlon, nr, nlat <span class="op">=</span> <span class="dv">360</span>, <span class="dv">201</span>, <span class="dv">180</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>points <span class="op">=</span> vtk.vtkPoints()</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>points.Allocate(nlon<span class="op">*</span>nr<span class="op">*</span>nlat)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> vtk.vtkDoubleArray() <span class="co"># create vtkPoints instance, to contain 100^2 points in the projection</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>temp.SetName(<span class="st">"temperature"</span>)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>output.SetExtent([<span class="dv">0</span>,nlon<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,nr<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,nlat<span class="op">-</span><span class="dv">1</span>])   <span class="co"># should match SetOutputWholeExtent below</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> np.zeros((nlon,nlat)), np.zeros((nlon,nlat))</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(nlat):   <span class="co"># the order of loops should reverse-match SetExtent</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(nr):</span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(nlon):</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>            inx <span class="op">=</span> k <span class="op">+</span> i<span class="op">*</span>nlon<span class="op">*</span>nr <span class="op">+</span> j<span class="op">*</span>nlon</span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> j <span class="op">==</span> <span class="dv">0</span>:   <span class="co"># inner radius = base layer</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>                lon, r, lat <span class="op">=</span> inputs[<span class="dv">0</span>].GetPoint(inx)[<span class="dv">0</span>:<span class="dv">3</span>]</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>                x[k,i], y[k,i] <span class="op">=</span> mollweide(lon,lat)</span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>            points.InsertNextPoint(x[k,i],y[k,i],<span class="fl">0.01</span><span class="op">*</span>j)</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>            temp.InsertNextValue(temp_in.GetValue(inx))</span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>output.SetPoints(points)</span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>output.GetPointData().SetScalars(temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Optionally, you can paste the following into RequestInformation Script:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> paraview <span class="im">import</span> util</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>nlon, nr, nlat <span class="op">=</span> <span class="dv">360</span>, <span class="dv">201</span>, <span class="dv">180</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>util.SetOutputWholeExtent(<span class="va">self</span>,[<span class="dv">0</span>,nlon<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,nr<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,nlat<span class="op">-</span><span class="dv">1</span>])   <span class="co"># the order is fixed and copied from input</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="saving-workflow" class="level2">
+<h2 class="anchored" data-anchor-id="saving-workflow">Saving workflow</h2>
+<ul>
+<li>Save as a ParaView state file <font size="+2">⇨</font> filter’s Python code with appear inside an XML element</li>
+<li>Save as a Python state file ⇨ filter’s Python code with appear inside <code>programmableFilter1.Script</code> variable</li>
+</ul>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Workflow suggestions
+<ul>
+<li>use <code>print</code> from inside the Filter/Source</li>
+<li>go slowly and save frequently, as ParaView <em>will crash</em> when you don’t allocate objects properly inside Programmable Filter/Source</li>
+</ul></li>
+<li>Links
+<ul>
+<li><a href="https://docs.paraview.org/en/latest/ReferenceManual/pythonProgrammableFilter.html" target="_blank">Programmable Filter</a> in the offical ParaView documentation</li>
+<li>an article <a href="https://pyscience.wordpress.com/2014/09/06/numpy-to-vtk-converting-your-numpy-arrays-to-vtk-arrays-and-files" target="_blank">NumPy to VTK: Converting your NumPy arrays to VTK arrays and files</a></li>
+<li>first half of the <a href="https://youtu.be/aPKVrrzYGdo" target="_blank">talk by Jean M. Favre</a> (Swiss National Supercomputing Centre)</li>
+</ul></li>
+<li>Future topic: converting Programmable Filter’s code to a plugin
+<ul>
+<li>code its own custom GUI Properties using Python decorators</li>
+<li>after loading your plugin, it should be available as a normal filter or source in the menu</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
