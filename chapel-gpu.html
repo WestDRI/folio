@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>GPU computing with Chapel – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#running-gpu-chapel-on-the-alliance-systems" id="toc-running-gpu-chapel-on-the-alliance-systems" class="nav-link active" data-scroll-target="#running-gpu-chapel-on-the-alliance-systems">Running GPU Chapel on the Alliance systems</a></li>
+  <li><a href="#running-gpu-chapel-on-your-computer" id="toc-running-gpu-chapel-on-your-computer" class="nav-link" data-scroll-target="#running-gpu-chapel-on-your-computer">Running GPU Chapel on your computer</a></li>
+  <li><a href="#todays-setup" id="toc-todays-setup" class="nav-link" data-scroll-target="#todays-setup">Today’s setup</a></li>
+  <li><a href="#useful-built-in-variables" id="toc-useful-built-in-variables" class="nav-link" data-scroll-target="#useful-built-in-variables">Useful built-in variables</a></li>
+  <li><a href="#our-first-gpu-code" id="toc-our-first-gpu-code" class="nav-link" data-scroll-target="#our-first-gpu-code">Our first GPU code</a></li>
+  <li><a href="#alternative-syntax" id="toc-alternative-syntax" class="nav-link" data-scroll-target="#alternative-syntax">Alternative syntax</a></li>
+  <li><a href="#gpu-diagnostics" id="toc-gpu-diagnostics" class="nav-link" data-scroll-target="#gpu-diagnostics">GPU diagnostics</a></li>
+  <li><a href="#verifying-if-a-loop-can-run-on-a-gpu" id="toc-verifying-if-a-loop-can-run-on-a-gpu" class="nav-link" data-scroll-target="#verifying-if-a-loop-can-run-on-a-gpu">Verifying if a loop can run on a GPU</a></li>
+  <li><a href="#timing-on-the-cpu" id="toc-timing-on-the-cpu" class="nav-link" data-scroll-target="#timing-on-the-cpu">Timing on the CPU</a></li>
+  <li><a href="#timing-on-the-gpu" id="toc-timing-on-the-gpu" class="nav-link" data-scroll-target="#timing-on-the-gpu">Timing on the GPU</a></li>
+  <li><a href="#prime-factorization-of-each-element-of-a-large-array" id="toc-prime-factorization-of-each-element-of-a-large-array" class="nav-link" data-scroll-target="#prime-factorization-of-each-element-of-a-large-array">Prime factorization of each element of a large array</a></li>
+  <li><a href="#finer-control" id="toc-finer-control" class="nav-link" data-scroll-target="#finer-control">Finer control</a></li>
+  <li><a href="#multiple-locales-and-multiple-gpus" id="toc-multiple-locales-and-multiple-gpus" class="nav-link" data-scroll-target="#multiple-locales-and-multiple-gpus">Multiple locales and multiple GPUs</a>
+  <ul class="collapse">
+  <li><a href="#running-multi-gpu-code-on-cedar" id="toc-running-multi-gpu-code-on-cedar" class="nav-link" data-scroll-target="#running-multi-gpu-code-on-cedar">Running multi-GPU code on Cedar</a></li>
+  <li><a href="#distributed-a_on_host-array" id="toc-distributed-a_on_host-array" class="nav-link" data-scroll-target="#distributed-a_on_host-array">Distributed <code>A_on_host</code> array</a></li>
+  </ul></li>
+  <li><a href="#julia-set-problem" id="toc-julia-set-problem" class="nav-link" data-scroll-target="#julia-set-problem">Julia set problem</a>
+  <ul class="collapse">
+  <li><a href="#porting-the-julia-set-problem-to-a-gpu" id="toc-porting-the-julia-set-problem-to-a-gpu" class="nav-link" data-scroll-target="#porting-the-julia-set-problem-to-a-gpu">Porting the Julia set problem to a GPU</a></li>
+  <li><a href="#adding-plotting-to-run-on-a-gpu" id="toc-adding-plotting-to-run-on-a-gpu" class="nav-link" data-scroll-target="#adding-plotting-to-run-on-a-gpu">Adding plotting to run on a GPU</a></li>
+  </ul></li>
+  <li><a href="#reduction-operations" id="toc-reduction-operations" class="nav-link" data-scroll-target="#reduction-operations">Reduction operations</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">GPU computing with Chapel</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>June 12<sup>th</sup>, 1:30pm-4:30pm Pacific Time</strong></p>
+<p>Chapel was designed as a parallel-first programming language targeting any hardware that supports parallel execution: <em>multicore processors</em>, <em>multiple nodes</em> in an HPC cluster, and now also <em>GPUs</em> on HPC systems. This is very different from the traditional approach to parallel programming in which you would use a dedicated tool for each level of hardware parallelism, e.g.&nbsp;MPI, or OpenMP, or CUDA, etc.</p>
+<!-- For example, a compact Chapel code can replace a much longer code that uses any combination of MPI + OpenMP + -->
+<!-- CUDA. -->
+<p>Later in this workshop I will show a compact Chapel code that uses multiple nodes on a cluster, multiple GPUs on each node, and automatically utilizes all available (in our Slum job) CPU cores on each node, while copying the data as needed between all these hardware layers. But let’s start with the basics!</p>
+<section id="running-gpu-chapel-on-the-alliance-systems" class="level2">
+<h2 class="anchored" data-anchor-id="running-gpu-chapel-on-the-alliance-systems">Running GPU Chapel on the Alliance systems</h2>
+<p>In general, you need to configure and compile Chapel for your specific GPU type and your specific cluster interconnect. For NVIDIA and AMD GPUs (the only ones currently supported), you must use LLVM as the backend compiler. With NVIDIA GPUs, you must build LLVM to use LLVM’s <a href="https://llvm.org/docs/NVPTXUsage.html">NVPTX backend</a> to support GPU programming, so usually you cannot use the system-provided LLVM module – instead you should set <code>CHPL_LLVM=bundled</code> during Chapel compilation.</p>
+<p>As of this writing, on the Alliance systems, you can use GPUs from Chapel on the following systems:</p>
+<ol type="1">
+<li>native multi-locale on Cedar, Graham, Béluga, Narval; the binaries might not be in place everywhere, so please get in touch if you want to run it on a specific system</li>
+<li>on an Arbutus VM in a project with access to vGPUs (our plan for today)</li>
+<li>via a single-locale GPU Chapel container on any Alliance system (clusters, cloud) with NVIDIA GPUs; let me know if you would like to access this container</li>
+</ol>
+<p>Efforts are underway to compile native Chapel 2.2 as a series of modules on all Alliance systems, but that might take a while.</p>
+</section>
+<section id="running-gpu-chapel-on-your-computer" class="level2">
+<h2 class="anchored" data-anchor-id="running-gpu-chapel-on-your-computer">Running GPU Chapel on your computer</h2>
+<p>If you have an NVIDIA GPU on your computer and run <strong>Linux</strong>, and have all the right GPU drivers and CUDA installed, it should be fairly straightforward to compile Chapel with GPU support. Here is <a href="https://gist.github.com/razoumov/03cfc54cc388675389bb4343beb8a6b1">what worked for me in AlmaLinux 9.4</a>. Please let me know if these steps do not work for you.</p>
+<p>In <strong>Windows</strong>, Chapel with GPU support works under the Windows Subsystem for Linux (WSL) as explained in <a href="https://chapel-lang.org/blog/posts/nvidia-gpu-wsl">this post</a>. You <em>could</em> also run Chapel inside a <a href="https://chapel-lang.org/install-docker.html">Docker container</a>, although you need to find a GPU-enabled Docker image.</p>
+</section>
+<section id="todays-setup" class="level2">
+<h2 class="anchored" data-anchor-id="todays-setup">Today’s setup</h2>
+<p>Today’s we’ll run Chapel on the virtual training cluster. We’ll now distribute the usernames and passwords – let’s try to log in.</p>
+<p>There are two Chapel configurations we will use today.</p>
+<ol type="1">
+<li><strong>Chapel with GPU support compiled for NVIDIA cards</strong>. We have 1 virtual GPU on the training cluster to share among all participants and the instructor, so we won’t be able to use it all at the same time. The idea is to try your final production code on this GPU allocating it only for a couple of minutes at a time per user:</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:02:00</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=3600</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=1</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startSingleLocaleGPU.sh</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> submit.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>We will be doing most debugging on CPUs using the so-called <strong>‘CPU-as-device’ mode</strong> to run a GPU code on a CPU. This is very handy for debugging a Chapel GPU code on a computer without a dedicated GPU and/or vendor SDK installed. You can find more details on this mode <a href="https://chapel-lang.org/docs/technotes/gpu.html#cpu-as-device-mode">here</a>. To enable this mode, I recompiled Chapel with <code>export CHPL_GPU=cpu</code>, but you need to load this version of Chapel separately, and you can use it via an interactive job:</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startSingleLocaleCPUasDevice.sh</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem</span><span class="op">=</span>3600</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this mode there are some restrictions, e.g.&nbsp;data movement between the device and the host will not be captured (as there are no data moved!), some parallel reductions might not be available in this mode (to be confirmed), and the GPU kernel breakdown might be different. Still, all GPU kernels will be launched on the CPU, and you can even use some of the Chapel’s diagnostic features in this mode, e.g.&nbsp;<code>@assertOnGpu</code> and <code>@gpu.assertEligible</code> attributes will fail at compile time for ineligible loops.</p>
+<!-- ```sh -->
+<!-- cedar -->
+<!-- source /home/razoumov/startMultiLocaleGPU.sh -->
+<!-- cd ~/scratch -->
+<!-- salloc --time=2:0:0 --nodes=1 --cpus-per-task=1 --mem-per-cpu=3600 --gpus-per-node=v100l:1 \ -->
+<!--       --account=cc-debug --reservation=asasfu_756 -->
+<!-- git clone ~/chapelBare/ $SLURM_TMPDIR -->
+<!-- cd $SLURM_TMPDIR/gpu -->
+<!-- ``` -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Please do not start nested Slurm jobs. When switching from one Chapel configuration to the other, please do this on the login node.</p>
+</div>
+</div>
+</section>
+<section id="useful-built-in-variables" class="level2">
+<h2 class="anchored" data-anchor-id="useful-built-in-variables">Useful built-in variables</h2>
+<p>From inside your Chapel code, you can access the following predefined variables:</p>
+<ul>
+<li><code>Locales</code> is the list of locales (nodes) that your code can run on (invoked in code execution)</li>
+<li><code>numLocales</code> is the number of these locales</li>
+<li><code>here</code> is the current locale (node), and by extension current CPU</li>
+<li><code>here.name</code> is its name</li>
+<li><code>here.maxTaskPar</code> is the number of CPU cores on this locale</li>
+<li><code>here.gpus</code> is the list of available GPUs on this locale (sometimes called “sublocales”)</li>
+<li><code>here.gpus.size</code> is the number of available GPUs on this locale</li>
+<li><code>here.gpus[0]</code> is the first GPU on this locale</li>
+</ul>
+<p>Let’s try some of these out; store this code as <code>test.chpl</code>:</p>
+<pre class="chpl"><code>writeln("Locales: ", Locales);
+writeln("on ", here.name, " I see ", here.gpus.size, " GPUs");
+writeln("and their names are: ", here.gpus);</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- ```sh -->
+<!-- git st -->
+<!-- git commit -am "debugging inside an interactive job" && git push -->
+<!-- ``` -->
+<pre class="output"><code>Locales: LOCALE0
+on cdr2514.int.cedar.computecanada.ca I see 1 GPUs
+and their names are: LOCALE0-GPU0</code></pre>
+<p>There is one GPU (even in ‘CPU-as-device’ mode), and it is available to us as the first (and only) element of the array <code>here.gpus</code>.</p>
+</section>
+<section id="our-first-gpu-code" class="level2">
+<h2 class="anchored" data-anchor-id="our-first-gpu-code">Our first GPU code</h2>
+<p>To benefit from GPU acceleration, you want to run a computation that can be broken into many independent identical pieces. An obvious example is a <code>for</code> loop in which each loop iteration does not depend on other iterations. Let’s run such an example on the GPU:</p>
+<pre class="chpl"><code>config const n = 10;
+on here.gpus[0] {
+  var A: [1..n] int;     // kernel launch to initialize an array
+  foreach i in 1..n do   // thread parallelism on a CPU or a GPU =&gt; kernel launch
+    A[i] = i**2;
+  writeln("A = ", A);    // copy A to host
+}</code></pre>
+<pre class="output"><code>A = 1 4 9 16 25 36 49 64 81 100</code></pre>
+<ul>
+<li>the array <code>A</code> is stored on the GPU</li>
+<li>order-independent loops will be executed in parallel on the GPU</li>
+<li>if instead of parallel <code>foreach</code> we use serial <code>for</code>, the loop will run on the CPU</li>
+<li>in our case the array <code>A</code> is both stored and computed on the GPU in parallel</li>
+<li>currently, to be computed on a GPU, an array must be stored on that GPU</li>
+<li>in general, when you run a code block on the device, parallel lines inside will launch kernels</li>
+</ul>
+</section>
+<section id="alternative-syntax" class="level2">
+<h2 class="anchored" data-anchor-id="alternative-syntax">Alternative syntax</h2>
+<p>We can modify this code so that it runs on a GPU if present; otherwise, it will run on the CPU:</p>
+<pre class="chpl"><code>var operateOn =
+  if here.gpus.size &gt; 0 then here.gpus[0]   // use the first GPU
+  else here;                                // use the CPU
+writeln("operateOn: ", operateOn);
+config const n = 10;
+on operateOn {
+  var A: [1..n] int;
+  foreach i in 1..n do
+    A[i] = i**2;
+  writeln("A = ", A);
+}</code></pre>
+<p>Of course, in ‘CPU-as-device’ mode this code will always run on the CPU. <!-- Let me quickly demo it on the GPU. --></p>
+<!-- > ## Demo -->
+<!-- > Let try running this both with and without a GPU. -->
+<p>You can also force a GPU check by hand:</p>
+<pre class="chpl"><code>if here.gpus.size == 0 {
+  writeln("need a GPU ...");
+  exit(1);
+}
+operateOn = here.gpus[0];</code></pre>
+</section>
+<section id="gpu-diagnostics" class="level2">
+<h2 class="anchored" data-anchor-id="gpu-diagnostics">GPU diagnostics</h2>
+<p>Wrap our code into the following lines:</p>
+<pre class="chpl"><code>use GpuDiagnostics;
+startGpuDiagnostics();
+...
+stopGpuDiagnostics();
+writeln(getGpuDiagnostics());</code></pre>
+<pre class="output"><code>operateOn: LOCALE0-GPU0
+A = 1 4 9 16 25 36 49 64 81 100
+(kernel_launch = 2, host_to_device = 0, device_to_host = 10, device_to_device = 0)
+in 'CPU-as-device' mode: (kernel_launch = 2, host_to_device = 0, device_to_host = 0, device_to_device = 0)</code></pre>
+<p>Let’s break down the events:</p>
+<ol type="1">
+<li>we have two kernel launches</li>
+</ol>
+<pre class="chpl"><code>  var A: [1..n] int;     // kernel launch to initialize an array
+  foreach i in 1..n do   // kernel launch to run a loop in parallel
+    A[i] = i**2;</code></pre>
+<ol start="2" type="1">
+<li>we copy 10 array elements device-to-host to print them (not shown in ‘CPU-as-device’ mode)</li>
+</ol>
+<pre class="chpl"><code>  writeln("A = ", A);</code></pre>
+<ol start="3" type="1">
+<li>no other data transfer</li>
+</ol>
+<p>Let’s take a look at the example from https://chapel-lang.org/blog/posts/intro-to-gpus. They define a function:</p>
+<pre class="chpl"><code>use GpuDiagnostics;
+proc numKernelLaunches() {
+  stopGpuDiagnostics();   // assuming you were running one before
+  var result = getGpuDiagnostics().kernel_launch;
+  resetGpuDiagnostics();
+  startGpuDiagnostics();  // restart diagnostics
+  return result;
+}</code></pre>
+<p>which can then be applied to these 3 examples (all in one <code>on here.gpus[0]</code> block):</p>
+<pre class="chpl"><code>startGpuDiagnostics();
+on here.gpus[0] {
+  var E = 2 * [1,2,3,4,5]; // one kernel launch to initialize the array
+  writeln(E);
+  assert(numKernelLaunches() == 1);
+
+  use Math;
+  const n = 10;
+  var A = [i in 0..#n] sin(2 * pi * i / n); // one kernel launch
+  writeln(A);
+  assert(numKernelLaunches() == 1);
+
+  var rows, cols = 1..5;
+  var Square: [rows, cols] int;         // one kernel launch
+  foreach (r, c) in Square.indices do   // one kernel launch
+    Square[r, c] = r * 10 + c;
+  writeln(Square);
+  assert(numKernelLaunches() == 2); // 2 on GPU and 7 on CPU-as-device
+}</code></pre>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On CPU-as-device we have 7 kernel launches in the last block. My initial interpretation: one launch to initialize <code>Square</code> + one launch to access <code>Square.indices</code> + one launch per loop iteration, but it’s actually not entire correct …</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Let’s play with this in the CPU-as-device mode! Make the upper limit of <code>rows, cols</code> a <strong>config</strong> variable, recompile, and play with the array size.</p>
+</div>
+</div>
+</div>
+<!-- config const nn = 10; // in the main scope -->
+<!--   var rows, cols = 1..nn; // on device -->
+</section>
+<section id="verifying-if-a-loop-can-run-on-a-gpu" class="level2">
+<h2 class="anchored" data-anchor-id="verifying-if-a-loop-can-run-on-a-gpu">Verifying if a loop can run on a GPU</h2>
+<p>The <em>loop attribute</em> <code>@assertOnGpu</code> (applied to a loop) does two things:</p>
+<ol type="1">
+<li>at compilation, will fail to compile a code that cannot run on a GPU and will tell you why</li>
+<li>at runtime, will halt execution if called from outside a GPU</li>
+</ol>
+<p>Consider the following serial code:</p>
+<pre class="chpl"><code>config const n = 10;
+on here.gpus[0] {
+  var A: [1..n] int;
+  for i in 1..n do
+    A[i] = i**2;
+  writeln("A = ", A);
+}</code></pre>
+<pre class="output"><code>A = 1 4 9 16 25 36 49 64 81 100</code></pre>
+<p>This code compiles fine (<code>chpl --fast test.chpl</code>), and it appears to run fine, printing the array. But it <strong>does not run on the GPU</strong>! Let’s mark the <code>for</code> loop with <code>@assertOnGpu</code> and try to compile it again. Now we get:</p>
+<pre class="output"><code>error: loop marked with @assertOnGpu, but 'for' loops don't support GPU execution</code></pre>
+<p>Serial <code>for</code> loops cannot run on a GPU! Without <code>@assertOnGpu</code> the code compiled for and ran on the CPU. To port this code to the GPU, replace <code>for</code> with either <code>foreach</code> or <code>forall</code> (both are parallel loops), and it should compile with <code>@assertOnGpu</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When running in ‘CPU-as-device’ mode, <code>@assertOnGpu</code> attribute will produce a warning “ignored with CHPL_GPU=cpu”.</p>
+</div>
+</div>
+<p>Alternatively, you can count kernel launches – it’ll be zero for the <code>for</code> loop.</p>
+<p>More on <code>@assertOnGpu</code> and other attributes at https://chapel-lang.org/docs/main/modules/standard/GPU.html.</p>
+<!-- @assertOnGpu foreach i in 0..0 { -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Starting with Chapel 2.2, there is an additional attribute <code>@gpu.assertEligible</code> that asserts that a statement is suitable for GPU execution (same as <code>@assertOnGpu</code>), without requiring it to be executed on a GPU. This is perfect in the ‘CPU-as-device’ mode: fails to compile a <code>for</code> loop, but no warnings at runtime.</p>
+</div>
+</div>
+</section>
+<section id="timing-on-the-cpu" class="level2">
+<h2 class="anchored" data-anchor-id="timing-on-the-cpu">Timing on the CPU</h2>
+<p>Let’s pack our computation into a function, so that we can call it from both a CPU and a GPU. For timing, we can use a stopwatch from the <code>Time</code> module:</p>
+<pre class="chpl"><code>use Time;
+
+config const n = 10;
+var watch: stopwatch;
+
+proc squares(device) {
+  on device {
+    var A: [1..n] int;
+    foreach i in 1..n do
+      A[i] = i**2;
+    writeln("A = ", A[n-2..n]); // last 3 elements
+  }
+}
+
+writeln("--- on CPU:"); watch.start();
+squares(here);
+watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');
+
+watch.clear();
+
+writeln("--- on GPU:"); watch.start();
+squares(here.gpus[0]);
+watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<pre class="output"><code>$ chpl --fast test.chpl
+$ ./test --n=100_000_000
+--- on CPU:
+A = 9999999600000004 9999999800000001 10000000000000000
+It took 7.94598 seconds
+--- on GPU:
+A = 9999999600000004 9999999800000001 10000000000000000
+It took 0.003673 seconds</code></pre>
+<p>You can also call <code>start</code> and <code>stop</code> functions from inside the <code>on device</code> block – they will still run on the CPU. We will see an example of this later in this workshop.</p>
+<!-- also jacobi.chpl: benchmarking the same function, counting kernel launches -->
+</section>
+<section id="timing-on-the-gpu" class="level2">
+<h2 class="anchored" data-anchor-id="timing-on-the-gpu">Timing on the GPU</h2>
+<p>Obtaining timing from within a running CUDA kernel is tricky as you are running potentially thousands of simultaneous threads, so you definitely cannot measure the wallclock time. However, you can measure GPU clock cycles spent on a partucular part of the kernel function. The <code>GPU</code> module provides a function <code>gpuClock()</code> that returns the clock cycle counter (per multiprocessor), and it needs to be called to time code blocks <em>within a GPU-enabled loop</em>.</p>
+<!-- V100 contains 80 Streaming Multiprocessors (SMs) and 2560 CUDA cores -->
+<!-- A100 contains 108 Streaming Multiprocessors (SMs) and 6912 CUDA cores -->
+<!-- H100 contains 114 Streaming Multiprocessors (SMs) and 14,592 CUDA cores -->
+<p>Here is an example (modelled after <a href="https://raw.githubusercontent.com/chapel-lang/chapel/main/test/gpu/native/measureGpuCycles.chpl">measureGpuCycles.chpl</a>) to demonstrate its use. This is not the most efficient code, as on the GPU we are parallelizing the loop with <code>n=10</code> iterations, and then inside each iteration we run a serial loop to keep the (few non-idle) GPU cores busy, but it gives you an idea.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Do not run this code in the ‘CPU-as-device’ mode, as its output will not be particularly meaningful: you need a physical GPU to see actual counts.</p>
+</div>
+</div>
+<pre class="chpl"><code>use GPU;
+
+config const n = 10;
+
+on here.gpus[0] {
+  var A: [1..n] int;
+  var clockDiff: [1..n] uint;
+  @assertOnGpu foreach i in 1..n {
+    var start, stop: uint;
+    A[i] = i**2;
+    start = gpuClock();
+    for j in 0..&lt;1000 do
+      A[i] += i*j;
+    stop = gpuClock();
+    clockDiff[i] = stop - start;
+  }
+  writeln("Cycle count = ", clockDiff);
+  writeln("Time = ", (clockDiff[1]: real) / (gpuClocksPerSec(0): real), " seconds");
+  writeln("A = ", A);
+}</code></pre>
+<pre class="output"><code>Cycle count = 227132 227132 227132 227132 227132 227132 227132 227132 227132 227132
+Time = 0.148452 seconds
+A = 49501 49604 49709 49816 49925 50036 50149 50264 50381 50500</code></pre>
+</section>
+<section id="prime-factorization-of-each-element-of-a-large-array" class="level2">
+<h2 class="anchored" data-anchor-id="prime-factorization-of-each-element-of-a-large-array">Prime factorization of each element of a large array</h2>
+<p>Now let’s compute a more interesting problem where we do some significant processing of each element, but independently of other elements – this will port nicely to a GPU.</p>
+<p><em>Prime factorization</em> of an integer number is finding all its prime factors. For example, the prime factors of 60 are 2, 2, 3, and 5. Let’s write a function that takes an integer number and returns the <em>sum</em> of all its prime factors. For example, for 60 it will return 2+2+3+5 = 12, for 91 it will return 7+13 = 20, for 101 it will return 101, and so on.</p>
+<pre class="chpl"><code>proc primeFactorizationSum(n: int) {
+  var num = n, output = 0, count = 0;
+  while num % 2 == 0 {
+    num /= 2;
+    count += 1;
+  }
+  for j in 1..count do output += 2;
+  for i in 3..(sqrt(n:real)):int by 2 {
+    count = 0;
+    while num % i == 0 {
+      num /= i;
+      count += 1;
+    }
+    for j in 1..count do output += i;
+  }
+  if num &gt; 2 then output += num;
+  return output;
+}</code></pre>
+<p>We can test it quickly:</p>
+<pre class="chpl"><code>writeln(primeFactorizationSum(60));
+writeln(primeFactorizationSum(91));
+writeln(primeFactorizationSum(101));
+writeln(primeFactorizationSum(100_000_000));</code></pre>
+<p>Since 1 has no prime factors, we will start computing from 2, and then will apply this function to all integers in the range <code>2..n</code>, where <code>n</code> is a larger number. We will do all computations separately from scratch for each number, i.e.&nbsp;we will not cache our results (caching can significantly speed up our calculations but the point here is to focus on brute-force computing).</p>
+<p>With the procedure <code>primeFactorizationSum</code> defined, here is the CPU version <code>primesSerial.chpl</code>:</p>
+<pre class="chpl"><code>config const n = 10;
+var A: [2..n] int;
+for i in 2..n do
+  A[i] = primeFactorizationSum(i);
+
+var lastFewDigits =
+  if n &gt; 5 then n-4..n  // last 5 digits
+  else 2..n;            // or fewer
+
+writeln("A = ", A[lastFewDigits]);</code></pre>
+<p>Here is the GPU version <code>primesGPU.chpl</code>:</p>
+<pre class="chpl"><code>config const n = 10;
+on here.gpus[0] {
+  var A: [2..n] int;
+  @gpu.assertEligible foreach i in 2..n do
+    A[i] = primeFactorizationSum(i);
+  var lastFewDigits =
+    if n &gt; 5 then n-4..n  // last 5 digits
+    else 2..n;            // or fewer
+  writeln("A = ", A[lastFewDigits]);
+}</code></pre>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesSerial.chpl</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesSerial</span> <span class="at">--n</span><span class="op">=</span>10_000_000</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In both cases we should see the same output:</p>
+<pre class="output"><code>A = 4561 1428578 5000001 4894 49</code></pre>
+<!-- {{< figure src="/img/pause.png" title="" width="400px" >}} -->
+<p>Let’s add timing to both codes:</p>
+<pre class="chpl"><code>use Time;
+var watch: stopwatch;
+...
+watch.start();
+...
+watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<p>Note that this problem does not scale linearly with <code>n</code>, as with larger numbers you will get more primes. Here are my timings on Cedar’s V100 GPU:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>n</th>
+<th>CPU time in sec</th>
+<th>GPU time in sec</th>
+<th>speedup factor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1_000_000</td>
+<td>3.04051</td>
+<td>0.001649</td>
+<td>1844</td>
+</tr>
+<tr class="even">
+<td>10_000_000</td>
+<td>92.8213</td>
+<td>0.042215</td>
+<td>2199</td>
+</tr>
+<tr class="odd">
+<td>100_000_000</td>
+<td>2857.04</td>
+<td>1.13168</td>
+<td>2525</td>
+</tr>
+</tbody>
+</table>
+<!-- A = 6673 78398 310591 328 56 -->
+</section>
+<section id="finer-control" class="level2">
+<h2 class="anchored" data-anchor-id="finer-control">Finer control</h2>
+<!-- https://en.wikipedia.org/wiki/Thread_block_(CUDA_programming) -->
+<p>There are various settings that you can fine-tune via attributes for maximum performance, e.g.&nbsp;you can change the number of threads per block (default 512, should be a multiple of 32) when launching kernels:</p>
+<pre class="chpl"><code> @gpu.blockSize(64) foreach i in 1..128 { ...}</code></pre>
+<p>You can also change the default when compiling Chapel via <code>CHPL_GPU_BLOCK_SIZE</code> variable, or when compiling Chapel codes by passing the flag <code>--gpu-block-size=&lt;block_size&gt;</code> to Chapel compiler</p>
+<p>Another setting to play with is the number of iterations per thread:</p>
+<pre class="chpl"><code>@gpu.itersPerThread(4) foreach i in 1..128 { ... }</code></pre>
+<p>This setting is probably specific to your computational problem. For these and other per-kernel attributes, please see <a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html">this page</a>.</p>
+</section>
+<section id="multiple-locales-and-multiple-gpus" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-locales-and-multiple-gpus">Multiple locales and multiple GPUs</h2>
+<p>If we have access to multiple locales and then multiple GPUs on each of those locales, we would utilize all this processing power through two nested loops, first cycling through all locales and then through all available GPUs on each locale:</p>
+<pre class="chpl"><code>coforall loc in Locales do
+  on loc {
+    writeln("on ", loc.name, " I see ", loc.gpus.size, " GPUs");
+    coforall gpu in loc.gpus {
+      on gpu {
+        ... do some work in parallel ...
+      }
+    }
+  }</code></pre>
+<p>Here we assume that we are running inside a multi-node job on the cluster, e.g.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>1:0:0 <span class="at">--nodes</span><span class="op">=</span>3 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2 <span class="at">--account</span><span class="op">=</span>...</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span> <span class="at">-nl</span> 3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>How would we use this approach in practice? Let’s consider our primes factorization problem. Suppose we want to collect the results on one node (LOCALE0), maybe for printing or for some additional processing. We need to break our array <code>A</code> into pieces, each computed on a separate GPU from the total pool of 6 GPUs available to us inside this job. Here is our approach, following the ideas outlined in https://chapel-lang.org/blog/posts/gpu-data-movement – let’s store this file as <code>primesGPU-distributed.chpl</code>:</p>
+<pre class="chpl"><code>import RangeChunk.chunks;
+
+proc primeFactorizationSum(n: int) {
+  ...
+}
+
+config const n = 1000;
+var A_on_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
+
+// let's assume that numLocales = 3
+
+coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
+  /* loc=LOCALE0, locChunk=2..334 */
+  /* loc=LOCALE1, locChunk=335..667 */
+  /* loc=LOCALE2, locChunk=668..1000 */
+  on loc {
+    writeln("loc = ", loc, "   chunk = ", locChunk);
+    const numGpus = here.gpus.size;
+    coforall (gpu, gpuChunk) in zip(here.gpus, chunks(locChunk, numGpus)) {
+      /* on LOCALE0 will see gpu=LOCALE0-GPU0, gpuChunk=2..168 */
+      /*                     gpu=LOCALE0-GPU1, gpuChunk=169..334 */
+      on gpu {
+        writeln("loc = ", loc, "   gpu = ", gpu, "   chunk = ", gpuChunk);
+        var A_on_device: [gpuChunk] int;
+        foreach i in gpuChunk do
+          A_on_device[i] = primeFactorizationSum(i);
+        A_on_host[gpuChunk] = A_on_device; // copy the chunk from the GPU via the host to LOCALE0
+      }
+    }
+  }
+}
+
+var lastFewDigits = if n &gt; 5 then n-4..n else 2..n;   // last 5 or fewer digits
+writeln("last few A elements: ", A_on_host[lastFewDigits]);</code></pre>
+<section id="running-multi-gpu-code-on-cedar" class="level3">
+<h3 class="anchored" data-anchor-id="running-multi-gpu-code-on-cedar">Running multi-GPU code on Cedar</h3>
+<p>When we run this code on 2 Cedar nodes with 2 GPUs per node:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /home/razoumov/startMultiLocaleGPU.sh</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--nodes</span><span class="op">=</span>2 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:2 <span class="dt">\</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- `--reservation=asasfu_756` -->
+<p>we get the following output:</p>
+<pre class="output"><code>loc = LOCALE0   chunk = 2..501
+loc = LOCALE0   gpu = LOCALE0-GPU0   chunk = 2..251
+loc = LOCALE0   gpu = LOCALE0-GPU1   chunk = 252..501
+loc = LOCALE1   chunk = 502..1000
+loc = LOCALE1   gpu = LOCALE1-GPU0   chunk = 502..751
+loc = LOCALE1   gpu = LOCALE1-GPU1   chunk = 752..1000
+last few A elements: 90 997 501 46 21</code></pre>
+</section>
+<section id="distributed-a_on_host-array" class="level3">
+<h3 class="anchored" data-anchor-id="distributed-a_on_host-array">Distributed <code>A_on_host</code> array</h3>
+<p>In the code above, the array <code>A_on_host</code> resides entirely in host’s memory on one node. With a sufficiently large problem, you can distribute <code>A_on_host</code> across multiple nodes using block distribution:</p>
+<pre class="chpl"><code>use BlockDist; // use standard block distribution module to partition the domain into blocks
+config const n = 1000;
+const distributedMesh: domain(1) dmapped new blockDist(boundingBox={2..n}) = {2..n};
+var A_on_host: [distributedMesh] int;</code></pre>
+<p>This way, when copying from device to host, you will copy only to the locally stored part of <code>A_on_host</code>.</p>
+<!-- ## Use GPU features without a GPU and/or vendor SDK -->
+<!-- You can recompile Chapel in so-called 'CPU-as-device' mode by setting `export CHPL_GPU=cpu` and use GPU code -->
+<!-- on a CPU, even if your computer does not have a GPU and/or vendor SDK installed. This is very useful for -->
+<!-- debugging a Chapel GPU code on a computer without a dedicated GPU. You can find more details on this mode -->
+<!-- [here](https://chapel-lang.org/docs/technotes/gpu.html#cpu-as-device-mode). -->
+<!-- You can also use some of the Chapel's diagnostic features in this mode, e.g. the `@assertOnGpu` attribute will -->
+<!-- fail at compile time for ineligible loops. You will also get the correct kernel launch count, but data -->
+<!-- movement between the device and the host will not be captured (as there is no data moved). -->
+<!-- As far as I can tell, Homebrew's Chapel in MacOS was compiled in this mode. -->
+<!-- I also compiled a single-locale 'CPU-as-device' Chapel version on Cedar: -->
+<!-- ```sh -->
+<!-- source /home/razoumov/startSingleLocaleCPUasDevice.sh -->
+<!-- git clone ~/chapelBare 111 -->
+<!-- cd 111/gpu -->
+<!-- chpl --fast probeGPU.chpl -->
+<!-- ./probeGPU -->
+<!-- ``` -->
+<!-- The GPU kernels are launched on the CPU. -->
+<!-- In my experience, some parallel operations (e.g. reductions) are not available in this mode. -->
+</section>
+</section>
+<section id="julia-set-problem" class="level2">
+<h2 class="anchored" data-anchor-id="julia-set-problem">Julia set problem</h2>
+<p>In the <a href="https://en.wikipedia.org/wiki/Julia_set">Julia set problem</a> we need to compute a set of points on the complex plane that remain bound under infinite recursive transformation <span class="math inline">\(f(z)\)</span>. We will use the traditional form <span class="math inline">\(f(z)=z^2+c\)</span>, where <span class="math inline">\(c\)</span> is a complex constant. Here is our algorithm:</p>
+<ol type="1">
+<li>pick a point <span class="math inline">\(z_0\in\mathbb{C}\)</span></li>
+<li>compute iterations <span class="math inline">\(z_{i+1}=z_i^2+c\)</span> until <span class="math inline">\(|z_i|&gt;4\)</span> (arbitrary fixed radius; here <span class="math inline">\(c\)</span> is a complex constant)</li>
+<li>store the iteration number <span class="math inline">\(\xi(z_0)\)</span> at which <span class="math inline">\(z_i\)</span> reaches the circle <span class="math inline">\(|z|=4\)</span></li>
+<li>limit max iterations at 255<br>
+4.1 if <span class="math inline">\(\xi(z_0)=255\)</span>, then <span class="math inline">\(z_0\)</span> is a stable point<br>
+4.2 the quicker a point diverges, the lower its <span class="math inline">\(\xi(z_0)\)</span> is</li>
+<li>plot <span class="math inline">\(\xi(z_0)\)</span> for all <span class="math inline">\(z_0\)</span> in a rectangular region <span class="math inline">\(-1&lt;=\mathfrak{Re}(z_0)&lt;=1\)</span>, <span class="math inline">\(-1&lt;=\mathfrak{Im}(z_0)&lt;=1\)</span></li>
+</ol>
+<p>We should get something conceptually similar to this figure (here <span class="math inline">\(c = 0.355 + 0.355i\)</span>; we’ll get drastically different fractals for different values of <span class="math inline">\(c\)</span>):</p>
+<p><img src="./fig/2000a.png" class="img-fluid"></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You might want to try these values too:<br>
+<span class="math inline">\(c = 1.2e^{1.1πi}\)</span> <span class="math inline">\(~\Rightarrow~\)</span> original textbook example<br>
+<span class="math inline">\(c = -0.4-0.59i\)</span> and 1.5X zoom-out <span class="math inline">\(~\Rightarrow~\)</span> denser spirals<br>
+<span class="math inline">\(c = 1.34-0.45i\)</span> and 1.8X zoom-out <span class="math inline">\(~\Rightarrow~\)</span> beans<br>
+<span class="math inline">\(c = 0.34-0.05i\)</span> and 1.2X zoom-out <span class="math inline">\(~\Rightarrow~\)</span> connected spiral boots</p>
+</div>
+</div>
+<p>Below is the serial code <code>juliaSetSerial.chpl</code>:</p>
+<pre class="chpl"><code>use Time;
+
+config const n = 2_000;   // 2000^2 image
+var watch: stopwatch;
+config const save = false;
+
+proc pixel(z0) {
+  const c = 0.355 + 0.355i;
+  var z = z0*1.2;   // zoom out
+  for i in 1..255 {
+    z = z*z + c;
+    if z.re**2+z.im**2 &gt;= 16 then // abs(z)&gt;=4 does not work with LLVM
+      return i;
+  }
+  return 255;
+}
+
+writeln("Computing ", n, "x", n, " Julia set ...");
+watch.start();
+var stability: [1..n,1..n] int;
+for i in 1..n {
+  var y = 2*(i-0.5)/n - 1;
+  for j in 1..n {
+    var point = 2*(j-0.5)/n - 1 + y*1i;
+    stability[i,j] = pixel(point);
+  }
+}
+watch.stop();
+writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span>  <span class="at">--fast</span> juliaSetSerial.chpl</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It took me 2.34679 seconds to compute a <span class="math inline">\(2000^2\)</span> fractal.</p>
+<section id="porting-the-julia-set-problem-to-a-gpu" class="level3">
+<h3 class="anchored" data-anchor-id="porting-the-julia-set-problem-to-a-gpu">Porting the Julia set problem to a GPU</h3>
+<p>Let’s port this problem to a GPU! Copy <code>juliaSetSerial.chpl</code> to <code>juliaSetGPU.chpl</code> and make the following changes.</p>
+<p><strong>Step 1</strong> (optional, will work only on a physical GPU):</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>&gt; if here.gpus.size == 0 {</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>&gt;   writeln("need a GPU ...");</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>&gt;   exit(1);</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As of this writing, Chapel 2.2 does not support complex arithmetic on a GPU. Independently of the precision, you will get errors at compilation (if marked with <code>@gpu.assertEligible</code>):</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>error: Loop is marked with @gpu.assertEligible but is not eligible for execution on a GPU</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex128), which is not marked as GPU eligible</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex64), which is not marked as GPU eligible</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If not marked with <code>@gpu.assertEligible</code>, the code compiles with complex arithmetic on a GPU, but it seems to take forever to finish.</p>
+<p>Fortunately, we can implement complex arithmetic manually:</p>
+<p><strong>Step 2</strong>:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>&lt; proc pixel(z0) {</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>&gt; proc pixel(x0,y0) {</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 3</strong>:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>&lt;   var z = z0*1.2;   // zoom out</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>&gt;   var x = x0*1.2;   // zoom out</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>&gt;   var y = y0*1.2;   // zoom out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 4</strong>:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>&lt;     z = z*z + c;</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>&gt;     var xnew = x**2 - y**2 + c.re;</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>&gt;     var ynew = 2*x*y + c.im;</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>&gt;     x = xnew;</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>&gt;     y = ynew;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 5</strong>:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>&lt;     if z.re**2+z.im**2 &gt;= 16 then // abs(z)&gt;=4 does not work with LLVM</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>&gt;     if x**2+y**2 &gt;= 16 then</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 6</strong>:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>&lt; var stability: [1..n,1..n] int;</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>&gt; on here.gpus[0] {</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>&gt;   var stability: [1..n,1..n] int;</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 7</strong>:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>&lt; for i in 1..n {</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>&gt;   @gpu.assertEligible foreach i in 1..n {</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 8</strong>:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>&lt;     var point = 2*(j-0.5)/n - 1 + y*1i;</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>&lt;     stability[i,j] = pixel(point);</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>&gt;       var x = 2*(j-0.5)/n - 1;</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>&gt;       stability[i,j] = pixel(x,y);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here is the full GPU version of the code <code>juliaSetGPU.chpl</code>:</p>
+<pre class="chpl"><code>use Time;
+
+config const n = 2_000;   // 2000^2 image
+var watch: stopwatch;
+config const save = false;
+
+if here.gpus.size == 0 {
+  writeln("need a GPU ...");
+  exit(1);
+}
+
+proc pixel(x0,y0) {
+  const c = 0.355 + 0.355i;
+  var x = x0*1.2; // zoom out
+  var y = y0*1.2; // zoom out
+  for i in 1..255 {
+    var xnew = x**2 - y**2 + c.re;
+    var ynew = 2*x*y + c.im;
+    x = xnew;
+    y = ynew;
+    if x**2+y**2 &gt;= 16 then
+      return i;
+  }
+  return 255;
+}
+
+writeln("Computing ", n, "x", n, " Julia set ...");
+watch.start();
+on here.gpus[0] {
+  var stability: [1..n,1..n] int;
+  @gpu.assertEligible foreach i in 1..n {
+    var y = 2*(i-0.5)/n - 1;
+    for j in 1..n {
+      var x = 2*(j-0.5)/n - 1;
+      stability[i,j] = pixel(x,y);
+    }
+  }
+}
+watch.stop();
+writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<p>It took 0.017364 seconds on the GPU.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Problem size</th>
+<th>CPU time in sec</th>
+<th>GPU time in sec</th>
+<th>speedup factor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(2000\times 2000\)</span></td>
+<td>1.64477</td>
+<td>0.017372</td>
+<td>95</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(4000\times 4000\)</span></td>
+<td>6.5732</td>
+<td>0.035302</td>
+<td>186</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(8000\times 8000\)</span></td>
+<td>26.1678</td>
+<td>0.067307</td>
+<td>389</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(16000\times 16000\)</span></td>
+<td>104.212</td>
+<td>0.131301</td>
+<td>794</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="adding-plotting-to-run-on-a-gpu" class="level3">
+<h3 class="anchored" data-anchor-id="adding-plotting-to-run-on-a-gpu">Adding plotting to run on a GPU</h3>
+<p>Chapel’s <a href="https://chapel-lang.org/docs/main/modules/packages/Image.html">Image</a> library lets you write arrays of pixels to a PNG file. The following code – when added to the non-GPU code <code>juliaSetSerial.chpl</code> – writes the array <code>stability</code> to a file <code>2000.png</code> assuming you</p>
+<ol type="1">
+<li>download the <a href="./files/nipy_spectral.csv">colour map in CSV</a> and</li>
+<li>add the file <code>sciplot.chpl</code> (pasted below)</li>
+</ol>
+<pre class="chpl"><code>writeln("Plotting ...");
+use Image, Math, sciplot;
+watch.clear();
+watch.start();
+const smin = min reduce(stability);
+const smax = max reduce(stability);
+var colour: [1..n, 1..n] 3*int;
+var cmap = readColourmap('nipy_spectral.csv');   // cmap.domain is {1..256, 1..3}
+for i in 1..n {
+  for j in 1..n {
+    var idx = ((stability[i,j]:real-smin)/(smax-smin)*255):int + 1; //scale to 1..256
+    colour[i,j] = ((cmap[idx,1]*255):int, (cmap[idx,2]*255):int, (cmap[idx,3]*255):int);
+  }
+}
+var pixels = colorToPixel(colour);               // array of pixels
+writeImage(n:string+".png", imageType.png, pixels);
+watch.stop();
+writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<pre class="chpl"><code>// save this as sciplot.chpl
+use IO;
+use List;
+
+proc readColourmap(filename: string) {
+  var reader = open(filename, ioMode.r).reader();
+  var line: string;
+  if (!reader.readLine(line)) then   // skip the header
+    halt("ERROR: file appears to be empty");
+  var dataRows : list(string); // a list of lines from the file
+  while (reader.readLine(line)) do   // read all lines into the list
+    dataRows.pushBack(line);
+  var cmap: [1..dataRows.size, 1..3] real;
+  for (i, row) in zip(1..dataRows.size, dataRows) {
+    var c1 = row.find(','):int;    // position of the 1st comma in the line
+    var c2 = row.rfind(','):int;   // position of the 2nd comma in the line
+    cmap[i,1] = row[0..c1-1]:real;
+    cmap[i,2] = row[c1+1..c2-1]:real;
+    cmap[i,3] = row[c2+1..]:real;
+  }
+  reader.close();
+  return cmap;
+}</code></pre>
+<p>Here are the typical timings on a CPU:</p>
+<pre class="output"><code>Computing 2000x2000 Julia set ...
+It took 0.382409 seconds
+Plotting ...
+It took 0.192508 seconds</code></pre>
+<p>This plotting snippet won’t work with the GPU version, as in that version the array <code>stability</code> is defined on the GPU only. You can move the definition of <code>stability</code> to the host, and then the code with plotting on the CPU will work. However, plotting a large heatmap can really benefit from GPU acceleration.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question Port plotting to a GPU
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This is a take-home exercise: try porting this plotting block to a GPU. On my side, I am running into an issue assigning to a tuple element on a GPU with</p>
+<pre class="chpl"><code>colour[i,j] = ((cmap[idx,1]*255):int, (cmap[idx,2]*255):int, (cmap[idx,3]*255):int);</code></pre>
+<p>getting a runtime “<em>Error calling CUDA function: an illegal memory access was encountered (Code: 700)</em>”. Image library is still marked unstable, so perhaps this is a bug. No issues running my code on ‘CPU-as-device’.</p>
+<p>If you succeed in running this block on a real GPU, please send me your solution.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="reduction-operations" class="level2">
+<h2 class="anchored" data-anchor-id="reduction-operations">Reduction operations</h2>
+<!-- e.g. https://chapel-lang.org/docs/main/modules/standard/GPU.html -->
+<p>Both the prime factorization problem and the Julia set problem compute elements of a large array in parallel on a GPU, but they don’t do any reduction (combining multiple numbers into one). It turns out, you <em>can do reduction operations</em> on a GPU with the usual <code>reduce</code> intent in a parallel loop:</p>
+<pre class="chpl"><code>config const n = 1e8: int;
+var total = 0.0;
+on here.gpus[0] {
+  forall i in 1..n with (+ reduce total) do
+    total += 1.0 / i**2;
+  writef("total = %{###.###############}\n", total);
+}</code></pre>
+<p>Alternatively, you can use built-in reduction operations on an array (that must reside in GPU-accessible memory), e.g.</p>
+<pre class="chpl"><code>use GPU;
+config const n = 1e8: int;
+on here.gpus[0] {
+  var a: [1..n] real;
+  forall i in 1..n do
+    a[i] = 1.0 / i**2;
+  writef("total = %{###.###############}\n", gpuSumReduce(a));
+}</code></pre>
+<p>Other supported array reduction operations on GPUs are <code>gpuMinReduce()</code>, <code>gpuMaxReduce()</code>, <code>gpuMinLocReduce()</code> and <code>gpuMaxLocReduce()</code>.</p>
+<!-- sending data to/from GPU -->
+<!-- accessing resources on another GPU -->
+<!-- sending data between GPUs -->
+<!-- `syncThreads` -->
+<!-- `createSharedArray` -->
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="https://chapel-lang.org/blog/posts/intro-to-gpus">Introduction to GPU Programming in Chapel</a></li>
+<li><a href="https://chapel-lang.org/blog/posts/gpu-data-movement">Chapel’s High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming</a></li>
+<li><a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html">GPU module functions and attributes</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
