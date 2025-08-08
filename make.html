@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Ranges, arrays, and loops – Various courses</title>
+<title>Introduction to makefiles – Various courses</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,23 +58,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-a986a95301e671fce2c6472dffc862a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a986a95301e671fce2c6472dffc862a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -104,178 +104,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-sidebar floating quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-        <i class="bi bi-layout-text-sidebar-reverse"></i>
-      </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapel2/chapel-03-ranges-and-arrays.html">Ranges and arrays</a></li></ol></nav>
-        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-        </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
-  </nav>
-</header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
-    <div class="sidebar-title mb-0 py-0">
-      <a href="../"></a> 
-    </div>
-      </div>
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel-compact.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Front page</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
- <span class="menu-text">PART 1: BASIC LANGUAGE FEATURES</span>
-  </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-01-intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Introduction to Chapel</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-02-variables.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Basic syntax and variables + Julia set description</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-03-ranges-and-arrays.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Ranges and arrays</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-04-control-flow.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Control flow</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-06-command-line-arguments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using command-line arguments</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-07-timing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Measuring code performance</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-08-output.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Writing output</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
- <span class="menu-text">PART 2: DATA PARALLELISM</span>
-  </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-10-intro-parallel.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Intro to parallel computing</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-11-single-locale-data-parallel.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Single-locale data parallelism</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-13-multi-locale-chapel.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Multi-locale Chapel</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-14-domains-and-data-parallel.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Domains and data parallelism</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-15-distributed-julia-set.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Parallel Julia set</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-16-distributed-heat-transfer.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Heat transfer solver on distributed domains + heat transfer description</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
- <span class="menu-text">PART 3: TASK PARALLELISM (BRIEFLY)</span>
-  </li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-20-fire-and-forget-tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Fire-and-forget tasks</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-21-synchronising-tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Synchronization of tasks</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../chapel2/chapel-22-task-parallel-heat-transfer.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Task-parallelizing the heat transfer solver</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
- <span class="menu-text">PART 4: GPU COMPUTING WITH CHAPEL</span>
-  </li>
-    </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#using-expressions-to-create-arrays" id="toc-using-expressions-to-create-arrays" class="nav-link active" data-scroll-target="#using-expressions-to-create-arrays">Using expressions to create arrays</a></li>
-  <li><a href="#structured-iterations-with-for-loops" id="toc-structured-iterations-with-for-loops" class="nav-link" data-scroll-target="#structured-iterations-with-for-loops">Structured iterations with for-loops</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Ranges, arrays, and loops</h1>
+<h1 class="title">Introduction to makefiles</h1>
 </div>
 
 
@@ -292,103 +139,120 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>A series of integers (1,2,3,4,5, for example), is called a <strong><em>range</em></strong> in Chapel. Ranges are generated with the <code>..</code> operator, and are useful, among other things, to declare <strong><em>arrays</em></strong> of variables. For example, the following variable</p>
-<pre class="chpl"><code>var stability: [1..n,1..n] int;   // our target array to compute</code></pre>
-<p>is a 2D array (matrix) with <code>n</code> rows and <code>n</code> columns of integer numbers, all initialized as <code>0</code>. The two ranges <code>1..n</code> not only define the size and shape of the array, they stand for the indices with which we could access particular elements of the array using the <code>[X,X]</code> notation. For example, <code>stability[1,1]</code> is the integer variable located at the first row and first column of the array <code>stability</code>, while <code>stability[3,7]</code> sits at the 3rd row and 7th column; <code>stability[2,3..15]</code> access columns 3 to 15 of the 2nd row, and <code>stability[1..4,4]</code> corresponds to the first 4 rows on the 4th column of <code>stability</code>.</p>
-<!-- Similarly, with -->
-<!-- ```chpl -->
-<!-- T[1..rows,1..cols] = 25;     // set the initial temperature -->
-<!-- ``` -->
-<!-- we assign an initial temperature of 25 degrees across all points of our metal plate. -->
-<p>We are now ready to start coding our computation … here is what we are going to do:</p>
-<!-- - this simulation will consider a matrix of _rows_ by _cols_ elements -->
-<!-- - it will run up to _niter_ iterations, or until the largest difference in temperature between iterations -->
-<!--   is less than _tolerance_ -->
-<!-- - at each iteration print out the temperature at the position (iout,jout) -->
-<ol type="1">
-<li>write a function to compute a single pixel of the image: takes a complex point, returns its stability number</li>
-<li>iterate over all points in the image, calling <code>pixel()</code> for each</li>
-<li>time the computation</li>
-<li>learn how to write the resulting 2D array to a NetCDF file and/or a PNG image</li>
-<li>parallelize this code, first on a single node, and then across multiple nodes</li>
-</ol>
-<section id="using-expressions-to-create-arrays" class="level3">
-<h3 class="anchored" data-anchor-id="using-expressions-to-create-arrays">Using expressions to create arrays</h3>
-<p>In Chapel arrays can also be initialized with expressions (similarly to list comprehensions in Python):</p>
-<pre class="chpl"><code>writeln([i in 1..10] i**2);   // prints 1 4 9 16 25 36 49 64 81 100
-var x = [i in 1..10] if (i%2 == 0) then i else 0;
-writeln(x);                   // prints 0 2 0 4 0 6 0 8 0 10
-writeln(x.type:string);       // 1D array of type int(64)</code></pre>
-</section>
-<section id="structured-iterations-with-for-loops" class="level2">
-<h2 class="anchored" data-anchor-id="structured-iterations-with-for-loops">Structured iterations with for-loops</h2>
-<p>We want to iterate over all points in our image. When it comes to iterating over a given number of elements, the <strong><em>for-loop</em></strong> is what we want to use. The for-loop has the following general syntax:</p>
-<pre class="chpl"><code>for index in iterand do
-  instruction;
-  
-for index in iterand {
-  instruction1;
-  instruction2;
-  ...
-  }</code></pre>
-<p>The <code>iterand</code> is a statement that expresses an iteration, e.g.&nbsp;it could be a range <code>1..15</code>. <code>index</code> is a variable that exists only in the context of the for-loop, and that will be taking the different values yielded by the iterand. The code flows as follows: index takes the first value yielded by the iterand, and keeps it until all the instructions inside the curly brackets are executed one by one; then, index takes the second value yielded by the iterand, and keeps it until all the instructions are executed again. This pattern is repeated until index takes all the different values exressed by the iterand.</p>
-<p>In our case we iterate both over all rows and all columns in the image to compute every pixel. This can be done with nested <em>for</em> loops like this:</p>
-<pre class="chpl"><code>for i in 1..n { // process row i
-  y = 2*(i-0.5)/n - 1;
-  for j in 1..n { // process column j, row i
-    point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}</code></pre>
-<p>To be able to compile the code, we also need a prototype <code>pixel()</code> function:</p>
-<pre class="chpl"><code>proc pixel(z0) {
-  return z0; // to be replaced with an actual calculation
-}</code></pre>
-<p>Now let’s compile and execute our code again:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl juliaSetSerial.chpl</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch serial.sh</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-f</span> solution.out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<pre class="output"><code></code></pre>
-<!-- As we can see, the temperature in the middle of the plate (position 50,50) is slowly decreasing as the -->
-<!-- plate is cooling down. -->
-<!-- > ### <font style="color:blue">Exercise "Basic.1"</font> -->
-<!-- > What would be the temperature at the top right corner (row 1, column `cols`) of the plate? The border of the -->
-<!-- > plate is in contact with the boundary conditions, which are set to zero (default boundary values for T), so -->
-<!-- > we expect the temperature at these points to decrease faster. Modify the code to see the temperature at the -->
-<!-- > top right corner. -->
-<!-- > ### <font style="color:blue">Exercise "Basic.2"</font> -->
-<!-- > Now let's have some more interesting boundary conditions. Suppose that the plate is heated by a source of 80 -->
-<!-- > degrees located at the bottom right corner (row `rows`, column `cols`), and that the temperature on the rest -->
-<!-- > of the border on adjacent sides (to this bottom right corner) decreases linearly to zero as one gets farther -->
-<!-- > from that corner. Utilize `for` loops to setup the described boundary conditions. Compile and run your code -->
-<!-- > to see how the temperature is changing now. -->
-<!-- > ### <font style="color:blue">Exercise "Basic.3"</font> -->
-<!-- > So far, `delta` has been always equal to `tolerance`, which means that our main while loop will always run -->
-<!-- > the 500 iterations. So let's update `delta` after each iteration. Use what we have studied so far to write -->
-<!-- > the required piece of code. -->
-<!-- Now, after Exercise "Basic.3" we should have a working program to simulate our heat transfer equation. Let's -->
-<!-- print some additional useful information: -->
-<!-- ```chpl -->
-<!-- writeln('Final temperature at the desired position [', iout, ',', jout, '] after ', count, ' iterations is: ', T[iout,jout]); -->
-<!-- writeln('The largest temperature difference between the last two iterations was: ', delta); -->
-<!-- ``` -->
-<!-- and compile and execute our final code -->
-<!-- ```sh -->
-<!-- $ chpl baseSolver.chpl -o baseSolver -->
-<!-- $ sbatch serial.sh -->
-<!-- $ tail -f solution.out -->
-<!-- ``` -->
-<!-- ```chpl -->
-<!-- Temperature at iteration 0: 25.0 -->
-<!-- Temperature at iteration 20: 2.0859 -->
-<!-- ... -->
-<!-- Temperature at iteration 500: 0.823152 -->
-<!-- Final temperature at the desired position [1,100] after 500 iterations is: 0.823152 -->
-<!-- The largest temperature difference between the last two iterations was: 0.0258874 -->
-<!-- ``` -->
+<p>Originally, <code>make</code> command (first released in 1975) was created for automating compilations. Consider a large software project with hundreds of dependencies. When you compile it, each source file is converted into an object file, and then all of them are linked together to the libraries to form a final executable(s) or a final library.</p>
+<p>Day-to-day, you typically work on a small section of the program, e.g.&nbsp;debug a single function, with much of the rest of the program unchanged. When recompiling, it would be a waste of time to recompile all hundreds of source files every time you want to compile/run the code. You need to recompile just a single source file and then update the final executable.</p>
+<p>A <em>makefile</em> is a build manager to automate this process, i.e.&nbsp;to figure out what is up-to-date and what is not, and only run the commands that are necessary to rebuild the final target. A <em>makefile</em> is essentially <strong>a tree of dependencies stored in a text file</strong> along with the commands to create these dependencies. It ensures that if some of the source files have been updated, we only run the steps that are necessary to create the target with those new source files.</p>
+<p>Makefiles can be used for any project (not just compilation) with multiple steps producing intermediate results, when some of these steps are compute-heavy. Let’s look at an example! We will store the following text in the file <code>text.md</code>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode md code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Design</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Makefiles can be used for automating any multiple-step workflow</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>when there is a need to update only some targets, as opposed to</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>running the entire workflow from start to finish.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>\newpage</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Make's builtin variables</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`$@`</span> is the "target of this rule"</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`$ˆ`</span> is "all prerequisites of this rule"</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`$&lt;`</span> is "the first prerequisite of this rule"</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`$?`</span> is "all out-of-date prerequisites of this rule"</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is our workflow to automate:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> text.md <span class="at">-t</span> beamer <span class="at">-o</span> text.pdf</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://wgpages.netlify.app/img/dolphin.png</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> dolphin.png dolphin.pdf</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://wgpages.netlify.app/img/penguin.png</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">magick</span> penguin.png penguin.pdf</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">gs</span> <span class="at">-dBATCH</span> <span class="at">-dNOPAUSE</span> <span class="at">-q</span> <span class="at">-sDEVICE</span><span class="op">=</span>pdfwrite <span class="at">-sOutputFile</span><span class="op">=</span>slides.pdf <span class="dt">{text</span><span class="op">,</span><span class="dt">dolphin</span><span class="op">,</span><span class="dt">penguin}</span>.pdf</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> dolphin.<span class="pp">*</span> penguin.<span class="pp">*</span> text.pdf</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-F</span> <span class="st">"file=@slides.pdf"</span> https://temp.sh/upload <span class="kw">&amp;&amp;</span> <span class="bu">echo</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>First version of <code>Makefile</code> automates creating of <code>slides.pdf</code>:</p>
+<pre class="make"><code>slides.pdf: text.pdf dolphin.pdf penguin.pdf
+    gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=slides.pdf {text,dolphin,penguin}.pdf
+text.pdf: text.md
+    pandoc text.md -t beamer -o text.pdf
+dolphin.pdf: dolphin.png
+    magick dolphin.png dolphin.pdf
+penguin.pdf: penguin.png
+    magick penguin.png penguin.pdf
+dolphin.png:
+    wget https://wgpages.netlify.app/img/dolphin.png
+penguin.png:
+    wget https://wgpages.netlify.app/img/penguin.png</code></pre>
+<p>Running <code>make</code> will create the target <code>slides.pdf</code> – how many command will it run? That depends on how many intermediate files you have, and their timestamps.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Test 1
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let’s modify <code>text.md</code>, e.g.&nbsp;add a line there. The makefile will figure out what needs to be done to update <code>slides.pdf</code>. How many command will it run?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Test 2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let’s remove <code>dolphin.png</code>. How many commands will <code>make</code> run?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Test 3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let’s remove both PNG files. How many commands will <code>make</code> run?</p>
+</div>
+</div>
+<p>Now, add three special targets at the end:</p>
+<pre class="make"><code>clean:
+    /bin/rm -f dolphin.* penguin.* text.pdf
+cleanall:
+    make clean
+    /bin/rm -f slides.pdf
+upload: slides.pdf
+    curl -F "file=@slides.pdf" https://temp.sh/upload &amp;&amp; echo</code></pre>
+<p>Next, we can make use of make’s builtin variables:</p>
+<ul>
+<li><code>$@</code> is the “target of this rule”</li>
+<li><code>$ˆ</code> is “all prerequisites of this rule”</li>
+<li><code>$&lt;</code> is “the first prerequisite of this rule”</li>
+<li><code>$?</code> is “all out-of-date prerequisites of this rule”</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>&lt; gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=slides.pdf {text,dolphin,penguin}.pdf</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>&gt; gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=$@ $^</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>&lt; pandoc text.md -t beamer -o text.pdf</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>&gt; pandoc $^ -t beamer -o $@</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The next simplification makes use of <code>make</code> wildcards to specify patterns:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>&lt; dolphin.pdf: dolphin.png</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>&lt;   magick dolphin.png dolphin.pdf</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>&lt; penguin.pdf: penguin.png</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>&lt;   magick penguin.png penguin.pdf</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>&gt; %.pdf: %.png</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>&gt;   magick $^ $@</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
