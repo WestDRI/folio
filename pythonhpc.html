@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Part 1: towards high-performance Python – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-4df3b0c4fafa0f66eafcead0ee6cff11.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#installation" id="toc-installation" class="nav-link active" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#python-setup-in-our-course" id="toc-python-setup-in-our-course" class="nav-link" data-scroll-target="#python-setup-in-our-course">Python setup in our course</a></li>
+  <li><a href="#slow-series" id="toc-slow-series" class="nav-link" data-scroll-target="#slow-series">Slow series</a></li>
+  <li><a href="#numpy-vectorization" id="toc-numpy-vectorization" class="nav-link" data-scroll-target="#numpy-vectorization">NumPy vectorization</a>
+  <ul class="collapse">
+  <li><a href="#vectorized-functions-on-array-elements" id="toc-vectorized-functions-on-array-elements" class="nav-link" data-scroll-target="#vectorized-functions-on-array-elements">Vectorized functions on array elements</a></li>
+  <li><a href="#array-broadcasting" id="toc-array-broadcasting" class="nav-link" data-scroll-target="#array-broadcasting">Array broadcasting</a></li>
+  <li><a href="#converting-velocity-components" id="toc-converting-velocity-components" class="nav-link" data-scroll-target="#converting-velocity-components">Converting velocity components</a></li>
+  <li><a href="#back-to-the-slow-series" id="toc-back-to-the-slow-series" class="nav-link" data-scroll-target="#back-to-the-slow-series">Back to the slow series</a></li>
+  </ul></li>
+  <li><a href="#parallelization" id="toc-parallelization" class="nav-link" data-scroll-target="#parallelization">Parallelization</a>
+  <ul class="collapse">
+  <li><a href="#threads-vs-processes" id="toc-threads-vs-processes" class="nav-link" data-scroll-target="#threads-vs-processes">Threads vs processes</a></li>
+  </ul></li>
+  <li><a href="#multithreading" id="toc-multithreading" class="nav-link" data-scroll-target="#multithreading">Multithreading</a>
+  <ul class="collapse">
+  <li><a href="#numexpr" id="toc-numexpr" class="nav-link" data-scroll-target="#numexpr">NumExpr</a></li>
+  </ul></li>
+  <li><a href="#profiling-and-performance-tuning" id="toc-profiling-and-performance-tuning" class="nav-link" data-scroll-target="#profiling-and-performance-tuning">Profiling and performance tuning</a></li>
+  <li><a href="#multiprocessing" id="toc-multiprocessing" class="nav-link" data-scroll-target="#multiprocessing">Multiprocessing</a></li>
+  <li><a href="#numba-jit-compiler" id="toc-numba-jit-compiler" class="nav-link" data-scroll-target="#numba-jit-compiler">Numba JIT compiler</a>
+  <ul class="collapse">
+  <li><a href="#parallelizing" id="toc-parallelizing" class="nav-link" data-scroll-target="#parallelizing">Parallelizing</a></li>
+  <li><a href="#back-to-the-slow-series-1" id="toc-back-to-the-slow-series-1" class="nav-link" data-scroll-target="#back-to-the-slow-series-1">Back to the slow series</a></li>
+  <li><a href="#fast-implementation" id="toc-fast-implementation" class="nav-link" data-scroll-target="#fast-implementation">Fast implementation</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Part 1: towards high-performance Python</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>June 13<sup>th</sup>, 9:30am–12:30pm and 1:30pm-4:30pm Pacific Time</strong></p>
+<p><strong>Abstract</strong>: Python has become the dominant language in scientific computing thanks to its high-level syntax, extensive ecosystem, and ease of use. However, its performance often lags behind traditional compiled languages like C, C++, and Fortran, as well as newer contenders like Julia and Chapel. This course is designed to help you speed up your Python workflows using a variety of tools and techniques.</p>
+<p>We’ll begin with classic optimization methods such as NumPy-based vectorization, and explore just-in-time compilation using Numba, along with performance profiling techniques. From there, we’ll delve into parallelization – starting with multithreading using external libraries like NumExpr and Python 3.13’s new free-threading capabilities – but placing greater emphasis on multiprocessing.</p>
+<p>Next, we’ll dive into Ray, a powerful and flexible framework for scaling Python applications. While Ray is widely used in AI, our focus will be on its core capabilities for distributed computing and data processing. You’ll learn how to parallelize CPU-bound numerical workflows – with and without reduction – as well as optimize I/O-bound tasks. We’ll also explore combining Ray with Numba and will discuss coding tightly coupled parallel problems.</p>
+<p>Please note: this course does not cover GPU computing (which merits its own course), nor will we dive into mpi4py, the standard MPI library for Python.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In these notes all timings are for a 2021 Macbook Pro equipped with the M1 Pro chip and 16 GB of memory. On other machines, including our current training cluster, the timings will be different. They can also vary quite a bit from one training cluster to another, depending on the virtual machine (VM) flavours and the underlying physical cores allocated to run these VMs. What’s important is the relative timing of one code vs.&nbsp;another when run on the same machine under the same conditions.</p>
+</div>
+</div>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p>Today we’ll be running Python on the training cluster. If instead you want to run everything locally on your computer, you can install Python and the libraries, but the installation instructions will vary depending on how you typically install Python, and whether/how you use Python virtual environments. Here is what I did on my computer (with <code>pyenv</code> installed earlier):</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> install 3.12.9</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> virtualenv 3.12.9 hpc-env   <span class="co"># goes into ~/.pyenv/versions/&lt;version&gt;/envs/hpc-env</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> activate hpc-env</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> pip</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install numpy</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> <span class="st">"ray[default]"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> <span class="st">"ray[data]"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install tqdm netcdf4 scipy numexpr psutil multiprocess numba scalene Pillow</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- # pip uninstall pandas -->
+<!-- # pip install -Iv pandas==2.1.4 -->
+<p>On a production HPC cluster:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">virtualenv</span> <span class="at">--no-download</span> hpc-env</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> hpc-env/bin/activate</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> <span class="at">--upgrade</span> pip</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> numba multiprocess numexpr</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">avail_wheels</span> <span class="st">"ray"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> ray tqdm scalene grpcio</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install modin</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In this course we will be doing all work on our training cluster on which we have already installed Python and all the necessary libraries.</p>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 64%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Python pros</th>
+<th>Python cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>elegant scripting language</td>
+<td>slow (interpreted, dynamically typed)</td>
+</tr>
+<tr class="even">
+<td>easy (fast) to develop and read code</td>
+<td>uses indentation for code blocks</td>
+</tr>
+<tr class="odd">
+<td>powerful, compact constructs for many tasks</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>huge number of external libraries</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>very popular across all fields</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<ul>
+<li>
+item1
+</li>
+<li>
+item2
+</li>
+</ul>
+
+<p>Python is interpreted: - translation to machine code happens line-by-line - no cross-line optimization</p>
+<p>Python is dynamically typed: - types are part of the data (since data collections can be very diverse) &nbsp;⇒&nbsp; significant overhead - automatic memory management: on-the-fly reference counting, garbage collection, range checking &nbsp;⇒&nbsp; slow</p>
+<p>All these high-level features make Python slow. In this course we will concentrate on getting the most performance out of it.</p>
+</section>
+<section id="python-setup-in-our-course" class="level2">
+<h2 class="anchored" data-anchor-id="python-setup-in-our-course">Python setup in our course</h2>
+<p>Today we’ll be running Python inside a shell on our training cluster <code>thu.vastcloud.org</code>. Let’s log in now!</p>
+<p>We have pre-installed all the required libraries for you in a virtual Python environment in <code>/project/def-sponsor00/shared/hpc-env</code> that everyone on the system can read.</p>
+<p>Once on the system, our workflow is going to be:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/tmp <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> ~/tmp</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/hpc-env/bin/activate</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>12000   <span class="co"># memory needed for several serial examples</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--cpus-per-task</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600   <span class="co"># our default mode</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># sometimes we'll use 4 cores and few GBs memory per core</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># sometimes we'll use one core and almost all available memory</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--nodes</span><span class="op">=</span>1 <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600   <span class="co"># very similar</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600   <span class="co"># might run on multiple nodes</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Please do not run Python on the login node, as it’ll make the login node slow for everyone.</p>
+<p>Finally, to monitor CPU usage inside a Slurm job, from the login node connect to the running job and launch <code>htop</code> or a similar utility:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--jobid</span><span class="op">=&lt;</span>jobID<span class="op">&gt;</span> --pty bash</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> htop=<span class="st">'htop -u $USER -s PERCENT_CPU'</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">htop</span>                     <span class="co"># monitor all your processes</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">htop</span> <span class="at">--filter</span> <span class="st">"python"</span>   <span class="co"># filter processes by name</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>or you can use a one-liner from the login node:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--jobid</span><span class="op">=&lt;</span>jobID<span class="op">&gt;</span> --pty htop <span class="at">-u</span> <span class="va">$USER</span> <span class="at">-s</span> PERCENT_CPU</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Inside <code>htop</code> you can repeatedly press “Shift+H” to show individual threads or group them inside their parent processes.</p>
+</section>
+<section id="slow-series" class="level2">
+<h2 class="anchored" data-anchor-id="slow-series">Slow series</h2>
+<p>When I teach parallel computing in other languages (Julia, Chapel), the approach is to take a numerical problem and parallelize it using multiple processors, and concentrate on various issues and bottlenecks (variable locks, load balancing, false sharing, messaging overheads, etc.) that lead to less than 100% <strong>parallel efficiency</strong>. For the numerical problem I usually select something that is very simple to code, yet forces the computer to do brute-force calculation that cannot be easily optimized.</p>
+<p>One such problem is a <em>slow series</em>. It is a well-known fact that the harmonic series <span class="math inline">\(\sum\limits_{k=1}^\infty{1\over k}\)</span> diverges. It turns out that if we omit the terms whose denominators in decimal notation contain any <em>digit</em> or <em>string of digits</em>, it converges, albeit very slowly (Schmelzer &amp; Baillie 2008), e.g.</p>
+<p><img src="./fig/slow.png" class="img-fluid"></p>
+<p>But this slow convergence is actually good for us: our answer will be bounded by the exact result (22.9206766192…) on the upper side, and we will force the computer to do CPU-intensive work. We will sum all the terms whose denominators do not contain the digit “9”, and evaluate the first <span class="math inline">\(10^8\)</span> terms.</p>
+<p>I implemented and timed this problem running in serial in Julia (356ms) and Chapel (300ms) – both are compiled languages. Here is one possible Python implementation:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> slow(n: <span class="bu">int</span>):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="st">"9"</span> <span class="kw">in</span> <span class="bu">str</span>(i):</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>            total <span class="op">+=</span> <span class="fl">1.0</span> <span class="op">/</span> i</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> slow(<span class="dv">100_000_000</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s save this code inside the file <code>slowSeries.py</code> and run it. Depending on the power supplied to my laptop’s CPU (which I find varies quite a bit depending on the environment), I get the average runtime of 6.625 seconds. That’s ~20X slower than in Julia and Chapel!</p>
+<p>Note that for other problems you will likely see an even bigger (100-200X) gap between Python and the compiled languages. In other languages looking for a substring in a decimal representation of a number takes a while, and there you will want to code this calculation using integer numbers. If we also do this via integer operations in Python:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> digitsin(num: <span class="bu">int</span>):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    base <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="dv">9</span><span class="op">//</span>base <span class="op">&gt;</span> <span class="dv">0</span>: base <span class="op">*=</span> <span class="dv">10</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> num <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> num<span class="op">%</span>base <span class="op">==</span> <span class="dv">9</span>: <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        num <span class="op">=</span> num<span class="op">//</span><span class="dv">10</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> slow(n: <span class="bu">int</span>):</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> digitsin(i):</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>            total <span class="op">+=</span> <span class="fl">1.0</span> <span class="op">/</span> i</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>our code will be ~3-4X slower, so we will use the first version of the code with <code>if not "9" in str(i)</code> – it turns out that in this particular case Python’s high-level substring search is actually quite well optimized!</p>
+<!-- serial.jl - 444.862 ms with digitSequence variable, 355.692 ms with fixed 9 -->
+<!-- serial.chpl - 300 ms -->
+<!-- direct calculation in Python: 8.741755723953247 s -->
+<!-- vectorized functions in Python: 17.629069089889526 s -->
+<p>Looking at other problems, you will see that Python’s performance is worse on “tightly coupled” calculations on fundamental data types (integers, doubles), e.g.&nbsp;when you try to run the same arithmetic calculation on many elements of an array which is often the case in numerical simulation.</p>
+<p>On the other hand, Python performs much better (or “less worse” compared to other languages) when doing file I/O and text processing. In addition, if your Python code spends most of its time in a compiled numerical library (often written in C or C++, and more recently in languages like Rust), your overall performance might be not that bad.</p>
+<p>We will come back to the slow-series problem, but let’s first take a look at speeding up Python with NumPy.</p>
+</section>
+<section id="numpy-vectorization" class="level2">
+<h2 class="anchored" data-anchor-id="numpy-vectorization">NumPy vectorization</h2>
+<p>Python is dynamically typed, i.e.&nbsp;variables can change their type on the fly:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> <span class="st">'apple'</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This makes Python very flexible. Out of these variables you can form 1D lists, and these can be inhomogeneous and can change values and types on the fly:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="st">'Vancouver'</span>, [<span class="st">'Earth'</span>, <span class="st">'Moon'</span>], {<span class="st">'list'</span>: <span class="st">'an ordered collection of values'</span>}]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>a[<span class="dv">1</span>] <span class="op">=</span> <span class="st">'Sun'</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Python lists are very general and flexible, which is great for high-level programming, but it comes at a cost. The Python interpreter can’t make any assumptions about what will come next in a list, so it treats everything as a generic object with its own type and size. As lists get longer, eventually performance takes a hit.</p>
+<p>Python does not have any mechanism for a uniform/homogeneous list, where – to jump to element #1000 – you just take the memory address of the very first element and then increment it by (element size in bytes) x 999. <strong>NumPy</strong> library fills this gap by adding the concept of homogenous collections to python – <code>numpy.ndarray</code>s – which are multidimensional, homogeneous arrays of fixed-size items (most commonly numbers).</p>
+<ol type="1">
+<li>This brings large performance benefits!</li>
+</ol>
+<ul>
+<li>no reading of extra bits (type, size, reference count)</li>
+<li>no type checking</li>
+<li>contiguous allocation in memory</li>
+<li>NumPy was written in C &nbsp;⇒&nbsp; pre-compiled</li>
+</ul>
+<ol start="2" type="1">
+<li>NumPy lets you work with mathematical arrays.</li>
+</ol>
+<p>Lists and NumPy arrays behave very differently:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> [<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">+</span> b              <span class="co"># this will concatenate two lists: [1,2,3,4,5,6,7,8]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>na <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>nb <span class="op">=</span> np.array([<span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">7</span>, <span class="dv">8</span>])</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>na <span class="op">+</span> nb            <span class="co"># this will sum two vectors element-wise: array([6,8,10,12])</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>na <span class="op">*</span> nb            <span class="co"># element-wise product</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="vectorized-functions-on-array-elements" class="level3">
+<h3 class="anchored" data-anchor-id="vectorized-functions-on-array-elements">Vectorized functions on array elements</h3>
+<p>One of the big reasons for using NumPy is so you can do fast numerical operations on a large number of elements. The result is another <code>ndarray</code>. In many calculations you can use replace the usual <code>for</code>/<code>while</code> loops with functions on NumPy elements.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.arange(<span class="dv">100</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>a<span class="op">**</span><span class="dv">2</span>          <span class="co"># each element is a square of the corresponding element of a</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>np.log10(a<span class="op">+</span><span class="dv">1</span>)     <span class="co"># apply this operation to each element</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>(a<span class="op">**</span><span class="dv">2</span><span class="op">+</span>a)<span class="op">/</span>(a<span class="op">+</span><span class="dv">1</span>)    <span class="co"># the result should effectively be a floating-version copy of a</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>np.arange(<span class="dv">10</span>) <span class="op">/</span> np.arange(<span class="dv">1</span>,<span class="dv">11</span>)  <span class="co"># this is np.array([ 0/1, 1/2, 2/3, 3/4, ..., 9/10 ])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="array-broadcasting" class="level3">
+<h3 class="anchored" data-anchor-id="array-broadcasting">Array broadcasting</h3>
+<p>An extremely useful feature of vectorized functions is their ability to operate between arrays of different sizes and shapes, a set of operations known as <em>broadcasting</em>.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>])    <span class="co"># 1D array</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.ones((<span class="dv">3</span>,<span class="dv">3</span>))         <span class="co"># 2D array</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">+</span> b          <span class="co"># `a` is stretched/broadcast across the 2nd dimension before addition;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>               <span class="co"># effectively we add `a` to each row of `b`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the following example both arrays are broadcast from 1D to 2D to match the shape of the other:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.arange(<span class="dv">3</span>)                     <span class="co"># 1D row;                a.shape is (3,)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.arange(<span class="dv">3</span>).reshape((<span class="dv">3</span>,<span class="dv">1</span>))      <span class="co"># effectively 1D column; b.shape is (3, 1)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">+</span> b                                <span class="co"># the result is a 2D array!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>NumPy’s broadcast rules are:</p>
+<ol type="1">
+<li>the shape of an array with fewer dimensions is padded with 1’s on the left</li>
+<li>any array with shape equal to 1 in that dimension is stretched to match the other array’s shape</li>
+<li>if in any dimension the sizes disagree and neither is equal to 1, an error is raised</li>
+</ol>
+<pre><code>First example above:
+********************
+a: (3,)   -&gt;  (1,3)  -&gt;  (3,3)
+b: (3,3)  -&gt;  (3,3)  -&gt;  (3,3)
+                                -&gt;  (3,3)
+Second example above:
+*********************
+a: (3,)  -&gt;  (1,3)  -&gt;  (3,3)
+b: (3,1) -&gt;  (3,1)  -&gt;  (3,3)
+                                -&gt;  (3,3)
+Example 3:
+**********
+a: (2,3)  -&gt;  (2,3)  -&gt;  (2,3)
+b: (3,)   -&gt;  (1,3)  -&gt;  (2,3)
+                                -&gt;  (2,3)
+Example 4:
+**********
+a: (3,2)  -&gt;  (3,2)  -&gt;  (3,2)
+b: (3,)   -&gt;  (1,3)  -&gt;  (3,3)
+                                -&gt;  error
+"ValueError: operands could not be broadcast together with shapes (3,2) (3,)"</code></pre>
+<p>Let’s see how these rules work on a real-life problem!</p>
+</section>
+<section id="converting-velocity-components" class="level3">
+<h3 class="anchored" data-anchor-id="converting-velocity-components">Converting velocity components</h3>
+<p>Consider a spherical dataset describing Earth’s mantle convection, defined on a spherical grid <span class="math inline">\(n_{lat}\times
+n_{lon}\times n_r = 500\times 800\times 300\)</span>, with the total of <span class="math inline">\(120\times10^6\)</span> grid points. For each grid point, we need to convert from the spherical (lateral - longitudinal - radial) velocity components to their Cartesian equivalents.</p>
+<!-- Doing this by hand with Python's `for` loops would take many hours for 13e6 points. I used NumPy to vectorize -->
+<!-- in one dimension, and that cut the time to ~5 mins. At first glance, a more complex vectorization would not -->
+<!-- work, as NumPy would have to figure out which dimension goes where. Writing it carefully and following the -->
+<!-- broadcast rules I made it work, with the correct solution at the end -- while the total compute time went down -->
+<!-- to a couple seconds! -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To run all code fragments in this example at full <span class="math inline">\(500\times 800\times 300\)</span> resolution, you will need to increase your memory ask to 7200M, or otherwise your Python session will be killed mid-way. Alternatively, you can reduce the problem size by 8X (yielding much less impressive runtime difference) and continue running with 3600M memory:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nlat, nlon, nr <span class="op">=</span> nlat<span class="op">//</span><span class="dv">2</span>, nlon<span class="op">//</span><span class="dv">2</span>, nr<span class="op">//</span><span class="dv">2</span>   <span class="co"># if short on memory</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<p>Let’s initialize our problem:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.special <span class="im">import</span> lpmv</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>nlat, nlon, nr <span class="op">=</span> <span class="dv">500</span>, <span class="dv">800</span>, <span class="dv">300</span>   <span class="co"># 120e6 grid points</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>latitude <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">90</span>, <span class="dv">90</span>, nlat)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>longitude <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">360</span>, nlon)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>radius <span class="op">=</span> np.linspace(<span class="dv">3485</span>, <span class="dv">6371</span>, nr)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># spherical velocity components: use Legendre Polynomials to set values</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>vlat <span class="op">=</span> lpmv(<span class="dv">0</span>,<span class="dv">3</span>,latitude<span class="op">/</span><span class="dv">90</span>).reshape(nlat,<span class="dv">1</span>,<span class="dv">1</span>) <span class="op">+</span> np.linspace(<span class="dv">0</span>,<span class="dv">0</span>,nr).reshape(nr,<span class="dv">1</span>) <span class="op">+</span> np.linspace(<span class="dv">0</span>,<span class="dv">0</span>,nlon)</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>vlon <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">0</span>,nlat).reshape(nlat,<span class="dv">1</span>,<span class="dv">1</span>) <span class="op">+</span> np.linspace(<span class="dv">0</span>,<span class="dv">0</span>,nr).reshape(nr,<span class="dv">1</span>) <span class="op">+</span> lpmv(<span class="dv">0</span>,<span class="dv">2</span>,longitude<span class="op">/</span><span class="dv">180</span><span class="op">-</span><span class="fl">1.</span>)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>vrad <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">0</span>,nlat).reshape(nlat,<span class="dv">1</span>,<span class="dv">1</span>) <span class="op">+</span> lpmv(<span class="dv">0</span>,<span class="dv">3</span>,(radius<span class="op">-</span><span class="dv">4928</span>)<span class="op">/</span><span class="dv">1443</span>).reshape(nr,<span class="dv">1</span>) <span class="op">+</span> np.linspace(<span class="dv">0</span>,<span class="dv">0</span>,nlon)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Cartesian velocity components</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>vx <span class="op">=</span> np.zeros((nlat,nr,nlon))</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>vy <span class="op">=</span> np.zeros((nlat,nr,nlon))</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>vz <span class="op">=</span> np.zeros((nlat,nr,nlon))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We need to go through all grid points, and at each point perform a matrix-vector multiplication. Here is our first attempt:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You might want to use Python’s <code>tqdm</code> library to provide a progress bar for real-time runtime estimate.</p>
+</div>
+</div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(nlat)):</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(nlon):</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(nr):</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>            vx[i,j,k] <span class="op">=</span> <span class="op">-</span> np.sin(np.radians(longitude[k]))<span class="op">*</span>vlon[i,j,k] <span class="op">-</span> <span class="op">\</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                np.sin(np.radians(latitude[i]))<span class="op">*</span>np.cos(np.radians(longitude[k]))<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                np.cos(np.radians(latitude[i]))<span class="op">*</span>np.cos(np.radians(longitude[k]))<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>            vy[i,j,k] <span class="op">=</span> np.cos(np.radians(longitude[k]))<span class="op">*</span>vlon[i,j,k] <span class="op">-</span> <span class="op">\</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                np.sin(np.radians(latitude[i]))<span class="op">*</span>np.sin(np.radians(longitude[k]))<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                np.cos(np.radians(latitude[i]))<span class="op">*</span>np.sin(np.radians(longitude[k]))<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            vz[i,j,k] <span class="op">=</span> np.cos(np.radians(latitude[i]))<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                np.sin(np.radians(latitude[i]))<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time.time()</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>On my laptop this calculation took 1280s. There are quite a lot of redundancies (repeated calculations), e.g.&nbsp;we compute all angles to radians multiple times, compute <span class="math inline">\(\sin\)</span> and <span class="math inline">\(\cos\)</span> of the same latitude and longitude multiple times, and so on. Getting rid of these redundancies:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(nlat)):</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    lat <span class="op">=</span> np.radians(latitude[i])</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    sinlat <span class="op">=</span> np.sin(lat)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    coslat <span class="op">=</span> np.cos(lat)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(nlon):</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        lon <span class="op">=</span> np.radians(longitude[k])</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        sinlon <span class="op">=</span> np.sin(lon)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        coslon <span class="op">=</span> np.cos(lon)</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(nr):</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>            vx[i,j,k] <span class="op">=</span> <span class="op">-</span> sinlon<span class="op">*</span>vlon[i,j,k] <span class="op">-</span> sinlat<span class="op">*</span>coslon<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> coslat<span class="op">*</span>coslon<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>            vy[i,j,k] <span class="op">=</span> coslon<span class="op">*</span>vlon[i,j,k] <span class="op">-</span> sinlat<span class="op">*</span>sinlon<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> coslat<span class="op">*</span>sinlon<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>            vz[i,j,k] <span class="op">=</span> coslat<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> sinlat<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time.time()</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>brings the runtime down to 192s.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 1
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Does using NumPy’s matrix-vector multiplication function <code>np.dot</code> speed this calculation? In this workflow, <em>at each latitude-longitude</em> you would define a rotation matrix and <em>at each point</em> a spherical velocity vector to compute their dot product, i.e.&nbsp;you would replace this fragment:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(nr):</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>            vx[i,j,k] <span class="op">=</span> <span class="op">-</span> sinlon<span class="op">*</span>vlon[i,j,k] <span class="op">-</span> sinlat<span class="op">*</span>coslon<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> coslat<span class="op">*</span>coslon<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>            vy[i,j,k] <span class="op">=</span> coslon<span class="op">*</span>vlon[i,j,k] <span class="op">-</span> sinlat<span class="op">*</span>sinlon<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> coslat<span class="op">*</span>sinlon<span class="op">*</span>vrad[i,j,k]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>            vz[i,j,k] <span class="op">=</span> coslat<span class="op">*</span>vlat[i,j,k] <span class="op">+</span> sinlat<span class="op">*</span>vrad[i,j,k]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>with this one:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>        rot <span class="op">=</span> np.array([[<span class="op">-</span>sinlon, <span class="op">-</span>sinlat<span class="op">*</span>coslon, coslat<span class="op">*</span>coslon],</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                        [coslon, <span class="op">-</span>sinlat<span class="op">*</span>sinlon, coslat<span class="op">*</span>sinlon],</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                        [<span class="dv">0</span>, coslat, sinlat]])</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(nr):</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>            vspherical <span class="op">=</span> np.array([vlon[i,j,k], vlat[i,j,k], vrad[i,j,k]])</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>            vx[i,j,k], vy[i,j,k], vz[i,j,k] <span class="op">=</span> np.dot(rot, vspherical)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<!-- Answer: nope, the computation time goes up to 293s. -->
+<p>To speed up our computation, we should vectorize over one of the dimensions, e.g.&nbsp;<strong>longitudes</strong>:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>lon <span class="op">=</span> np.radians(longitude[<span class="dv">0</span>:nlon])</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>sinlon <span class="op">=</span> np.sin(lon)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>coslon <span class="op">=</span> np.cos(lon)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(nlat)):</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    lat <span class="op">=</span> np.radians(latitude[i])</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    sinlat <span class="op">=</span> np.sin(lat)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    coslat <span class="op">=</span> np.cos(lat)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(nr):</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        vx[i,j,<span class="dv">0</span>:nlon] <span class="op">=</span> <span class="op">-</span> sinlon<span class="op">*</span>vlon[i,j,<span class="dv">0</span>:nlon] <span class="op">-</span> sinlat<span class="op">*</span>coslon<span class="op">*</span>vlat[i,j,<span class="dv">0</span>:nlon] <span class="op">+</span> coslat<span class="op">*</span>coslon<span class="op">*</span>vrad[i,j,<span class="dv">0</span>:nlon]</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        vy[i,j,<span class="dv">0</span>:nlon] <span class="op">=</span> coslon<span class="op">*</span>vlon[i,j,<span class="dv">0</span>:nlon] <span class="op">-</span> sinlat<span class="op">*</span>sinlon<span class="op">*</span>vlat[i,j,<span class="dv">0</span>:nlon] <span class="op">+</span> coslat<span class="op">*</span>sinlon<span class="op">*</span>vrad[i,j,<span class="dv">0</span>:nlon]</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        vz[i,j,<span class="dv">0</span>:nlon] <span class="op">=</span> coslat<span class="op">*</span>vlat[i,j,<span class="dv">0</span>:nlon] <span class="op">+</span> sinlat<span class="op">*</span>vrad[i,j,<span class="dv">0</span>:nlon]</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time.time()</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s see how broadcasting works in here. Consider the dimensions of all variables in the expression for computing <code>vx[i,j,0:nlon]</code>:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>[1,1,nlon] = - [nlon]*[1,1,nlon] - [1]*[nlon]*[1,1,nlon] + [1]*[nlon]*[1,1,nlon]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Omitting scalars ([1]), padding with 1’s on the left will produce:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>[1,1,nlon] = - [1,1,nlon]*[1,1,nlon] - [1,1,nlon]*[1,1,nlon] + [1,1,nlon]*[1,1,nlon]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now all variables have the same dimensions, and all operations will be element-wise. The calculation time is now 3.503s, which is a huge improvement!</p>
+<p>Vectorizing over two dimensions, e.g.&nbsp;over <strong>radii</strong> and <strong>longitudes</strong> leaves us with a single loop:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>lon <span class="op">=</span> np.radians(longitude[<span class="dv">0</span>:nlon])</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>sinlon <span class="op">=</span> np.sin(lon)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>coslon <span class="op">=</span> np.cos(lon)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(nlat)):</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    lat <span class="op">=</span> np.radians(latitude[i])</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    sinlat <span class="op">=</span> np.sin(lat)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    coslat <span class="op">=</span> np.cos(lat)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    vx[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">=</span> <span class="op">-</span> sinlon<span class="op">*</span>vlon[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">-</span> sinlat<span class="op">*</span>coslon<span class="op">*</span>vlat[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">+</span> coslat<span class="op">*</span>coslon<span class="op">*</span>vrad[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon]</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    vy[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">=</span> coslon<span class="op">*</span>vlon[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">-</span> sinlat<span class="op">*</span>sinlon<span class="op">*</span>vlat[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">+</span> coslat<span class="op">*</span>sinlon<span class="op">*</span>vrad[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon]</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    vz[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">=</span> coslat<span class="op">*</span>vlat[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon] <span class="op">+</span> sinlat<span class="op">*</span>vrad[i,<span class="dv">0</span>:nr,<span class="dv">0</span>:nlon]</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time.time()</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s check broadcasting, taking the expression for computing <code>vx[i,0:nr,0:nlon]</code> and omitting scalars ([1]):</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>[1,nr,nlon] = - [nlon]*[1,nr,nlon] - [1]*[nlon]*[1,nr,nlon] + [1]*[nlon]*[1,nr,nlon]          # original dimensions</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>[1,nr,nlon] = - [1,1,nlon]*[1,nr,nlon] - [1,1,nlon]*[1,nr,nlon] + [1,1,nlon]*[1,nr,nlon]      # after padding with 1's on the left</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>[1,nr,nlon] = - [1,nr,nlon]*[1,nr,nlon] - [1,nr,nlon]*[1,nr,nlon] + [1,nr,nlon]*[1,nr,nlon]   # after stretching 1's</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now all variables have the same dimensions, and all operations will be element-wise. The calculation time goes down to 1.487s.</p>
+<p>You can also vectorize in all three dimensions (latitudes, radii and longitudes), resulting in no explicit Python loops in your calculation at all, but this requires a little bit of extra work, and the computation time will actually slightly go up – <strong>any idea why</strong>?</p>
+<p>In the end, with NumPy’s element-wise vectorized operations, we improved our time from 1280s to 1.5s! The entire calculation was done as a batch in a compiled C code, instead of cycling through individual elements and then calling a compiled C code on each. There are a lot fewer Python code lines to interpret and run.</p>
+</section>
+<section id="back-to-the-slow-series" class="level3">
+<h3 class="anchored" data-anchor-id="back-to-the-slow-series">Back to the slow series</h3>
+<p>Let’s use NumPy for our slow series calculation. We will:</p>
+<ol type="1">
+<li>write a function that acts on each integer <span class="math inline">\(k\)</span> in the series,</li>
+<li>convert this function to a <em>vectorized function</em> that takes in an array of integer numbers and returns an array of terms,</li>
+<li>sum these terms to get the result.</li>
+</ol>
+<p>Let’s save the following code as <code>slow2.py</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100_000_000</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> combined(k):</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"9"</span> <span class="kw">not</span> <span class="kw">in</span> <span class="bu">str</span>(k):</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">1.0</span><span class="op">/</span>k</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>v3 <span class="op">=</span> np.vectorize(combined)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> np.arange(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> np.<span class="bu">sum</span>(v3(i))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This particular code uses a lot of memory, so you might want to request <code>--mem-per-cpu=14400</code> (and single core).</p>
+</div>
+</div>
+<p>The vectorized function is supposed to speed up calculating the terms, but our time becomes significantly worse (14.72s) than the original calculation (6.625s). <strong>The reason</strong>: we are no longer replacing multiple Python lines with a single line. The code inside <code>combined()</code> is still native Python code that is being interpreted on the fly, and we applying all its lines to each element of array <code>i</code>.</p>
+<p>The function <code>np.vectorize</code> does not compile <code>combined()</code> – it simply adapts it to work with arrays, but underneath you are still running Python loops. If, instead, our vectorization could produce a <em>compiled function</em> that takes an array of integers and computes the slow series sum all inside the same C/C++/Fortran/Rust function, it would run ~20X faster than the original calculation. This is what a JIT compiler can do – we will study it later.</p>
+<p>As it turns out, to speed up this problem with NumPy, you really need to perform the check for digit “9” via low-level custom NumPy code with a combination of vectorizable integer and floating operations, and this is very difficult – but not impossible – to do.</p>
+<!-- Here are a couple other implementations: -->
+<!-- In the 2nd NumPy version (average runtime 16.04s) we create a vectorized function returning an array of -->
+<!-- True/False for input integers $i$ checking for the presence of "9" in their decimal notation, use this output -->
+<!-- array as a mask to $i$, then invert all elements in the resulting array, and finally sum them up: -->
+<!-- ```py -->
+<!-- from time import time -->
+<!-- import numpy as np -->
+<!-- n = 100_000_000 -->
+<!-- nodigitsin = np.vectorize(lambda x: "9" not in str(x)) -->
+<!-- inverse = np.vectorize(lambda x: 1.0/x) -->
+<!-- start = time() -->
+<!-- i = np.arange(1,n+1) -->
+<!-- total = np.sum(inverse(i[nodigitsin(i)])) -->
+<!-- end = time() -->
+<!-- print("Time in seconds:", round(end-start,3)) -->
+<!-- print(total) -->
+<!-- ``` -->
+<!-- In the 3rd NumPy version (average runtime 23.47s) we create a vectorized function returning an array of -->
+<!-- True/False for input integers $i$, and another vectorized function inverting all $i$, and compute a dot -->
+<!-- product of their respective outputs (True/False are 1/0), summing up all its elements: -->
+<!-- ```py -->
+<!-- from time import time -->
+<!-- import numpy as np -->
+<!-- n = 100_000_000 -->
+<!-- nodigitsin = np.vectorize(lambda x: "9" not in str(x)) -->
+<!-- inverse = np.vectorize(lambda x: 1.0/x) -->
+<!-- start = time() -->
+<!-- i = np.arange(1,n+1) -->
+<!-- total = np.inner(inverse(i),nodigitsin(i)) -->
+<!-- end = time() -->
+<!-- print("Time in seconds:", round(end-start,3)) -->
+<!-- print(total) -->
+<!-- ``` -->
+<!-- terms vectorize pretty well, but most of the time is taken by summation => need to parallelize -->
+</section>
+</section>
+<section id="parallelization" class="level2">
+<h2 class="anchored" data-anchor-id="parallelization">Parallelization</h2>
+<p>We can only start parallelizing the code when we are certain that our serial performance is not too bad, or at the very least we have optimized our serial Python code as much as possible. At this point, <em>we don’t know</em> if we have the best optimized Python code, as we are only starting to look into various tools that (hopefully) could speed up our code. We know that our code is ~20X slower than a compiled code in Julia/Chapel/C/Fortran, but do we have the best-performing Python code?</p>
+<p>Next we’ll try to speed up our code with NumExpr expression evaluator, in which simple mathematical / NumPy expressions can be parsed and then evaluated using <em>compiled C code</em>. NumExpr has an added benefit in that you can do this evaluation with multiple threads in parallel. But first we should talk about threads and processes.</p>
+<!-- 1. You already have a fairly large code that you run in serial, and you want to speed it up on multiple cores -->
+<!--    or nodes; can you optimize this code before parallelizing it? profiling tools -->
+<!-- 2. If your code is I/O-bound (not CPU/GPU-bound) - perfect case for parallelization, especially when run on a cluster -->
+<!-- 3.  -->
+<section id="threads-vs-processes" class="level3">
+<h3 class="anchored" data-anchor-id="threads-vs-processes">Threads vs processes</h3>
+<p>In Unix a <strong>process</strong> is the smallest independent unit of processing, with its own memory space – think of an instance of a running application. The operating system tries its best to isolate processes so that a problem with one process doesn’t corrupt or cause havoc with another process. Context switching between processes is relatively expensive.</p>
+<p>A process can contain multiple <strong>threads</strong>, each running on its own CPU core (parallel execution), or sharing CPU cores if there are too few CPU cores relative to the number of threads (parallel + concurrent execution). All threads in a Unix process share the virtual memory address space of that process, e.g.&nbsp;several threads can update the same variable, whether it is safe to do so or not (we’ll talk about thread-safe programming in this course). Context switching between threads of the same process is less expensive.</p>
+<p><img src="./fig/threads.png" class="img-fluid"> <!-- "Image copied from https://www.backblaze.com/blog/whats-the-diff-programs-processes-and-threads"  --></p>
+<ul>
+<li>Threads within a process communicate via shared memory, so <strong>multi-threading</strong> is always limited to shared memory within one node.</li>
+<li>Processes communicate via messages (over the cluster interconnect or via shared memory). <strong>Multi-processing</strong> can be in shared memory (one node, multiple CPU cores) or distributed memory (multiple cluster nodes). With multi-processing there is no scaling limitation, but traditionally it has been more difficult to write code for distributed-memory systems. Various libraries tries to simplify it with high-level abstractions.</li>
+</ul>
+<blockquote class="blockquote">
+<h3 id="discussion" class="anchored">Discussion</h3>
+<p>What are the benefits of each type of parallelism: multi-threading vs.&nbsp;multi-processing? Consider: 1. context switching, e.g.&nbsp;starting and terminating or concurrent execution on the same CPU core, 1. communication, 1. scaling up.</p>
+</blockquote>
+</section>
+</section>
+<section id="multithreading" class="level2">
+<h2 class="anchored" data-anchor-id="multithreading">Multithreading</h2>
+<p>Python uses <em>reference counting</em> for memory management. Each object in memory that you create in Python has a counter storing the number of references to that object. Once this counter reaches zero (when you delete objects), Python releases memory occupied by the object. If you have multiple threads, letting them modify the same counter at the same time can lead to a race condition where you can write an incorrect value to the counter, leading to either memory leaks (too much memory allocated) or to releasing memory incorrectly when a there is still a reference to that object on another thread.</p>
+<p>One way to solve this problem is to have locks on all shared data structures, where only one thread at a time can modify data. This can also lead to problems, and Python’s solution prior to version 3.13 is to use a lock on the interpreter itself (Global Interpreter Lock = GIL), so that only <strong>one thread can run at a time</strong>. Recall that in Python each line of code is being interpreted on the fly, so placing a lock on the interpreter means pausing code execution while some other thread is running.</p>
+<p>Starting with v3.13, you can install Python with the GIL removed. This mode called <em>free threading</em> is still considered experimental and is usually not enabled by default. There is a good <a href="https://realpython.com/python313-free-threading-jit">Real Python article</a> (might require subscription) describing various build options to enable free threading; here is what worked on my Macbook:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install pyenv</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/pyenv/pyenv-update.git <span class="va">$(</span><span class="ex">pyenv</span> root<span class="va">)</span>/plugins/pyenv-update</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> update</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> install <span class="at">--list</span> <span class="kw">|</span> <span class="fu">grep</span> 3.13   <span class="co"># list all available versions, with "t" standing for free-threaded variant</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="va">PYTHON_CONFIGURE_OPTS</span><span class="op">=</span><span class="st">'--enable-experimental-jit'</span> <span class="ex">pyenv</span> install 3.13.0t <span class="co"># build free-threaded Python with JIT</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                                                                        <span class="co"># support in ~/.pyenv/versions/3.13.0t</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> versions        <span class="co"># show installed versions</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> shell 3.13.2t   <span class="co"># switch to the new build in this shell only</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- The GIL will be removed from Python in its next big release (3.13), but until then you can only run one Python -->
+<!-- thread at a time. -->
+<p>Python has several threading libraries. For example, <code>threading</code> library provides a function <code>Thread()</code> to launch new threads. Here is a <a href="./files/sum.py" target="_blank">full example of the slow series calculation</a> that instead uses <code>ThreadPoolExecutor()</code> function from <code>concurrent</code> library. If you run it with v3.12 or earlier, you will get about the same runtime independently of the number of threads, as – due to the GIL – these threads will be taking turns running. With a free-threaded Python 3.13 build, you will see better runtimes with additional threads, provided you have the CPU cores to run all threads in parallel:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> sum.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="output"><code>running with 1 threads over [(1, 100000000)]
+Time in seconds: 13.747
+sum = 13.277605949858103</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> sum.py <span class="at">--ntasks</span><span class="op">=</span>4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="output"><code>running with 4 threads over [(1, 25000000), (25000001, 50000000), (50000001, 75000000), (75000001, 100000000)]
+Time in seconds: 5.831
+sum = 13.277605949854326</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> sum.py <span class="at">--ntasks</span><span class="op">=</span>8</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="output"><code>running with 8 threads over [(1, 12500000), (12500001, 25000000), (25000001, 37500000), (37500001, 50000000), (50000001, 62500000), (62500001, 75000000), (75000001, 87500000), (87500001, 100000000)]
+Time in seconds: 4.324
+sum = 13.277605949855293</code></pre>
+<p>Note that the free-threaded build has some additional overhead when executing Python code compared to the default GIL-enabled build. In 3.13, this overhead is ~40%.</p>
+<section id="numexpr" class="level3">
+<h3 class="anchored" data-anchor-id="numexpr">NumExpr</h3>
+<p>Alternatively, you can do multithreading in Python via 3rd-party libraries that were written in other languages in which there is no GIL. One such famous library is NumExpr which is essentially a compiler for NumPy operations. It takes its input NumPy expression as a string and can run it with multiple threads.</p>
+<ul>
+<li>supported operators: - + - * / % &lt;&lt; &gt;&gt; &lt; &lt;= == != &gt;= &gt; &amp; | ~ **</li>
+<li>supported functions: where, sin, cos, tan, arcsin, arccos arctan, arctan2, sinh, cosh, tanh, arcsinh, arccosh arctanh, log, log10, log1p, exp, expm1, sqrt, abs, conj, real, imag, complex, contains</li>
+<li>supported reductions: sum, product</li>
+<li>supported data types: 8-bit boolean, 32-bit signed integer (int or int32), 64-bit signed integer (long or int64), 32-bit single-precision floating point number (float or float32), 64-bit double-precision floating point number (double or float64), 2x64-bit double-precision complex number (complex or complex128), raw string of bytes</li>
+</ul>
+<p>Here is a very simple NumPy example, timing only the calculation itself:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100_000_000</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.random.rand(n)</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.sin(<span class="dv">2</span><span class="op">*</span>np.pi<span class="op">*</span>a)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> np.cos(<span class="dv">2</span><span class="op">*</span>np.pi<span class="op">*</span>a)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a,b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>I get the average runtime of 2.04s. Here is how you would implement this with NumExpr:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, numexpr <span class="im">as</span> ne</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100_000_000</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.random.rand(n)</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>prev <span class="op">=</span> ne.set_num_threads(<span class="dv">1</span>)   <span class="co"># specify the number of threads, returns the previous setting</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(prev)                    <span class="co"># on first use tries to grab all cores</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>twoPi <span class="op">=</span> <span class="dv">2</span><span class="op">*</span>np.pi</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ne.evaluate(<span class="st">'sin(twoPi*a)**2 + cos(twoPi*a)**2'</span>)</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a,b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Average time:</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>ncores</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>wallclock runtime (sec)</td>
+<td>1.738</td>
+<td>0.898</td>
+<td>0.478</td>
+<td>0.305</td>
+</tr>
+</tbody>
+</table>
+<!-- How it works: https://numexpr.readthedocs.io/en/latest/intro.html -->
+<!-- 1. The expression is first compiled using Python's `compile` function (must be a valid Python expression). -->
+<!-- 1.  -->
+<p>How would we implement the slow series with NumExpr? We need a mechanism to check if a substring is present in a string:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, numexpr <span class="im">as</span> ne</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="st">b'hi'</span>, <span class="st">b'there'</span>])   <span class="co"># an array of byte strings (stored as an array of ASCII codes)</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>x.dtype     <span class="co"># each element is a 5-element string</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>x.nbytes    <span class="co"># 10 bytes in total, i.e. 1 byte per ASCII character</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>ne.evaluate(<span class="st">"contains(x, b'hi')"</span>)   <span class="co"># returns array([True, False])</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>ne.evaluate(<span class="st">"contains(x, b'h')"</span>)    <span class="co"># returns array([True, True])</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>ne.evaluate(<span class="st">"~contains(x, b'h')"</span>)   <span class="co"># not contains =&gt; returns array([False, False])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can use NumExpr to parallelize checking for substrings (store this as <code>slow3.py</code>):</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, numexpr <span class="im">as</span> ne</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span>                        <span class="co"># later set to 100_000_000</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>prev <span class="op">=</span> ne.set_num_threads(<span class="dv">1</span>)   <span class="co"># specify the number of threads</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> np.arange(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>)           <span class="co"># array of integers</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>j <span class="op">=</span> i.astype(np.bytes_)        <span class="co"># convert to byte strings</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> ne.evaluate(<span class="st">"~contains(j, '9')"</span>)   <span class="co"># parallel part; returns an array of True/False</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>nonZeroTerms <span class="op">=</span> i[mask]</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>inverse <span class="op">=</span> np.vectorize(<span class="kw">lambda</span> x: <span class="fl">1.0</span><span class="op">/</span>x)</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="bu">sum</span>(inverse(nonZeroTerms))</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here are the average (over three runs) times:</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>ncores</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+</tr>
+<tr class="even">
+<td>wallclock runtime (sec)</td>
+<td>18.427</td>
+<td>17.375</td>
+<td>17.029</td>
+</tr>
+</tbody>
+</table>
+<p>Clearly, we are bottlenecked by the serial part of the code. Let’s use another NumExpr call to evaluate <code>1.0/x</code> – store this as updated <code>slow3.py</code>:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> inverse <span class="op">=</span> np.vectorize(<span class="kw">lambda</span> x: <span class="fl">1.0</span><span class="op">/</span>x)</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> total <span class="op">=</span> <span class="bu">sum</span>(inverse(nonZeroTerms))</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="op">---</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> total <span class="op">=</span> np.<span class="bu">sum</span>(ne.evaluate(<span class="st">"1.0/nonZeroTerms"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here are the improved times:</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>ncores</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>wallclock runtime (sec)</td>
+<td>12.094</td>
+<td>11.304</td>
+<td>10.965</td>
+<td>10.83</td>
+</tr>
+</tbody>
+</table>
+<p>Obviously, we still have some bottleneck(s): look at the scaling, and recall the original serial runtime 6.625s on which we are trying to improve. How do we find these? Let’s use a profiler!</p>
+<!-- NumExpr for threaded parallelization of certain numpy expressions; show examples; still slow for slow series -->
+<!-- - https://stackoverflow.com/questions/64488923/usage-of-numexpr-contains-function -->
+</section>
+</section>
+<section id="profiling-and-performance-tuning" class="level2">
+<h2 class="anchored" data-anchor-id="profiling-and-performance-tuning">Profiling and performance tuning</h2>
+<!-- Intro to Memory Profiling in Python https://www.kdnuggets.com/introduction-to-memory-profiling-in-python -->
+<p>Since we are talking about bottlenecks, now is a good time to look into profilers. There are several good open-source profilers for Python codes, e.g.&nbsp;<code>cProfile</code>, <code>line_profiler</code>, <code>Scalene</code>, <code>Pyinstrument</code>, Linux’s <code>perf</code> profiler, and few others.</p>
+<!-- - `cProfile` to check performance by function -->
+<!-- - `line_profiler` and `Scalene` to check performance line-by-line -->
+<!-- - `Pyinstrument` is a Python profiler -->
+<p>In our last code we had a sequential workflow with multiple lines, so let’s measure its performance line by line using <code>Scalene</code> profiler. It tracks both CPU and memory usage (and more recently GPU), it is fast and very easy to use:</p>
+<!-- https://pypi.org/project/scalene/0.9.15 -->
+<div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="ex">scalene</span> slow3.py         <span class="co"># on your own computer, will open result in a browser</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">scalene</span> <span class="at">--cli</span> slow3.py   <span class="co"># on a remote system</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<blockquote class="blockquote">
+<p>Note: to run <code>scalene --cli slow3.py</code> on the training cluster, you might need more memory, so I found it useful to request <code>--mem-per-cpu=7200</code>.</p>
+</blockquote>
+<p>If running on your computer, this will open the result in a browser:</p>
+<p><img src="./fig/scalene.png" class="img-fluid"></p>
+<p>As you can see, our actual computing is quite fast! ~65% of the time is taken by the line initializing an array of byte strings <code>j = i.astype(np.bytes_)</code>, and the second biggest offender is initializing an array of integers.</p>
+<p>If we could find a way to implement this initialization in NumExpr, we could vastly improve our code’s performance. I have not found a way to do this quickly and elegantly in NumExpr (very marginal improvement with <code>j = i.astype(dtype='S9')</code>), but perhaps there is a solution?</p>
+<p>I will leave it as a take-home exercise, and please let me know if you find a solution!</p>
+</section>
+<section id="multiprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="multiprocessing">Multiprocessing</h2>
+<!-- Super-fast Python: Multi-processing https://santhalakshminarayana.github.io/blog/super-fast-python-multi-processing -->
+<p>With multiprocessing you can launch multiple processes and allocate each process to a separate CPU core to run in parallel. Each process will have its own interpreter with its own GIL and memory space, and – unlike with multithreading – they can all run at the same time in parallel.</p>
+<p>Python has the <code>multiprocessing</code> module as part of its Standard Library. Unfortunately, it has some limitations: (1) it only accepts certain Python functions, and (2) it cannot handle a lot of different types of Python objects. This is due to the way Python serializes (packs) data and sends it to the other processes.</p>
+<p>Fortunately, there is a fork of the <code>multiprocessing</code> module called <code>multiprocess</code> (https://pypi.org/project/multiprocess) that solves most of these problems by using a different serialization mechanism. The way you use it is identical to <code>multiprocessing</code>, so it should be straightforward to convert your code between the two.</p>
+<p>Consider Python’s serial <code>map()</code> function:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(<span class="bu">map</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="bu">map</span>(<span class="kw">lambda</span> x: x<span class="op">**</span><span class="dv">2</span>, [<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>])</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can write a Python function to sleep for 1 second, and run it 10 times with serial <code>map()</code>:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="bu">list</span>(<span class="bu">map</span>(<span class="kw">lambda</span> x: time.sleep(<span class="dv">1</span>), <span class="bu">range</span>(<span class="dv">10</span>)))   <span class="co"># use 0, 1, ..., 9 as arguments to the lambda function</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time.time()</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This takes 10.045s as expected.</p>
+<p>At this point we need to restart our job on 4 cores:</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s parallelize it with <code>multiprocess</code>, creating a pool of workers and replacing serial <code>map()</code> with parallel <code>pool.map()</code>:</p>
+<blockquote class="blockquote">
+<p>Note: serial <code>map()</code> returns an iterable, whereas parallel <code>pool.map()</code> already returns a list &nbsp;⇒&nbsp; no need to convert it to a list.</p>
+</blockquote>
+<div class="sourceCode" id="cb44"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> multiprocess <span class="im">import</span> Pool</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>ncores <span class="op">=</span> <span class="dv">4</span>            <span class="co"># set it to the actual number of cores</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Running on"</span>, ncores, <span class="st">"cores"</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>pool <span class="op">=</span> Pool(ncores)   <span class="co"># create a pool of workers</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time.time()</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> pool.<span class="bu">map</span>(<span class="kw">lambda</span> x: time.sleep(<span class="dv">1</span>), <span class="bu">range</span>(<span class="dv">10</span>))   <span class="co"># use 0, 1, ..., 9 as arguments to the lambda function</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>pool.close()          <span class="co"># turn off your parallel workers</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time.time()</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- <br>&nbsp;<br> -->
+<!-- ![](/fig/pause.png) -->
+<!-- <br>&nbsp;<br> -->
+<ol type="1">
+<li>On 4 cores this takes 3.005 seconds: running batches of 4 + 4 + 2 calls, i.e.&nbsp;in the 1st second we run four <code>sleep(1)</code> calls in parallel, in the 2nd second we run another set of four <code>sleep(1)</code> calls, and the remaining two calls run during the 3rd second.</li>
+<li>On 8 cores this takes 2.007 seconds: running batches of 8+2 calls.</li>
+<li>On 1 core it takes 10.013 seconds.</li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We are not doing real calculations here, just waiting for 1 wallclock time second in each call. If you attempt to run multiple processes (e.g.&nbsp;<code>ncores = 4</code> in the code above) on 1 physical core, they will take turns running at the same time, but they will compare their time against the wallclock time (not CPU time), and all of them will finish running as if you had 4 physical cores.</p>
+</div>
+</div>
+<p>How do we parallelize the slow series with parallel <code>map()</code>? One idea is to create a function to process each of the <span class="math inline">\(10^8\)</span> terms and use <code>map()</code> to apply it to each term. Here is the <strong>serial version</strong> of this code:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100_000_000</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> combined(k):</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"9"</span> <span class="kw">in</span> <span class="bu">str</span>(k):</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">1.0</span><span class="op">/</span>k</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="bu">sum</span>(<span class="bu">map</span>(combined, <span class="bu">range</span>(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>)))   <span class="co"># use 1,...,n as arguments to `combined` function</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This takes 9.403 seconds.</p>
+<p>With <code>multiprocess</code> we would be inclined to use <code>sum(pool.map(combined, range(1,n+1))))</code>. Unfortunately, <code>pool.map()</code> returns a list, and with <span class="math inline">\(10^8\)</span> input integers it will return a <span class="math inline">\(10^8\)</span>-element list, processing and summing which will take a long time … (85 seconds in my tests). Simply put, lists perform poorly in Python.</p>
+<p>How do we speed it up?</p>
+<p><strong>Idea</strong>: Break down the problem into <code>ncores</code> partial sums, and do it each of them on a separate core.<br>
+<strong>Hint</strong>: Here is how this approach would work on two cores (not the full code):</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> partial(interval):</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">sum</span>(<span class="bu">map</span>(combined, <span class="bu">range</span>(interval[<span class="dv">0</span>],interval[<span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>)))</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>pool <span class="op">=</span> Pool(<span class="dv">2</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> pool.<span class="bu">map</span>(partial, [(<span class="dv">1</span>, n<span class="op">//</span><span class="dv">2</span><span class="op">-</span><span class="dv">1</span>), (n<span class="op">//</span><span class="dv">2</span>,n)])</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sum</span>(total))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 2
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Complete and run this code on two cores. Add timing.</p>
+</div>
+</div>
+</div>
+<!-- Solution: -->
+<!-- ```py -->
+<!-- from time import time -->
+<!-- from multiprocess import Pool -->
+<!-- n = 100_000_000 -->
+<!-- def combined(k): -->
+<!--     if "9" in str(k): -->
+<!--         return 0.0 -->
+<!--     else: -->
+<!--         return 1.0/k -->
+<!-- def partial(interval): -->
+<!--     return sum(map(combined, range(interval[0],interval[1]+1))) -->
+<!-- start = time() -->
+<!-- pool = Pool(2) -->
+<!-- total = pool.map(partial, [(1, n//2-1), (n//2,n)]) -->
+<!-- pool.close()   # turn off your parallel workers -->
+<!-- end = time() -->
+<!-- print("Time in seconds:", round(end-start,3))   # 1.487 1.471 1.555 -->
+<!-- print(sum(total)) -->
+<!-- ``` -->
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 3
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Write a scalable version of this code and run it on an arbitrary number of cores (up to the maximum number of cores you can use). Use the following strategy to divide the workload:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>ncores <span class="op">=</span> ...</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>pool <span class="op">=</span> Pool(ncores)</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> n <span class="op">//</span> ncores</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>intervals <span class="op">=</span> [(i<span class="op">*</span>size<span class="op">+</span><span class="dv">1</span>,(i<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>size) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ncores)]</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> n <span class="op">&gt;</span> intervals[<span class="op">-</span><span class="dv">1</span>][<span class="dv">1</span>]:</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    intervals[<span class="op">-</span><span class="dv">1</span>] <span class="op">=</span> (intervals[<span class="op">-</span><span class="dv">1</span>][<span class="dv">0</span>], n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+<!-- Solution: -->
+<!-- ```py -->
+<!-- from time import time -->
+<!-- import psutil -->
+<!-- from multiprocess import Pool -->
+<!-- n = 100_000_000 -->
+<!-- def combined(k): -->
+<!--     if "9" in str(k): -->
+<!--         return 0.0 -->
+<!--     else: -->
+<!--         return 1.0/k -->
+<!-- def partial(interval): -->
+<!--     return sum(map(combined, range(interval[0],interval[1]+1))) -->
+<!-- start = time() -->
+<!-- ncores = 1   # psutil.cpu_count(logical=False) -->
+<!-- pool = Pool(ncores) -->
+<!-- size = n//ncores -->
+<!-- intervals = [(i*size+1,(i+1)*size) for i in range(ncores)] -->
+<!-- if n > intervals[-1][1]: -->
+<!--     intervals[-1] = (intervals[-1][0], n) -->
+<!-- total = pool.map(partial, intervals) -->
+<!-- pool.close()   # turn off your parallel workers -->
+<!-- end = time() -->
+<!-- print("Time in seconds:", round(end-start,3))   # 1.487 1.471 1.555 -->
+<!-- print(sum(total)) -->
+<!-- ``` -->
+<p>Here is what I get for timing on <strong><em>my laptop</em></strong> and on <strong><em>the training cluster</em></strong>:</p>
+<table class="caption-top table">
+<tbody>
+<tr class="odd">
+<td>ncores</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr class="even">
+<td>laptop wallclock runtime (sec)</td>
+<td>8.294</td>
+<td>4.324</td>
+<td>2.200</td>
+<td>1.408</td>
+</tr>
+<tr class="odd">
+<td>–ntasks=4 cluster runtime (sec)</td>
+<td>17.557</td>
+<td>8.780</td>
+<td>4.499</td>
+<td>4.508</td>
+</tr>
+</tbody>
+</table>
+<p>Our parallel scaling looks great, but in terms of absolute numbers we are still lagging behind the same problem implemented with a serial code in compiled languages …</p>
+</section>
+<section id="numba-jit-compiler" class="level2">
+<h2 class="anchored" data-anchor-id="numba-jit-compiler">Numba JIT compiler</h2>
+<!-- let's try pre-compiling -->
+<!-- vaqt7exjlllvls3.py - no difference ... -->
+<p>Hopefully, I have convinced you that – in order to get decent performance out of your Python code – you need to compile it with a proper compiler (and not just NumExpr). There are several Python compilers worth mentioning here:</p>
+<ol type="1">
+<li>We have already looked at NumExpr (only takes simple expressions).</li>
+<li>Numba open-source just-in-time compiler that uses LLVM underneath, can also parallelize your code for multi-core CPUs and GPUs; often requires only minor code changes.</li>
+<li>Cython open-source compiled language is a superset of Python: Python-like code with Cython-specific extensions for C types.</li>
+<li>Codon is research project from MIT: not endorsing it, but it consistently comes up high in my search results, source code https://github.com/exaloop/codon and the related article https://bit.ly/3uUvTmd.</li>
+<li>New proprietary programming language https://www.modular.com/max/mojo is a superset of Python, with somewhat misleading (68,000X) speedup claims on their front page, documentation/examples/workshops at https://github.com/modularml/mojo.</li>
+</ol>
+<!-- numba, using a JIT compiler (https://numba.readthedocs.io/en/stable/glossary.html#term-nopython-mode) -->
+<!-- <\!-- also https://github.com/numba/llvmlite -\-> -->
+<p>Here we’ll take a look at Numba: - compiles selected blocks of Python code to machine code, - can process multi-dimensional arrays, - can do multithreading on multiple CPU cores (and we’ll later learn how to use it with multiprocessing), - can use GPUs (not covered here): you’d be writing CUDA kernels.</p>
+<p>Let’s compute the following sum:</p>
+<!-- $$\sum_{i=1}^\infty\frac{\cos(i\theta)}{i} = -\ln\left(2\sin\frac{\theta}{2}\right)~~~~~{\rm for}~\theta=1. $$ -->
+<p><span class="math display">\[\sum_{i=1}^\infty\frac{\cos(i)}{i} = -\ln\left(2\sin0.5\right) \]</span></p>
+<p>Here is the familiar serial implementation (let’s save it as <code>trig.py</code>):</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> cos, sin, log</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trig(n):</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>        total <span class="op">+=</span> cos(i)<span class="op">/</span>i</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> trig(<span class="dv">100_000_000</span>)</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"approximate / exact ="</span>, <span class="op">-</span>total<span class="op">/</span>log(<span class="dv">2</span><span class="op">*</span>sin(<span class="fl">0.5</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Our runtime is 7.493 seconds.</p>
+<p>Let’s add the following Python decorator just before our function definition:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> jit</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="at">@jit</span>(nopython<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The first time you use Numba in a code, it might be slow, but all subsequent uses will be fast: needs time to compile the code. Our runtime went down to 0.693 seconds – that’s more than a 10X speedup!</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On the training cluster I see ~5X speedup.</p>
+</div>
+</div>
+<p>There are two compilation modes in Numba: 1. <strong>object mode</strong>: generates a more stable, slower code 1. <strong>nopython mode</strong>: generates much faster code that requires knowledge of all types, has limitations that can force Numba to fall back to the object mode; the flag <code>nopython=True</code> enforces faster mode and raises an error in case of problems</p>
+<section id="parallelizing" class="level3">
+<h3 class="anchored" data-anchor-id="parallelizing">Parallelizing</h3>
+<p>Let’s add <code>parallel=True</code> to our decorator and change <code>range(1,n+1)</code> to <code>prange(1,n+1)</code> - it’ll be subdividing loops into pieces to pass them to <em>all available</em> CPU cores via <em>multithreading</em>. On my 8-core laptop the runtime goes down to 0.341 seconds – a further ~2X improvement … This is not so impressive …</p>
+<p>It turns out there is quite a bit of overhead with subdividing loops, starting/stopping threads and orchestrating everything. If instead of <span class="math inline">\(10^8\)</span> we consider <span class="math inline">\(10^{10}\)</span> terms, a single thread processes this in 57.890 seconds, whereas 8 threads take 10.125 seconds – factor of 5.7X speedup!</p>
+<!-- still not as good as compiled languages -->
+</section>
+<section id="back-to-the-slow-series-1" class="level3">
+<h3 class="anchored" data-anchor-id="back-to-the-slow-series-1">Back to the slow series</h3>
+<p>Let’s apply Numba to our slow series problem. Take the very first version of the code (6.625 seconds):</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> slow(n: <span class="bu">int</span>):</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="st">"9"</span> <span class="kw">in</span> <span class="bu">str</span>(i):</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>            total <span class="op">+=</span> <span class="fl">1.0</span> <span class="op">/</span> i</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> slow(<span class="dv">100_000_000</span>)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and add <code>from numba import jit</code> and <code>@jit(nopython=True)</code> to it. Turns out, when run in serial, our time improves only by ~10-20%. There is some compilation overhead, so for bigger problems you could gain few additional %.</p>
+<p>As you can see, Numba is not a silver bullet when it comes to speeding up Python. It works great for many numerical problems including the trigonometric series above, but for problems with high-level Python abstractions – in our case the specific line <code>if not "9" in str(i)</code> – Numba does not perform very well.</p>
+</section>
+<section id="fast-implementation" class="level3">
+<h3 class="anchored" data-anchor-id="fast-implementation">Fast implementation</h3>
+<p>It turns out with Numba there <em>is</em> a way to make the slow series code almost as fast as with the compiled languages. Check out this implementation:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> jit</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="at">@jit</span>(nopython<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> combined(k):</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>    base, k0 <span class="op">=</span> <span class="dv">10</span>, k</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="dv">9</span><span class="op">//</span>base <span class="op">&gt;</span> <span class="dv">0</span>: base <span class="op">*=</span> <span class="dv">10</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> k <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> k<span class="op">%</span>base <span class="op">==</span> <span class="dv">9</span>: <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>        k <span class="op">=</span> k<span class="op">//</span><span class="dv">10</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="fl">1.0</span><span class="op">/</span>k0</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="at">@jit</span>(nopython<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> slow(n):</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>    total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,n<span class="op">+</span><span class="dv">1</span>):</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>        total <span class="op">+=</span> combined(i)</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> slow(<span class="dv">100_000_000</span>)</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It finishes in 0.601 seconds, i.e.&nbsp;~10X faster than the first Numba implementation – any ideas why?</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 4
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Parallelize this code with multiple threads and time it on several cores – does your time improve? (it should somewhat) Let’s fill this table together:<br>
+ncores           1      2      4<br>
+wallclock runtime (sec)</p>
+</div>
+</div>
+</div>
+<p>In Part 2 we will combine Numba with multiprocessing via Ray tasks – this approach can scale beyond a single node.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 5
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>We covered a lot of material in this section! Let’s summarize the most important points. Which tool would you use, in what situation, and why?<br>
+- which of today’s tools let you do multithreading?<br>
+- which of today’s tools let you do multiprocessing?<br>
+- which Python compilers did we try?</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Question 6
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Which tool would you use for your research problem and why? Are you ready to parallelize your workflow?</p>
+</div>
+</div>
+</div>
+<!-- **Bart Oldeman**: probably depends on the audience as well. AI/ML/data science crowd wants Ray/Dask/Spark, but -->
+<!-- mpi4py+numpy can be useful for more pure numerics. Threads are complicated with the GIL..., at least until -->
+<!-- Python 3.13 https://peps.python.org/pep-0703 -->
+<!-- **Ramses van Zon**: parallel python is still a patchwork of different approaches. This is what I tend to teach -->
+<!-- in a ~3h session https://scinet.courses/1318 . Unfortunately, I just can't even fit in multiprocessing or dask -->
+<!-- in that time. -->
+<!-- **Lucas Nogueira**: Dask and Spark are both great as parallel drop-in replacements for pandas. For general -->
+<!-- purpose computing, Spark is great if you don't mind functional programming. Dask has more options in terms of -->
+<!-- style as you probably already know. And then there's Ray, which I find the most flexible of the bunch for -->
+<!-- general purpose computing, but is very different in terms of programming style. Takes some getting used to. It -->
+<!-- also comes with a ton of built-in APIs for AI/ML stuff: https://www.ray.io . There's also Mars which has -->
+<!-- distributed implementations of a good portion of numpy's functionalities https://mars-project.readthedocs.io -->
+<!-- **Chris Want**: I just do Dask ... makes sense when the course is called "Parallel Python with Dask" :) I like -->
+<!-- Dask in theory, in practice I think it's so-so. I guess it depends on what features you're using. Streaming to -->
+<!-- disk to conserve memory can be annoying, especially when there is a lot of memory to spare. -->
+<!-- Advanced Python Tutorials https://pwskills.com/blog/advanced-python-tutorials -->
+<!-- Entering into the World of Concurrency with Python https://www.freecodecamp.org/news/concurrency-in-python -->
+<!-- What Is the Python Global Interpreter Lock (GIL) ~/training/pythonHPC/realpython-gil.jpg -->
+<!-- SC examples of parallel Python https://www.hpc-carpentry.org/hpc-python/06-parallel -->
+<!-- webpage2image https://www.web2pdfconvert.com/to/img -->
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
