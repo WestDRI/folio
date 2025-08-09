@@ -10,12 +10,13 @@ The basic concept of parallel computing is simple to understand: we **divide our
 executed at the same time**, so that we finish the job in a fraction of the time that it would have taken if
 the tasks are executed one by one.
 
-> **Task** is a unit of computation that can run in parallel with other tasks. In this course, we'll be using
-> a more general term "task" that -- depending on the context -- could mean either a Unix process (MPI task or
-> rank) or a Unix thread. Consequently, parallel execution in Chapel could mean either multiprocessing and
-> multithreading, or both (hybrid parallelism). In Chapel in many cases this distinction is hidden from the
-> programmer.
-{.note}
+::: {.callout-note}
+**Task** is a unit of computation that can run in parallel with other tasks. In this course, we'll be using
+a more general term "task" that -- depending on the context -- could mean either a Unix process (MPI task or
+rank) or a Unix thread. Consequently, parallel execution in Chapel could mean either multiprocessing and
+multithreading, or both (hybrid parallelism). In Chapel in many cases this distinction is hidden from the
+programmer.
+:::
 
 Implementing parallel computations is not always easy. How easy it is to parallelize a code really depends on
 the underlying problem you are trying to solve. This can result in:
@@ -125,12 +126,13 @@ Of course, we can use both, the initial value and the type, when declaring a var
 const c: complex = 0.355 + 0.355i;   // Julia set constant
 ```
 
-> Note that these two notations are different, but produce the same result in the end:
-> ```chpl
-> var a: real = 10;   // we specify both the type and the value
-> var a = 10: real;   // we specify only the value (integer 10 converted to real)
-> ```
-{.note}
+::: {.callout-note}
+The following two notations are different, but produce the same result in the end:
+```chpl
+var a: real = 10;   // we specify both the type and the value
+var a = 10: real;   // we specify only the value (integer 10 converted to real)
+```
+:::
 
 Let's print our configuration after we set all parameters:
 

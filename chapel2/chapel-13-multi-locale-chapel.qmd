@@ -9,21 +9,22 @@ compute node, making use of the shared memory space and accelerating computation
 threads on individual cores. Chapel codes can also run on multiple nodes on a compute cluster. In Chapel this
 is referred to as **multi-locale** execution.
 
-> ## Docker side note
->
-> If you work inside a Chapel Docker container, e.g., `chapel/chapel`, the container environment
-> simulates a multi-locale cluster, so you would compile and launch multi-locale Chapel codes directly by
-> specifying the number of locales with `-nl` flag:
->
-> ```sh
-> $ chpl --fast mycode.chpl -o mybinary
-> $ ./mybinary -nl 3
-> ```
->
-> Inside the Docker container on multiple locales your code will not run any faster than on a single
-> locale, since you are emulating a virtual cluster, and all tasks run on the same physical node. To
-> achieve actual speedup, you need to run your parallel multi-locale Chapel code on a real HPC cluster.
-{.note}
+::: {.callout-note}
+## Docker side note
+
+If you work inside a Chapel Docker container, e.g., `chapel/chapel`, the container environment
+simulates a multi-locale cluster, so you would compile and launch multi-locale Chapel codes directly by
+specifying the number of locales with `-nl` flag:
+
+```sh
+$ chpl --fast mycode.chpl -o mybinary
+$ ./mybinary -nl 3
+```
+
+Inside the Docker container on multiple locales your code will not run any faster than on a single
+locale, since you are emulating a virtual cluster, and all tasks run on the same physical node. To
+achieve actual speedup, you need to run your parallel multi-locale Chapel code on a real HPC cluster.
+:::
 
 On an HPC cluster you would need to submit either an interactive or a batch job asking for several nodes and
 then run a multi-locale Chapel code inside that job. In practice, the exact commands to run multi-locale

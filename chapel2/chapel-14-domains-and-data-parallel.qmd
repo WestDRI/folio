@@ -55,9 +55,10 @@ us print out:
 1. `here.id` = the ID of the locale on which the code is running (should be 0)
 1. `here.maxTaskPar` = the number of available cores (max parallelism with 1 task/core) (should be 3)
 
-> We already saw some of these variables / functions: `numLocales`, `Locales`, `here.id`, `here.name`,
-> `here.numPUs()`, `here.physicalMemory()`, `here.maxTaskPar`.
-{.note}
+::: {.callout-note}
+We already saw some of these variables / functions: `numLocales`, `Locales`, `here.id`, `here.name`,
+`here.numPUs()`, `here.physicalMemory()`, `here.maxTaskPar`.
+:::
 
 ```chpl
 config const n = 8;
@@ -195,18 +196,19 @@ Running our code on 3 locales, with 2 cores per locale, produces the following o
 2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2
 ```
 
-> If we were to run it on 4 locales, with 2 cores per locale, we might see something like this:
-> ```txt
-> 0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
-> 0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
-> 0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
-> 0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
-> 2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
-> 2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
-> 2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
-> 2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
-> ```
-{.note}
+::: {.callout-note}
+If we were to run it on 4 locales, with 2 cores per locale, we might see something like this:
+```txt
+0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
+0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
+0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
+0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
+2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
+2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
+2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
+2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2
+```
+:::
 
 As we see, the domain `distributedMesh` (along with the string array `A` on top of it) was decomposed into 3x1
 blocks stored on the three nodes, respectively. Equally important, for each element `a` of the array, the line
@@ -298,18 +300,19 @@ $ cat solution.out
 1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2
 ```
 
-> With 4 locales, we might see something like this:
-> ```txt
-> 0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
-> 2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
-> 0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
-> 2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
-> 0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
-> 2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
-> 0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
-> 2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
-> ```
-{.note}
+::: {.callout-note}
+With 4 locales, we might see something like this:
+```txt
+0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
+2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
+0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
+2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
+0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
+2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
+0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__
+2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__
+```
+:::
 
 As the name `CyclicDist` suggests, the domain was mapped to locales in a cyclic, round-robin pattern. We
 can also print the range of indices for each sub-domain by adding the following to our code:
