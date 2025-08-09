@@ -380,6 +380,204 @@
     ]
   },
   {
+    "objectID": "bash1/bash-05-file-transfer.html",
+    "href": "bash1/bash-05-file-transfer.html",
+    "title": "File transfer",
+    "section": "",
+    "text": "To copy a single file to/from the cluster, we can use scp:\n[local]$ scp /path/to/local/file.txt userXX@sfuschool.c3.ca:/path/on/remote/computer\n[local]$ scp local-file.txt userXX@sfuschool.c3.ca:   # will put into your remote home\n[local]$ scp userXX@sfuschool.c3.ca:/path/on/remote/computer/file.txt /path/to/local/\nTo recursively copy a directory, we just add the -r (recursive) flag:\n[local]$ scp -r some-local-folder/ userXX@sfuschool.c3.ca:target-directory/\nYou can also use wildcards to transfer multiple files:\n[local]$ scp userXX@sfuschool.c3.ca:start*.sh .\nWith MobaXterm in Windows, you can actually copy files by dragging them between your desktop and the left pane when you are logged into the cluster (no need to type any commands), or you can click the download/upload buttons.\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Transferring files to/from remote computers"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-05-file-transfer.html#transferring-files-and-folders-with-scp",
+    "href": "bash1/bash-05-file-transfer.html#transferring-files-and-folders-with-scp",
+    "title": "File transfer",
+    "section": "",
+    "text": "To copy a single file to/from the cluster, we can use scp:\n[local]$ scp /path/to/local/file.txt userXX@sfuschool.c3.ca:/path/on/remote/computer\n[local]$ scp local-file.txt userXX@sfuschool.c3.ca:   # will put into your remote home\n[local]$ scp userXX@sfuschool.c3.ca:/path/on/remote/computer/file.txt /path/to/local/\nTo recursively copy a directory, we just add the -r (recursive) flag:\n[local]$ scp -r some-local-folder/ userXX@sfuschool.c3.ca:target-directory/\nYou can also use wildcards to transfer multiple files:\n[local]$ scp userXX@sfuschool.c3.ca:start*.sh .\nWith MobaXterm in Windows, you can actually copy files by dragging them between your desktop and the left pane when you are logged into the cluster (no need to type any commands), or you can click the download/upload buttons.\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Transferring files to/from remote computers"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-05-file-transfer.html#transferring-files-interactively-with-sftp",
+    "href": "bash1/bash-05-file-transfer.html#transferring-files-interactively-with-sftp",
+    "title": "File transfer",
+    "section": "Transferring files interactively with sftp",
+    "text": "Transferring files interactively with sftp\nscp is useful, but what if we don’t know the exact location of what we want to transfer? Or perhaps we’re simply not sure which files we want to transfer yet. sftp is an interactive way of downloading and uploading files. Let’s connect to a cluster with sftp:\n[local]$ sftp userXX@sfuschool.c3.ca\nThis will start what appears to be a shell with the prompt sftp&gt;. However, we only have access to a limited number of commands. We can see which commands are available with help:\nsftp&gt; help\nAvailable commands:\nbye                                Quit sftp\ncd path                            Change remote directory to 'path'\nchgrp grp path                     Change group of file 'path' to 'grp'\nchmod mode path                    Change permissions of file 'path' to 'mode'\nchown own path                     Change owner of file 'path' to 'own'\ndf [-hi] [path]                    Display statistics for current directory or\n                                   filesystem containing 'path'\nexit                               Quit sftp\nget [-afPpRr] remote [local]       Download file\nreget [-fPpRr] remote [local]      Resume download file\nreput [-fPpRr] [local] remote      Resume upload file\nhelp                               Display this help text\nlcd path                           Change local directory to 'path'\nlls [ls-options [path]]            Display local directory listing\nlmkdir path                        Create local directory\nln [-s] oldpath newpath            Link remote file (-s for symlink)\nlpwd                               Print local working directory\nls [-1afhlnrSt] [path]             Display remote directory listing\n...\nNotice the presence of multiple commands that make mention of local and remote. We are actually browsing two filesystems at once, with two working directories!\nsftp&gt; pwd    # show our remote working directory\nsftp&gt; lpwd   # show our local working directory\nsftp&gt; ls     # show the contents of our remote directory\nsftp&gt; lls    # show the contents of our local directory\nsftp&gt; cd     # change the remote directory\nsftp&gt; lcd    # change the local directory\nsftp&gt; put localFile    # upload a file\nsftp&gt; get remoteFile   # download a file\nAnd we can recursively put/get files by just adding -r. Note that the directory needs to be present beforehand:\nsftp&gt; mkdir content\nsftp&gt; put -r content/\nTo quit, type exit or bye.\n\n\n\n\n\n\nExercise\n\n\n\nUsing one of the above methods, try transferring files to and from the cluster. For example, you can download bfiles.tar.gz to your laptop. Which method do you like best?\n\n\n\n\n\n\n\n\nNote on Windows line endings\n\n\n\n\nWhen you transfer files to from a Windows system to a Unix system (Mac, Linux, BSD, Solaris, etc.) this can cause problems. Windows encodes its files slightly different than Unix, and adds an extra character to every line. On a Unix system, every line in a file ends with a \\n (newline), whereas on Windows every line in a file ends with a \\r\\n (carriage return + newline). This causes problems sometimes.\nIn some bash implementations, you can identify if a file with Windows line endings with cat -A   filename. A file with Windows line endings will have ^M$ at the end of every line. A file with Unix line endings will have $ at the end of a line.\nThough most modern programming languages and software handle this correctly, in some rare instances you may run into an issue. The solution is to convert a file from Windows to Unix encoding with the command dos2unix filename. Conversely, to convert back to Windows format, you can run unix2dos filename.\n\n\n\n\n\n\n\n\n\nNote on syncing\n\n\n\nThere also a command rsync for synching two directories. It is super useful, especially for work in progress. For example, you can use it the download all the latest PNG images from your working directory on the cluster.\n\n\n\n\n\n\n\n\nQuestion scp and sftp\n\n\n\n\n\nCopy a file to/from the training cluster using either scp or sftp.\n\n\n\n\n\n\n\n\n\nQuestion rsync\n\n\n\n\n\nBring up the manual page on rsync, then use it to synchronize a directory from the training cluster.\n\n\n\n\n\n\n\n\n\nQuestion Multiple files\n\n\n\n\n\nWrite a command to scp multiple files with a single command so that scp asks you for password (and possible MFA) only once for all files, not once per file. Feel free to google this problem. If you have an Alliance account, try copying a set of files from the training cluster to Cedar (you will run into a problem):\nfor i in {1..5}; do\n    echo ${RANDOM}${RANDOM}${RANDOM} &gt; a$i.txt\ndone\nscp a*.txt username@cedar.alliancecan.ca:scratch\nHow many times does it ask for a password?\n\n\n\n\n\n\n\n\n\nQuestion ssh config file\n\n\n\n\n\nLet’s discuss remote system profiles in ~/.ssh/config. Consider this:\nHost &lt;name&gt;\n    HostName sfuschool.c3.ca\n    User userXX\n\nNote that in Windows you can create .ssh/config in C:\\Users\\username. If referencing this folder from Windows Subsystem for Linux, make sure to run chmod 600 ~\\.ssh\\* after creating the config file.\nAnother useful setting is IdentityFile private_ssh_key coupled with IdentitiesOnly yes (i.e. use only the provided key).",
+    "crumbs": [
+      "PART 1",
+      "Transferring files to/from remote computers"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-04-tar-gzip.html",
+    "href": "bash1/bash-04-tar-gzip.html",
+    "title": "Archiving and compressing",
+    "section": "",
+    "text": "In this section we will be working with a ZIP file that you can download and unpack with\n(alternative download link https://wgpages.netlify.app/files/bfiles.zip)\nUnlike an SSD or a hard drive on your laptop, the filesystem on HPC cluster was designed to store large files, ideally with parallel I/O. As a result, it handles any large number of small I/O requests (reads or writes) very poorly, sometimes bringing the I/O system to a halt. For this reason, we strongly recommend that users do not store many thousands of small files – instead you should pack them into a small number of large archives. This is where the archiving tool tar comes in handy.",
+    "crumbs": [
+      "PART 1",
+      "Archives and compression"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-04-tar-gzip.html#working-with-tar-and-gzipgunzip",
+    "href": "bash1/bash-04-tar-gzip.html#working-with-tar-and-gzipgunzip",
+    "title": "Archiving and compressing",
+    "section": "Working with tar and gzip/gunzip",
+    "text": "Working with tar and gzip/gunzip\nCovered topics: tar and g(un)zip.\nLet’s download some files in Windows’ ZIP format:\n$ wget http://bit.ly/bashfile -O bfiles.zip\n$ unzip bfiles.zip\n$ rm bfiles.zip\n$ ls\n$ ls data-shell\nZIP is a compression format from Windows, and it is not very popular in the Unix world. Let’s archive the directory data-shell using Unix’s native tar command:\n$ tar cvf bfiles.tar data-shell/\n$ gzip bfiles.tar\nYou can also create a gzipped TAR file in one step:\n$ rm bfiles.tar.gz\n$ tar cvfz bfiles.tar.gz data-shell/\nLet’s remove the directory and the original ZIP file (if still there), and extract directory from our new archive:\n$ /bin/rm -r data-shell/ bfiles.zip\n$ tar xvfz bfiles.tar.gz\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Archives and compression"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-04-tar-gzip.html#managing-many-files-with-disk-archiver-dar",
+    "href": "bash1/bash-04-tar-gzip.html#managing-many-files-with-disk-archiver-dar",
+    "title": "Archiving and compressing",
+    "section": "Managing many files with Disk ARchiver (DAR)",
+    "text": "Managing many files with Disk ARchiver (DAR)\ntar is by far the most widely used archiving tool on UNIX-like systems. Since it was originally designed for sequential write/read on magnetic tapes, it does not index data for random access to its contents. A number of 3rd-party tools can add indexing to tar. However, there is a modern version of tar called DAR (stands for Disk ARchiver) that has some nice features:\n\neach DAR archive includes an index for fast file list/restore,\nDAR supports full / differential / incremental backup,\nDAR has build-in compression on a file-by-file basis to make it more resilient against data corruption and to avoid compressing already compressed files such as video,\nDAR supports strong encryption,\nDAR can detect corruption in both headers and saved data and recover with minimal data loss,\n\nand so on. Learning DAR is not part of this course. In the future, if you want to know more about working with DAR, please watch our DAR webinar (scroll down to see it), or check our DAR documentation page.",
+    "crumbs": [
+      "PART 1",
+      "Archives and compression"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-10-text-manipulation.html",
+    "href": "bash1/bash-10-text-manipulation.html",
+    "title": "Text manipulation",
+    "section": "",
+    "text": "(This example was kindly provided by John Simpson.)\nIn this section we’ll use two tools for text manipulation: sed and tr. Our goal is to calculate the frequency of all dictionary words in the novel “The Invisible Man” by Herbert Wells (public domain). First, let’s apply our knowledge of grep to this text:\n$ cd /path/to/data-shell\n$ ls   # shows wellsInvisibleMan.txt\n$ wc wellsInvisibleMan.txt                          # number of lines, words, characters\n$ grep invisible wellsInvisibleMan.txt              # see the invisible man\n$ grep invisible wellsInvisibleMan.txt | wc -l      # returns 60; adding -w gives the same count\n$ grep -i invisible wellsInvisibleMan.txt | wc -l   # returns 176 (includes: invisible Invisible INVISIBLE)\nLet’s sidetrack for a second and see how we can use the “stream editor” sed:\n$ sed 's/[iI]nvisible/visible/g' wellsInvisibleMan.txt &gt; visible.txt   # make him visible\n$ cat wellsInvisibleMan.txt | sed 's/[iI]nvisible/visible/g' &gt; visible.txt   # this also works (standard input)\n$ grep -i invisible visible.txt   # see what was not converted\n$ man sed\nNow let’s remove punctuation from the original file using “tr” (translate) command:\n$ cat wellsInvisibleMan.txt | tr -d \"[:punct:]\" &gt; nopunct.txt    # tr only takes standard input\n$ tail wellsInvisibleMan.txt\n$ tail nopunct.txt\nNext, convert all upper case to lower case:\n$ cat nopunct.txt | tr '[:upper:]' '[:lower:]' &gt; lower.txt\n$ tail lower.txt\nNext, replace spaces with new lines:\n$ cat lower.txt | sed 's/ /\\'$'\\n/g' &gt; words.txt   # \\'$'\\n is a shortcut for a new line\n$ more words.txt\nNext, remove empty lines:\n$ sed '/^$/d' words.txt  &gt; compact.txt\nNext, sort the list alphabetically, count each word’s occurrence, and remove duplicate words:\n$ cat compact.txt | sort | uniq -c &gt; dictionary.txt\n$ more dictionary.txt\nNext, sort the list into most frequent words:\n$ cat dictionary.txt | sort -gr &gt; frequency.txt   # use 'man sort'\n$ more frequency.txt\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.\n\n\nQuick reference:\nsed 's/pattern1/pattern2/' filename    # replace pattern1 with pattern2, one per line\nsed 's/pattern1/pattern2/g' filename   # same but multiple per line\nsed 's|pattern1|pattern2|g' filename   # same\n\ncat wellsInvisibleMan.txt | tr -d \"[:punct:]\" &gt; nopunct.txt # remove punctuation; tr only takes standard input\ncat nopunct.txt | tr '[:upper:]' '[:lower:]' &gt; lower.txt    # convert all upper case to lower case\ncat lower.txt | sed 's/ /\\'$'\\n/g' &gt; words.txt              # replace spaces with new lines\nsed '/^$/d' words.txt  &gt; compact.txt                # remove empty lines\ncat compact.txt | sort | uniq -c &gt; dictionary.txt   # sort the list alphabetically, count each word's occurrence\ncat dictionary.txt | sort -gr &gt; frequency.txt       # sort the list into most frequent words\n\n\n\n\n\n\nQuestion 10.1\n\n\n\n\n\nCan you shorten our novel-manipulation workflow putting it into a single line using pipes?\n\n\n\n\n\n\n\n\n\nQuestion 10.2\n\n\n\n\n\nWrite a script that takes an English-language text file and prints the list of its 100 most common words, along with the word count in its dictionary. Hint: use the workflow we just studied. Next, convert this script into a bash function.",
+    "crumbs": [
+      "PART 2",
+      "Text manipulation"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-10-text-manipulation.html#text-manipulation",
+    "href": "bash1/bash-10-text-manipulation.html#text-manipulation",
+    "title": "Text manipulation",
+    "section": "",
+    "text": "(This example was kindly provided by John Simpson.)\nIn this section we’ll use two tools for text manipulation: sed and tr. Our goal is to calculate the frequency of all dictionary words in the novel “The Invisible Man” by Herbert Wells (public domain). First, let’s apply our knowledge of grep to this text:\n$ cd /path/to/data-shell\n$ ls   # shows wellsInvisibleMan.txt\n$ wc wellsInvisibleMan.txt                          # number of lines, words, characters\n$ grep invisible wellsInvisibleMan.txt              # see the invisible man\n$ grep invisible wellsInvisibleMan.txt | wc -l      # returns 60; adding -w gives the same count\n$ grep -i invisible wellsInvisibleMan.txt | wc -l   # returns 176 (includes: invisible Invisible INVISIBLE)\nLet’s sidetrack for a second and see how we can use the “stream editor” sed:\n$ sed 's/[iI]nvisible/visible/g' wellsInvisibleMan.txt &gt; visible.txt   # make him visible\n$ cat wellsInvisibleMan.txt | sed 's/[iI]nvisible/visible/g' &gt; visible.txt   # this also works (standard input)\n$ grep -i invisible visible.txt   # see what was not converted\n$ man sed\nNow let’s remove punctuation from the original file using “tr” (translate) command:\n$ cat wellsInvisibleMan.txt | tr -d \"[:punct:]\" &gt; nopunct.txt    # tr only takes standard input\n$ tail wellsInvisibleMan.txt\n$ tail nopunct.txt\nNext, convert all upper case to lower case:\n$ cat nopunct.txt | tr '[:upper:]' '[:lower:]' &gt; lower.txt\n$ tail lower.txt\nNext, replace spaces with new lines:\n$ cat lower.txt | sed 's/ /\\'$'\\n/g' &gt; words.txt   # \\'$'\\n is a shortcut for a new line\n$ more words.txt\nNext, remove empty lines:\n$ sed '/^$/d' words.txt  &gt; compact.txt\nNext, sort the list alphabetically, count each word’s occurrence, and remove duplicate words:\n$ cat compact.txt | sort | uniq -c &gt; dictionary.txt\n$ more dictionary.txt\nNext, sort the list into most frequent words:\n$ cat dictionary.txt | sort -gr &gt; frequency.txt   # use 'man sort'\n$ more frequency.txt\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.\n\n\nQuick reference:\nsed 's/pattern1/pattern2/' filename    # replace pattern1 with pattern2, one per line\nsed 's/pattern1/pattern2/g' filename   # same but multiple per line\nsed 's|pattern1|pattern2|g' filename   # same\n\ncat wellsInvisibleMan.txt | tr -d \"[:punct:]\" &gt; nopunct.txt # remove punctuation; tr only takes standard input\ncat nopunct.txt | tr '[:upper:]' '[:lower:]' &gt; lower.txt    # convert all upper case to lower case\ncat lower.txt | sed 's/ /\\'$'\\n/g' &gt; words.txt              # replace spaces with new lines\nsed '/^$/d' words.txt  &gt; compact.txt                # remove empty lines\ncat compact.txt | sort | uniq -c &gt; dictionary.txt   # sort the list alphabetically, count each word's occurrence\ncat dictionary.txt | sort -gr &gt; frequency.txt       # sort the list into most frequent words\n\n\n\n\n\n\nQuestion 10.1\n\n\n\n\n\nCan you shorten our novel-manipulation workflow putting it into a single line using pipes?\n\n\n\n\n\n\n\n\n\nQuestion 10.2\n\n\n\n\n\nWrite a script that takes an English-language text file and prints the list of its 100 most common words, along with the word count in its dictionary. Hint: use the workflow we just studied. Next, convert this script into a bash function.",
+    "crumbs": [
+      "PART 2",
+      "Text manipulation"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-10-text-manipulation.html#column-based-text-processing-with-awk-scripting-language",
+    "href": "bash1/bash-10-text-manipulation.html#column-based-text-processing-with-awk-scripting-language",
+    "title": "Text manipulation",
+    "section": "Column-based text processing with awk scripting language",
+    "text": "Column-based text processing with awk scripting language\ncd /path/to/data-shell/writing\ncat haiku.txt   # 11 lines\nYou can define inline awk scripts with braces surrounded by single quotation:\nawk '{print $1}' haiku.txt        # $1 is the first field (word) in each line =&gt; processing columns\nawk '{print $0}' haiku.txt        # $0 is the whole line\nawk '{print}' haiku.txt           # the whole line is the default action\nawk -Fa '{print $1}' haiku.txt    # can specify another separator with -F (\"a\" in this case)\nawk -F, '{print $1}' cities.csv   # for a CSV file\nYou can use multiple commands inside your awk script:\necho Hello Tom &gt; hello.txt\necho Hello John &gt;&gt; hello.txt\nawk '{$2=\"Adam\"; print $0}' hello.txt   # we replaced the second word in each line with \"Adam\"\nMost common awk usage is to postprocess output of other commands:\n/bin/ps aux    # display all running processes as multi-column output\n/bin/ps aux | awk '{print $2 \" \" $11}'   # print only the process number and the command\nAwk also takes patterns in addition to scripts:\nawk '/Yesterday/' haiku.txt         # print the lines that contain \"Yesterday\"\nawk '/Yesterday|Today/' haiku.txt   # print the lines that contain \"Yesterday\" or \"Today\"\nAnd then you act on these patterns: if the pattern evaluates to True, then run the script:\nawk '/Yesterday|Today/{print $3}' haiku.txt\nawk '/Yesterday|Today/' haiku.txt | awk '{print $3}'   # same as previous line\n\neverything inside '' is processed by awk language; then nested further inside,\n\neverything inside // is a search pattern\neverything inside {} is an action to run\n\n\nAwk has a number of built-in variables; the most commonly used is NR:\nawk 'NR&gt;1' haiku.txt    # if NumberRecord &gt;1 then print it (default action), i.e. skip the first line\nawk 'NR&gt;1{print $0}' haiku.txt     # last command expanded\nawk 'NR&gt;1 && NR &lt; 5' haiku.txt     # print lines 2-4\nawk 'NR&gt;=2 && NR &lt;= 4' haiku.txt   # the same\n\n\n\n\n\n\nQuestion 10.3\n\n\n\n\n\nWrite an awk script to process cities.csv to print only town/city names and their population and store it in a separate file populations.csv. Try to do everything in a single-line command.\n\n\n\n\n\n\n\n\n\nQuestion 10.4\n\n\n\n\n\nWrite an awk script that prints every 10th line from cities.csv starting from line 2, i.e. the first line after the header. Hint: use NR variable.\n\n\n\n\n\n\n\n\n\nQuestion Copy every 10th file\n\n\n\n\n\nImagine that the directory /project/def-sponsor00/shared/toyModel contains results from a numerical simulation. Write a command to copy every 10th file (starting from yB31_oneblock_00000.vti) from this directory to one of your own directories. Hint: create an alphabetically sorted list of files in that directory and then use awk’s NR variable.\n\n\n\n\n\n\n\n\n\nQuestion Archive every 20th file\n\n\n\n\n\nSimilarly to the previous exercise, write a command to create a tar archive that includes every 20th file from the simulation directory /project/def-sponsor00/shared/toyModel. Is it possible to do this in one command? Why does it remove leading ‘/’ from file paths?\n\n\n\n\n\n\n\n\n\nQuick reference\n\n\n\nls -l | awk 'NR&gt;3 {print $5 \"  \" $9}'     # print 5th and 9th columns starting with line 4\nawk 'NR&gt;1 && NR &lt; 5' haiku.txt            # print lines 2-4\nawk 'NR&gt;1 && NR &lt; 5 {print $1}' haiku.txt # print lines 2-4, column 1\nawk '/Yesterday|Today/' haiku.txt         # print lines that contain Yesterday or Today\n\n\n\n\n\n\n\n\nQuestion 10.7\n\n\n\n\n\nWrite a one-line command that finds 5 largest files in the current directory (and all of its subdirectories) and prints only their names and file sizes in the human-readable format (indicating bytes, kB, MB, GB, …) in the decreasing file-size order. Hint: use find, xargs, and awk.\n\n\n\n\n\n\n\n\n\nQuestion ps\n\n\n\n\n\nUse ps command to see how many processes you are running on the training cluster. Explore its flags. Write commands to reduce ps output to a few essential columns.\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Text manipulation"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-01-intro.html",
+    "href": "bash1/bash-01-intro.html",
+    "title": "Introduction",
+    "section": "",
+    "text": "We use HPC systems (clusters) to do computing beyond the scale of a desktop. For example, we can:\nThe use of HPC in modeling complex physical phenomena such as astrophysical processes, weather, fluid dynamics, molecular interactions, and engineering design is well known to researchers in those fields. More recently, HPC is being used by researchers in other fields from genomics and medical imaging to social sciences and humanities.",
+    "crumbs": [
+      "PART 1",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-01-intro.html#why-the-shell",
+    "href": "bash1/bash-01-intro.html#why-the-shell",
+    "title": "Introduction",
+    "section": "Why the shell?",
+    "text": "Why the shell?\n\nUsing HPC systems usually involves the use of a shell. Unlike a GUI, the shell is a text-based interface to the operating system that excels at two things:\n\nlaunching other tools and scripts, and\nconnecting standard input/output of these tools through pipes to form more complex commands.\n\nThe shell design follows the classic UNIX philosophy of breaking complex projects into simpler subtasks and chaining together components and utilities. The name “shell” comes from the coconut anallogy, as it is a shell around the operating system kernel, surrounded itself by utilities and applications. Shell commands are often very cryptic, and this is by design to avoid too much typing.\nWe use the Unix shell because it is very powerful, great for automation and for creating reproducible workflows, and is necessary to work on larger Unix systems. Bash is one of many Unix shell implementations out there. It is a default on the Alliance systems, but you can easily switch to a different shell such as tcsh, zsh, etc. The main difference between these is a slight change in the command syntax.\nFor the hands-on work, we have set up a small training cluster sfuschool.c3.ca that features the same software setup as our real production clusters. In our “Introduction to HPC” course we teach the specifics of working on a cluster: its software environment, scheduler, compilers, parallel programming models, and so on. In this course we start with the basics and learn how to work with a remote Linux machine and its filesystem, the basic Linux commands, how to transfer files to/from/between remote systems, how to automate things, and similar introductory topics.",
+    "crumbs": [
+      "PART 1",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-01-intro.html#logging-in-to-a-remote-system",
+    "href": "bash1/bash-01-intro.html#logging-in-to-a-remote-system",
+    "title": "Introduction",
+    "section": "Logging in to a remote system",
+    "text": "Logging in to a remote system\nYou can connect to a remote HPC system via SSH (secure shell) using a terminal on your laptop. Linux and Mac laptops have built-in terminals, whereas on Windows we suggest using a free version of MobaXterm that comes with its own terminal emulator and a simple interface for remote SSH sessions.\nLet’s log in to sfuschool.c3.ca using a username userXX (where XX is two digits):\n[local]$ ssh userXX@sfuschool.c3.ca   # password supplied by the instructor\n\nthose on Windows please use MobaXterm: click on Session | SSH, and then fill in the Remote host name and your username.\n\nPlease enter the password when prompted. Note that no characters will be shown when typing the password. If you make a mistake, you will have to start your connection from scratch.\nOnce connected, compare the prompt on the local and remote systems – do you notice any difference?\n\nSSH connection problems\nIf you are trying to ssh into the training cluster and you get one of these errors\n\n“Permission denied, please try again”\n“Network error: Connection timed out”\n“Connection refused”\n\nand you are 100% certain that you type the password correctly, we might need to check if your IP address is blocked after too many attempts to log in. Please go to https://whatismyipaddress.com and tell us your IPv4 address so that we could whitelist it.",
+    "crumbs": [
+      "PART 1",
+      "Introduction"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-03-creating-moving-copying.html",
+    "href": "bash1/bash-03-creating-moving-copying.html",
+    "title": "Creating, moving, and copying",
+    "section": "",
+    "text": "Covered topics: creating directories with mkdir, using nano text editor, deleting with rm and rmdir.\n$ mkdir thesis\n$ ls -F\n$ ls -F thesis\n$ cd thesis\n$ nano draft.txt   # let's spend few minutes learning how to use nano; can also use other editors\n$ ls\n$ more draft.txt   # displays a file one page at a time\n$ cd ..\n$ rm thesis   # getting an error - why?\n$ rmdir thesis   # again getting an error - why?\n$ rm thesis/draft.txt\n$ rmdir thesis\nAlso could do ‘rm -r thesis’ in lieu of the last two commands.\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Creating, moving and copying things, and aliases"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-03-creating-moving-copying.html#creating-things",
+    "href": "bash1/bash-03-creating-moving-copying.html#creating-things",
+    "title": "Creating, moving, and copying",
+    "section": "",
+    "text": "Covered topics: creating directories with mkdir, using nano text editor, deleting with rm and rmdir.\n$ mkdir thesis\n$ ls -F\n$ ls -F thesis\n$ cd thesis\n$ nano draft.txt   # let's spend few minutes learning how to use nano; can also use other editors\n$ ls\n$ more draft.txt   # displays a file one page at a time\n$ cd ..\n$ rm thesis   # getting an error - why?\n$ rmdir thesis   # again getting an error - why?\n$ rm thesis/draft.txt\n$ rmdir thesis\nAlso could do ‘rm -r thesis’ in lieu of the last two commands.\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Creating, moving and copying things, and aliases"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-03-creating-moving-copying.html#moving-and-copying-things",
+    "href": "bash1/bash-03-creating-moving-copying.html#moving-and-copying-things",
+    "title": "Creating, moving, and copying",
+    "section": "Moving and copying things",
+    "text": "Moving and copying things\nCovered topics: mv and cp.\n$ mkdir thesis\n$ nano thesis/draft.txt\n$ ls thesis\n$ mv thesis/draft.txt thesis/quotes.txt\n$ ls thesis\n$ mv thesis/quotes.txt .   # . stands for current directory\n$ ls thesis\n$ ls\n$ ls quotes.txt\n$ cp quotes.txt thesis/quotations.txt\n$ ls quotes.txt thesis/quotations.txt\n$ rm quotes.txt\n$ ls quotes.txt thesis/quotations.txt\nMore than two arguments to mv and cp:\n$ touch  intro.txt  methods.txt  index.txt   # create three empty files\n$ ls\n$ mv  intro.txt  methods.txt  index.txt  thesis   # the last argument is the destination directory\n$ ls\n$ ls thesis\n\n\n\n\n\n\nQuestion Misspelled file\n\n\n\n\n\nSuppose that you created a .txt file in your current directory to contain a list of the statistical tests you will need to do to analyze your data, and named it statstics.txt. After creating and saving this file, you realize you misspelled the filename! You want to correct the mistake, which of the following commands could you use to do so?\n1. cp statstics.txt statistics.txt\n2. mv statstics.txt statistics.txt\n3. mv statstics.txt .\n4. cp statstics.txt .\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Creating, moving and copying things, and aliases"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-03-creating-moving-copying.html#aliases",
+    "href": "bash1/bash-03-creating-moving-copying.html#aliases",
+    "title": "Creating, moving, and copying",
+    "section": "Aliases",
+    "text": "Aliases\nAliases are one-line shortcuts/abbreviations to avoid typing a longer command, e.g.\n$ alias ls='ls -AFh'\n$ alias pwd='pwd -P'\n$ alias hi='history'\n$ alias top='top -o cpu -s 10 -stats \"pid,command,cpu,mem,threads,state,user\"' # MacOS only\n$ alias top='top -b -n 1 -o %CPU | head -n 20'                                 # Linux\n$ alias cedar='ssh -Y cedar.computecanada.ca'\n$ alias weather='curl wttr.in/vancouver'\n$ alias cal='cal -m'                  # starts on Monday\n$ alias cal='gcal --starting-day=1'   # if you use gcal instead; need gcal installed\nNow, instead of typing ssh -Y cedar.computecanada.ca, you can simply type cedar. To see all your defined aliases, type alias. To remove, e.g. the alias cedar, type unalias cedar.\nYou may want to put all your alias definitions into the file ~/.bashrc which is run every time you start a new local or remote shell.\n\n\n\n\n\n\nQuestion Safer mv and cp\n\n\n\n\n\nWrite simple aliases for safer mv, cp so that these do not automatically overwrite the target. Hint: use their manual pages. Where would you store these aliases?\n\n\n\n\n\n\n\n\n\nQuestion Safer rm\n\n\n\n\n\nWrite simple alias for safer rm.\n\n\n\n\n\n\n\n\n\nQuestion 3.4\n\n\n\n\n\nWhat is the output of the last ls command in the sequence shown below?\n$ pwd\n/home/jamie/data\n$ ls\nproteins.dat\n$ mkdir recombine\n$ mv proteins.dat recombine\n$ cp recombine/proteins.dat ../proteins-saved.dat\n$ ls\n\nproteins-saved.dat recombine\nrecombine\nproteins.dat recombine\nproteins-saved.dat",
+    "crumbs": [
+      "PART 1",
+      "Creating, moving and copying things, and aliases"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-06-wildcards-redirection-pipes.html",
+    "href": "bash1/bash-06-wildcards-redirection-pipes.html",
+    "title": "Tapping the power of Unix",
+    "section": "",
+    "text": "Covered topics: working with multiple files using wildmasks, standard output redirection to a file, constructing complex commands with Unix pipes.\n\nopen http://bit.ly/bashfile in your browser, it’ll download the file bfiles.zip\nunpack bfiles.zip to your home directory; you should see ~/data-shell\n\n$ cd &lt;parentDirectoryOf`data-shell`&gt;\n$ ls data-shell\n$ cd data-shell/molecules\n$ ls\n$ ls p*   # this is a Unix wildcard; bash will expand it to 'ls pentane.pdb propane.pdb'\n$ ls *.pdb      # another wildcard, will expand to \"ls cubane.pdb ethane.pdb ...'\n$ wc -l *.pdb   # list number of lines in each file\n$ wc -l *.pdb &gt; lengths.txt   # redirect the output of the last command into a file\n$ more lengths.txt\n$ sort -n lengths.txt   # sort numerically, i.e. 2 will go before 10, and 6 before 22\n$ sort -n lengths.txt &gt; sorted.txt\n$ head -1 sorted.txt    # show the length of the shortest (number of lines) file\n$ wc -l *.pdb | sort -n | head -1   # three commands can be shortened to one - this is called Unix pipe\nStandard input of a process. Standard output of a process. Pipes connect the two.\n\n\n\n\n\n\n\n\n\n\n\nQuestion 6.1\n\n\n\n\n\nRunning ls -F in ~/Desktop/Shell/Users/nelle/sugars results in:\nanalyzed/  glucose.dat  mannose.dat  sucrose.dat  fructose.dat  maltose.dat  raw/\nWhat code would you use to move all the .dat files into the analyzed subdirectory?\n\n\n\n\n\n\n\n\n\nQuestion 6.2\n\n\n\n\n\nIn a directory we want to find the 3 files that have the least number of lines. Which command would work for this?\n1. wc -l * &gt; sort -n &gt; head -3\n2. wc -l * | sort -n | head 1-3\n3. wc -l * | head -3 | sort -n\n4. wc -l * | sort -n | head -3\n\n\n\n\n\n\n\n\n\nQuestion 6.3\n\n\n\n\n\nUsing Unix pipes, write a one-line command to show the name of the longest .pdb file (by the number of lines). Paste your answer into the chat.\n\n\n\n\n\n\n\n\n\nQuestion 6.4\n\n\n\n\n\nCombine ls and head and/or tail into a one-line command to show three largest files (by the number of bytes) in a given directory. Paste your answer into the chat.\n\n\n\n\n\n\n\n\n\nQuestion Echo with wildcards\n\n\n\n\n\nWhat will the command echo directoryName/* do? Try answering without running it. How is this output different from ls directoryName and ls directoryName/*?\n\n\n\n\n\n\n\n\n\nQuestion redirection\n\n\n\n\n\nRedirection: 1&gt;, 2&gt;, &&gt;, /dev/null\n\n\n\n\n\n\n\n\n\nQuestion Command separators\n\n\n\n\n\n; vs. && separators, e.g. mkdirr tmp; cd tmp\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Wildcards, redirection, pipes"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-06-wildcards-redirection-pipes.html#wildcards-redirection-to-files-and-pipes",
+    "href": "bash1/bash-06-wildcards-redirection-pipes.html#wildcards-redirection-to-files-and-pipes",
+    "title": "Tapping the power of Unix",
+    "section": "",
+    "text": "Covered topics: working with multiple files using wildmasks, standard output redirection to a file, constructing complex commands with Unix pipes.\n\nopen http://bit.ly/bashfile in your browser, it’ll download the file bfiles.zip\nunpack bfiles.zip to your home directory; you should see ~/data-shell\n\n$ cd &lt;parentDirectoryOf`data-shell`&gt;\n$ ls data-shell\n$ cd data-shell/molecules\n$ ls\n$ ls p*   # this is a Unix wildcard; bash will expand it to 'ls pentane.pdb propane.pdb'\n$ ls *.pdb      # another wildcard, will expand to \"ls cubane.pdb ethane.pdb ...'\n$ wc -l *.pdb   # list number of lines in each file\n$ wc -l *.pdb &gt; lengths.txt   # redirect the output of the last command into a file\n$ more lengths.txt\n$ sort -n lengths.txt   # sort numerically, i.e. 2 will go before 10, and 6 before 22\n$ sort -n lengths.txt &gt; sorted.txt\n$ head -1 sorted.txt    # show the length of the shortest (number of lines) file\n$ wc -l *.pdb | sort -n | head -1   # three commands can be shortened to one - this is called Unix pipe\nStandard input of a process. Standard output of a process. Pipes connect the two.\n\n\n\n\n\n\n\n\n\n\n\nQuestion 6.1\n\n\n\n\n\nRunning ls -F in ~/Desktop/Shell/Users/nelle/sugars results in:\nanalyzed/  glucose.dat  mannose.dat  sucrose.dat  fructose.dat  maltose.dat  raw/\nWhat code would you use to move all the .dat files into the analyzed subdirectory?\n\n\n\n\n\n\n\n\n\nQuestion 6.2\n\n\n\n\n\nIn a directory we want to find the 3 files that have the least number of lines. Which command would work for this?\n1. wc -l * &gt; sort -n &gt; head -3\n2. wc -l * | sort -n | head 1-3\n3. wc -l * | head -3 | sort -n\n4. wc -l * | sort -n | head -3\n\n\n\n\n\n\n\n\n\nQuestion 6.3\n\n\n\n\n\nUsing Unix pipes, write a one-line command to show the name of the longest .pdb file (by the number of lines). Paste your answer into the chat.\n\n\n\n\n\n\n\n\n\nQuestion 6.4\n\n\n\n\n\nCombine ls and head and/or tail into a one-line command to show three largest files (by the number of bytes) in a given directory. Paste your answer into the chat.\n\n\n\n\n\n\n\n\n\nQuestion Echo with wildcards\n\n\n\n\n\nWhat will the command echo directoryName/* do? Try answering without running it. How is this output different from ls directoryName and ls directoryName/*?\n\n\n\n\n\n\n\n\n\nQuestion redirection\n\n\n\n\n\nRedirection: 1&gt;, 2&gt;, &&gt;, /dev/null\n\n\n\n\n\n\n\n\n\nQuestion Command separators\n\n\n\n\n\n; vs. && separators, e.g. mkdirr tmp; cd tmp\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Wildcards, redirection, pipes"
+    ]
+  },
+  {
     "objectID": "solutions-chapel.html",
     "href": "solutions-chapel.html",
     "title": "Solutions for Chapel course",
@@ -740,6 +938,13 @@
     "text": "Summary\n\nWorkflow suggestions\n\nuse print from inside the Filter/Source\ngo slowly and save frequently, as ParaView will crash when you don’t allocate objects properly inside Programmable Filter/Source\n\nLinks\n\nProgrammable Filter in the offical ParaView documentation\nan article NumPy to VTK: Converting your NumPy arrays to VTK arrays and files\nfirst half of the talk by Jean M. Favre (Swiss National Supercomputing Centre)\n\nFuture topic: converting Programmable Filter’s code to a plugin\n\ncode its own custom GUI Properties using Python decorators\nafter loading your plugin, it should be available as a normal filter or source in the menu"
   },
   {
+    "objectID": "badSpeedupSolution.html",
+    "href": "badSpeedupSolution.html",
+    "title": "Fixing poor parallel scaling in the Julia set",
+    "section": "",
+    "text": "False sharing has no effect in this problem, as for most part individual threads are writing into array elements that are well separated in memory.\nThe row-major vs. column-major order does not matter in the Julia set problem, as it is dominated by computation of individual pixels: computing a single pixel on average takes much longer than writing to a random array element. The timings are virtually identical for row-major vs. column-major, whether in serial or in parallel with @threads. If you were to fill in these elements without computing, then the order would matter, e.g. consider this code:\nusing BenchmarkTools\nfunction testOrder(n::Int, order::Bool)\n    stability = zeros(Int32, n, n)\n    for i in 1:n\n        for j in 1:n\n            order ? stability[i,j] = i+j : stability[j,i] = i+j\n        end\n    end\n    return stability\nend\n@btime testOrder(30_000, true);    # 2.753 s\n@btime testOrder(30_000, false);   # 721.484 ms\n@btime testOrder(1000, true);    # 714.958 μs\n@btime testOrder(1000, false);   # 681.333 μs\nThe real culprit in the Julia set’s bad parallel scaling is the problem’s less-than-perfect load balancing. We know that @threads subdivides the large outer loop equally between the threads. However, some threads have fewer iterations to compute and finish faster, but they have to wait for the threads with more iterations in their pixels. If you modify the code in such a way that all pixels do the same large number of iterations, you will see perfect linear speedup with multi-threading.\nWith the unbalanced load, it is possible to improve performance somewhat with dynamic scheduling using either channels (not covered in our workshop) or Threads.@spawn but it’ll make the code a little bit more complex.\nThe following asynchronous solution was written by Jeremiah O’Neil (University of Ottawa):\nfunction juliaSet(height, width)\n    stability = zeros(Int32, height, width)\n    c = Channel{Int64}(nthreads()) do chnl\n        for i in 1:height\n            put!(chnl, i)\n        end\n    end\n    Threads.foreach(c) do i\n        for j in 1:width\n            point = (2*(j-0.5)/width-1) + (2*(i-0.5)/height-1)im\n            stability[i,j] = pixel(point)\n        end\n    end\n    return stability\nend\nshows better (but still less than linear) speedup."
+  },
+  {
     "objectID": "apptainer-menu.html",
     "href": "apptainer-menu.html",
     "title": "Working with Apptainer containers",
@@ -894,6 +1099,27 @@
     "title": "GPU computing with Chapel",
     "section": "Links",
     "text": "Links\n\nIntroduction to GPU Programming in Chapel\nChapel’s High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming\nGPU module functions and attributes"
+  },
+  {
+    "objectID": "solutions-bash.html",
+    "href": "solutions-bash.html",
+    "title": "Bash solutions",
+    "section": "",
+    "text": "function swap() {\n    if [ -e $1 ] && [ -e $2 ] ; then\n        /bin/mv $2 $2.bak\n        /bin/mv $1 $2\n        /bin/mv $2.bak $1\n    else\n        echo at least one of these files does not exist ...\n    fi\n}\n\n\n\nfunction countfiles() {\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n    for dir in $@; do\n        echo in $dir we found $(find $dir -type f | wc -l) files\n    done\n}"
+  },
+  {
+    "objectID": "solutions-bash.html#scripts-functions-and-variables",
+    "href": "solutions-bash.html#scripts-functions-and-variables",
+    "title": "Bash solutions",
+    "section": "",
+    "text": "function swap() {\n    if [ -e $1 ] && [ -e $2 ] ; then\n        /bin/mv $2 $2.bak\n        /bin/mv $1 $2\n        /bin/mv $2.bak $1\n    else\n        echo at least one of these files does not exist ...\n    fi\n}\n\n\n\nfunction countfiles() {\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n    for dir in $@; do\n        echo in $dir we found $(find $dir -type f | wc -l) files\n    done\n}"
+  },
+  {
+    "objectID": "solutions-bash.html#text-manipulation",
+    "href": "solutions-bash.html#text-manipulation",
+    "title": "Bash solutions",
+    "section": "10. Text manipulation",
+    "text": "10. Text manipulation\n\n10.1\ncat wellsInvisibleMan.txt | tr -d \"[:punct:]\" | tr '[:upper:]' '[:lower:]' | \\\n  sed 's/ /\\'$'\\n/g' | sed '/^$/d' | sort | uniq -c | sort -gr &gt; frequency.txt\n\n\n10.3\nawk -F, '{print $1 \",\" $2}' cities.csv &gt; populations.csv\n\n\n10.4\nawk -F, 'NR%10==2' cities.csv\n\n\ncopy every 10th file\nfind /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%10==0'\n\n\narchive every 20th file\nThere are many solutions:\n# the downside of this solution is that it'll include paths (without the leading /) into the arhive\ntar cvf toy.tar $(find /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%20==0')\ncd /project/def-sponsor00/shared/toyModel   # if you are allowed to cd into that directory\ntar cvf ~/tmp/toy.tar $(find . -type f | sort | awk 'NR%20==0')\ncd -\nfind /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%20==0' &gt; list.txt\ntar cfz toy.tar --files-from=list.txt\n/bin/rm list.txt\n\n\n10.7\nfind . -type f | xargs /bin/ls -lSh | awk '{print $5 \"  \" $9}' | head -5"
   },
   {
     "objectID": "chapel2/chapel-01-intro.html",
@@ -1323,6 +1549,225 @@
     ]
   },
   {
+    "objectID": "bash-menu.html",
+    "href": "bash-menu.html",
+    "title": "Introduction to Bash command line",
+    "section": "",
+    "text": "June 9th, 9:30am–12:30pm and 1:30pm-4:30pm Pacific Time\n\nThis is a hands-on introduction to the Linux command line and the interaction with a remote server. This course mixes Software Carpentry materials with our own custom training.\nInstructor: Alex Razoumov (SFU)\nPrerequisites: This is an introductory course, no previous experience is required. We will provide guest accounts to one of our Linux systems.\nSoftware: All attendees will need a remote secure shell (SSH) client installed on their computer in order to participate in the course exercises. On Windows we recommend the free Home Edition of MobaXterm. On Mac and Linux computers SSH is usually pre-installed (try typing ssh in a terminal to make sure it is there).\n\nSolutions\nYou can find the solutions here.",
+    "crumbs": [
+      "Front page"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-11-other.html",
+    "href": "bash1/bash-11-other.html",
+    "title": "Other topics and exercises",
+    "section": "",
+    "text": "This page is a placeholder to cover tools that we do not normally teach in our Linux command line introduction but we would like to mention as we find them useful. Also, over the years we taught a number of webinars on advanced bash that you can watch at any time.",
+    "crumbs": [
+      "PART 2",
+      "Other topics and exercises"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-11-other.html#fuzzy-finder",
+    "href": "bash1/bash-11-other.html#fuzzy-finder",
+    "title": "Other topics and exercises",
+    "section": "Fuzzy finder",
+    "text": "Fuzzy finder\nFuzzy finder fzf is a third-party tool, not installed by default. With basic usage, it does interactive processing of standard input. At a more advanced level (not covered in the video below), it provides key bindings and fuzzy completion.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.\n\n\n\n\n\n\n\n\nQuestion 11.1\n\n\n\n\n\nLet’s study together these commands:\n$ source ~/projects/def-sponsor00/shared/fzf/.fzf.bash\n$ kill -9 `/bin/ps aux | fzf | awk '{print $2}'`",
+    "crumbs": [
+      "PART 2",
+      "Other topics and exercises"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-11-other.html#additional-topics",
+    "href": "bash1/bash-11-other.html#additional-topics",
+    "title": "Other topics and exercises",
+    "section": "Additional topics",
+    "text": "Additional topics\nIf there is interest, we could explore some other topics in the future:\n\nBash arithmetics\nPermissions\nHow to control processes\nGNU Parallel",
+    "crumbs": [
+      "PART 2",
+      "Other topics and exercises"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-11-other.html#bash-webinars",
+    "href": "bash1/bash-11-other.html#bash-webinars",
+    "title": "Other topics and exercises",
+    "section": "Bash webinars",
+    "text": "Bash webinars\nOur 2022 webinar Lesser known but very useful Bash features covers running commands in a subshell, subsetting string variables, Bash arrays, modifying separators with IFS, running Python code from inside self-contained Bash functions, editing your command history, running unaliased versions of commands, handy use of bracket expansion, and a few other topics.",
+    "crumbs": [
+      "PART 2",
+      "Other topics and exercises"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-11-other.html#more-exercises",
+    "href": "bash1/bash-11-other.html#more-exercises",
+    "title": "Other topics and exercises",
+    "section": "More exercises",
+    "text": "More exercises\n\nFind all files in a directory hierarchy that have a matching substring inside, and run ls -l on these files.\nSame, but replace this string with another substring in all these matching files.\nList all files in a directory (passed as an argument), printing only their name, size, and the MD5 checksum.\nList ten largest files in a directory (passed as an argument).",
+    "crumbs": [
+      "PART 2",
+      "Other topics and exercises"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-08-scripts-functions.html",
+    "href": "bash1/bash-08-scripts-functions.html",
+    "title": "Scripts, functions, and variables",
+    "section": "",
+    "text": "We now know a lot of UNIX commands! Wouldn’t it be great if we could save certain commands so that we could run them later or not have to type them out again? As it turns out, this is extremely easy to do. Saving a list of commands to a file is called a “shell script”. These shell scripts can be run whenever we want, and are a great way to automate our work.\n$ cd /path/to/data-shell/molecules\n$ nano process.sh\n    #!/bin/bash         # this is called sha-bang; can be omitted for generic (bash/csh/tcsh) commands\n    echo Looking into file octane.pdb\n    head -15 octane.pdb | tail -5       # what does it do?\n$ bash process.sh   # the script ran!\nAlternatively, you can change file permissions:\n$ chmod u+x process.sh\n$ ./process.sh\nLet’s pass an arbitrary file to it:\n$ nano process.sh\n    #!/bin/bash\n    echo Looking into file $1       # $1 means the first argument to the script\n    head -15 $1 | tail -5\n$ ./process cubane.pdb\n$ ./process propane.pdb\n\nhead -15 “$1” | tail -5 # placing in double-quotes lets us pass filenames with spaces\nhead $2 $1 | tail $3 # what will this do?\n$# holds the number of command-line arguments\n$@ means all command-lines arguments to the script (words in a string)\n\n\n\n\n\n\n\n\n\n\n\nTopic File permissions\n\n\n\n\n\nLet’s talk more about file permissions.\n\n\n\n\n\n\n\n\n\nQuestion 8.2\n\n\n\n\n\nIn the molecules directory (download link mentioned here), create a shell script called scan.sh containing the following:\n#!/bin/bash\nhead -n $2 $1\ntail -n $3 $1\nWhile you are in that current directory, you type the following command (with space between two 1s):\n./scan.sh  '*.pdb'  1  1\nWhat output would you expect to see? 1. All of the lines between the first and the last lines of each file ending in .pdb in the current directory 2. The first and the last line of each file ending in .pdb in the current directory 3. The first and the last line of each file in the current directory 4. An error because of the quotes around *.pdb\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Bash scripts and functions, and variables"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-08-scripts-functions.html#shell-scripts",
+    "href": "bash1/bash-08-scripts-functions.html#shell-scripts",
+    "title": "Scripts, functions, and variables",
+    "section": "",
+    "text": "We now know a lot of UNIX commands! Wouldn’t it be great if we could save certain commands so that we could run them later or not have to type them out again? As it turns out, this is extremely easy to do. Saving a list of commands to a file is called a “shell script”. These shell scripts can be run whenever we want, and are a great way to automate our work.\n$ cd /path/to/data-shell/molecules\n$ nano process.sh\n    #!/bin/bash         # this is called sha-bang; can be omitted for generic (bash/csh/tcsh) commands\n    echo Looking into file octane.pdb\n    head -15 octane.pdb | tail -5       # what does it do?\n$ bash process.sh   # the script ran!\nAlternatively, you can change file permissions:\n$ chmod u+x process.sh\n$ ./process.sh\nLet’s pass an arbitrary file to it:\n$ nano process.sh\n    #!/bin/bash\n    echo Looking into file $1       # $1 means the first argument to the script\n    head -15 $1 | tail -5\n$ ./process cubane.pdb\n$ ./process propane.pdb\n\nhead -15 “$1” | tail -5 # placing in double-quotes lets us pass filenames with spaces\nhead $2 $1 | tail $3 # what will this do?\n$# holds the number of command-line arguments\n$@ means all command-lines arguments to the script (words in a string)\n\n\n\n\n\n\n\n\n\n\n\nTopic File permissions\n\n\n\n\n\nLet’s talk more about file permissions.\n\n\n\n\n\n\n\n\n\nQuestion 8.2\n\n\n\n\n\nIn the molecules directory (download link mentioned here), create a shell script called scan.sh containing the following:\n#!/bin/bash\nhead -n $2 $1\ntail -n $3 $1\nWhile you are in that current directory, you type the following command (with space between two 1s):\n./scan.sh  '*.pdb'  1  1\nWhat output would you expect to see? 1. All of the lines between the first and the last lines of each file ending in .pdb in the current directory 2. The first and the last line of each file ending in .pdb in the current directory 3. The first and the last line of each file in the current directory 4. An error because of the quotes around *.pdb\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Bash scripts and functions, and variables"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-08-scripts-functions.html#if-statements",
+    "href": "bash1/bash-08-scripts-functions.html#if-statements",
+    "title": "Scripts, functions, and variables",
+    "section": "If statements",
+    "text": "If statements\nLet’s write and run the following script:\n$ nano check.sh\n    for f in $@\n    do\n      if [ -e $f ]      # make sure to have spaces around each bracket!\n      then\n        echo $f exists\n      else\n        echo $f does not exist\n      fi\n    done\n$ chmod u+x check.sh\n$ ./check.sh a b c check.sh\n\nFull syntax is:\n\nif [ condition1 ]\nthen\n  command 1\n  command 2\n  command 3\nelif [ condition2 ]\nthen\n  command 4\n  command 5\nelse\n  default command\nfi\nSome examples of conditions (make sure to have spaces around each bracket!):\n\n[ $myvar == 'text' ] checks if variable is equal to ‘text’\n[ $myvar == number ] checks if variable is equal to number\n[ -e fileOrDirName ] checks if fileOrDirName exists\n[ -d name ] checks if name is a directory\n[ -f name ] checks if name is a file\n[ -s name ] checks if file name has length greater than 0\n\n\n\n\n\n\n\nQuestion 8.3\n\n\n\n\n\nWrite a script that complains when it does not receive any arguments.",
+    "crumbs": [
+      "PART 2",
+      "Bash scripts and functions, and variables"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-08-scripts-functions.html#variables",
+    "href": "bash1/bash-08-scripts-functions.html#variables",
+    "title": "Scripts, functions, and variables",
+    "section": "Variables",
+    "text": "Variables\nWe already saw variables that were specific to scripts ($1, \\(@, ...) and to loops (\\)file). Variables can be used outside of scripts:\n$ myvar=3        # no spaces permitted around the equality sign!\n$ echo myvar     # will print the string 'myvar'\n$ echo $myvar    # will print the value of myvar\nSometimes you can see the notation:\n$ export myvar=3\nUsing ‘export’ will make sure that all inherited processes of this shell will have access to this variable. Try defining the variable newvar without/with ‘export’ and then running the script:\n$ nano process.sh\n    #!/bin/bash\n    echo $newvar\nYou can assign a command’s output to a variable to use in another command (this is called command substitution) – we’ll see this later when we play with ‘find’ command.\n$ printenv    # print all declared variables\n$ env         # same\n$ unset myvar   # unset a variable\n\n\n\n\n\n\nQuestion Using a variable inside a string\n\n\n\n\n\nvar=\"sun\"\necho $varshine\necho ${var}shine\necho \"$var\"shine\n\n\n\n\n\n\n\n\n\nQuestion Variable manipulation\n\n\n\n\n\nmyvar=\"hello\"\necho $myvar\necho ${myvar:offset}\necho ${myvar:offset:length}\necho ${myvar:2:3}    # 3 characters starting from character 2\necho ${myvar/l/L}    # replace the first match of a pattern\necho ${myvar//l/L}   # replace all matches of a pattern\n\n\n\nEnvironment variables are those that affect the behaviour of the shell and user interface:\n$ echo $HOME\n$ echo $PATH\n$ echo $PWD\n$ echo $PS1\nIt is best to define custom environment variables inside your ~/.bashrc file. It is loaded every time you start a new shell.\n\n\n\n\n\n\nQuestion 8.6\n\n\n\n\n\nPlay with variables and their values. Change the prompt, e.g. PS1=\"\\u@\\h \\w&gt; \".\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Bash scripts and functions, and variables"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-08-scripts-functions.html#functions",
+    "href": "bash1/bash-08-scripts-functions.html#functions",
+    "title": "Scripts, functions, and variables",
+    "section": "Functions",
+    "text": "Functions\nFunctions are similar to scripts, but there are some differences. A bash script is an executable file sitting at a given path. A bash function is defined in your environment. Therefore, when running a script, you need to prepend its path to its name, whereas a function – once defined in your environment – can be called by its name without a need for a path. Both scripts and functions can take command-line arguments.\nA convenient place to put all your function definitions is ~/.bashrc file which is run every time you start a new shell (local or remote).\nLike in any programming language, in bash a function is a block of code that you can access by its name. The syntax is:\nfunctionName() {\n  command 1\n  command 2\n  ...\n}\nInside functions you can access its arguments with variables $1 $2 … $# $@ – exactly the same as in scripts. Functions are very convenient because you can define them inside your ~/.bashrc file. Alternatively, you can place them into a file and then source them whenever needed:\n$ source allMyFunctions.sh\nHere is our first function:\ngreetings() {\n  echo hello\n}\nLet’s write a function ‘combine()’ that takes all the files we pass to it, copies them into a randomly-named directory and prints that directory to the screen:\ncombine() {\n  if [ $# -eq 0 ]; then\n    echo \"No arguments specified. Usage: combine file1 [file2 ...]\"\n    return 1        # return a non-zero error code\n  fi\n  dir=$RANDOM$RANDOM\n  mkdir $dir\n  cp $@ $dir\n  echo look in the directory $dir\n}\n\n\n\n\n\n\nQuestion Swap file names\n\n\n\n\n\nWrite a function to swap two file names. Add a check that both files exist, before renaming them.\n\n\n\n\n\n\n\n\n\nQuestion archive()\n\n\n\n\n\nWrite a function archive() to replace directories with their gzipped archives.\n$ ls -F\nchapter1/  chapter2/  notes/\n$ archive chapter* notes/\n$ ls\nchapter1.tar.gz  chapter2.tar.gz  notes.tar.gz\n\n\n\n\n\n\n\n\n\n\nQuestion countfiles()\n\n\n\n\n\nWrite a function countfiles() to count files in all directories passed to it as arguments (need to loop through all arguments). At the beginning add the check:\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Bash scripts and functions, and variables"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-08-scripts-functions.html#scripts-in-other-languages",
+    "href": "bash1/bash-08-scripts-functions.html#scripts-in-other-languages",
+    "title": "Scripts, functions, and variables",
+    "section": "Scripts in other languages",
+    "text": "Scripts in other languages\nAs a side note, it possible to incorporate scripts in other languages into your bash code, e.g. consider this:\nfunction test() {\n    randomFile=${RANDOM}${RANDOM}.py\n    cat &lt;&lt; EOF &gt; $randomFile\n#!/usr/bin/python3\nprint(\"do something in Python\")\nEOF\n    chmod u+x $randomFile\n    ./$randomFile\n    /bin/rm $randomFile\n}\nHere EOF is a random delimiter string, and &lt;&lt; tells bash to wait for the delimiter to end input. For example, try the following:\ncat &lt;&lt; the_end\nThis text will be\nprinted in the terminal.\nthe_end",
+    "crumbs": [
+      "PART 2",
+      "Bash scripts and functions, and variables"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-02-filesystem.html",
+    "href": "bash1/bash-02-filesystem.html",
+    "title": "Filesystem",
+    "section": "",
+    "text": "Covered topics: pwd, ls, absolute vs. relative paths, command flags, cd, path shortcuts.\n\npwd = Print Working Directory\nls = LiSt everything inside the current/given directory\ncd = Change Directory\n\nClick on a triangle to expand a question:\n\n\n\n\n\n\nTopic 2.1\n\n\n\n\n\nRelative vs. absolute paths. Using ~ as part of a longer path.\n\n\n\n\n\n\n\n\n\n\nQuestion 2.2\n\n\n\n\n\nIn the figure above, if pwd displays /users/thing, what will ls ../backup display?\n1. ../backup: No such file or directory\n2. 2012-12-01 2013-01-08 2013-01-27\n3. 2012-12-01/ 2013-01-08/ 2013-01-27/\n4. original pnas_final pnas_sub\n\n\n\n\n\n\n\n\n\nQuestion 2.3\n\n\n\n\n\nGiven the same directory structure, if pwd displays /users/backup, and -r tells ls to display things in reverse order, what command will display:\npnas-sub/  pnas-final/  original/\n\nls pwd\nls -r -F\nls -r -F /users/backup\nEither #2 or #3 above, but not #1\n\n\n\n\n\n\n\n\n\n\nQuestion 2.4\n\n\n\n\n\nWhat does the command cd do if you do not pass it a directory name?\n1. It has no effect\n2. It changes the working directory to /\n3. It changes the working directory to the user’s home directory\n4. It produces an error message\n\n\n\n\n\n\n\n\n\nQuestion 2.5\n\n\n\n\n\nStarting from /Users/amanda/data/, which of the following commands could Amanda use to navigate to her home directory, which is /Users/amanda? Mark all correct answers.\n1. cd /\n2. cd /home/amanda\n3. cd ../..\n4. cd ~\n5. cd home\n6. cd ~/data/..\n7. cd\n8. cd ..\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Navigating the filesystem"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-02-filesystem.html#navigating-directories",
+    "href": "bash1/bash-02-filesystem.html#navigating-directories",
+    "title": "Filesystem",
+    "section": "",
+    "text": "Covered topics: pwd, ls, absolute vs. relative paths, command flags, cd, path shortcuts.\n\npwd = Print Working Directory\nls = LiSt everything inside the current/given directory\ncd = Change Directory\n\nClick on a triangle to expand a question:\n\n\n\n\n\n\nTopic 2.1\n\n\n\n\n\nRelative vs. absolute paths. Using ~ as part of a longer path.\n\n\n\n\n\n\n\n\n\n\nQuestion 2.2\n\n\n\n\n\nIn the figure above, if pwd displays /users/thing, what will ls ../backup display?\n1. ../backup: No such file or directory\n2. 2012-12-01 2013-01-08 2013-01-27\n3. 2012-12-01/ 2013-01-08/ 2013-01-27/\n4. original pnas_final pnas_sub\n\n\n\n\n\n\n\n\n\nQuestion 2.3\n\n\n\n\n\nGiven the same directory structure, if pwd displays /users/backup, and -r tells ls to display things in reverse order, what command will display:\npnas-sub/  pnas-final/  original/\n\nls pwd\nls -r -F\nls -r -F /users/backup\nEither #2 or #3 above, but not #1\n\n\n\n\n\n\n\n\n\n\nQuestion 2.4\n\n\n\n\n\nWhat does the command cd do if you do not pass it a directory name?\n1. It has no effect\n2. It changes the working directory to /\n3. It changes the working directory to the user’s home directory\n4. It produces an error message\n\n\n\n\n\n\n\n\n\nQuestion 2.5\n\n\n\n\n\nStarting from /Users/amanda/data/, which of the following commands could Amanda use to navigate to her home directory, which is /Users/amanda? Mark all correct answers.\n1. cd /\n2. cd /home/amanda\n3. cd ../..\n4. cd ~\n5. cd home\n6. cd ~/data/..\n7. cd\n8. cd ..\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Navigating the filesystem"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-02-filesystem.html#getting-help",
+    "href": "bash1/bash-02-filesystem.html#getting-help",
+    "title": "Filesystem",
+    "section": "Getting help",
+    "text": "Getting help\nCovered topics: man, navigating manual pages, --help flag.\n$ man ls\n$ ls --help\n\n\n\n\n\n\nQuestion -h\n\n\n\n\n\nCheck the manual page for ls command: what does the -h (--human-readable) option do?\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 1",
+      "Navigating the filesystem"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-07-loops.html",
+    "href": "bash1/bash-07-loops.html",
+    "title": "Loops",
+    "section": "",
+    "text": "Bash loops\n$ cd /path/to/data-shell/creatures\n$ ls   # shows basilisk.dat unicorn.dat -- let's pretend there are several hundred files here\nLet’s say we want to rename:\n\nbasilisk.dat  →  original-basilisk.dat\nunicorn.dat  →  original-unicorn.dat\n\nWe could try\n$ mv *.dat original-*.dat   # getting an error\nRemember if more than two arguments to mv, the last argument is the destination directory, but there is no directory matching original-*.dat, so we are getting an error. The proper solution is to use loops.\n$ for filename in basilisk.dat unicorn.dat     # filename is the loop variable here\n&gt; do\n&gt;   ls -l $filename                 # get the value of the variable by placing $ in front of it\n&gt; done\n\nLet’s simplify the previous loop:\n$ for f in *.dat\n&gt; do\n&gt;   ls -l $f\n&gt; done\nLet’s include two commands per each loop iteration:\n$ for f in *.dat\n&gt; do\n&gt;   echo $f\n&gt;   head -3 $f\n&gt; done\nNow to renaming basilisk.dat  ⮕  original-basilisk.dat, unicorn.dat  ⮕  original-unicorn.dat:\n$ for f in *.dat\n&gt; do\n&gt; cp $f original-$f\n&gt; done\nThe general syntax is\n$ for &lt;variable&gt; in &lt;collection&gt;\n&gt; do\n&gt;   commands with $variable\n&gt; done\nwhere a collection could be a explicit list of items, a list produced by a wildmask, or a collection of numbers/letters.\n$ echo {1..10}    # this is called brace expansion\n$ echo {1,2,5}    # very useful for loops or for including into large paths with multiple items, e.g.\n$ cd /path/to/data-shell/creatures\n$ ls -l ../molecules/{ethane,methane,pentane}.pdb\n$ echo {a..z}    # can also use letters\n$ echo {a..z}{1..10}   # this will produce 260 items\n$ echo {a..z}{a..z}    # this will produce 676 items\n$ seq 1 2 10      # step=2, so can use: for i in $(seq 1 2 10)\n$ for ((i=1; i&lt;=5; i++)) do echo $i; done   # can use C-style loops\n\n\n\n\n\n\nQuestion 7.1\n\n\n\n\n\nIn a directory the command ls returns:\nfructose.dat  glucose.dat  sucrose.dat  maltose.txt\nWhat would be the output of the following loop?\nfor datafile in *.dat\ndo\n  cat $datafile &gt;&gt; sugar.dat\ndone\n\nAll of the text from fructose.dat, glucose.dat and sucrose.dat would be concatenated and saved to a file called sugar.dat\nThe text from sucrose.dat will be saved to a file called sugar.dat\nAll of the text from fructose.dat, glucose.dat, sucrose.dat, and maltose.txt would be concatenated and saved to a file called sugar.dat\nAll of the text from fructose.dat, glucose.dat and sucrose.dat will be printed to the screen and saved into a file called sugar.dat\n\n\n\n\n\n\n\n\n\n\nTopic diff\n\n\n\n\n\nUsing diff to compare files and directories.\n\n\n\n\n\n\n\n\n\nQuestion Nested braces\n\n\n\n\n\nDiscuss brace expansion. Try nested braces. Paste an example that works. What will this command do:\ntouch 2022-May-{0{1..9},{10..30}}.md\n\n\n\n\n\n\n\n\n\nQuestion 7.4\n\n\n\n\n\nWrite a loop that concatenates all .pdb files in data-shell/molecules subdirectory into one file called allmolecules.txt, prepending each fragment with the name of the corresponding .pdb file, and separating different files with an empty line. Run the loop, make sure it works, bring it up with the  ↑  key and paste into the chat.\n\n\n\n\n\n\n\n\n\nQuestion Infinite loop\n\n\n\n\n\nUse Ctrl-C to kill an infinite (or very long) loop or an unfinished command.\nwhile true\ndo\n    echo \"Press [ctrl+c] to stop\"\n    sleep 1\ndone\n\n\n\n\n\n\n\n\n\nQuestion Looping through a collection\n\n\n\n\n\nWhat will the loop for i in hello 1 2 * bye; do echo $i; done print? Try answering without running the loop.\n\n\n\n\n\n\n\n\n\nQuestion Writing to chapters\n\n\n\n\n\nCreate a loop that writes into 10 files chapter01.md, chapter02.md, …, chapter10.md. Each file should contain chapter-specific lines, e.g. chapter05.md will contain exactly these lines:\n## Chapter 05\nThis is the beginning of Chapter 05.\nContent will go here.\nThis is the end of Chapter 05.\n\n\n\n\n\n\n\n\n\nQuestion Renaming with wildmask\n\n\n\n\n\nWhy mv *.txt *.bak does not work? Write a loop to rename all .txt files to .bak files. There are several solutions for changing a file extension inside a loop you know by now.\n\n\n\n\n\n\n\n\n\nQuestion Spaces to underscores\n\n\n\n\n\nUsing knowledge from the previous question, write a loop to replace spaces to underscores in all file names in the current directory.\ntouch hello \"first phrase\" \"second phrase\" \"good morning, everyone\"\nls -l\nls *\\ *\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Loops"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-09-grep-find.html",
+    "href": "bash1/bash-09-grep-find.html",
+    "title": "Grep and find",
+    "section": "",
+    "text": "$ cd /path/to/data-shell/writing\n$ more haiku.txt\nFirst let’s search for text in files:\n$ grep not haiku.txt     # let's find all lines that contain the word 'not'\n$ grep day haiku.txt     # now search for word 'day'\n$ grep -w day haiku.txt     # search for a separate word 'day' (not 'today', etc.)\n$ grep -w today haiku.txt   # search for 'today'\n$ grep -w Today haiku.txt   # search for 'Today'\n$ grep -i -w today haiku.txt       # both upper and lower case 'today'\n$ grep -n -i -w today haiku.txt    # -n prints out numbers the matching lines\n$ grep -n -i -w -v the haiku.txt   # -v searches for lines that do not contain 'the'\n$ man grep\nMore than two arguments to grep:\n$ grep pattern file1 file2 file3   # all argument after the first one are assumed to be filenames\n$ grep pattern *.txt   # the last argument will expand to the list of *.txt files\n\n\n\n\n\n\nQuestion Dissecting a haiku\n\n\n\n\n\nThe Tao that is seen\nIs not the true Tao, until\nYou bring fresh toner.\nWith searching comes loss\nand the presence of absence:\n\"My Thesis\" not found.\nYesterday it worked.\nToday it is not working.\nSoftware is like that.\nFrom the above text, contained in the file haiku.txt, which command would result in the following output:\nand the presence of absence:\n\ngrep of haiku.txt\ngrep -E of haiku.txt\ngrep -w of haiku.txt\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Finding things with `grep` and `find`"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-09-grep-find.html#searching-inside-files-with-grep",
+    "href": "bash1/bash-09-grep-find.html#searching-inside-files-with-grep",
+    "title": "Grep and find",
+    "section": "",
+    "text": "$ cd /path/to/data-shell/writing\n$ more haiku.txt\nFirst let’s search for text in files:\n$ grep not haiku.txt     # let's find all lines that contain the word 'not'\n$ grep day haiku.txt     # now search for word 'day'\n$ grep -w day haiku.txt     # search for a separate word 'day' (not 'today', etc.)\n$ grep -w today haiku.txt   # search for 'today'\n$ grep -w Today haiku.txt   # search for 'Today'\n$ grep -i -w today haiku.txt       # both upper and lower case 'today'\n$ grep -n -i -w today haiku.txt    # -n prints out numbers the matching lines\n$ grep -n -i -w -v the haiku.txt   # -v searches for lines that do not contain 'the'\n$ man grep\nMore than two arguments to grep:\n$ grep pattern file1 file2 file3   # all argument after the first one are assumed to be filenames\n$ grep pattern *.txt   # the last argument will expand to the list of *.txt files\n\n\n\n\n\n\nQuestion Dissecting a haiku\n\n\n\n\n\nThe Tao that is seen\nIs not the true Tao, until\nYou bring fresh toner.\nWith searching comes loss\nand the presence of absence:\n\"My Thesis\" not found.\nYesterday it worked.\nToday it is not working.\nSoftware is like that.\nFrom the above text, contained in the file haiku.txt, which command would result in the following output:\nand the presence of absence:\n\ngrep of haiku.txt\ngrep -E of haiku.txt\ngrep -w of haiku.txt\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Finding things with `grep` and `find`"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-09-grep-find.html#finding-files-with-find",
+    "href": "bash1/bash-09-grep-find.html#finding-files-with-find",
+    "title": "Grep and find",
+    "section": "Finding files with find",
+    "text": "Finding files with find\nNow on to finding files:\ncd /path/to/data-shell/writing\n$ find . -type d     # search for directories inside current directory\n$ find . -type f     # search for files inside current directory\n$ find . -maxdepth 1 -type f     # depth 1 is the current directory\n$ find . -mindepth 2 -type f     # current directory and one level down\n$ find . -name haiku.txt      # finds specific file\n$ ls data       # shows one.txt two.txt\n$ find . -name *.txt      # still finds one file -- why? answer: expands *.txt to haiku.txt\n$ find . -name '*.txt'    # finds all three files -- good!\nLet’s wrap the last command into $() (called command substitution), as if it was a variable:\n$ echo $(find . -name '*.txt')   # will print ./data/one.txt ./data/two.txt ./haiku.txt\n$ ls -l $(find . -name '*.txt')   # will expand to ls -l ./data/one.txt ./data/two.txt ./haiku.txt\n$ wc -l $(find . -name '*.txt')   # will expand to wc -l ./data/one.txt ./data/two.txt ./haiku.txt\n$ grep elegant $(find . -name '*.txt')   # will look for 'elegant' inside all *.txt files\n\n\n\n\n\n\nQuestion Somewhat tricky problem\n\n\n\n\n\nThe -v flag to grep inverts pattern matching, so that only lines that do not match the pattern are printed. Given that, which of the following commands will find all files in /data whose names end in ose.dat (e.g., sucrose.dat or maltose.dat), but whose names do not contain the word temp?\n1. find /data -name '*.dat' | grep ose | grep -v temp\n2. find /data -name ose.dat | grep -v temp\n3. grep -v temp $(find /data -name '*ose.dat')\n4. None of the above\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Finding things with `grep` and `find`"
+    ]
+  },
+  {
+    "objectID": "bash1/bash-09-grep-find.html#combining-find-and-grep",
+    "href": "bash1/bash-09-grep-find.html#combining-find-and-grep",
+    "title": "Grep and find",
+    "section": "Combining find and grep",
+    "text": "Combining find and grep\n\nLet’s say you want to run a command on each of the files in the output of find. You can always do something using command substitution like this:\n$ for f in $(find . -name \"*.txt\")\n&gt; do\n&gt;   command on $f\n&gt; done\nAlternatively, you can make it a one-liner:\nfind . -name \"*.txt\" -exec command {} \\;       # important to have spaces\nAnother – perhaps more elegant – one-line alternative is to use xargs. In its simplest usage, xargs command lets you construct a list of arguments:\n\nfind . -name \"*.txt\"                   # returns multiple lines\nfind . -name \"*.txt\" | xargs           # use those lines to construct a list\nfind . -name \"*.txt\" | xargs command   # pass this list as arguments to `command`\ncommand $(find . -name \"*.txt\")        # command substitution, achieving the same result (this is riskier!)\ncommand `(find . -name \"*.txt\")`       # alternative syntax for command substitution\nIn these examples, xargs achieves the same result as command substitution, but it is safer in terms of memory usage and the length of lists you can pass.\nWhere would you use this? Well, consider grep command that takes a search stream (and not a list of files) as its standard input:\ncat filename | grep pattern\nTo pass a list of files to grep, you can use xargs that takes that list from its standard input and converts it into a list of arguments that is then passed to grep:\nfind . -name \"*.txt\" | xargs grep pattern   # search for `pattern` inside all those files (`grep` does not take a list of files as standard input)\n\n\n\n\n\n\nQuestion Recursive search\n\n\n\n\n\nWrite a one-line command that will search for a string in all files in the current directory and all its subdirectories, and will hide errors (e.g. due to permissions).\n\n\n\n\n\n\n\n\n\nQuestion Command substitution\n\n\n\n\n\nPlay with command substitution using both $(...) and `...` syntax.\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can watch a video for this topic after the workshop.",
+    "crumbs": [
+      "PART 2",
+      "Finding things with `grep` and `find`"
+    ]
+  },
+  {
     "objectID": "julia1/julia-01-intro-language.html",
     "href": "julia1/julia-01-intro-language.html",
     "title": "Introduction to Julia language",
@@ -1657,10 +2102,73 @@
     "text": "Exercise 6\nOne possible solution is with lambda-functions, with i=0..n-1,     j=0..n-1,     x=i/(n-1)=0..1,     y=j/(n-1)=0..1:\nimport plotly.graph_objs as go\nfrom numpy import fromfunction, sin, pi\nn = 100   # plot resolution\nF = fromfunction(lambda i, j: (1-j/(n-1))*sin(pi*i/(n-1)) + \\\n                 j/(n-1)*(sin(2*pi*i/(n-1)))**2, (n,n), dtype=float)\nsurface = go.Surface(z=F)\nlayout = go.Layout(width=1200, height=1200)\nfig = go.Figure([surface], layout=layout)\nfig.show()\nIf you don’t like lambda-functions, you can replace F = fromfunction(...) line with:\nfrom numpy import zeros, linspace\nF = zeros((n,n))\nfor i, x in enumerate(linspace(0,1,n)):\n    for j, y in enumerate(linspace(0,1,n)):\n        F[i,j] = (1-y)*sin(pi*x) + y*(sin(2*pi*x))**2\nAs a third option, you can use array operations to compute f:\nfrom numpy import linspace, meshgrid\nx = linspace(0,1,n)\ny = linspace(0,1,n)\nY, X = meshgrid(x, y)   # meshgrid() returns two 2D arrays storing x/y respectively at each point\nF = (1-Y)*sin(pi*X) + Y*(sin(2*pi*X))**2   # array operation\nIf we want to scale the z-range, we can add scene=go.layout.Scene(zaxis=go.ZAxis(range=[-1,2])) inside go.Layout()."
   },
   {
-    "objectID": "badSpeedupSolution.html",
-    "href": "badSpeedupSolution.html",
-    "title": "Fixing poor parallel scaling in the Julia set",
+    "objectID": "annex.html",
+    "href": "annex.html",
+    "title": "Distributed file storage with git-annex",
     "section": "",
-    "text": "False sharing has no effect in this problem, as for most part individual threads are writing into array elements that are well separated in memory.\nThe row-major vs. column-major order does not matter in the Julia set problem, as it is dominated by computation of individual pixels: computing a single pixel on average takes much longer than writing to a random array element. The timings are virtually identical for row-major vs. column-major, whether in serial or in parallel with @threads. If you were to fill in these elements without computing, then the order would matter, e.g. consider this code:\nusing BenchmarkTools\nfunction testOrder(n::Int, order::Bool)\n    stability = zeros(Int32, n, n)\n    for i in 1:n\n        for j in 1:n\n            order ? stability[i,j] = i+j : stability[j,i] = i+j\n        end\n    end\n    return stability\nend\n@btime testOrder(30_000, true);    # 2.753 s\n@btime testOrder(30_000, false);   # 721.484 ms\n@btime testOrder(1000, true);    # 714.958 μs\n@btime testOrder(1000, false);   # 681.333 μs\nThe real culprit in the Julia set’s bad parallel scaling is the problem’s less-than-perfect load balancing. We know that @threads subdivides the large outer loop equally between the threads. However, some threads have fewer iterations to compute and finish faster, but they have to wait for the threads with more iterations in their pixels. If you modify the code in such a way that all pixels do the same large number of iterations, you will see perfect linear speedup with multi-threading.\nWith the unbalanced load, it is possible to improve performance somewhat with dynamic scheduling using either channels (not covered in our workshop) or Threads.@spawn but it’ll make the code a little bit more complex.\nThe following asynchronous solution was written by Jeremiah O’Neil (University of Ottawa):\nfunction juliaSet(height, width)\n    stability = zeros(Int32, height, width)\n    c = Channel{Int64}(nthreads()) do chnl\n        for i in 1:height\n            put!(chnl, i)\n        end\n    end\n    Threads.foreach(c) do i\n        for j in 1:width\n            point = (2*(j-0.5)/width-1) + (2*(i-0.5)/height-1)im\n            stability[i,j] = pixel(point)\n        end\n    end\n    return stability\nend\nshows better (but still less than linear) speedup."
+    "text": "November 26th, 2024, 10:00am–11:00am Pacific Time\nYou can find this page at   https://folio.vastcloud.org/annex\nAbstract: git-annex is a file synchronization tool designed to simplify the management of large (typically data-oriented) files under version control. Unlike Git, git-annex does not track file contents but rather facilitates the organization of data across multiple locations, both online and offline, enabling the creation of multiple copies for backup and redundancy, ensuring data safety and organization.     In the past, we have taught webinars on tools built upon git-annex, such as DataLad. In these tools the core functionality is typically provided by git-annex, so we believe it is crucial to understand how to effectively organize data using git-annex itself, without the distraction of additional features.     Personally, I have been utilizing git-annex for several years to manage my extensive collection of archived files across multiple drives stored on a shelf. git-annex provides built-in redundancy, ensuring that each individual repository or drive is aware of the location of all files on other drives, eliminating the need to power them on just to find a file. git-annex also offers online capabilities, allowing file synchronization across multiple filesystems and clusters to help you manage your research data."
+  },
+  {
+    "objectID": "annex.html#git-shortcomings-for-large-files",
+    "href": "annex.html#git-shortcomings-for-large-files",
+    "title": "Distributed file storage with git-annex",
+    "section": "Git shortcomings for large files",
+    "text": "Git shortcomings for large files\nGit was designed for version control of text files (codes, articles, any text-based documents). One major drawback of putting large data files under traditional version control is that it will double the size of your repository. You can use a hack to alleviate this problem, e.g. instead of putting the repository into the working directory, you can put it on a separate drive:\nmkdir large && cd large\ngit init --separate-git-dir=/Volume/drive/repoDir\ndd if=/dev/urandom of=someLargeFile bs=10240 count=$(( RANDOM + 1024 ))\ngit add someLargeFile\ngit commit -m \"...\"\nIn the working directory, this will create a text file .git containing the path to the actual repository. Now, when you commit large files to this repository, a copy will remain in the working directory (first drive), and another copy will go into the repository (second drive). Theoretically, you can even swap between different repositories (i.e. different drives) by swapping the content of .git, so you can have a copy of the same set of files on multiple drives.\nHowever, if you modify/delete a binary data file from the working directory, git will keep the older version in the repository. If this is a multi-GB data file and you no longer need it, you’ll be wasting space by keeping this file in the repository.\ngit-annex solves this problem by replacing data files with symbolic links. When you no longer need a file, you simply run a git-annex drop command to free some disk space. In addition, git-annex provides these features:\n\nIt can distribute files across multiple repositories, to have a different collection of files in each repository. You don’t use multiple bookcases to store the same set of books!\nIt can automate redundant storage, so that you can have multiple copies of files on different drives when you need backups.\nIt can work offline: you can synchronize data between drives without having to mount all of them at the same time. git-annex is fully distributed, i.e. each repository in the collection stores the full history, but it is often convenient to designate the main repository for syncing multiple secondary repositories on external drives. In addition, each repository knows about the location of all files in all other repositories, without having to mount the drives.\n\nIn short, git-annex helps me automate storage of a large number of files across a heterogeneous collection of standalone HDDs and SSDs sitting on a shelf and ensures that all my storage is redundant, i.e. I have at least two copies of all important files. If I ever run out of space, I can add another annex on a new drive, or even throw into the mix a remote server with extra storage.\nYou can read about the history of git-annex on Wikipedia.\nThere is a competing project Git Large File Storage (LFS), and a number of projects built on top of git-annex."
+  },
+  {
+    "objectID": "annex.html#installation",
+    "href": "annex.html#installation",
+    "title": "Distributed file storage with git-annex",
+    "section": "Installation",
+    "text": "Installation\ngit-annex is open source and is available as a package in Linux, Mac, Windows. On my Mac I installed it with brew install git-annex. On the Alliance clusters git-annex is provided as a module (module load git-annex), so no need to install it there.\nFor git-annex to function, you also need Git. Sometimes Git development gets ahead of git-annex, and very occasionally things might behave weirdly if you have newer Git and older git-annex (but I never had any data lost). In such cases you might want to check if a new version of git-annex is available."
+  },
+  {
+    "objectID": "annex.html#standalone-workflows",
+    "href": "annex.html#standalone-workflows",
+    "title": "Distributed file storage with git-annex",
+    "section": "Standalone workflows",
+    "text": "Standalone workflows\n\nAdding binary files\nFor the purpose of this tutorial, let’s create a bash function to quickly add new binary files to the current directory.\n\nshuf -i 0-9 -n 5 produces 5 unique random digits 0-9\nshuf -i 0-9 -n 5 | tr -d '\\n' puts 5 unique random digits into a singe line\n$RANDOM returns a pseudorandom integer in the range 0..32767\n\nThe following function will take a number and will produce this number of binary files (filled with random bits) of size (1-33)MB.\nfunction populate() {\n    if [ $# -gt 0 ]; then\n    for i in $(seq -w 1 $1); do\n        num=$(shuf -i 0-9 -n 5 | tr -d '\\n')\n        dd if=/dev/urandom of=test\"$num\" bs=1024 count=$(( RANDOM + 1024 ))\n    done\n    fi\n}\n\n\nInitialize annexes\ncd ~/tmp\nmkdir -p {earth,mars,venus}/annex   # placeholders for different drives or filesystems\ntree\ncd earth/annex\n\nalias ga='git-annex'\n\ngit init\nga init \"earth\"\n\npopulate 10\n\nga add .   # (1) move files to .git/annex/objects\n           # (2) create symbolic links pointing to the new location\n           # (3) add these links to the index (git staging area)\ngit commit -m \"add 10 new files\"\n\nIt is very important to use ga add and not git add when adding files to annex, so you need to rewire your git finger memory.\nTo check the repository/annex current status, you can use one of these two commands – both of them report approximately the same information, so in practice I use one or the other:\ngit status   # everything is clean\nga status    # everything is clean\npopulate 5\nls   # 5 new files, 10 old links\n\nga add .\ngit commit -m \"add 5 new files\"\ndu -s .git/annex/objects   # the files are really there\n\n\nUndo accidental add command\nLet’s say we added a file by mistake, but have not committed it yet:\npopulate 1\nls\nexport testfile=test50427\nga add $testfile\n\ngit status   # new file to be comitted\nga status    # added the new file\n\nls -l $testfile\nobject=$(ls -l $testfile | awk '{print $11}')   # store last line\nls -l $object\nHow do we undo this ga add operation? We must do it in two steps.\n\nput the file content back to replace the link:\n\nga unannex $testfile\nls -l $testfile   # the file is back\nls -l $object     # but the object is also still there\n\nremove unlinked file content from the repository:\n\nga unused   # show all unlinked files in the repository (object store)\nga dropunused --force 1   # drop the first unused file\n\nls -l $object     # now the object is gone\nga unused         # no unlinked files left\nWe are now back to having our new, untracked file – you can check that with either git status or ga status.\n\n\nRemove files from annex control\nWhat if we have both added and committed the file – how do we undo that, i.e. how do we remove a file from git-annex control? Follow the same two steps and update the repository:\nga unannex test80145      # unannex one file currently under git-annex control\nga dropunused --force 1   # drop the first unused file\ngit commit -m \"moved test80145 out of the annex\"\nNow if we do either git status or ga status, they will report that now we have a new, untracked file.\nIf you want to remove multiple files, e.g. file1, file2, file3, or an entire subdirectory subdir, you would do something like this:\nga unannex &lt;file1&gt; &lt;file2&gt; &lt;file3&gt;\nga unannex &lt;subdir&gt;\nga unused                      # show all unlinked files\nga dropunused --force {1..5}   # adjust the number based on the previous command's output\n\n\nRemove file completely from the drive\nIf you don’t want to keep the data file, one possible solution is:\n\nreplace the link with the file content: ga unannex &lt;filename&gt;\ndrop the unused object file with a combination of ga unused and ga dropunused --force &lt;number&gt;\nupdate the repository: git commit -m \"moved &lt;filename&gt; out of the annex\"\ndelete the file rm &lt;filename&gt;\n\nAn alternative solution (we’ll see ga drop later when we work with remotes) could be:\nga drop --force &lt;filename&gt;   # drop a local copy (object)\nunlink  &lt;filename&gt;           # remove the link\nga sync                      # does git commit in the background\n\n\nGetting help\n\n`ga –help’ will list all available commands\nga &lt;command&gt; --help will give quick info about the command flags\nonline help pages for individual commands https://git-annex.branchable.com/git-annex-command (replace command with the actual command)"
+  },
+  {
+    "objectID": "annex.html#working-with-remotes",
+    "href": "annex.html#working-with-remotes",
+    "title": "Distributed file storage with git-annex",
+    "section": "Working with remotes",
+    "text": "Working with remotes\nThe real power of git-annex lies in its ability to distribute files across multiple annexes in a seamless manner. This is achieved through conventional Git remotes.\n\nRemote via a clone\nLet’s go to another drive and clone our existing repository there:\nga status   # make sure everything is committed\n\ncd ~/tmp/venus\ngit clone ~/tmp/earth/annex\ncd annex\n\nls          # there are symbolic links to non-existent destinations\ndu -s .     # currently no objects (data files)\ngit log     # see the history from earth\n\nga whereis    # all 15 files are on earth (1 copy of each)\n\npopulate 10\nga add .\ngit commit -m \"add 10 new files\"\n\nga whereis   # 15 files on earth, 10 files here\nIn a separate terminal, if we go to earth drive:\ncd ~/tmp/earth/annex\nga whereis   # shows only 15 local files\n\ngit remote add venus ~/tmp/venus/annex\nga sync\nga whereis   # 15 files here, 10 files on venus\nSo, what does ga sync do exactly? It performs these operations:\n\nrun local git commit with a generic message “git-annex in ”\nupdate the current repository with all changes made to its remotes, and\npush any changes in the current repository to its remotes, where you need to run ga sync to get them\n\nAn important innovation of ga sync is that it can work with remotes when they are offline:\n\nwhen pulling from an offline remote, it will check its “Inbox” branch (not actual name) to see if that remote has sync’ed to it earlier\nwhen pushing to an offline remote, it will push updates to its “Outbox” branch (not actual name)\n\nin earth ---\n  git-annex\n* main\n  synced/git-annex\n  synced/main\n\nin venus ---\n  git-annex\n* main\n  synced/main\nLet’s test communicating with offline annexes:\n--- venus annex ---\nga sync             # we made some changes to earth, need to update here\ndd if=/dev/urandom of=venus1 bs=1024 count=$(( RANDOM + 1024 ));\nga add venus1\ngit commit -m \"add venus1\"\nga sync\ncd ../..\nmv venus hidden     # hide it from earth\n\n--- earth annex ---\nga whereis venus1   # cannot find\nga sync             # update from the local branch\nga whereis venus1   # it is in venus\n\ncd ~/tmp\nmv hidden venus\n\n\nRemote from scratch\nLet’s move to another drive and create a new annex there from scratch with 10 new files:\ncd ~/tmp/mars/annex\ngit init\nga init \"mars\"\npopulate 10\nga add .\ngit commit -m \"add 10 new files\"\nga status   # all clean\nAt this point we still have an isolated annex. Let’s add our original repo as a remote for this repo:\ngit remote add earth ~/tmp/earth/annex\nga sync   # now fails, as you have two separate histories\nga sync --allow-unrelated-histories   # should work if no file conflicts\nIf there is a conflict, you may want to either (1) create a new repository via git clone like in the previous section, and then add new files by hand, or (2) try to rename the conflicting file.\nFinally, let’s do this:\n--- earth annex ---\nga sync\ngit remote               # mars is not its remote yet\nga whereis | grep mars   # but we can see the 10 files on mars!\nHere we see another example of offline communication: mars pushed into earth’s inbox earlier, and the last ga sync received those updates, even though we cannot connect to mars directly (no such remote). Let’s correct this by adding the remote:\n--- earth annex ---\ngit remote add mars ~/tmp/mars/annex\n\n\nCreate multiple copies\nThis is easily one of my favourite git-annex features!\n--- earth annex ---\npopulate 2\nexport coupleOfFiles=\"test03985 test69314\"\nga add $coupleOfFiles\ngit commit -m \"add 2 files\"\nga whereis $coupleOfFiles\nThese files have just one copy (here). In fact, in our annexes there are many files with a single copy:\nga whereis | grep -A 1 \"1 copy\"   # show all files with only one copy, in earth + mars + venus\nga whereis . | grep -A 1 \"1 copy\" | grep -B 2 \"\\[here\\]\"   # show local files with only one copy\nga sync\n\n--- mars annex ---\nga sync\nga whereis $coupleOfFiles   # 1 copy on earth\nga get --auto --numcopies=2 $coupleOfFiles\nga whereis $coupleOfFiles   # 2 copies\nga sync\nThe command ga get --auto --numcopies=2 can work with any list of files and/or directories.\n\n\n\n\n\n\n\n\n\n\n\n\nMove files manually between remotes\nga whereis   # pick a file on venus\nga move &lt;filename&gt; --to here   # will likely fail (venus not linked)\ngit remote add venus ~/tmp/venus/annex\nga move &lt;filename&gt; --to here   # should work\nga find   # list all local files =&gt; pick a file\nga whereis test52930   # check its copies\nga move test52930 --to venus   # venus has to be online for this to work\n\n\nDrop a local copy\nga find   # list all local files =&gt; pick a file\nga drop test97806   # delete the object; keep the link: dangerous territory!\nUsually, git-annex will not let you delete a single copy, but you can --force it to permanently delete your data.\nIf you still want to keep a copy elsewhere, a safer approach would be:\nga drop --auto --numcopies=1 &lt;path&gt;   # drop all local copies if there is a remote copy\nga drop --auto --numcopies=2 &lt;path&gt;   # drop all local copies if there are 2 remote copies\n\n\nMove a file out of the annex and drop all annexed copies\n\nLets’ create a new file and put its content into two annexes:\n--- earth annex ---\npopulate 1\nexport testfile=test05873\nga add $testfile\nga copy $testfile --to mars\nga sync\nga whereis $testfile   # two copies: on earth and mars\n\n--- mars annex ---\nga sync\nga whereis $testfile   # two copies: on earth and mars\nobject=$(ls -l $testfile | awk '{print $11}')\nls -l $object          # actual file is stored here\nLet’s copy the file content back to replace the link:\nga unannex $testfile\nls              # the file replaced the link\nga unused       # shows no unlinked files\nls -l $object   # the file is still there, and it is unlinked\nWhat is going on here? It turns out that “ga unused” actually works across linked annexes, and it simply says that there is a link to this file somewhere in the other repository. To unannex this file’s copy everywhere, you need to tell ga unused to ignore that this file is checked out in other annexes:\nga unused --used-refspec=+master\nga dropunused --force 1\nga sync\nls -l $object   # the object is now gone locally\n\n--- earth annex ---\nls -l $testfile   # the file is still under annex here\nga sync\nls -l $testfile   # and now it is not\nga whereis $testfile               # this file is not under annex anywhere\nga unused --used-refspec=+master   # delete its copy here as well\nga dropunused --force 1\n\n--- mars annex ---\nls $testfile      # we have the unannexed copy (and only copy) in mars\n\n\nShow disk usage across all remotes\nga info &lt;path&gt;   # show local+global disk usage in a directory\n\n\nOrganize links into directories\nIn real life you put files into folders / directories. We can do the same with git-controlled links:\n--- mars annex ---\nmkdir data\ngit mv test{0,1,2}* data/\nga sync\n\n--- earth annex ---\nga sync\nls   # test0*,test1*,test2* should be in data/\nga get --auto --numcopies=2 data   # get files in /data with fewer than two copies\nga sync\n\n--- mars annex ---\nga get --auto --numcopies=2 data   # get files in /data with fewer than two copies\nga whereis data                    # all files will likely have two copies now\nga sync"
+  },
+  {
+    "objectID": "annex.html#ssh-remotes",
+    "href": "annex.html#ssh-remotes",
+    "title": "Distributed file storage with git-annex",
+    "section": "SSH remotes",
+    "text": "SSH remotes\nIf you want to talk to a remote via ssh, its host server will need to have git and git-annex installed and available via command line when you ssh to that server. However, the Alliance clusters provide git-annex as a module. In this case, you can add module load git-annex to your ~/.bashrc file:\nuser01@vis.vastcloud.org\necho module load git-annex &gt;&gt; .bashrc\necho alias ga=git-annex &gt;&gt; .bashrc\nsource .bashrc\ngit config --global init.defaultBranch main   # sometimes remote git can be old\n\n\n\n\n\n\n\nuser01@vis.vastcloud.org\nmkdir annex && cd annex\ngit init       # --bare\nga init \"cluster\"\ngit commit --allow-empty -m \"first commit\"   # otherwise local \"ga sync\" will fail to merge\n\n--- earth annex ---\ngit remote remove cluster\ngit remote add cluster user01@vis.vastcloud.org:annex\nga sync --allow-unrelated-histories\n\n--- cluster annex ---\nga sync\nls        # all aliases from earth should be there\ndu -s .   # but there are no object files\nWith the two repositories linked, any new change on earth can be sync’ed with the SSH remote:\n--- earth annex ---\ndd if=/dev/urandom of=earth3 bs=1024 count=$(( RANDOM + 1024 ));\nga add earth3\nga unannex earth1\nga sync\n\n--- cluster annex ---\nga sync\nls   # recent updates from earth should be here\nga whereis earth3   # only one copy on earth\nga whereis earth1   # no copies under git-annex control\nHow about going the other way, i.e. syncing a change from the ssh remote?\n--- cluster annex ---\ndd if=/dev/urandom of=cluster1 bs=1024 count=$(( RANDOM + 1024 ));\nga add cluster1\nga sync   # cannot update the repos on my computer: they are behind the firewall;\n          # plus we have not even set up the remotes!\n\n--- earth annex ---\nga sync   # not to worry, this will sync the recent changes in the ssh remote\nls        # cluster1 is now here\nga whereis cluster1\nNote that having SSH remotes will slow down your ga sync commands, so personally – even when I have them – I prefer to temporarily remove them with git remote remove ....\nYou can find another example at https://git-annex.branchable.com/walkthrough/using_ssh_remotes."
+  },
+  {
+    "objectID": "annex.html#check-annexed-data",
+    "href": "annex.html#check-annexed-data",
+    "title": "Distributed file storage with git-annex",
+    "section": "Check annexed data",
+    "text": "Check annexed data\nga fsck     # run checksum on all local files\nga unused   # show all unlinked files in this annex"
+  },
+  {
+    "objectID": "annex.html#when-a-drive-fails",
+    "href": "annex.html#when-a-drive-fails",
+    "title": "Distributed file storage with git-annex",
+    "section": "When a drive fails",
+    "text": "When a drive fails\nIf a drive goes bad, you want to make sure its content is mirrored in two other places, i.e. you should rebuild your redundant storage:\n--- some other annex ---\nga whereis . | grep -A 1 \"1 copy\" | grep -B 2 &lt;bad annex&gt;    # congratulations, you lost your only copy ...\nga whereis . | grep -A 2 \"2 copies\" | grep -B 3 &lt;bad annex&gt;  # 1 copy left elsewhere\nBack up those single copies to a third annex with one of these commands:\n--- third annex ---\nga get &lt;items&gt;   # get a local copy\nga get --auto --numcopies=2 &lt;items&gt;\n\n--- source annex ---\nga copy &lt;items&gt; --to &lt;third annex&gt;\nNext, you want to mark the failed drive’s annex as “dead”, so that its content stops showing in gitannex whereis:\nga dead &lt;bad annex&gt;\nand remove it from all other repositories:\ngit remote remove &lt;bad annex&gt;   # do this in each annex"
+  },
+  {
+    "objectID": "annex.html#print-one-line-per-file",
+    "href": "annex.html#print-one-line-per-file",
+    "title": "Distributed file storage with git-annex",
+    "section": "Print one line per file",
+    "text": "Print one line per file\nSometimes it is tricky to grep the output of ga whereis, as it produces a variable number of lines per file, depending on the number of copies.\nga whereis has the flag --format, but I find its output somewhat lacking.\n\nSimpler, less efficient solution\nThe following commands\necho $(ga whereis)        | sed 's/whereis/\\n/g'\necho $(ga whereis &lt;path&gt;) | sed 's/whereis/\\n/g'\nwill print one line per file, so you can organize searches with something like:\necho $(ga whereis) | sed 's/whereis/\\n/g' | grep &lt;annex&gt;\necho $(ga whereis) | sed 's/whereis/\\n/g' | grep \"1 copy\"\necho $(ga whereis) | sed 's/whereis/\\n/g' | grep &lt;annex&gt; | grep \"1 copy\"\necho $(ga whereis watch) | sed ‘s/whereis//g’ | grep “1 copy”\n\n\nFaster, more elegant solution\nPerhaps, a more elegant solution is to use the --json flag which could be useful for sending (very complete) JSON output to other utilities or even Python scripts. One added benefit: it’ll properly process and display Unicode in file names, e.g. if you use Chinese characters or a non-Latin alphabet.\nLet’s process our output with jq, a command-line JSON processor.\nFirst, let’s list files with at least 2 copies:\nga whereis --copies 2\nand use one of their names below.\nga whereis test43816               # multiple lines\nga whereis --json test43816        # one JSON line per file\nga whereis --json test43816 | jq   # show the multi-line JSON object\nga whereis --json test43816 | jq '.file'   # print the file name only\n\n# print file name and the space-delimited list of repositories\nga whereis --json test43816 | jq '.file + \" \" + (.whereis|map(.description)|join(\",\"))'\nWe can now apply this to any list of items or the entire repository:\nga whereis --json | jq '.file + \" \" + (.whereis|map(.description)|join(\",\"))'"
+  },
+  {
+    "objectID": "annex.html#cheat-sheet",
+    "href": "annex.html#cheat-sheet",
+    "title": "Distributed file storage with git-annex",
+    "section": "Cheat sheet",
+    "text": "Cheat sheet\n\n&lt;items&gt; could be any collection of files and/or directories\n&lt;annex&gt; is the name of a git-annex, e.g. earth or mars or venus\n\nga init &lt;name&gt;\nga add &lt;items&gt;\nga sync\n\nga unannex &lt;items&gt;            # replace the link with the actual file content\nga unused                     # show all unlinked files in the annex\nga unused --used-refspec=+master   # same, but ignore these files being checked out in other annexes\nga dropunused --force &lt;num&gt;   # drop the unused file with a given index\nga drop --force &lt;items&gt;       # drop a local copy (object)\n\nga find                       # list all local files\nga whereis &lt;items&gt;            # locate file(s) or dir(s)\nga whereis | grep -A 1 \"1 copy\"                          # show all files with only one copy\nga whereis | grep -A 1 \"1 copy\" | grep -B 2 \"\\[here\\]\"   # show local files with only one copy\necho $(ga whereis) | sed 's/whereis/\\n/g'                # print one file per line\nga whereis --json | jq '.file + \" \" + (.whereis|map(.description)|join(\",\"))' # print name + annex\nga info &lt;items&gt;               # show local + global disk usage\n\nga copy &lt;items&gt; --to here\nga copy &lt;items&gt; --to &lt;annex&gt;\nga move &lt;items&gt; --to here\nga move &lt;items&gt; --to &lt;annex&gt;\nga get --auto --numcopies=2 &lt;items&gt;\n\ngit-annex walkthrough is a good introduction to using git-annex from the command line."
   }
 ]

@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Distributed file storage with git-annex – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-4df3b0c4fafa0f66eafcead0ee6cff11.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#git-shortcomings-for-large-files" id="toc-git-shortcomings-for-large-files" class="nav-link active" data-scroll-target="#git-shortcomings-for-large-files">Git shortcomings for large files</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#standalone-workflows" id="toc-standalone-workflows" class="nav-link" data-scroll-target="#standalone-workflows">Standalone workflows</a>
+  <ul class="collapse">
+  <li><a href="#adding-binary-files" id="toc-adding-binary-files" class="nav-link" data-scroll-target="#adding-binary-files">Adding binary files</a></li>
+  <li><a href="#initialize-annexes" id="toc-initialize-annexes" class="nav-link" data-scroll-target="#initialize-annexes">Initialize annexes</a></li>
+  <li><a href="#undo-accidental-add-command" id="toc-undo-accidental-add-command" class="nav-link" data-scroll-target="#undo-accidental-add-command">Undo accidental add command</a></li>
+  <li><a href="#remove-files-from-annex-control" id="toc-remove-files-from-annex-control" class="nav-link" data-scroll-target="#remove-files-from-annex-control">Remove files from annex control</a></li>
+  <li><a href="#remove-file-completely-from-the-drive" id="toc-remove-file-completely-from-the-drive" class="nav-link" data-scroll-target="#remove-file-completely-from-the-drive">Remove file completely from the drive</a></li>
+  <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting help</a></li>
+  </ul></li>
+  <li><a href="#working-with-remotes" id="toc-working-with-remotes" class="nav-link" data-scroll-target="#working-with-remotes">Working with remotes</a>
+  <ul class="collapse">
+  <li><a href="#remote-via-a-clone" id="toc-remote-via-a-clone" class="nav-link" data-scroll-target="#remote-via-a-clone">Remote via a clone</a></li>
+  <li><a href="#remote-from-scratch" id="toc-remote-from-scratch" class="nav-link" data-scroll-target="#remote-from-scratch">Remote from scratch</a></li>
+  <li><a href="#create-multiple-copies" id="toc-create-multiple-copies" class="nav-link" data-scroll-target="#create-multiple-copies">Create multiple copies</a></li>
+  <li><a href="#move-files-manually-between-remotes" id="toc-move-files-manually-between-remotes" class="nav-link" data-scroll-target="#move-files-manually-between-remotes">Move files manually between remotes</a></li>
+  <li><a href="#drop-a-local-copy" id="toc-drop-a-local-copy" class="nav-link" data-scroll-target="#drop-a-local-copy">Drop a local copy</a></li>
+  <li><a href="#move-a-file-out-of-the-annex-and-drop-all-annexed-copies" id="toc-move-a-file-out-of-the-annex-and-drop-all-annexed-copies" class="nav-link" data-scroll-target="#move-a-file-out-of-the-annex-and-drop-all-annexed-copies">Move a file out of the annex and drop all annexed copies</a></li>
+  <li><a href="#show-disk-usage-across-all-remotes" id="toc-show-disk-usage-across-all-remotes" class="nav-link" data-scroll-target="#show-disk-usage-across-all-remotes">Show disk usage across all remotes</a></li>
+  <li><a href="#organize-links-into-directories" id="toc-organize-links-into-directories" class="nav-link" data-scroll-target="#organize-links-into-directories">Organize links into directories</a></li>
+  </ul></li>
+  <li><a href="#ssh-remotes" id="toc-ssh-remotes" class="nav-link" data-scroll-target="#ssh-remotes">SSH remotes</a></li>
+  <li><a href="#check-annexed-data" id="toc-check-annexed-data" class="nav-link" data-scroll-target="#check-annexed-data">Check annexed data</a></li>
+  <li><a href="#when-a-drive-fails" id="toc-when-a-drive-fails" class="nav-link" data-scroll-target="#when-a-drive-fails">When a drive fails</a></li>
+  <li><a href="#print-one-line-per-file" id="toc-print-one-line-per-file" class="nav-link" data-scroll-target="#print-one-line-per-file">Print one line per file</a>
+  <ul class="collapse">
+  <li><a href="#simpler-less-efficient-solution" id="toc-simpler-less-efficient-solution" class="nav-link" data-scroll-target="#simpler-less-efficient-solution">Simpler, less efficient solution</a></li>
+  <li><a href="#faster-more-elegant-solution" id="toc-faster-more-elegant-solution" class="nav-link" data-scroll-target="#faster-more-elegant-solution">Faster, more elegant solution</a></li>
+  </ul></li>
+  <li><a href="#cheat-sheet" id="toc-cheat-sheet" class="nav-link" data-scroll-target="#cheat-sheet">Cheat sheet</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Distributed file storage with git-annex</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>November 26<sup>th</sup>, 2024, 10:00am–11:00am Pacific Time</strong></p>
+<p>You can find this page at &nbsp; <span style="font-size:1.8em;">https://folio.vastcloud.org/annex</span></p>
+<p><strong>Abstract</strong>: git-annex is a file synchronization tool designed to simplify the management of large (typically data-oriented) files under version control. Unlike Git, git-annex does not track file contents but rather facilitates the organization of data across multiple locations, both online and offline, enabling the creation of multiple copies for backup and redundancy, ensuring data safety and organization. &nbsp;&nbsp;&nbsp; In the past, we have taught webinars on tools built upon git-annex, such as <a href="https://www.datalad.org">DataLad</a>. In these tools the core functionality is typically provided by git-annex, so we believe it is crucial to understand how to effectively organize data using git-annex itself, without the distraction of additional features. &nbsp;&nbsp;&nbsp; Personally, I have been utilizing git-annex for several years to manage my extensive collection of archived files across multiple drives stored on a shelf. git-annex provides built-in redundancy, ensuring that each individual repository or drive is aware of the location of all files on other drives, eliminating the need to power them on just to find a file. git-annex also offers online capabilities, allowing file synchronization across multiple filesystems and clusters to help you manage your research data.</p>
+<section id="git-shortcomings-for-large-files" class="level2">
+<h2 class="anchored" data-anchor-id="git-shortcomings-for-large-files">Git shortcomings for large files</h2>
+<p>Git was designed for version control of <strong>text files</strong> (codes, articles, any text-based documents). One major drawback of putting large <strong>data files</strong> under traditional version control is that it will double the size of your repository. You can use a hack to alleviate this problem, e.g.&nbsp;instead of putting the repository into the working directory, you can put it on a separate drive:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> large <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> large</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init <span class="at">--separate-git-dir</span><span class="op">=</span>/Volume/drive/repoDir</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=someLargeFile bs=10240 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add someLargeFile</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"..."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the working directory, this will create a text file <code>.git</code> containing the path to the actual repository. Now, when you commit large files to this repository, a copy will remain in the working directory (first drive), and another copy will go into the repository (second drive). Theoretically, you can even swap between different repositories (i.e.&nbsp;different drives) by swapping the content of <code>.git</code>, so you can have a copy of the same set of files on multiple drives.</p>
+<p>However, if you modify/delete a binary data file from the working directory, git will keep the older version in the repository. If this is a multi-GB data file and you no longer need it, you’ll be wasting space by keeping this file in the repository.</p>
+<p>git-annex solves this problem by replacing data files with symbolic links. When you no longer need a file, you simply run a <code>git-annex drop</code> command to free some disk space. In addition, git-annex provides these features:</p>
+<ol type="1">
+<li>It can distribute files across multiple repositories, to have a different collection of files in each repository. You don’t use multiple bookcases to store the same set of books!</li>
+<li>It can automate redundant storage, so that you can have multiple copies of files on different drives <em>when you need backups</em>.</li>
+<li>It can work offline: you can synchronize data between drives without having to mount all of them at the same time. git-annex is <em>fully distributed</em>, i.e.&nbsp;each repository in the collection stores the full history, but it is often convenient to designate the main repository for syncing multiple secondary repositories on external drives. In addition, each repository knows about the location of all files in all other repositories, without having to mount the drives.</li>
+</ol>
+<p>In short, git-annex helps me automate storage of a large number of files across a heterogeneous collection of standalone HDDs and SSDs sitting on a shelf and ensures that all my storage is redundant, i.e.&nbsp;I have at least two copies of <em>all important</em> files. If I ever run out of space, I can add another annex on a new drive, or even throw into the mix a remote server with extra storage.</p>
+<p>You can read about the history of git-annex on <a href="https://en.wikipedia.org/wiki/Git-annex">Wikipedia</a>.</p>
+<p>There is a competing project <a href="https://git-lfs.com">Git Large File Storage (LFS)</a>, and a number of projects built on top of git-annex.</p>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p>git-annex is open source and is available as a package in Linux, Mac, Windows. On my Mac I installed it with <code>brew install git-annex</code>. On the Alliance clusters git-annex is provided as a module (<code>module load git-annex</code>), so no need to install it there.</p>
+<p>For git-annex to function, you also need Git. Sometimes Git development gets ahead of git-annex, and very occasionally things might behave weirdly if you have newer Git and older git-annex (but I never had any data lost). In such cases you might want to check if a new version of git-annex is available.</p>
+</section>
+<section id="standalone-workflows" class="level2">
+<h2 class="anchored" data-anchor-id="standalone-workflows">Standalone workflows</h2>
+<section id="adding-binary-files" class="level3">
+<h3 class="anchored" data-anchor-id="adding-binary-files">Adding binary files</h3>
+<p>For the purpose of this tutorial, let’s create a bash function to quickly add new binary files to the current directory.</p>
+<ol type="1">
+<li><code>shuf -i 0-9 -n 5</code> produces 5 unique random digits 0-9</li>
+<li><code>shuf -i 0-9 -n 5 | tr -d '\n'</code> puts 5 unique random digits into a singe line</li>
+<li><code>$RANDOM</code> returns a pseudorandom integer in the range 0..32767</li>
+</ol>
+<p>The following function will take a number and will produce this number of binary files (filled with random bits) of size (1-33)MB.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> populate()</span> <span class="kw">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="va">$#</span> <span class="ot">-gt</span> 0 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="va">$(</span><span class="fu">seq</span> <span class="at">-w</span> 1 <span class="va">$1)</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">num</span><span class="op">=</span><span class="va">$(</span><span class="fu">shuf</span> <span class="at">-i</span> 0-9 <span class="at">-n</span> 5 <span class="kw">|</span> <span class="fu">tr</span> <span class="at">-d</span> <span class="st">'\n'</span><span class="va">)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dd</span> if=/dev/urandom of=test<span class="st">"</span><span class="va">$num</span><span class="st">"</span> bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">done</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="initialize-annexes" class="level3">
+<h3 class="anchored" data-anchor-id="initialize-annexes">Initialize annexes</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> <span class="dt">{earth</span><span class="op">,</span><span class="dt">mars</span><span class="op">,</span><span class="dt">venus}</span>/annex   <span class="co"># placeholders for different drives or filesystems</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">tree</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> earth/annex</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> ga=<span class="st">'git-annex'</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> init <span class="st">"earth"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 10</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add .   <span class="co"># (1) move files to .git/annex/objects</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>           <span class="co"># (2) create symbolic links pointing to the new location</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>           <span class="co"># (3) add these links to the index (git staging area)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"add 10 new files"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- # echo "* annex.numcopies=1" >> .gitattributes -->
+<p>It is very important to use <code>ga add</code> and not <code>git add</code> when adding files to annex, so you need to rewire your git finger memory.</p>
+<p>To check the repository/annex current status, you can use one of these two commands – both of them report approximately the same information, so in practice I use one or the other:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status   <span class="co"># everything is clean</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> status    <span class="co"># everything is clean</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 5</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>   <span class="co"># 5 new files, 10 old links</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add .</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"add 5 new files"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .git/annex/objects   <span class="co"># the files are really there</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="undo-accidental-add-command" class="level3">
+<h3 class="anchored" data-anchor-id="undo-accidental-add-command">Undo accidental add command</h3>
+<p>Let’s say we added a file by mistake, but have not committed it yet:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 1</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">testfile</span><span class="op">=</span>test50427</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add <span class="va">$testfile</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status   <span class="co"># new file to be comitted</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> status    <span class="co"># added the new file</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$testfile</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="va">object</span><span class="op">=</span><span class="va">$(</span><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$testfile</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{print $11}'</span><span class="va">)</span>   <span class="co"># store last line</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>How do we undo this <code>ga add</code> operation? We must do it in two steps.</p>
+<ol type="1">
+<li>put the file content back to replace the link:</li>
+</ol>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex <span class="va">$testfile</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$testfile</span>   <span class="co"># the file is back</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$object</span>     <span class="co"># but the object is also still there</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ol start="2" type="1">
+<li>remove unlinked file content from the repository:</li>
+</ol>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused   <span class="co"># show all unlinked files in the repository (object store)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dropunused <span class="at">--force</span> 1   <span class="co"># drop the first unused file</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$object</span>     <span class="co"># now the object is gone</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused         <span class="co"># no unlinked files left</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We are now back to having our new, untracked file – you can check that with either <code>git status</code> or <code>ga status</code>.</p>
+</section>
+<section id="remove-files-from-annex-control" class="level3">
+<h3 class="anchored" data-anchor-id="remove-files-from-annex-control">Remove files from annex control</h3>
+<p>What if we have both added and committed the file – how do we undo that, i.e.&nbsp;how do we remove a file from git-annex control? Follow the same two steps and update the repository:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex test80145      <span class="co"># unannex one file currently under git-annex control</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dropunused <span class="at">--force</span> 1   <span class="co"># drop the first unused file</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"moved test80145 out of the annex"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now if we do either <code>git status</code> or <code>ga status</code>, they will report that now we have a new, untracked file.</p>
+<p>If you want to remove multiple files, e.g.&nbsp;<code>file1</code>, <code>file2</code>, <code>file3</code>, or an entire subdirectory <code>subdir</code>, you would do something like this:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex <span class="op">&lt;</span>file1<span class="op">&gt;</span> <span class="op">&lt;</span>file2<span class="op">&gt;</span> <span class="op">&lt;</span>file3<span class="op">&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex <span class="op">&lt;</span>subdir<span class="op">&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused                      <span class="co"># show all unlinked files</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dropunused <span class="at">--force</span> <span class="dt">{</span><span class="dv">1</span><span class="dt">..</span><span class="dv">5</span><span class="dt">}</span>   <span class="co"># adjust the number based on the previous command's output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="remove-file-completely-from-the-drive" class="level3">
+<h3 class="anchored" data-anchor-id="remove-file-completely-from-the-drive">Remove file completely from the drive</h3>
+<p>If you don’t want to keep the data file, one possible solution is:</p>
+<ol type="1">
+<li>replace the link with the file content: <code>ga unannex &lt;filename&gt;</code></li>
+<li>drop the unused object file with a combination of <code>ga unused</code> and <code>ga dropunused --force &lt;number&gt;</code></li>
+<li>update the repository: <code>git commit -m "moved &lt;filename&gt; out of the annex"</code></li>
+<li>delete the file <code>rm &lt;filename&gt;</code></li>
+</ol>
+<p>An alternative solution (we’ll see <code>ga drop</code> later when we work with remotes) could be:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> drop <span class="at">--force</span> <span class="op">&lt;</span>filename<span class="op">&gt;</span>   <span class="co"># drop a local copy (object)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unlink</span>  <span class="op">&lt;</span>filename<span class="op">&gt;</span>           <span class="co"># remove the link</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync                      <span class="co"># does git commit in the background</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="getting-help" class="level3">
+<h3 class="anchored" data-anchor-id="getting-help">Getting help</h3>
+<ul>
+<li>`ga –help’ will list all available commands</li>
+<li><code>ga &lt;command&gt; --help</code> will give quick info about the command flags</li>
+<li>online help pages for individual commands https://git-annex.branchable.com/git-annex-command (replace <code>command</code> with the actual command)</li>
+</ul>
+</section>
+</section>
+<section id="working-with-remotes" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-remotes">Working with remotes</h2>
+<p>The real power of git-annex lies in its ability to distribute files across multiple annexes in a seamless manner. This is achieved through conventional Git remotes.</p>
+<section id="remote-via-a-clone" class="level3">
+<h3 class="anchored" data-anchor-id="remote-via-a-clone">Remote via a clone</h3>
+<p>Let’s go to another drive and clone our existing repository there:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> status   <span class="co"># make sure everything is committed</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/venus</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone ~/tmp/earth/annex</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> annex</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>          <span class="co"># there are symbolic links to non-existent destinations</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .     <span class="co"># currently no objects (data files)</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log     <span class="co"># see the history from earth</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis    <span class="co"># all 15 files are on earth (1 copy of each)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 10</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add .</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"add 10 new files"</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis   <span class="co"># 15 files on earth, 10 files here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In a separate terminal, if we go to <code>earth</code> drive:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/earth/annex</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis   <span class="co"># shows only 15 local files</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add venus ~/tmp/venus/annex</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis   <span class="co"># 15 files here, 10 files on venus</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So, what does <code>ga sync</code> do exactly? It performs these operations:</p>
+<ol type="1">
+<li>run local <code>git commit</code> with a generic message “git-annex in <annex>”</annex></li>
+<li>update the current repository with all changes made to its remotes, and</li>
+<li>push any changes in the current repository to its remotes, where you need to run <code>ga sync</code> to get them</li>
+</ol>
+<p>An important innovation of <code>ga sync</code> is that it can work with remotes when they are offline:</p>
+<ul>
+<li>when pulling from an offline remote, it will check its “Inbox” branch (not actual name) to see if that remote has sync’ed to it earlier</li>
+<li>when pushing to an offline remote, it will push updates to its “Outbox” branch (not actual name)</li>
+</ul>
+<pre class="output"><code>in earth ---
+  git-annex
+* main
+  synced/git-annex
+  synced/main
+
+in venus ---
+  git-annex
+* main
+  synced/main</code></pre>
+<p>Let’s test communicating with offline annexes:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> venus annex <span class="at">---</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync             <span class="co"># we made some changes to earth, need to update here</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=venus1 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span><span class="kw">;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add venus1</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"add venus1"</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> venus hidden     <span class="co"># hide it from earth</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis venus1   <span class="co"># cannot find</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync             <span class="co"># update from the local branch</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis venus1   <span class="co"># it is in venus</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> hidden venus</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="remote-from-scratch" class="level3">
+<h3 class="anchored" data-anchor-id="remote-from-scratch">Remote from scratch</h3>
+<p>Let’s move to another drive and create a new annex there from scratch with 10 new files:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/mars/annex</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> init <span class="st">"mars"</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 10</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add .</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"add 10 new files"</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> status   <span class="co"># all clean</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>At this point we still have an isolated annex. Let’s add our original repo as a remote for this repo:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add earth ~/tmp/earth/annex</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync   <span class="co"># now fails, as you have two separate histories</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync <span class="at">--allow-unrelated-histories</span>   <span class="co"># should work if no file conflicts</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If there is a conflict, you may want to either (1) create a new repository via <code>git clone</code> like in the previous section, and then add new files by hand, or (2) try to rename the conflicting file.</p>
+<p>Finally, let’s do this:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote               <span class="co"># mars is not its remote yet</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="kw">|</span> <span class="fu">grep</span> mars   <span class="co"># but we can see the 10 files on mars!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here we see another example of offline communication: mars pushed into earth’s inbox earlier, and the last <code>ga sync</code> received those updates, even though we cannot connect to mars directly (no such remote). Let’s correct this by adding the remote:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add mars ~/tmp/mars/annex</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="create-multiple-copies" class="level3">
+<h3 class="anchored" data-anchor-id="create-multiple-copies">Create multiple copies</h3>
+<p>This is easily one of my favourite git-annex features!</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 2</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">coupleOfFiles</span><span class="op">=</span><span class="st">"test03985 test69314"</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add <span class="va">$coupleOfFiles</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"add 2 files"</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="va">$coupleOfFiles</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>These files have just one copy (here). In fact, in our annexes there are many files with a single copy:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A</span> 1 <span class="st">"1 copy"</span>   <span class="co"># show all files with only one copy, in earth + mars + venus</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis . <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A</span> 1 <span class="st">"1 copy"</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-B</span> 2 <span class="st">"\[here\]"</span>   <span class="co"># show local files with only one copy</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> mars annex <span class="at">---</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="va">$coupleOfFiles</span>   <span class="co"># 1 copy on earth</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> get <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>2 <span class="va">$coupleOfFiles</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="va">$coupleOfFiles</span>   <span class="co"># 2 copies</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The command <code>ga get --auto --numcopies=2</code> can work with any list of files and/or directories.</p>
+<!-- ```sh -->
+<!-- cd /Volumes/white/annex   # 2nd copy destination -->
+<!-- src=watch/soloCamping -->
+<!-- ga whereis $src | grep -A 1 "1 copy"   # show files with only one copy in a given directory -->
+<!-- ga whereis . | grep -A 1 "1 copy" | grep -B 2 evo   # show files with only one copy on a given drive -->
+<!-- >>> make sure the source drive is mounted -->
+<!-- ga get --auto --numcopies=2 $src   # get files with fewer than two copies -->
+<!-- ga whereis $src -->
+<!-- ga sync -->
+<!-- ``` -->
+</section>
+<section id="move-files-manually-between-remotes" class="level3">
+<h3 class="anchored" data-anchor-id="move-files-manually-between-remotes">Move files manually between remotes</h3>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis   <span class="co"># pick a file on venus</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> move <span class="op">&lt;</span>filename<span class="op">&gt;</span> --to here   <span class="co"># will likely fail (venus not linked)</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add venus ~/tmp/venus/annex</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> move <span class="op">&lt;</span>filename<span class="op">&gt;</span> --to here   <span class="co"># should work</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> find   <span class="co"># list all local files =&gt; pick a file</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis test52930   <span class="co"># check its copies</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> move test52930 <span class="at">--to</span> venus   <span class="co"># venus has to be online for this to work</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="drop-a-local-copy" class="level3">
+<h3 class="anchored" data-anchor-id="drop-a-local-copy">Drop a local copy</h3>
+<div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> find   <span class="co"># list all local files =&gt; pick a file</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> drop test97806   <span class="co"># delete the object; keep the link: dangerous territory!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Usually, git-annex will not let you delete a single copy, but you can <code>--force</code> it to permanently delete your data.</p>
+<p>If you still want to keep a copy elsewhere, a safer approach would be:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> drop <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>1 <span class="op">&lt;</span>path<span class="op">&gt;</span>   <span class="co"># drop all local copies if there is a remote copy</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> drop <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>2 <span class="op">&lt;</span>path<span class="op">&gt;</span>   <span class="co"># drop all local copies if there are 2 remote copies</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="move-a-file-out-of-the-annex-and-drop-all-annexed-copies" class="level3">
+<h3 class="anchored" data-anchor-id="move-a-file-out-of-the-annex-and-drop-all-annexed-copies">Move a file out of the annex and drop all annexed copies</h3>
+<!-- details at https://git-annex.branchable.com/forum/git-annex_unused_not_dropping_deleted_files -->
+<p>Lets’ create a new file and put its content into two annexes:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">populate</span> 1</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">testfile</span><span class="op">=</span>test05873</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add <span class="va">$testfile</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> copy <span class="va">$testfile</span> <span class="at">--to</span> mars</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="va">$testfile</span>   <span class="co"># two copies: on earth and mars</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> mars annex <span class="at">---</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="va">$testfile</span>   <span class="co"># two copies: on earth and mars</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="va">object</span><span class="op">=</span><span class="va">$(</span><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$testfile</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{print $11}'</span><span class="va">)</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$object</span>          <span class="co"># actual file is stored here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s copy the file content back to replace the link:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex <span class="va">$testfile</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>              <span class="co"># the file replaced the link</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused       <span class="co"># shows no unlinked files</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$object</span>   <span class="co"># the file is still there, and it is unlinked</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>What is going on here? It turns out that “ga unused” actually works across linked annexes, and it simply says that there is a link to this file somewhere in the other repository. To unannex this file’s copy everywhere, you need to tell <code>ga unused</code> to ignore that this file is checked out in other annexes:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused <span class="at">--used-refspec</span><span class="op">=</span>+master</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dropunused <span class="at">--force</span> 1</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$object</span>   <span class="co"># the object is now gone locally</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$testfile</span>   <span class="co"># the file is still under annex here</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="va">$testfile</span>   <span class="co"># and now it is not</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="va">$testfile</span>               <span class="co"># this file is not under annex anywhere</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused <span class="at">--used-refspec</span><span class="op">=</span>+master   <span class="co"># delete its copy here as well</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dropunused <span class="at">--force</span> 1</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> mars annex <span class="at">---</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="va">$testfile</span>      <span class="co"># we have the unannexed copy (and only copy) in mars</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="show-disk-usage-across-all-remotes" class="level3">
+<h3 class="anchored" data-anchor-id="show-disk-usage-across-all-remotes">Show disk usage across all remotes</h3>
+<div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> info <span class="op">&lt;</span>path<span class="op">&gt;</span>   <span class="co"># show local+global disk usage in a directory</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="organize-links-into-directories" class="level3">
+<h3 class="anchored" data-anchor-id="organize-links-into-directories">Organize links into directories</h3>
+<p>In real life you put files into folders / directories. We can do the same with git-controlled links:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> mars annex <span class="at">---</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> data</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> mv test<span class="dt">{0</span><span class="op">,</span><span class="dt">1</span><span class="op">,</span><span class="dt">2}</span><span class="pp">*</span> data/</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>   <span class="co"># test0*,test1*,test2* should be in data/</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> get <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>2 data   <span class="co"># get files in /data with fewer than two copies</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> mars annex <span class="at">---</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> get <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>2 data   <span class="co"># get files in /data with fewer than two copies</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis data                    <span class="co"># all files will likely have two copies now</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="ssh-remotes" class="level2">
+<h2 class="anchored" data-anchor-id="ssh-remotes">SSH remotes</h2>
+<p>If you want to talk to a remote via ssh, its host server will need to have git and git-annex installed and available via command line when you ssh to that server. However, the Alliance clusters provide git-annex as a module. In this case, you can add <code>module load git-annex</code> to your ~/.bashrc file:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user01@vis.vastcloud.org</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> module load git-annex <span class="op">&gt;&gt;</span> .bashrc</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> alias ga=git-annex <span class="op">&gt;&gt;</span> .bashrc</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> .bashrc</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main   <span class="co"># sometimes remote git can be old</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- ```sh -->
+<!-- user01@vis.vastcloud.org -->
+<!-- echo export PATH="/cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v3/Core/git-annex/10.20231129/bin:\$PATH" >> .bashrc -->
+<!-- echo alias ga=git-annex >> .bashrc -->
+<!-- source .bashrc -->
+<!-- git config --global init.defaultBranch main -->
+<!-- ``` -->
+<div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user01@vis.vastcloud.org</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> annex <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> annex</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init       <span class="co"># --bare</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> init <span class="st">"cluster"</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">--allow-empty</span> <span class="at">-m</span> <span class="st">"first commit"</span>   <span class="co"># otherwise local "ga sync" will fail to merge</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote remove cluster</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add cluster user01@vis.vastcloud.org:annex</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync <span class="at">--allow-unrelated-histories</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cluster annex <span class="at">---</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>        <span class="co"># all aliases from earth should be there</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .   <span class="co"># but there are no object files</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>With the two repositories linked, any new change on earth can be sync’ed with the SSH remote:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=earth3 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span><span class="kw">;</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add earth3</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex earth1</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cluster annex <span class="at">---</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>   <span class="co"># recent updates from earth should be here</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis earth3   <span class="co"># only one copy on earth</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis earth1   <span class="co"># no copies under git-annex control</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>How about going the other way, i.e.&nbsp;syncing a change from the ssh remote?</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cluster annex <span class="at">---</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=cluster1 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span><span class="kw">;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add cluster1</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync   <span class="co"># cannot update the repos on my computer: they are behind the firewall;</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>          <span class="co"># plus we have not even set up the remotes!</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> earth annex <span class="at">---</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync   <span class="co"># not to worry, this will sync the recent changes in the ssh remote</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>        <span class="co"># cluster1 is now here</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis cluster1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that having SSH remotes will slow down your <code>ga sync</code> commands, so personally – even when I have them – I prefer to temporarily remove them with <code>git remote remove ...</code>.</p>
+<p>You can find another example at https://git-annex.branchable.com/walkthrough/using_ssh_remotes.</p>
+</section>
+<section id="check-annexed-data" class="level2">
+<h2 class="anchored" data-anchor-id="check-annexed-data">Check annexed data</h2>
+<div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> fsck     <span class="co"># run checksum on all local files</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused   <span class="co"># show all unlinked files in this annex</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="when-a-drive-fails" class="level2">
+<h2 class="anchored" data-anchor-id="when-a-drive-fails">When a drive fails</h2>
+<p>If a drive goes bad, you want to make sure its content is mirrored in two other places, i.e.&nbsp;you should rebuild your redundant storage:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> some other annex <span class="at">---</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis . <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A</span> 1 <span class="st">"1 copy"</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-B</span> 2 <span class="op">&lt;</span>bad annex<span class="op">&gt;</span>    <span class="co"># congratulations, you lost your only copy ...</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis . <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A</span> 2 <span class="st">"2 copies"</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-B</span> 3 <span class="op">&lt;</span>bad annex<span class="op">&gt;</span>  <span class="co"># 1 copy left elsewhere</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Back up those single copies to a third annex with one of these commands:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> third annex <span class="at">---</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> get <span class="op">&lt;</span>items<span class="op">&gt;</span>   <span class="co"># get a local copy</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> get <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>2 <span class="op">&lt;</span>items<span class="op">&gt;</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> source annex <span class="at">---</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> copy <span class="op">&lt;</span>items<span class="op">&gt;</span> --to <span class="op">&lt;</span>third annex<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next, you want to mark the failed drive’s annex as “dead”, so that its content stops showing in <code>gitannex whereis</code>:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dead <span class="op">&lt;</span>bad annex<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and remove it from all other repositories:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote remove <span class="op">&lt;</span>bad annex<span class="op">&gt;</span>   <span class="co"># do this in each annex</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="print-one-line-per-file" class="level2">
+<h2 class="anchored" data-anchor-id="print-one-line-per-file">Print one line per file</h2>
+<p>Sometimes it is tricky to <code>grep</code> the output of <code>ga whereis</code>, as it produces a variable number of lines per file, depending on the number of copies.</p>
+<p><code>ga whereis</code> has the flag <code>--format</code>, but I find its output somewhat lacking.</p>
+<section id="simpler-less-efficient-solution" class="level3">
+<h3 class="anchored" data-anchor-id="simpler-less-efficient-solution">Simpler, less efficient solution</h3>
+<p>The following commands</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="ex">ga</span> whereis<span class="va">)</span>        <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/whereis/\n/g'</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="ex">ga</span> whereis <span class="op">&lt;</span>path<span class="op">&gt;</span><span class="va">)</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/whereis/\n/g'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>will print one line per file, so you can organize searches with something like:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="ex">ga</span> whereis<span class="va">)</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/whereis/\n/g'</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="op">&lt;</span>annex<span class="op">&gt;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="ex">ga</span> whereis<span class="va">)</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/whereis/\n/g'</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">"1 copy"</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="ex">ga</span> whereis<span class="va">)</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/whereis/\n/g'</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="op">&lt;</span>annex<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">"1 copy"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>echo $(ga whereis watch) | sed ‘s/whereis//g’ | grep “1 copy”</p>
+</section>
+<section id="faster-more-elegant-solution" class="level3">
+<h3 class="anchored" data-anchor-id="faster-more-elegant-solution">Faster, more elegant solution</h3>
+<p>Perhaps, a more elegant solution is to use the <code>--json</code> flag which could be useful for sending (very complete) JSON output to other utilities or even Python scripts. One added benefit: it’ll properly process and display Unicode in file names, e.g.&nbsp;if you use Chinese characters or a non-Latin alphabet.</p>
+<p>Let’s process our output with <a href="https://stedolan.github.io/jq">jq</a>, a command-line JSON processor.</p>
+<p>First, let’s list files with at least 2 copies:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--copies</span> 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and use one of their names below.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis test43816               <span class="co"># multiple lines</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--json</span> test43816        <span class="co"># one JSON line per file</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--json</span> test43816 <span class="kw">|</span> <span class="ex">jq</span>   <span class="co"># show the multi-line JSON object</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--json</span> test43816 <span class="kw">|</span> <span class="ex">jq</span> <span class="st">'.file'</span>   <span class="co"># print the file name only</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co"># print file name and the space-delimited list of repositories</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--json</span> test43816 <span class="kw">|</span> <span class="ex">jq</span> <span class="st">'.file + " " + (.whereis|map(.description)|join(","))'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can now apply this to any list of items or the entire repository:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--json</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="st">'.file + " " + (.whereis|map(.description)|join(","))'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="cheat-sheet" class="level2">
+<h2 class="anchored" data-anchor-id="cheat-sheet">Cheat sheet</h2>
+<ul>
+<li><code>&lt;items&gt;</code> could be any collection of files and/or directories</li>
+<li><code>&lt;annex&gt;</code> is the name of a git-annex, e.g.&nbsp;earth or mars or venus</li>
+</ul>
+<div class="sourceCode" id="cb45"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> init <span class="op">&lt;</span>name<span class="op">&gt;</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> add <span class="op">&lt;</span>items<span class="op">&gt;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> sync</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unannex <span class="op">&lt;</span>items<span class="op">&gt;</span>            <span class="co"># replace the link with the actual file content</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused                     <span class="co"># show all unlinked files in the annex</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> unused <span class="at">--used-refspec</span><span class="op">=</span>+master   <span class="co"># same, but ignore these files being checked out in other annexes</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> dropunused <span class="at">--force</span> <span class="op">&lt;</span>num<span class="op">&gt;</span>   <span class="co"># drop the unused file with a given index</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> drop <span class="at">--force</span> <span class="op">&lt;</span>items<span class="op">&gt;</span>       <span class="co"># drop a local copy (object)</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> find                       <span class="co"># list all local files</span></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="op">&lt;</span>items<span class="op">&gt;</span>            <span class="co"># locate file(s) or dir(s)</span></span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A</span> 1 <span class="st">"1 copy"</span>                          <span class="co"># show all files with only one copy</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-A</span> 1 <span class="st">"1 copy"</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-B</span> 2 <span class="st">"\[here\]"</span>   <span class="co"># show local files with only one copy</span></span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="ex">ga</span> whereis<span class="va">)</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/whereis/\n/g'</span>                <span class="co"># print one file per line</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> whereis <span class="at">--json</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="st">'.file + " " + (.whereis|map(.description)|join(","))'</span> <span class="co"># print name + annex</span></span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> info <span class="op">&lt;</span>items<span class="op">&gt;</span>               <span class="co"># show local + global disk usage</span></span>
+<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> copy <span class="op">&lt;</span>items<span class="op">&gt;</span> --to here</span>
+<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> copy <span class="op">&lt;</span>items<span class="op">&gt;</span> --to <span class="op">&lt;</span>annex<span class="op">&gt;</span></span>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> move <span class="op">&lt;</span>items<span class="op">&gt;</span> --to here</span>
+<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> move <span class="op">&lt;</span>items<span class="op">&gt;</span> --to <span class="op">&lt;</span>annex<span class="op">&gt;</span></span>
+<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a><span class="ex">ga</span> get <span class="at">--auto</span> <span class="at">--numcopies</span><span class="op">=</span>2 <span class="op">&lt;</span>items<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><a href="http://git-annex.branchable.com/walkthrough">git-annex walkthrough</a> is a good introduction to using git-annex from the command line.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
