@@ -1,0 +1,66 @@
+---
+title: "Other topics and exercises"
+---
+
+This page is a placeholder to cover tools that we do not normally teach in our Linux command line introduction
+but we would like to mention as we find them useful. Also, over the years we taught a number of
+[webinars on advanced bash](https://training.westdri.ca/getting-started/#linux-command-line){target="_blank"}
+that you can watch at any time.
+
+## Fuzzy finder
+
+Fuzzy finder `fzf` is a third-party tool, not installed by default. With basic usage, it does interactive
+processing of standard input. At a more advanced level (not covered in the video below), it provides key
+bindings and fuzzy completion.
+
+<!-- **Update (2020-June-25)**: On the training cluster, the path to `fzf` has changed -- you can now load it with: -->
+
+<!-- ``` -->
+<!-- source ~user120/shared/fzf/.fzf.bash -->
+<!-- ``` -->
+
+<!-- ```sh -->
+<!-- $ source /project/shared/fzf/.fzf.bash     # each user in each shell or put it into your ~/.bashrc -->
+<!-- $ fzf -->
+<!-- $ nano $(fzf --height 40%) -->
+<!-- $ kill -9 `/bin/ps aux | fzf | awk '{print $2}'` -->
+<!-- $ e `find ~/Documents/ -type f | fzf` -->
+<!-- ``` -->
+
+<!-- 11-fzf.mkv -->
+::: {.callout-note}
+You can [watch a video for this topic](https://youtu.be/Mq6Vs9v_VAI){target="_blank"} after the workshop.
+:::
+
+::: {.callout-caution collapse="true"}
+## Question 11.1
+Let's study together these commands:
+```sh
+$ source ~/projects/def-sponsor00/shared/fzf/.fzf.bash
+$ kill -9 `/bin/ps aux | fzf | awk '{print $2}'`
+```
+:::
+
+## Additional topics
+
+If there is interest, we could explore some other topics in the future:
+
+- Bash arithmetics
+- Permissions
+- How to control processes
+- GNU Parallel
+
+## Bash webinars
+
+Our 2022 webinar
+[Lesser known but very useful Bash features](https://training.westdri.ca/getting-started/#linux-command-line){target="_blank"}
+covers running commands in a subshell, subsetting string variables, Bash arrays, modifying separators with
+IFS, running Python code from inside self-contained Bash functions, editing your command history, running
+unaliased versions of commands, handy use of bracket expansion, and a few other topics.
+
+## More exercises
+
+1. Find all files in a directory hierarchy that have a matching substring inside, and run `ls -l` on these files.
+1. Same, but replace this string with another substring in all these matching files.
+1. List all files in a directory (passed as an argument), printing only their name, size, and the MD5 checksum.
+1. List ten largest files in a directory (passed as an argument).
