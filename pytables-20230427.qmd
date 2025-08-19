@@ -1,0 +1,581 @@
+---
+title: "Managing large hierarchical datasets with PyTables"
+aliases:
+  - /pytables
+---
+
+***May 23<sup>rd</sup>, 2023***
+
+You can find this page at &nbsp;
+<span style="font-size:1.8em;">https://folio.vastcloud.org/pytables</span>
+
+**Abstract**: [PyTables](https://www.pytables.org){target="_blank"} is a free and open-source Python library
+for managing large hierarchical datasets. It is built on top of numpy and the HDF5 scientific dataset library,
+and it focuses both on performance and interactive analysis of very large datasets. For large data streams
+(think multi-dimensional arrays or billions of records) it outperforms databases in terms of speed, memory
+usage and I/O bandwidth, although it is not a replacement to traditional relational databases as PyTables does
+not support broad relationships between dataset variables. PyTables can be even used to organize a workflow
+with many (thousands to millions) of small files, as you can create a PyTables database of nodes that can be
+used like regular opened files in Python. This lets you store a large number of arbitrary files in a PyTables
+database with on-the-fly compression, making it very efficient for handling huge amounts of data.
+
+## Installation
+
+- PyTables vs. h5py (official HDF5 for Python):
+[comparison 1](https://docs.h5py.org/en/stable/faq.html#what-s-the-difference-between-h5py-and-pytables){target="_blank"}
+and
+[comparison 2](http://www.pytables.org/FAQ.html#how-does-pytables-compare-with-the-h5py-project){target="_blank"}
+
+To run PyTables in Python, you will need:
+
+1. a recent version of Python
+1. the HDF5 (C flavour) library from http://www.hdfgroup.org
+1. the NumPy package
+
+Depending on your operating system, your processor architecture, and your preferred way to install Python and
+its packages, potentially there is a large number of installation paths. Here is how I proceeded on my
+Macbook, with [Homebrew](https://brew.sh){target="_blank"} installed:
+
+```sh
+brew install python   # installs into /opt/homebrew/bin/python3
+export PATH="$(brew --prefix)/opt/python@3/libexec/bin:$PATH"   # add this to your ~/.bashrc
+                                                                # so that it finds pip, python
+brew install hdf5         # C-flavoured HDF5 library
+brew install virtualenv
+pip install --upgrade pip
+pip install pip_search
+pip_search tables   # first entry, version 3.8.0, "Hierarchical datasets for Python"
+
+virtualenv ~/pytables-env
+source ~/pytables-env/bin/activate
+env HDF5_DIR=/opt/homebrew/opt/hdf5 pip install tables   # install PyTables
+pip install netCDF4       # if you want to work with NetCDF data
+pip install Pillow        # if you want to work with images
+pip install wonderwords   # if you want to name stars
+...
+deactivate
+```
+
+On an Alliance cluster you don't have to install anything (unless you are planning to use `Pillow`,
+`wonderwords` which you can install in a virtual environment) -- simply load the modules:
+
+```sh
+module load netcdf    # only if you want to play with the NetCDF example below
+module load hdf5/1.12.1 python/3.10.2 scipy-stack
+python
+>>> import tables
+```
+
+
+
+
+
+
+
+
+## Classical intro: groups, tables, arrays
+
+**Goal**: easily manipulate data tables and array objects in a hierarchical structure (HDF5 file).
+
+Conceptually, storage inside an HDF5 file is similar to a Unix filesystem:
+- any hierarchy of groups and nodes, all stored under *root `/`*
+- *groups* playing the role of directories
+- *nodes* playing the role of files; could be tables, arrays, file nodes, etc.
+
+A single HDF5 file may contain all these objects and be portable across different computer architectures and
+HDF5 library implementations, in addition supporting compression, parallel I/O and other nice features.
+
+```sh
+cd ~/tmp/pytables
+/bin/rm -f *.h5 compressed.xmf
+source ~/pytables-env/bin/activate
+python
+```
+
+Imagine we are compiling a catalogue of stars in which we record each star's properties:
+
+```py
+import tables as tt
+import numpy as np
+
+help(tt.IsDescription)          # class IsDescription inside PyTables
+
+class Star(tt.IsDescription):   # create a child class "Star" (class inheritance)
+    name     = tt.StringCol(16) # each name contains 16 8-bit numbers, could be used to store ASCII characters
+    ra       = tt.Float64Col()  # Right Ascension as double-precision float
+    dec      = tt.Float64Col()  # Declination as double-precision float
+    white    = tt.Float32Col()  # white magnitude as single-precision float
+    red      = tt.Float32Col()  # red magnitude as single-precision float
+    blue     = tt.Float32Col()  # blue magnitude as single-precision float
+    parallax = tt.Float32Col()  # parallax as single-precision float
+    proper   = tt.Float32Col()  # proper motion as single-precision float
+
+h5file = tt.open_file("catalogue.h5", mode="w", title="Stellar catalogue")
+g1 = h5file.create_group("/", 'data', 'Observational data')    # new group under root node; title and description
+table = h5file.create_table(g1, 'stars', Star, "All stars") # table stored as a node named `stars`
+                                                               # while the `Star` class defines its columns
+print(h5file)   # show the object tree
+h5file          # show more info, including the table columns
+
+import random
+from math import asin, degrees
+from wonderwords import RandomWord
+r = RandomWord()
+star = table.row   # get a pointer to this table's row instance
+for i in range(100):
+    # star['name'] = 'star' + str(random.randint(0,999))
+    star['name'] = r.word(include_parts_of_speech=["nouns"], word_min_length=4, word_max_length=8)
+    star['ra'] = 360 * random.random()
+    star['dec'] = degrees(asin(2*random.random()-1))
+    star['white'] = random.gauss(mu=0, sigma=1)
+    star['red'] = random.gauss(mu=0, sigma=1)
+    star['blue'] = random.gauss(mu=0, sigma=1)
+    star['parallax'] = 1.e-4 * random.random()
+    star['proper'] = random.random()
+    star.append()   # insert this new star into the catalogue
+
+table.shape     # nothing's been written yet
+table.flush()   # flush the table's I/O buffer: write to disk, free memory resources
+table.shape     # now we have data in the table
+h5file.close()
+```
+
+```py
+import tables as tt
+import numpy as np
+h5file = tt.open_file("catalogue.h5", mode="a")   # append mode
+
+table = h5file.root.data.stars
+table.cols               # 8 columns from Star class
+table.shape              # 10 rows
+table.col('name')        # data in the "name" column
+table.col('parallax')    # data in the "parallax" column
+table.cols.parallax[:]   # same
+for row in table.iterrows():
+    print(row[:])   # print each row
+
+min(table.col('parallax')), max(table.col('parallax'))
+names = [row['name'] for row in table.iterrows() if 3e-5 <= row['parallax'] < 5e-5]
+names    # star names stored as 16-element binary objects (not strings)
+b'A' == b'\x41'   # true; each 8-bit number (0-255) can store a character
+
+condition = "dec > 45"
+for row in table.where(condition):
+	print(row['name'], row['dec'])
+
+condition = "(dec > 45) & (blue > 0.5)"
+for row in table.where(condition):
+	print(row['name'], row['dec'], row['blue'])
+
+names = [row['name'] for row in table.where("(dec > 45) & (blue > 0.5)")]
+names
+
+sel = h5file.create_group(h5file.root, "selection", "Northern blue stars")         # add a group: name and description
+h5file.create_array(sel, 'name', np.array(names), "Northern blue stars selection") # add an array of names
+
+h5file.close()
+```
+
+```sh
+h5dump catalogue.h5     # full content of the file as text
+h5ls -rd catalogue.h5   # shorter format
+```
+
+```py
+import tables as tt
+import numpy as np
+h5file = tt.open_file("catalogue.h5", mode="a")   # append mode
+
+for node in h5file: # root, 2 groups /data and /selection, 1 table /data/stars, 1 array /selection/name
+    print(node)
+
+for group in h5file.walk_groups():   # root and 2 groups
+    print(group)
+
+for group in h5file.walk_groups("/data"):   # 1 group under /data
+    print(group)
+
+for node in h5file.list_nodes("/data", classname='Table'):   # 1 table under /data
+    print(node)
+	
+h5file.list_nodes("/data", classname='Table')   # more info on this table
+
+table = h5file.root.data.stars
+table.shape
+
+table.attrs.date = "Thu, 2023-May-27 14:33"
+table.attrs.temperature = 18.4
+table.attrs.temp_unit = "Celsius"
+table.attrs                   # list all attributes
+del table.attrs.temperature   # delete an attribute
+del table.attrs.temp_unit
+
+import random
+from math import asin, degrees
+from wonderwords import RandomWord
+r = RandomWord()
+table = h5file.root.data.stars
+star = table.row
+for i in range(50):   # add 50 more stars to the existing table
+    star['name'] = r.word(include_parts_of_speech=["nouns"], word_min_length=4, word_max_length=8)
+    star['ra'] = 360 * random.random()
+    star['dec'] = degrees(asin(2*random.random()-1))
+    star['white'] = random.gauss(mu=0, sigma=1)
+    star['red'] = random.gauss(mu=0, sigma=1)
+    star['blue'] = random.gauss(mu=0, sigma=1)
+    star['parallax'] = 1.e-4 * random.random()
+    star['proper'] = random.random()
+    star.append()   # insert this new star into the catalogue
+
+table.shape   # 100 original stars
+table.flush()
+table.shape   # now 150 stars
+
+bodies = table.cols.name
+bodies[:10]   # the first 10 star names (out of 150)
+
+bodies[:2] = [b'one', b'two']   # overwrite the first two values
+bodies[:]
+
+table.flush()   # flush the table's I/O buffer: write to disk, free memory resources
+h5file.close()
+```
+
+You can find more examples in [this
+tutorial](https://www.pytables.org/usersguide/tutorials.html){target="_blank"}.
+
+
+
+
+
+
+
+
+
+
+## Working with large multidimensional arrays
+
+We could start with a randomly-generated numpy array but it is much more interesting to look at some real
+data. Let's read a cool dataset in NetCDF (we'll visualize it towards the end of this section) and then learn
+how to write/read it in HDF5 format.
+
+Our workflow in this section:
+1. read the NetCDF data into a Python numpy-like array
+1. save it into an uncompressed HDF5 file
+1. save it into a compressed HDF5 file
+1. append a 2nd array to the same file
+1. read this file in Python
+1. remove the 2nd array from the file
+1. create a *soft link* inside the file
+1. create an *XMF descriptor file*
+1. load this XMF file into ParaView to visualize our large array
+
+Let's download our large-array NetCDF file:
+
+```sh
+wget https://bit.ly/paraviewzipp -O paraviewWorkshop.zip
+unzip paraviewWorkshop.zip data/mandelbulb300.nc && /bin/rm paraviewWorkshop.zip
+ls -l data/mandelbulb300.nc   # 1MB file
+```
+
+Activate your PyTables environment:
+
+```sh
+cd ~/tmp/pytables
+source ~/pytables-env/bin/activate
+python
+```
+
+```py
+import tables as tt
+import numpy as np
+
+import netCDF4 as nc
+ds = nc.Dataset("data/mandelbulb300.nc")
+print(ds)
+print(ds["stability"].shape)
+
+h5file = tt.open_file("uncompressed.h5", mode="w", title="Mandelbulb at 300^3 resolution")
+g1 = h5file.create_group("/", 'g1', 'Fractal data')   # new group under root node; title and description
+h5file.create_array(g1, 'stability', ds["stability"][:,:,:], "stability variable")
+h5file.close()
+```
+
+The resulting file is much bigger (103M = 300^3 in single precision) than the original (1.0M). Let's enable
+compression:
+
+```py
+compress = tt.Filters(complib='zlib', complevel=5)   # create the compression filter
+h5file = tt.open_file("compressed.h5", mode="w", title="Mandelbulb at 300^3 resolution", filters=compress)
+g1 = h5file.create_group("/", 'g1', 'Fractal data')   # new group under root node; title and description
+h5file.create_carray('/g1', 'stability', obj=ds["stability"][:,:,:])   # use chunked arrays, write into g1
+h5file.close()
+```
+
+The compressed file is 1.4M.
+
+Let's append a second array to the same group:
+
+```py
+import tables as tt
+import numpy as np
+compress = tt.Filters(complib='zlib', complevel=5)   # create the compression filter
+h5file = tt.open_file("compressed.h5", mode="a", filters=compress)   # append mode
+a = np.random.randn(100,100)   # 100^2 array from a normal (Gaussian with x0=0, sigma=1) distribution
+h5file.create_carray('/g1', 'a', obj=a)   # use chunked arrays, write into g1
+h5file.close()
+```
+
+Let's read this file:
+
+```py
+import tables as tt
+f1 = tt.open_file("compressed.h5", mode="r")   # read mode
+for node in f1:   # root, 1 group g1, 2 arrays inside g1, both compressed
+    print(node)
+
+for array in f1.walk_nodes("/", "Array"):
+    print('---')
+    print(array)
+    print(array.shape)
+    # print(array[:])
+
+f1.root.g1.a[:]                  # entire array
+
+f1.root.g1.stability[:]          # entire array
+f1.root.g1.stability[:3,:3,:3]   # 3x3x3 starting corner block
+f1.root.g1.stability.shape
+f1.root.g1.stability.filters
+f1.root.g1.stability.title
+f1.root.g1.stability.dtype
+f1.root.g1.stability.size_in_memory   # uncompressed in memory
+f1.close()
+```
+
+Let's remove the array `a` from the file:
+
+```py
+import tables as tt
+f1 = tt.open_file("compressed.h5", mode="a")   # append mode
+f1.root.g1.a.remove()
+f1.close()
+```
+
+Let's create a soft link inside the file:
+
+```py
+import tables as tt
+f1 = tt.open_file("compressed.h5", mode="a")   # append mode
+f1.create_soft_link("/", "stab", "/g1/stability")   # link in root called "stab" pointing to "/g1/stability"
+f1.root.stab.shape
+f1.root.stab[:]
+f1.close()
+```
+
+```sh
+which ptdump           # provided by PyTables
+ptdump compressed.h5   # very useful command: dumps all objects from the file
+```
+
+Let's view this array in ParaView 5.11. Create a file `compressed.xmf` with the following:
+
+```txt
+<?xml version="1.0" ?>
+<!DOCTYPE Xdmf SYSTEM "Xdmf.dtd" []>
+<Xdmf Version="2.0">
+ <Domain>
+   <Grid Name="mesh" GridType="Uniform">
+     <Topology TopologyType="3DCoRectMesh" NumberOfElements="300 300 300"/>
+     <Geometry GeometryType="Origin_DxDyDz">
+       <DataItem Dimensions="3" NumberType="Float" Precision="4" Format="XML">
+          1 2 3
+       </DataItem>
+       <DataItem Dimensions="3" NumberType="Float" Precision="4" Format="XML">
+        0.1 0.1 0.1
+       </DataItem>
+     </Geometry>
+     <Attribute Name="stability" AttributeType="Scalar" Center="Node">
+       <DataItem Dimensions="300 300 300" NumberType="Int" Precision="4" Format="HDF">
+        compressed.h5:/g1/stability
+       </DataItem>
+     </Attribute>
+   </Grid>
+ </Domain>
+</Xdmf>
+```
+
+Open this file in ParaView using the XDMF Reader and visualize it as usual.
+
+
+
+
+
+
+
+
+
+
+## Simulating a filesystem with PyTables
+
+- The module `filenode` creates a PyTables database of nodes which can be used like regular opened files in Python.
+- Details at https://www.pytables.org/usersguide/filenode.html
+
+You can use file nodes and PyTables groups to mimic a filesystem with files and directories, all inside a
+single HDF5 file. This lets you use HDF5 as a portable compressed file container/archive, across different
+computer platforms and architectures.
+
+```py
+import tables as tt
+from tables.nodes import filenode
+
+f1 = tt.open_file('storage.h5', 'w')                         # create a new HDF5 file
+fnode = filenode.new_node(f1, where='/', name='text_file')   # create a new node file inside this file
+print(f1.get_node_attr('/text_file', 'NODE_TYPE'))           # it looks like a file inside our HDF5 file
+
+fnode.write("This is a sample line.\n".encode('utf8'))
+fnode.write("Write a second line.\n".encode('ascii'))
+fnode.write(b"Write a third line.\n")
+
+fnode.seek(0)   # rewind to the beginning of the file
+for line in fnode:
+    print(line)
+
+fnode.close()
+print(fnode.closed)   # check that it's closed
+f1.close()
+```
+
+```sh
+ls -l storage.h5    # 68K
+ptdump storage.h5   # root /, file /text_file
+```
+
+Let's open it again to read data:
+
+```py
+import tables as tt
+from tables.nodes import filenode
+f1 = tt.open_file('storage.h5', 'r')
+fnode = filenode.open_node(f1.root.text_file, 'r')
+for line in fnode:
+    print(line)
+
+fnode.close()
+f1.close()
+```
+
+Let's add some data:
+
+```py
+import tables as tt
+from tables.nodes import filenode
+f1 = tt.open_file('storage.h5', 'a')                  # append mode
+fnode = filenode.open_node(f1.root.text_file, 'a+')   # read and append mode
+fnode.write(b"Write a fourth line.\n")
+fnode.seek(0)   # rewind to the beginning of the file
+for line in fnode:
+    print(line)
+
+fnode.close()
+f1.close()
+```
+
+```sh
+ls -l tuscany.avif               # 2874x2154 file
+width=2874
+height=2154
+for num in $(seq -w 00 19); do   # crop it into twenty 300x300 random images
+    echo $num
+    x=$(echo "scale=8; $RANDOM / 32767 * ($width-300)" | bc)   # $RANDOM goes from 0 to 32767
+    x=$(echo $x | awk '{print int($1+0.5)}')
+    y=$(echo "scale=8; $RANDOM / 32767 * ($height-300)" | bc)
+    y=$(echo $y | awk '{print int($1+0.5)}')
+	convert tuscany.avif -crop 300x300+$x+$y small$num.png
+done
+```
+
+Normally, in Pillow you read, display, write individual images with:
+
+```py
+from PIL import Image
+image = Image.open('small00.png')
+image.show()
+# image.save('copy00.png')
+```
+
+Let's try to copy all our images into our HDF5 file `storage.h5`:
+
+```py
+import tables as tt
+from tables.nodes import filenode
+from PIL import Image
+from glob import glob
+
+f1 = tt.open_file('storage.h5', 'a')
+tuscany = f1.create_group("/", 'tuscany')
+
+for input in glob("small*.png"):
+    print('copying', input)
+    image = Image.open(input)
+    fnode = filenode.new_node(f1, where='/tuscany', name=input.replace('.png', ''))
+    image.save(fp=fnode, format='png')
+    fnode.close()
+
+f1.close()
+```
+
+```sh
+/bin/rm -f small*png
+ls -l storage.h5    # 2.2M - all our images are now stored inside this HDF5 file, along with the earlier text_file
+ptdump storage.h5   # very useful command: dumps all objects from the file
+```
+
+Let's read and display these images:
+
+```py
+import tables as tt
+from tables.nodes import filenode
+from PIL import Image
+
+f1 = tt.open_file('storage.h5', 'r')
+
+image = Image.open(fp=f1.root.tuscany.small08)
+image.show()
+
+for i in f1.root.tuscany:   # cycle through all its children
+    print(i)
+ 
+f1.root.tuscany.small00      # one possible syntax
+f1.root.tuscany['small00']   # another syntax
+
+image = Image.open(fp=f1.root.tuscany['small08'])
+image.show()
+```
+
+Finally, let's see how we can rename and remove nodes:
+
+```py
+import tables as tt
+from tables.nodes import filenode
+from PIL import Image
+
+f1 = tt.open_file('storage.h5', 'a')
+f1.root.tuscany.small19.remove()               # remove the node
+f1.root.tuscany.small18.rename("last_image")   # rename the node
+
+f1.root.tuscany             # all in one array
+
+for i in f1.root.tuscany:   # cycle through all its children
+    print(i)
+```
+
+Current limitations:
+
+- not a generic filesystem, but a filesystem accessible only though Python I/O: writing to a file is replaced
+  by writing to an HDF5 node
+- node files are restricted in their naming: only valid Python identifiers are valid &nbsp;⇨&nbsp; use
+  metadata to provide more description
+- only binary I/O is supported
+- no universal newline support yet, besides `\n`
+
+<!-- - node files can only be opened for read-only or read+append mode; you can also rename and delete nodes -->
