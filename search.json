@@ -42,6 +42,281 @@
     "text": "Dash library for making interactive web applications\nPlotly Dash library is a framework for making interactive data applications.\n\nDash Python User Guide https://dash.plotly.com\nhttps://dash.gallery/Portal has ~100 app examples\n\n\ncan create a dropdown to select data to plot\ncan enter a value into a box to select or interpolate data to plot\nselection in one plot shows in the other plot\nmix and match these into a single web app\ncan create different tabs inside the app, with the render switching between them\ncan make entire website with user guides, plots, code examples, etc."
   },
   {
+    "objectID": "python3/python-07-dictionaries.html",
+    "href": "python3/python-07-dictionaries.html",
+    "title": "Dictionaries",
+    "section": "",
+    "text": "As you just saw, Python’s lists are ordered sets of objects that you access via their position/index. Dictionaries are unordered sets in which the objects are accessed via their keys. In other words, dictionaries are unordered key-value pairs.\nConsider two lists:\nThere is nothing connecting these two lists, as far as figuring a person’s favourite colour goes. You could do something like this using indices:\nbut this is a little too convoluted … A dictionary can help you connect the two datasets directly:\nYou can also cycle using .keys(), .values() and .items() methods:\nThere are other ways to organize the same information using dictionaries. For example, you can create a list of dictionaries, one dictionary per person:\nThe benefit of this approach is that you can have many more attributes per person than just name and colour, and this is a very common way to organize structured and/or hierarchical data in Python. The downside is that – to search for by name – you have to do it explicitly:\nor in a single line:\nFinally, if you want performance, you might want to consider the following approach:\nHere we: 1. apply the lambda (anonymous) function  lambda x: x%2 == 0  to each item in range(1,11); it returns True or False, 2. create an iterator yielding only those items in range(1,11) for which the lambda function produced True, and 3. cycle through this iterator.\nUsing this approach, we can create an iterator of all people matching a name:\nHere we: 1. apply the lambda function lambda person: person[\"name\"] == \"Jeff\" to each item in the list data; it returns True or False, 2. create an iterator yielding only those items in data for which the lambda function produced True, and 3. create a list from this iterator, in this case containing only one element.\nGoing back to the basics, you can see where dictionary got its name:\nLet’s modify values:\nDeleting dictionary items:\nValues can also be numerical:\nAnd so can be the keys:",
+    "crumbs": [
+      "DAY 2",
+      "Dictionaries"
+    ]
+  },
+  {
+    "objectID": "python3/python-07-dictionaries.html#sorting-dictionary-items",
+    "href": "python3/python-07-dictionaries.html#sorting-dictionary-items",
+    "title": "Dictionaries",
+    "section": "“Sorting” dictionary items",
+    "text": "“Sorting” dictionary items\nLet’s go back to our original dictionary:\nfav = {'Mary': 'orange', 'John': 'green', 'Eric': 'turquoise', 'Jeff': 'burgundy', 'Anne': 'turquoise'}\nsorted(fav)             # returns the sorted list of keys\nsorted(fav.keys())      # the same\nsorted(fav.values())    # returns the sorted list of values\nfor k in sorted(fav):\n    print(k, fav[k])    # full dictionary sorted by key\n\n\n\n\n\n\nExercise 7.3\n\n\n\n\n\nWrite a script to print the full dictionary (keys and values) sorted by the value.\nHint: create a list comprehension looping through all (key,value) pairs and then try sorting the result.",
+    "crumbs": [
+      "DAY 2",
+      "Dictionaries"
+    ]
+  },
+  {
+    "objectID": "python3/python-07-dictionaries.html#dictionary-comprehensions",
+    "href": "python3/python-07-dictionaries.html#dictionary-comprehensions",
+    "title": "Dictionaries",
+    "section": "Dictionary comprehensions",
+    "text": "Dictionary comprehensions\nSimilar to list comprehensions, we can form a dictionary comprehension:\n{k:'.'*k for k in range(10)}\n{k:v*2 for (k,v) in zip(range(10),range(10))}\n{j:c for j,c in enumerate('computer')}",
+    "crumbs": [
+      "DAY 2",
+      "Dictionaries"
+    ]
+  },
+  {
+    "objectID": "python3/python-13-scraping.html",
+    "href": "python3/python-13-scraping.html",
+    "title": "Web scraping",
+    "section": "",
+    "text": "Web scraping refers to extracting data from the web in a semi-automatic fashion. There is some programming involved, but Python web-scraping tools attempt to make this as painless as possible.\nimport requests                 # to download the html data from a site\nfrom bs4 import BeautifulSoup   # to parse these html data\nimport pandas as pd             # to store our data in a dataframe\n\nurl = \"https://arxiv.org/list/econ/new\"\nr = requests.get(url)\nr   # &lt;Response [200]&gt; means our request was successful\n\nprint(r.text[:200])   # the first 200 characters in the raw data\n\nmainpage = BeautifulSoup(r.text, \"html.parser\")\nmainpage.prettify()   # still very messy ...\nThere is a lot of text there, and it’s not particularly readable even after .prettify()! At this point we need to identify relevant markers in the HTML from which we could extract interesting data. There are several ways of doing this, e.g. you can use SelectorGadget bookmarklet on your site and mouse over various elements on the page, but here I will just look at the HTML source.\nIn Firefox I load https://arxiv.org/list/econ/new, select Tools | Browser Tools | Page Source and then try to identify relevant tags. For example, I might see some useful text inside the &lt;div&gt; container tag:\n&lt;div class=\"list-title mathjax\"&gt;\n&lt;span class=\"descriptor\"&gt;Title:&lt;/span&gt; This is the first article's title\n&lt;/div&gt;\nLet’s search for all &lt;div&gt; tags with an attribute class starting with “list-title”:\ndivs = mainpage.findAll(\"div\", attrs={'class':'list-title'})\nlen(divs)   # number of article titles on this page\nLet’s inspect the first title:\ndiv[0]\ndiv[0].text           # get the actual text inside this container\ndiv[0].text.strip()   # remove leading and trailing whitespaces and end-of-line characters\ndiv[0].text.strip().replace('Title: ', '')\nWe can wrap this in a loop through all titles:\nfor div in divs:\n    print(div.text.strip().replace('Title: ', ''))\nLet’s store our data in a dataframe with three columns:\ntitles = []\ndivs = mainpage.findAll(\"div\", attrs={'class':'list-title'})\nfor div in divs:\n    titles.append(div.text.strip().replace('Title: ', ''))\n\nauthors = []\ndivs = mainpage.findAll(\"div\", attrs={'class':'list-authors'})\nfor div in divs:\n    authors.append(div.text.strip().replace('Authors:', '').replace('\\n', ''))\n\nsubjects = []\ndivs = mainpage.findAll(\"div\", attrs={'class':'list-subjects'})\nfor div in divs:\n    subjects.append(div.text.strip().replace('Subjects: ', ''))\n\nd = {'titles': titles, 'authors': authors, 'subjects': subjects}\npapers = pd.DataFrame(d)\npapers\nFinally, let’s filter articles based on a topic:\nmask = [\"Machine Learning\" in subject for subject in papers.subjects]\npapers[mask]\n\n\n\n\n\n\nExercise 13.1\n\n\n\n\n\nCreate a list of abstracts from today’s articles on https://arxiv.org/list/econ/new – no titles, authors, keywords, just abstracts. Print the first 5 elements of this list. Paste the entire Python code to do this from start to finish.",
+    "crumbs": [
+      "DAY 3",
+      "Web scraping"
+    ]
+  },
+  {
+    "objectID": "python3/python-01-setup.html",
+    "href": "python3/python-01-setup.html",
+    "title": "Setup and running Jupyter notebooks",
+    "section": "",
+    "text": "Disclaimer\n\n\n\nThese notes started number of years ago from the official SWC lesson but then evolved quite a bit to include other topics.",
+    "crumbs": [
+      "DAY 1",
+      "Setup and running Jupyter notebooks"
+    ]
+  },
+  {
+    "objectID": "python3/python-01-setup.html#why-python",
+    "href": "python3/python-01-setup.html#why-python",
+    "title": "Setup and running Jupyter notebooks",
+    "section": "Why Python?",
+    "text": "Why Python?\nPython is a free, open-source programming language first developed in the late 1980s and 90s that became really popular for scientific computing in the past 15 years. With Python in a few minutes you can: - analyze thousands of texts, - process tables with billions of records, - manipulate thousands of images, - restructure and process data any way you want.\n\nPython vs. Excel\n\nUnlike Excel, Python can read any type of data, both structured and unstructured.\nPython is free and open-source, so no artificial limitations on where/how you run it.\nPython works on all platforms: Windows, Mac, Linux, Android, etc.\nData manipulation is much easier in Python. There are hundreds of data processing, machine learning, and visualization libraries.\nPython can handle much larger amounts of data: limited not by Python, but by your available computing resources. In addition, Python can run at scale (in parallel) on larger systems.\nPython is more reproducible (rerun / modify the script).\n\n\n\n\n\n\n\n\n\n\n\nPython vs. other programming languages\n\n\n\n\n\n\n\nPython pros\nPython cons\n\n\n\n\nelegant scripting language\nslow (interpreted, dynamically typed)\n\n\neasy to write and read code\nuses indentation for code blocks\n\n\npowerful, compact constructs for many tasks\n\n\n\nvery popular across all fields\n\n\n\nhuge number of external libraries",
+    "crumbs": [
+      "DAY 1",
+      "Setup and running Jupyter notebooks"
+    ]
+  },
+  {
+    "objectID": "python3/python-01-setup.html#installing-python-locally",
+    "href": "python3/python-01-setup.html#installing-python-locally",
+    "title": "Setup and running Jupyter notebooks",
+    "section": "Installing Python locally",
+    "text": "Installing Python locally\nToday we’ll be running Python in the cloud, so you can skip this section. I am listing these options in case you want to install Python on your computer after the workshop.\nOption 1: Install Python from https://www.python.org/downloads making sure to check the option “Add Python to PATH” during the installation.\nOption 2: Install Python and the packages via Anaconda from https://www.anaconda.com/download.\nOption 3: Install Python via your favourite package manager, e.g. in MacOS – assuming you have Homebrew installed – run the command brew install python.\nPost-installation: Install 3rd-party Python packages in the Command Prompt / terminal via pip install &lt;packageName&gt;, e.g. to be able to run Python inside a Jupyter Notebook run pip install jupyter.",
+    "crumbs": [
+      "DAY 1",
+      "Setup and running Jupyter notebooks"
+    ]
+  },
+  {
+    "objectID": "python3/python-01-setup.html#starting-python",
+    "href": "python3/python-01-setup.html#starting-python",
+    "title": "Setup and running Jupyter notebooks",
+    "section": "Starting Python",
+    "text": "Starting Python\nThere are many ways to run Python commands:\n\nfrom a Unix shell you can start a Python shell and type commands there,\nyou can launch Python scripts saved in plain text *.py files,\nyou can execute Python cells inside Jupyter notebooks; the code is stored inside JSON files, displayed as HTML",
+    "crumbs": [
+      "DAY 1",
+      "Setup and running Jupyter notebooks"
+    ]
+  },
+  {
+    "objectID": "python3/python-01-setup.html#todays-setup",
+    "href": "python3/python-01-setup.html#todays-setup",
+    "title": "Setup and running Jupyter notebooks",
+    "section": "Today’s setup",
+    "text": "Today’s setup\nToday we’ll be using JupyterHub on our training cluster. Point your browser to https://hss.c3.ca and log in with your username and password, then launch a JupyterHub server with time = 2.5 hours, 1 CPU core, memory = 3712 MB, GPU configuration = None, user interface = JupyterLab. Finally, start a new Python 3 notebook.\n\nAfter you log in, in the dashboard start a new Python 3 notebook.",
+    "crumbs": [
+      "DAY 1",
+      "Setup and running Jupyter notebooks"
+    ]
+  },
+  {
+    "objectID": "python3/python-01-setup.html#navigating-jupyter-interface",
+    "href": "python3/python-01-setup.html#navigating-jupyter-interface",
+    "title": "Setup and running Jupyter notebooks",
+    "section": "Navigating Jupyter interface",
+    "text": "Navigating Jupyter interface\n\nFile | Save Notebook As - to rename your notebook\nFile | Download - download the notebook to your computer\nFile | New Launcher - to open a new launcher dashboard, e.g. to start a terminal\nFile | Log Out - to terminate your job (everything is running inside a Slurm job!)\n\n\n\n\n\n\n\nNote to self\n\n\n\nExplain: tab completion, annotating code, displaying figures inside the notebook.\n\n\n\nEsc - leave the cell (border changes colour) to the control mode\nA - insert a cell above the current cell\nB - insert a cell below the current cell\nX - delete the current cell\nM - turn the current cell into the markdown cell\nH - to display help\nEnter - re-enter the cell (border becomes green) from the control mode\n\nYou can enter Latex expressions in a markdown cell, e.g. try typing \\int_0^\\infty f(x)dx inside two dollar signs.\nprint(1/2)   # to run all commands in the cell, either use the Run button, or press shift+return",
+    "crumbs": [
+      "DAY 1",
+      "Setup and running Jupyter notebooks"
+    ]
+  },
+  {
+    "objectID": "python3/python-12-images.html",
+    "href": "python3/python-12-images.html",
+    "title": "Images, hierarchical data, time",
+    "section": "",
+    "text": "Several image-processing libraries use numpy data structures underneath, e.g. Pillow and skimage.io. Let’s take a look at the latter.\nfrom skimage import io   # scikit-image is a collection of algorithms for image processing\nimage = io.imread(fname=\"https://raw.githubusercontent.com/razoumov/publish/master/grids.png\")\ntype(image)   # numpy array\nimage.shape   # 1024^2 image, with three colour (RGB) channels\nLet’s plot this image using matplotlib:\nio.imshow(image)\n# io.show()   # only if working in a terminal\n# io.imsave(\"tmp.png\", image)\nUsing numpy, you can easily manipulate pixels, e.g.\nimage[:,:,2] = 255 - image[:,:,2]\nand then plot it again.",
+    "crumbs": [
+      "DAY 3",
+      "Image manipulation, hierarchical data, time"
+    ]
+  },
+  {
+    "objectID": "python3/python-12-images.html#image-manipulation-with-scikit-image",
+    "href": "python3/python-12-images.html#image-manipulation-with-scikit-image",
+    "title": "Images, hierarchical data, time",
+    "section": "",
+    "text": "Several image-processing libraries use numpy data structures underneath, e.g. Pillow and skimage.io. Let’s take a look at the latter.\nfrom skimage import io   # scikit-image is a collection of algorithms for image processing\nimage = io.imread(fname=\"https://raw.githubusercontent.com/razoumov/publish/master/grids.png\")\ntype(image)   # numpy array\nimage.shape   # 1024^2 image, with three colour (RGB) channels\nLet’s plot this image using matplotlib:\nio.imshow(image)\n# io.show()   # only if working in a terminal\n# io.imsave(\"tmp.png\", image)\nUsing numpy, you can easily manipulate pixels, e.g.\nimage[:,:,2] = 255 - image[:,:,2]\nand then plot it again.",
+    "crumbs": [
+      "DAY 3",
+      "Image manipulation, hierarchical data, time"
+    ]
+  },
+  {
+    "objectID": "python3/python-12-images.html#hierarchical-data-formats",
+    "href": "python3/python-12-images.html#hierarchical-data-formats",
+    "title": "Images, hierarchical data, time",
+    "section": "Hierarchical data formats",
+    "text": "Hierarchical data formats\n\nWe already saw Python dictionaries. You can save them in a file using a variety of techniques. One of the most popular techniques, especially among web developers, is JSON (JavaScript Object Notation), as its internal mapping is similar to that of a Python dictionary, with key-value pairs. In the file all data are stored as human-readable text, including any non-ASCII (Unicode) characters.\nimport json\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\nlen(x)     # 6 key-value pairs\nx.keys()   # here are the keys\n\nfilename = open(\"personal.json\", \"w\")\njson.dump(x, filename, indent = 2)   # serialize `x` as a JSON-formatted stream to `filename`\n                  # `indent` sets field offsets in the file (for human readability)\nfilename.close()\n\n...\n\nimport json\nfilename = open(\"personal.json\", \"r\")\ndata = json.load(filename)   # read into a new dictionary\nfilename.close()\nfor k in data:\n    print(k, data[k])\nIf you want to read larger and/or binary data, there is BSON format. Going step further, there are popular scientific data formats such as NetCDF and HDF5 for storing large multi-dimensional arrays and/or large hierarchical datasets, but we won’t study them here.",
+    "crumbs": [
+      "DAY 3",
+      "Image manipulation, hierarchical data, time"
+    ]
+  },
+  {
+    "objectID": "python3/python-12-images.html#working-with-time",
+    "href": "python3/python-12-images.html#working-with-time",
+    "title": "Images, hierarchical data, time",
+    "section": "Working with time",
+    "text": "Working with time\nIn its standard library Python has high-level functions to work with time and dates:\nfrom time import *\ngmtime(0)   # show the starting epoch on my system (typically 1970-Jan-01 on Unix-like systems)\ntime()      # number of seconds since then = current time\nctime(time())   # convert that to human-readable time\nctime()         # same = current time\n\nlocal = localtime()   # convert current date/time to a structure\nlocal.tm_year, local.tm_mon, local.tm_mday\nlocal.tm_hour, local.tm_min, local.tm_sec\nlocal.tm_zone     # my time zone\nlocal.tm_isdst    # Daylight Saving Time 1=on or 0=off\nYou can find many more examples here.",
+    "crumbs": [
+      "DAY 3",
+      "Image manipulation, hierarchical data, time"
+    ]
+  },
+  {
+    "objectID": "python3/python-05-lists.html",
+    "href": "python3/python-05-lists.html",
+    "title": "Lists",
+    "section": "",
+    "text": "Python has a number of built-in composite data structures: tuples, lists, sets, dictionaries. Here we take a look at lists and dictionaries.\nA list stores many values in a single structure.\nevents = [267, 1332, 1772, 1994, 493, 1373, 1044, 156, 1515, 1788]  # array of years\nprint('events:', events)\nprint('length:', len(events))\nprint('first item of events is', events[0])   # indexing starts witgh 0\nevents[2] = 1773                              # individual elements are mutable\nprint('events is now:', events)\nevents.append(1239)   # append at the end\nevents.append(606)    # append at the end\nprint('events is now:', events)\nevents.pop(4)         # remove element #4\nprint('events is now:', events)\nevents.remove(267)    # remove by value (first occurrence)\na = []   # start with an empty list\na.append('Vancouver')\na.append('Toronto')\na.append('Kelowna')\nprint(a)\na[3]   # will give an error message (past the end of the array)\na[-1]   # display the last element; what's the other way?\na[:]    # will display all elements\na[1:]   # all elements starting from #1\na[:1]   # ending with but not including #1\nLists can be heterogeneous and nested:\na = [11, 21., 3.5]\nb = ['Mercury', 'Venus', 'Earth']\nc = 'hello'\nnestedList = [a, b, c]\nprint(nestedList)\n\n\n\n\n\n\nExercise 5.1: double subsetting\n\n\n\n\n\nHow would you extract element “Earth” from nestedList?\n\n\n\nYou can search inside a list:\n'Venus' in b                   # returns True\n'Pluto' in b                   # returns False\nb.index('Venus')               # returns 1 (positional index)\nnestedList[1].index('Venus')   # same\nAnd you sort lists alphabetically:\nb.sort()\nb             # returns ['Earth', 'Mercury', 'Venus']\n\n\n\n\n\n\nExercise 5.2\n\n\n\n\n\nWrite a script to find the second largest number in the list [77,9,23,67,73,21].",
+    "crumbs": [
+      "DAY 1",
+      "Lists"
+    ]
+  },
+  {
+    "objectID": "python3/python-09-scope.html",
+    "href": "python3/python-09-scope.html",
+    "title": "Strings, variable scope, exceptions",
+    "section": "",
+    "text": "A string object in Python has a number of built-in methods:\nevent = \"HSS Winter Series\"\nevent.&lt;hit TAB once or twice&gt;   # strings can access a number of methods = functions\nevent.capitalize()\nevent.count(\"S\")\nevent.find(\"S\")       # the first occurrence\nevent.find(\"hello\")   # -1 = not found\nevent = event.replace(\"HSS\", \"Humanities and Social Sciences\")\nevent += \" 2024\"\nevent.lower()\nevent.upper()\nWe can do all of this manipulation in one line:\nevent = \"HSS Winter Series\"\n(event.replace(\"HSS\", \"Humanities and Social Sciences\")+\" 2024\").upper()\nAt this point you might ask about finding all occurrences of “S” inside events. One possible solution:\nimport re   # regular expressions library\n[m.start() for m in re.finditer(\"S\", event)]   # [1, 2, 11]\nLet’s now split our string:\nwords = event.split()   # split into words\n'_'.join(words)         # join these words into a string with the `-` separator\nThis .join() syntax is useful for many purposes, e.g. you can use it to convert a list to a string:\nsentence = [\"Good\", \"morning\"]\nstr(sentence)        # this is not what we want ...\n\" \".join(sentence)   # this works!",
+    "crumbs": [
+      "DAY 2",
+      "Working with strings, variable scope, exceptions"
+    ]
+  },
+  {
+    "objectID": "python3/python-09-scope.html#working-with-strings",
+    "href": "python3/python-09-scope.html#working-with-strings",
+    "title": "Strings, variable scope, exceptions",
+    "section": "",
+    "text": "A string object in Python has a number of built-in methods:\nevent = \"HSS Winter Series\"\nevent.&lt;hit TAB once or twice&gt;   # strings can access a number of methods = functions\nevent.capitalize()\nevent.count(\"S\")\nevent.find(\"S\")       # the first occurrence\nevent.find(\"hello\")   # -1 = not found\nevent = event.replace(\"HSS\", \"Humanities and Social Sciences\")\nevent += \" 2024\"\nevent.lower()\nevent.upper()\nWe can do all of this manipulation in one line:\nevent = \"HSS Winter Series\"\n(event.replace(\"HSS\", \"Humanities and Social Sciences\")+\" 2024\").upper()\nAt this point you might ask about finding all occurrences of “S” inside events. One possible solution:\nimport re   # regular expressions library\n[m.start() for m in re.finditer(\"S\", event)]   # [1, 2, 11]\nLet’s now split our string:\nwords = event.split()   # split into words\n'_'.join(words)         # join these words into a string with the `-` separator\nThis .join() syntax is useful for many purposes, e.g. you can use it to convert a list to a string:\nsentence = [\"Good\", \"morning\"]\nstr(sentence)        # this is not what we want ...\n\" \".join(sentence)   # this works!",
+    "crumbs": [
+      "DAY 2",
+      "Working with strings, variable scope, exceptions"
+    ]
+  },
+  {
+    "objectID": "python3/python-09-scope.html#variable-scope",
+    "href": "python3/python-09-scope.html#variable-scope",
+    "title": "Strings, variable scope, exceptions",
+    "section": "Variable scope",
+    "text": "Variable scope\nThe scope of a variable is the part of a program that can see that variable.\na = 5\ndef adjust(b):\n    sum = a + b\n    return sum\nadjust(10)   # what will the outcome be?\n\na is the global variable  ⇨  visible everywhere\nb and sum are local variables  ⇨  visible only inside the function\n\nInside a function we can access methods of global variables:\na = []\ndef add():\n    a.append(5)   # modify global `a`\nadd()\nprint(a)          # [5]\nHowever, from a local scope we cannot assign to a global variable directly:\na = []\ndef add():\n    a = [1,2,3]   # this will create a local copy of `a` inside the function\n    print(a)      # [1,2,3]\nadd()\nprint(a)          # []",
+    "crumbs": [
+      "DAY 2",
+      "Working with strings, variable scope, exceptions"
+    ]
+  },
+  {
+    "objectID": "python3/python-09-scope.html#handling-exceptions",
+    "href": "python3/python-09-scope.html#handling-exceptions",
+    "title": "Strings, variable scope, exceptions",
+    "section": "Handling exceptions",
+    "text": "Handling exceptions\nPutting some explicit logic into your code to deal with errors will make your code more robust. For example, if the input data are missing, you can have some printout to show the instructions to get the data at runtime.\nThis error handling can be applied to calculations too. Let’s say we want to write a code to calculate mortgage payments. For a fixed interest rate in percent, we have two of the following three variables: (1) the principal amount, (2) the term in years, or (3) a monthly payment. Our code will calculate the third variable, based on the other two. There are three scenarios:\n\nIf we have the principal amount and the term in years, here is how you would calculate the monthly payment:\n\nr = rate / 1200\nq = (1 + r)**(12*term)\npayment = principal * r * q / (q - 1)\n\nIf we have the monthly payment and the principal amount, here is how you would calculate the term in years:\n\nr = rate / 1200\nq =  payment / (payment - principal * r)\nif q &lt; 0.:\n    print(\"you will never pay it off ...\")\n    exit(1)\nterm = log(q) / (log(1+r)*12)\n\nIf we have the term in years and the monthly payment, here is how you would calculate the principal amount:\n\nr = rate / 1200\nq = (1 + r)**(12*term)\nprincipal = payment * (q - 1) / (r * q)\nHow can we tell the code to decide on the fly which variable it needs to compute, based on the two existing ones?\nWe would like to do something like this (not actual Python code):\nif payment is not defined:\n    use formula 1\nif term is not defined:\n    use formula 2\nif principal is not defined:\n    use formula 3\nConsider this syntax:\ntry:\n    someUndefinedVariable       # here is what we try to do\nexcept NameError:\n    someUndefinedVariable = 1   # if that produces NameError, don't show it, but do this instead\n    print(someUndefinedVariable)\nAnd you can combine multiple error codes, e.g.\n...\nexcept (RuntimeError, TypeError, NameError):\n...\n\n\n\n\n\n\nExercise 9.1\n\n\n\n\n\nWrite the rest of the mortgage calculation code.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\nYou can also implement this code setting payment = None for a missing variable, and then placing the code under if payment == None condition. Alternatively, you can put everything into a function with optional arguments that default to None unless assigned values. I personally like the implementation with the exception handling, as this way you don’t have to assign the missing variable at all.",
+    "crumbs": [
+      "DAY 2",
+      "Working with strings, variable scope, exceptions"
+    ]
+  },
+  {
+    "objectID": "python3/python-09-scope.html#number-crunching-in-python-if-we-have-time",
+    "href": "python3/python-09-scope.html#number-crunching-in-python-if-we-have-time",
+    "title": "Strings, variable scope, exceptions",
+    "section": "Number crunching in Python: if we have time",
+    "text": "Number crunching in Python: if we have time\n\nHow would you explain the following:\n\n1 + 2 == 3         # returns True (makes sense!)\n0.1 + 0.2 == 0.3   # returns False -- be aware of this when you use conditionals\nabs(0.1+0.2 - 0.3) &lt; 1.e-8   # compare floats for almost equality\nimport numpy as np\nnp.isclose(0.1+0.2, 0.3, atol=1e-8)\n\n\n\n\n\n\nExplanation (click only after solving)\n\n\n\n\n\n0.1 in binary will be 0.0001(1001) which we then truncate with round-off, then perform arithmetic, then convert back to decimal with round-off.\n\n\n\n\nMore challening: write a code to solve \\(x^3+4x^2-10=0\\) with a bisection method in the interval \\([1.3,\n1.4]\\) with tolerance \\(10^{-8}\\).",
+    "crumbs": [
+      "DAY 2",
+      "Working with strings, variable scope, exceptions"
+    ]
+  },
+  {
+    "objectID": "python3/python-11-pandas.html",
+    "href": "python3/python-11-pandas.html",
+    "title": "Pandas dataframes",
+    "section": "",
+    "text": "Pandas is a widely-used Python library for working with tabular data, borrows heavily from R’s dataframes, built on top of NumPy. Let’s try reading some public-domain data about Jeopardy questions with pandas (31MB file, so it might take a while):\nimport pandas as pd\ndata = pd.read_csv(\"https://raw.githubusercontent.com/razoumov/publish/master/jeopardy.csv\")\ndata.shape      # shape is a member variable inside data =&gt; 216930 rows, 7 columns\n\nprint(data)\ndata            # this prints out the table nicely in Jupyter Notebook!\n\ndata.info()     # info is a *member method inside data*\ndata.head(10)   # first 10 rows\ndata.tail()     # last 5 rows\ndata.columns    # names of the columns\nLet’s download the same online data as a file into our current directory:\n!wget https://raw.githubusercontent.com/razoumov/publish/master/jeopardy.csv\nThis time let’s read from this file naming the rows by their respective answer:\ndata = pd.read_csv(\"jeopardy.csv\", index_col='Answer')\ndata\ndata.shape   # one fewer column\ndata.columns\ndata.index   # row names",
+    "crumbs": [
+      "DAY 3",
+      "Pandas dataframes"
+    ]
+  },
+  {
+    "objectID": "python3/python-11-pandas.html#reading-csv-tabular-data",
+    "href": "python3/python-11-pandas.html#reading-csv-tabular-data",
+    "title": "Pandas dataframes",
+    "section": "",
+    "text": "Pandas is a widely-used Python library for working with tabular data, borrows heavily from R’s dataframes, built on top of NumPy. Let’s try reading some public-domain data about Jeopardy questions with pandas (31MB file, so it might take a while):\nimport pandas as pd\ndata = pd.read_csv(\"https://raw.githubusercontent.com/razoumov/publish/master/jeopardy.csv\")\ndata.shape      # shape is a member variable inside data =&gt; 216930 rows, 7 columns\n\nprint(data)\ndata            # this prints out the table nicely in Jupyter Notebook!\n\ndata.info()     # info is a *member method inside data*\ndata.head(10)   # first 10 rows\ndata.tail()     # last 5 rows\ndata.columns    # names of the columns\nLet’s download the same online data as a file into our current directory:\n!wget https://raw.githubusercontent.com/razoumov/publish/master/jeopardy.csv\nThis time let’s read from this file naming the rows by their respective answer:\ndata = pd.read_csv(\"jeopardy.csv\", index_col='Answer')\ndata\ndata.shape   # one fewer column\ndata.columns\ndata.index   # row names",
+    "crumbs": [
+      "DAY 3",
+      "Pandas dataframes"
+    ]
+  },
+  {
+    "objectID": "python3/python-11-pandas.html#subsetting",
+    "href": "python3/python-11-pandas.html#subsetting",
+    "title": "Pandas dataframes",
+    "section": "Subsetting",
+    "text": "Subsetting\nPandas lets you subset elements using either their numerical indices or their row/column names. Long time ago Pandas used to have a single function to do both. Now there are two separate functions, .iloc and .loc. Let’s print one element:\ndata.iloc[0,5]                                    # using row/column numbers\ndata.loc[\"Sinking of the Titanic\", \"Question\"]    # using row/column names\nPrinting a row:\ndata.loc['Sinking of the Titanic',:]   # usual Python's slicing notation - show all columns in that row\ndata.loc['Sinking of the Titanic']     # exactly the same\ndata.loc['Sinking of the Titanic',]    # exactly the same\nPrinting a column:\ndata.loc[:,'Category']   # show all rows in that column\ndata['Category']         # exactly the same; single index refers to columns\ndata.Category            # most compact notation; does not work with numerical-only names\nCombining .iloc and .loc – let’s say we want to retrieve a cell by its row number and its column name:\ndata.iloc[0]     # returns a pandas series (with many rows) =&gt; use .loc to select its row\ndata.iloc[0].loc[\"Question\"]   # combining numbers and names\ndata.iloc[0][\"Question\"]       # the same\nPrinting a range:\ndata.iloc[10:15]     # rows 10,11,12,13,14\ndata.columns\ndata.iloc[10:15].loc[:,'Category':'Question']     # rows 10-14, columns 'Category' - 'Question'\ndata.iloc[10:15].loc[:,['Category','Question']]   # rows 10-14, columns 'Category' and 'Question'\ndata.loc['Copernicus', 'Air Date':'Category']     # a range of columns ... why so many lines?\ndata.loc['Copernicus', ['Air Date','Question']]   # print two selected columns\ndata['Category']              # many different categories, truncated output ...\nlist(data['Category'])        # print all categories ... huge list\nlen(set(data['Category']))    # 27,983 unique categories\ndata['Category']=='HISTORY'   # return either True or False for each row\nYou can use the last expression as a mask to return only those rows where Category is “HISTORY”:\ndata.loc[data['Category']=='HISTORY']\ndata.loc[data['Category']=='HISTORY'].shape   # 349 matches\ndata.loc[data['Category']=='HISTORY'].to_csv(\"history.csv\")   # write to a file\nLet’s take a look at the value column:\nlist(data['Value'])   # some of these contain nan\n\ndata.shape              # original table: 216,930 rows\nclean = data.dropna()   # drop rows with nan's\nclean.shape             # after dropping rows with missing values: 213,144 rows\n\nclean['Value']   # one column\nclean['Value'].apply(lambda x: type(x))   # show the type of each element (fixed for each column)\nclean['Value'].apply(lambda x: x.replace('$',''))   # remove all $ signs\nvalues = clean['Value'].apply(lambda x: int(x.replace('$','').replace(',','')))\n\nmask = values&gt;5000\nclean[mask]         # only show rows with Value &gt; $5000\nclean[mask].shape   # thera are 345 such rows\nLet’s replace the “Values” column in-place – here using the same expression on the right-hand side as before:\nclean.loc[:,'Value'] = clean['Value'].apply(lambda x: int(x.replace('$','').replace(',','')))\nclean\nNow clean’s Value column is all numerical.\n\n\n\n\n\n\nExercise 11.1\n\n\n\n\n\nExplain in simple terms what .idxmin() and .idxmax() do in the short program below. When would you use these methods?\nclean.idxmin()\nclean.idxmax()\nHint: Try running these:\nclean.loc[\"Freddie And The Dreamers\"]\nclean.loc[\"Suriname\"]\nor use help pages. This simpler example could also help:\ncol1 = [\"1\",\"a\",\"A\"]\ncol2 = [\"4\",\"b\",\"B\"]\ndata = pd.DataFrame({'a': col1, 'b': col2})   # dataframe from a dictionary\ndata.idxmin()\n\n\n\n\n\n\n\nFinally, let’s check what time period is covered by these data:\ndata[\"Air Date\"]\ndata[\"Air Date\"][0][-2:]   # first row, last two digits is the year\nyear = data[\"Air Date\"].apply(lambda x: x[-2:])   # last two digits of the year from all rows\nyear.min(); year.max()     # '00' and '99' - not very informative, wraps at the turn of the century\n\nfor y in range(100):\n    twoDigits = str(y).zfill(2)\n    print(twoDigits, sum(year==twoDigits))\nThis shows that this table covers years from 1984 to 2012.",
+    "crumbs": [
+      "DAY 3",
+      "Pandas dataframes"
+    ]
+  },
+  {
+    "objectID": "python3/python-11-pandas.html#creating-a-dataframe-from-scratch",
+    "href": "python3/python-11-pandas.html#creating-a-dataframe-from-scratch",
+    "title": "Pandas dataframes",
+    "section": "Creating a dataframe from scratch",
+    "text": "Creating a dataframe from scratch\nHow do you create a dataframe from scratch? There are many ways; perhaps, the easiest is by defining columns (as you saw in the last exercise):\ncol1 = [1,2,3]\ncol2 = [4,5,6]\npd.DataFrame({'a': col1, 'b': col2})       # dataframe from a dictionary\nWe can index (assign names to) the rows with this syntax:\npd.DataFrame({'a': col1, 'b': col2}, index=['a1','a2','a3'])",
+    "crumbs": [
+      "DAY 3",
+      "Pandas dataframes"
+    ]
+  },
+  {
+    "objectID": "python3/python-11-pandas.html#three-solutions-to-a-classification-problem",
+    "href": "python3/python-11-pandas.html#three-solutions-to-a-classification-problem",
+    "title": "Pandas dataframes",
+    "section": "Three solutions to a classification problem",
+    "text": "Three solutions to a classification problem\n\nFizz buzz is a children’s game to practice divisions. Players take turn counting out loud while replacing: - any number divisible by 3 with the word “Fizz”, - any number divisible by 5 with the word “Buzz”, - any number divisible by both 3 and 5 with the word “FizzBuzz”.\nLet’s implement this in pandas! First, create a simple dataframe from scratch:\nimport pandas as pd\nimport numpy as np\ndf = pd.DataFrame()\nsize = 10_000\ndf['number'] = np.arange(1, size+1)   # create a column called \"number\" containing 1,2,...,size\nDefine for pretty printing:\ndef show(frame):\n    print(df.tail(15).to_string(index=False))   # print last 15 rows without the row index\n\nshow(df)\nLet’s built a new column response containing either “Fizz” or “Buzz” or “FizzBuzz” or the original number, based on the number value in that row. Let’s start by defining a function to process a row:\ndef count(row):\n    if (row['number'] % 3 == 0) and (row['number'] % 5 == 0):\n        return 'FizzBuzz'\n    elif row['number'] % 3 == 0:\n        return 'Fizz'\n    elif row['number'] % 5 == 0:\n      return 'Buzz'\n    else:\n      return str(row['number'])\nThis is how you would use this function:\ncount(df.iloc[2])    # returns 'Fizz'\ncount(df.iloc[14])   # returns 'FizzBuzz'\n\nWe can apply this function to each row in a loop:\n\n%%timeit\nfor index, row in df.iterrows():\n    df.loc[index, 'response'] = count(row)\n413 ms ± 11.1 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)\nshow(df)\n\nWe can use df.apply() to apply this function to each row:\n\n%%timeit\ndf['response'] = df.apply(count, axis=1)   # axis=1 means apply along the column\n69.1 ms ± 380 µs per loop (mean ± std. dev. of 7 runs, 10 loops each)\nshow(df)\n\nOr we could use a mask to only assign correct responses to the corresponding rows:\n\n%%timeit\ndf['response'] = df['number'].astype(str)\ndf.loc[df['number'] % 3==0, 'response'] = 'Fizz'\ndf.loc[df['number'] % 5==0, 'response'] = 'Buzz'\ndf.loc[(df['number'] % 3==0) & (df['number'] % 5==0), 'response'] = 'FizzBuzz'\n718 µs ± 10.6 µs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)\nshow(df)",
+    "crumbs": [
+      "DAY 3",
+      "Pandas dataframes"
+    ]
+  },
+  {
     "objectID": "pythonhpc.html",
     "href": "pythonhpc.html",
     "title": "Part 1: towards high-performance Python",
@@ -1246,139 +1521,32 @@
     "text": "Summary\n\nWorkflow suggestions\n\nuse print from inside the Filter/Source\ngo slowly and save frequently, as ParaView will crash when you don’t allocate objects properly inside Programmable Filter/Source\n\nLinks\n\nProgrammable Filter in the offical ParaView documentation\nan article NumPy to VTK: Converting your NumPy arrays to VTK arrays and files\nfirst half of the talk by Jean M. Favre (Swiss National Supercomputing Centre)\n\nFuture topic: converting Programmable Filter’s code to a plugin\n\ncode its own custom GUI Properties using Python decorators\nafter loading your plugin, it should be available as a normal filter or source in the menu"
   },
   {
-    "objectID": "formats-20221104.html",
-    "href": "formats-20221104.html",
-    "title": "What format to choose to save your data",
+    "objectID": "solutions-bash.html",
+    "href": "solutions-bash.html",
+    "title": "Bash solutions",
     "section": "",
-    "text": "Friday, November 4th, 2022, 1:00pm - 2:30pm\nYou can find this page at   https://folio.vastcloud.org/formats\nAbstract: Which file format should you use when saving your research dataset? Besides the obvious question of how to encode your data structures in a file, you might also want to consider portability (the ability to write/read data across different operating systems and different programming languages and libraries), the inclusion of metadata (data description), I/O bandwidth and file sizes, compression, and the ability to read/write data in parallel for large datasets. In this introductory in-person workshop, we will cover all these aspects starting from the very basic file formats and ending with scalable scientific dataset formats. We will cover CSV, JSON, YAML, XML, BSON, VTK, NetCDF, HDF5, using both structured and unstructured datasets and demoing all examples in Python."
+    "text": "function swap() {\n    if [ -e $1 ] && [ -e $2 ] ; then\n        /bin/mv $2 $2.bak\n        /bin/mv $1 $2\n        /bin/mv $2.bak $1\n    else\n        echo at least one of these files does not exist ...\n    fi\n}\n\n\n\nfunction countfiles() {\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n    for dir in $@; do\n        echo in $dir we found $(find $dir -type f | wc -l) files\n    done\n}"
   },
   {
-    "objectID": "formats-20221104.html#links",
-    "href": "formats-20221104.html#links",
-    "title": "What format to choose to save your data",
-    "section": "Links",
-    "text": "Links\n\nFall 2022 training schedule: https://bit.ly/wg2022b\nResearch computing autumn in November: https://autumnschool2022.westdri.ca (free registration)\nTraining materials: https://training.westdri.ca (upcoming and archived events, ~100 recorded webinars)\nDocumentation: https://docs.alliancecan.ca\nEmail: training “at” westdri “dot” ca"
-  },
-  {
-    "objectID": "formats-20221104.html#requirements",
-    "href": "formats-20221104.html#requirements",
-    "title": "What format to choose to save your data",
-    "section": "Requirements",
-    "text": "Requirements\nIn the demos we will use Python and quite a few Python libraries to write into all these file formats. If you are comfortable with running Python and installing Python libraries on your computer, we will mention the libraries as we go during the workshop. For everyone else, we will provide access to a remote system with all these libraries installed – all you’ll need is a browser."
-  },
-  {
-    "objectID": "formats-20221104.html#themes",
-    "href": "formats-20221104.html#themes",
-    "title": "What format to choose to save your data",
-    "section": "Themes",
-    "text": "Themes\n\nMain theme:  tabular data  ⮕  Python data structures (hierarchical dictionaries)  ⮕  large arrays\nParallel theme:  ASCII  ⮕  binary  ⮕  scientific formats with metadata, compression, parallel I/O\nAlso to consider:  file sizes, bandwidth (I/O speed), portability"
-  },
-  {
-    "objectID": "formats-20221104.html#remote-system",
-    "href": "formats-20221104.html#remote-system",
-    "title": "What format to choose to save your data",
-    "section": "Remote system",
-    "text": "Remote system\nLog in to the remote system and copy the workshop files into your home directory:\ncp /home/user19/shared/formats/{jeopardy.csv,mandelbulb300.nc,writeNodesEdges.py} .\nIn a Python notebook in our JupyterHub, use:\n!cp /home/user19/shared/formats/{jeopardy.csv,mandelbulb300.nc,writeNodesEdges.py} ."
-  },
-  {
-    "objectID": "formats-20221104.html#python-packages",
-    "href": "formats-20221104.html#python-packages",
-    "title": "What format to choose to save your data",
-    "section": "Python packages",
-    "text": "Python packages\npyyaml bson dict2xml pickle netCDF4 networkx numpy pandas xarray vtk pyevtk"
-  },
-  {
-    "objectID": "formats-20221104.html#csv",
-    "href": "formats-20221104.html#csv",
-    "title": "What format to choose to save your data",
-    "section": "CSV",
-    "text": "CSV\n\ntabular data, such as a spreadsheet or database\nASCII format  ⇨  good for small datasets\n\nimport csv\nfilename = \"jeopardy.csv\"  # from https://domohelp.domo.com/hc/en-us/articles/360043931814-Fun-Sample-DataSets\nrows = []\nwith open(filename, 'r') as csvfile:  # open the CSV file in READ mode\n    csvreader = csv.reader(csvfile)   # create a CSV reader iterator\n    fields = next(csvreader)          # extract first row; advance the iterator to the next row\n    for row in csvreader:             # extract each row one by one\n        rows.append(row)\n\nprint(\"total number of rows:\", len(rows))\nprint(\"field names are:\", fields)\n\nfor row in rows[:5]:   # print first 5 rows\n    print(row)\n\nfor col in rows[0]:    # cycle through the first-row columns\n    print(col)\n\nwith open(\"short.csv\", 'w') as csvfile:\n    csvwriter = csv.writer(csvfile)   # create a CSV writer object\n    csvwriter.writerow(fields)        # write the fields\n    csvwriter.writerows(rows[:10])    # write the data rows\nThere is alternative syntax:\ncsvfile = open(\"short.csv\", 'w')\ncsvwriter = csv.writer(csvfile)\ncsvwriter.writerow(fields)\ncsvwriter.writerows(rows[:10])\ncsvfile.close()\nLet’s now use pandas dataframes for processing our rows and columns:\nimport pandas as pd\ndata = pd.read_csv(\"jeopardy.csv\")\ndata.shape   # 216930 rows, 7 columns\ndata.head(10)   # first 10 rows\ndata.columns    # names of the columns\ndata.loc[data['Category']=='HISTORY'].shape   # 349 matches\ndata.loc[data['Category']=='HISTORY'].to_csv(\"history.csv\")   # write to a file\nSimple Python dictionaries can be stored as 2-column tables. Here is an example of writing a Python dictionary to CSV:\ncentres = {'Vancouver': 2463, 'Calgary': 1393, 'Toronto': 5928, 'Montreal': 4099, 'Halifax': 413} # Python dictionary\nwith open('cities.csv', 'w') as f:   # open a stream for writing\n    for key in centres.keys():\n        f.write(\"%s, %s\\n\" % (key, centres[key]))\n\n\n\n\n\n\nExercise Header\n\n\n\n\n\nModify the last Python script to add a header “city, population” to this CSV file.\n\n\n\n\nHow about a more complex Python dictionary, with some hierarchical structure? For that a CSV file won’t work, but you can use JSON files."
-  },
-  {
-    "objectID": "formats-20221104.html#json",
-    "href": "formats-20221104.html#json",
-    "title": "What format to choose to save your data",
-    "section": "JSON",
-    "text": "JSON\n\nJavaScript Object Notation, inspired by JavaScript object literal syntax, although not part of JavaScript\nhuman-readable text, although can contain non-ASCII characters\nvery popular for encoding all sorts of data among web developers\ninternal mapping is similar to that of a Python dictionary, with key-value pairs\n\nLet’s start again with a simple dictionary:\nimport json\ncentres = {'Vancouver': 2463, 'Calgary': 1393, 'Toronto': 5928, 'Montreal': 4099, 'Halifax': 413} # Python dictionary\ny = json.dumps(centres)      # convert it to a JSON string\ntype(y)                      # it is string, as far as Python is concerned\njson.loads(y)[\"Vancouver\"]   # back to a Python dictionary that we can subset\ntype(json.loads(y))          # it is really a dictionary\n\n# convert more complex Python object to a JSON string\na = ['something', {'more': ('complex', None, 1.0, 2)}]\njson.dumps(a)\n\n# can use custom separators\njson.dumps(a, separators=(\"; \", \" &gt; \"), sort_keys=True)\nYou can convert into JSON strings the following Python objects: int, float, string, logical, tuple, list, dict, None.\nimport json\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"divorced\": False,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\njstring = json.dumps(x)\nprint(jstring)\n\n# write the string to a file\nwith open('personal.json', 'w') as f:\n    f.write(jstring)\n\n# read the file\nwith open('personal.json', 'r') as f:\n    data = f.read()\n\ntype(data)             # it is a (JSON) string\ng = json.loads(data)   # convert to a dictionary\ng[\"name\"]\n\n\n\n\n\n\nExercise Open-close\n\n\n\n\n\nConvert the last write operation from a stream to an “open-close” block.\n\n\n\n\n\n\n\n\nYou can also write the dictionary directly to a file, without creating a JSON string:\nwith open('personal.json', 'w') as outfile:\n    json.dump(x, outfile)\n\nwith open('personal.json') as file:   # read from a file into a dictionary\n    data = json.load(file)\n\nprint(data)\nTo summarize:\n\njson.dumps() converts a Python object to a JSON string\njson.loads() converts a JSON string to a Python object\njson.dump() writes a Python object to a stream as a JSON string\njson.load() loads a Python object from a JSON string stream\n\nFinally, let’s write a large multidimensional numpy array into JSON. The converter json.dumps() is not aware of the numpy data format. If you try to run f.write(json.dumps(x)), you will receive “TypeError: Object of type ndarray is not JSON serializable”. However, you can convert this array to a list:\nimport numpy as np\nx = np.zeros((100,100,100), dtype=np.float32)   # allocate single-precision 100^3 array\nx[:] = np.random.random(size=x.shape)   # fill it with random numbers drawn from a uniform [0,1) distribution\nx.dtype   # single precision\nx.shape   # (100, 100, 100)\n\nimport json\nf = open(\"array.json\", 'w')\nf.write(json.dumps(x.tolist()))\nf.close()   # the new file is 20,289,659 bytes - remember this number\nTo read it:\nimport json\nf = open(\"array.json\", 'r')\ndata = f.read()\nf.close()\nb = json.loads(data)   # convert to a nested list\ntype(b)        # it is a list\nlen(b)         # it has 100 elements (2D slices)\nlen(b[0])      # of which the first element also has 100 elements (1D columns)\nlen(b[0][0])   # of which the first element also has 100 elements (individual numbers)"
-  },
-  {
-    "objectID": "formats-20221104.html#yaml",
-    "href": "formats-20221104.html#yaml",
-    "title": "What format to choose to save your data",
-    "section": "YAML",
-    "text": "YAML\n\nstands for YAML Ain’t Markup Language\nuses indentation to define structured data\noften used as a format for configuration files\nsimpler replacement for the JSON format\nhttps://www.cloudbees.com/blog/yaml-tutorial-everything-you-need-get-started\n\npip install pyyaml\nimport yaml\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"divorced\": False,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\nyaml.dump(x)                            # dump to the terminal\nwith open('personal.yaml', 'w') as f:   # write to a file\n    yaml.dump(x, f, sort_keys=False, default_flow_style=False)\nSetting default_flow_style=True would give you a more compact notation with separators, but it’ll be more difficult to read with a naked eye.\nLet’s now read it. There are different readers (“loaders”) ordered by their security level:\n\nBaseLoader loads all the basic YAML scalars as strings\nSafeLoader loads subset of the YAML safely, mainly used if the input is from an untrusted source; cannot deal with Python tuples\nFullLoader loads the full YAML but avoids arbitrary code execution; still poses a potential risk when used for the untrusted input\nUnsafeLoader is the original loader, generally used for backward compatibility\n\nimport yaml\nfrom yaml.loader import FullLoader\nwith open('personal.yaml') as f:\n    data = yaml.load(f, Loader=FullLoader)\n\nprint(data)\nLet’s try writing 2 documents into a YAML file:\nx2 = {'this': 77, 'there': 45, 'hi': 10, 'at': 23, 'Hello': 7}\nwith open('personal.yaml', 'w') as f:   # write to a file\n    data = yaml.dump_all([x,x2], f, sort_keys=False, default_flow_style=False)\nYou can read them with:\nimport yaml\nfrom yaml.loader import FullLoader\nwith open('personal.yaml', 'r') as f:\n    data = list(yaml.load_all(f, Loader=FullLoader))\n\nprint(len(data))\nprint(data)"
-  },
-  {
-    "objectID": "formats-20221104.html#xml",
-    "href": "formats-20221104.html#xml",
-    "title": "What format to choose to save your data",
-    "section": "XML",
-    "text": "XML\n\neXtensible Markup Language\nuses a tag to define the structure, just like HTML\n3rd popular serialization format https://www.csestack.org/yaml-vs-json-vs-xml-difference\nwrite/read XML from Python\n\nhttps://stackabuse.com/reading-and-writing-xml-files-in-python\nhttps://www.geeksforgeeks.org/serialize-python-dictionary-to-xml\n\n\nHere let’s consider only a quick write example:\npip install xml-python\nimport xml.etree.ElementTree as ET\n\ndata = ET.Element('data')\nitems = ET.SubElement(data, 'items')\nitem1 = ET.SubElement(items, 'item')\nitem2 = ET.SubElement(items, 'item')\nitem1.set('name','item1')\nitem2.set('name','item2')\nitem1.text = 'item1-some-text'\nitem2.text = 'item2-some-text'\n\nmydata = ET.tostring(data)\ntype(mydata)                        # it is a `bytes` object\nmyfile = open(\"items.xml\", \"wb\")   # write it into a string\nmyfile.write(mydata)\nmyfile.close()\npip install dict2xml\nfrom dict2xml import dict2xml\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"divorced\": False,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\nxml = dict2xml(x)\nprint(xml)\nmyfile = open(\"personal.xml\", \"w\")\nmyfile.write(xml)\nmyfile.close()"
-  },
-  {
-    "objectID": "formats-20221104.html#bson",
-    "href": "formats-20221104.html#bson",
-    "title": "What format to choose to save your data",
-    "section": "BSON",
-    "text": "BSON\n\nbinary Javascript Object Notation, i.e. binary-encoded serialization of JSON documents\ndata storage, main format for MongoDB\ncan even send/receive BSON objects over network sockets from Python\nused heavily for sending/receiving data in web development\na list of ordered elements containing a field name, type, and value\nmaximum structure size is 2GB (not very good …)\n\npip install bson\nIt is very easy to write into BSON files:\nimport bson\nx = {\"a\": [1, 2, 3, 4, 5, \"6\", {\"some\": \"text\"}]}\na = bson.dumps(x)   # convert dictionary -&gt; BSON object (string of binary codes)\nf = open(\"test.bson\", 'wb')\nf.write(a)\nf.close()\nReading is a reverse process:\nimport bson\nf = open(\"test.bson\", 'rb')\ndata = f.read()    # read a BSON string\nf.close()\nbson.loads(data)   # extract our dictionary\nLet’s consider a larger numpy array. If you try to pass it via a dictionary value to BSON, it’ll crash with an error, as BSON library is not smart enough to understand a numpy array wrapped into a dictionary. However, you can encode this numpy array into a byte stream with a numpy-aware pickle library (https://docs.python.org/3/library/pickle.html):\nimport numpy as np\nx = np.zeros((100,100,100), dtype=np.float32)   # allocate single-precision 100^3 array\nx[:] = np.random.random(size=x.shape)   # fill it with random numbers drawn from a uniform [0,1) distribution\nx.dtype   # single precision\n\nimport pickle   # binary protocols for serializing (converting into a byte stream) and de-serializing Python object structures\nimport bson\ntable = {\"random\": pickle.dumps(x)}\nf = open(\"array.bson\", 'wb')\nf.write(bson.dumps(table))\nf.close()   # the new file is 4,000,181 bytes - compare this to an earlier JSON example (20 MB)\n\n\n\n\n\n\nNote\n\n\n\nNote: For those wondering if we could convert a “pickled” numpy array to BSON, without using a dictionary, e.g.\nxstream = pickle.dumps(x)\nbson.dumps(xstream)\nthe answer is “no”, as the second command would produce “AttributeError: ‘bytes’ object has no attribute ‘keys’”, i.e. bson.dumps() expects a dictionary.\n\n\nNow, let’s read from BSON:\nimport pickle, bson\nf = open(\"array.bson\", 'rb')\ndata = f.read()\nf.close()\nnewTable = bson.loads(data)            # convert BSON -&gt; dictionary\nb = pickle.loads(newTable[\"random\"])   # de-serialize the value back into a numpy array\ntype(b)   # numpy array\nb.dtype   # single precision\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise Network\n\n\n\n\n\nHow would you store a network as a Python data structure?\n1. list of node coordinates\n2. list of connections, each with two node IDs\n3. optionally can wrap the previous two into a dictionary\n4. try to write it into a BSON file"
-  },
-  {
-    "objectID": "formats-20221104.html#netcdf-and-hdf5",
-    "href": "formats-20221104.html#netcdf-and-hdf5",
-    "title": "What format to choose to save your data",
-    "section": "NetCDF (and HDF5)",
-    "text": "NetCDF (and HDF5)\nPreviously, we saw that storing a large data array was very efficient with BSON (as far as file sizes are concerned), but we had to jump through a number of hoops:\n\nput our array into a byte stream\nuse this byte stream as a value in a dictionary\nconvert this dictionary to BSON\nwrite this BSON to disk\n\nThere is a much better approach for large arrays: use a dedicated scientific array format library such as NetCDF or HDF5. These are available from (virtually) all programming languages. What they provide:\n\ndata description\ndata portability\ndata compression\nmultiple variables in a single file\nmultiple timesteps in a single file (if desired)\noptionally, parallel I/O\n\nNetCDF and HDF5 are related to each other and heavily borrow from each other’s source code. There are some differences too, e.g.\n\nNetCDF has an ecosystem of conventions, e.g. a CF (climate-forecast) convention\nNetCDF is understood natively by ParaView, HDF5 not so easily\nHDF5 was developed specifically for storing hierarchical/nested data\n\nHere we only show NetCDF.\npip install netCDF4\nimport numpy as np\nimport netCDF4 as nc\nf = nc.Dataset(\"array.nc\", 'w', format='NETCDF4')\nf.createDimension('x', 100)\nf.createDimension('y', 100)\nf.createDimension('z', 100)\nrho = f.createVariable('density', 'f4', ('x', 'y', 'z'))   # f4 stands for 4-byte float\nrho[:,:,:] = np.random.random(size=(100,100,100))\nf.close()   # 4,008,192 bytes\nNow let’s read it:\nimport netCDF4 as nc\nds = nc.Dataset(\"array.nc\")\nprint(ds)  # can see the dimensions, variables, precision\nprint(ds[\"density\"].shape)\nprint(ds[\"density\"][:])   # it is a numpy array\n\n\n\n\n\n\nExercise Compression 1\n\n\n\n\n\nTurn on compression when saving the variable. Did it change the file size?\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise Compression 2\n\n\n\n\n\nRead a highly compressed dataset from file mandelbulb300.nc. Compare the file size to the size of embedded data – do they agree? Give a reason behind that.\n\n\n\nIf you want the functionality of pandas (easy 2D table manipulation) in a multidimensional array, then you can use xarray Python library. Xarray library is built on top of numpy and pandas. There are two main data structures in xarray:\n\nxarray.DataArray is a fancy, labelled version of numpy.ndarray\nxarray.Dataset is a collection of multiple xarray.DataArray’s that share dimensions\n\npip install xarray\nimport xarray as xa\nimport numpy as np\ndata = xa.DataArray(\n    np.random.random(size=(8,6)),\n    dims=(\"y\",\"x\"),  # dimension names (row,col); we want `y` to represent rows and `x` columns\n    coords={\"x\": [10,11,12,13,14,15], \"y\": [10,20,30,40,50,60,70,80]}  # coordinate labels/values\n)\ndata\nWe can access various attributes of this array:\ndata.values                 # the 2D numpy array\ndata.values[0,0] = 0.53     # can modify in-place\ndata.dims                   # ('y', 'x')\ndata.coords               # all coordinates, cannot modify!\ndata.coords['x'][1]       # a number\ndata.x[1]                 # the same\nArray subsetting:\n\nisel() selects by index, could be replaced by [index1] or [index1,…]\nsel() selects by value\ninterp() interpolates by value\n\ndata.isel()      # same as `data`\ndata.isel(y=1)   # second row\ndata.isel(y=0, x=[-2,-1])    # first row, last two columns\nVectorized operations:\ndata + 100      # element-wise like numpy arrays\n(data - data.mean()) / data.std()    # normalize the data\ndata - data[0,:]      # use numpy broadcasting =&gt; subtract first row from all rows\nLet’s initialize two 2D arrays with the identical dimensions:\ncoords = {\"x\": np.linspace(0,1,5), \"y\": np.linspace(0,1,5)}\ntemp = xa.DataArray(      # first 2D array\n    20 + np.random.randn(5,5),\n    dims=(\"y\",\"x\"),\n    coords=coords\n)\npres = xa.DataArray(       # second 2D array\n    100 + 10*np.random.randn(5,5),\n    dims=(\"y\",\"x\"),\n    coords=coords\n)\nFrom these we can form a dataset:\nds = xa.Dataset({\"temperature\": temp, \"pressure\": pres,\n                 \"bar\": (\"x\", 200+np.arange(5)), \"pi\": np.pi})\nds\nSubsetting works the usual way:\nds.sel(x=0)     # each 2D array becomes 1D array, the 1D array becomes a number, plus a number\nds.temperature.sel(x=0)     # 'temperature' is now a 1D array\nds.temperature.sel(x=0.25, y=0.5)     # one element of `temperature`\nWe can save this dataset to a file:\nds.to_netcdf(\"double.nc\")\nReading it is very easy:\nnew = xa.open_dataset(\"double.nc\")\nWe can even try opening this 2D dataset in ParaView - select (x,y) and deselect Spherical.\nSo far we’ve been working with datasets in Cartesian coordinates. How about spherical geometry – how do we initialize and store a dataset in spherical coordinates (longitude - latitude - elevation)? Very easy: define these coordinates and your data arrays on top, put everything into an xarray dataset, and then specify the following units:\nds.lat.attrs[\"units\"] = \"degrees_north\"   # this line is important to adhere to CF convention\nds.lon.attrs[\"units\"] = \"degrees_east\"    # this line is important to adhere to CF convention\n\n\n\n\n\n\nExercise NetCDF CF convention\n\n\n\n\n\nCreate a \\(100\\times 300\\) (nlat\\(\\times\\)nlon) spherical dataset with two variables adhering to the NetCDF CF convention."
-  },
-  {
-    "objectID": "formats-20221104.html#vtk-versatile-format-for-spatially-defined-data",
-    "href": "formats-20221104.html#vtk-versatile-format-for-spatially-defined-data",
-    "title": "What format to choose to save your data",
-    "section": "VTK = versatile format for spatially defined data",
-    "text": "VTK = versatile format for spatially defined data\nVTK is a computer graphics and visualization library that’s been around since early 1990s. Originally it was C++ only, but now there are interfaces from other languages as well, including Python.\n\n\nlegacy VTK: ASCII or binary data, ASCII metadata, could write manually or through APIs\nXML VTK: usually binary data, compression, parallel I/O, write via API\n\nIn simple cases using the original VTK library is probably an overkill, as doing even simple things could involve quite a few function calls. VTK is a very powerful library, but there is also a very steep learning curve. Consider the number of functions inside VTK’s Python interface:\npip install vtk pyevtk\nimport vtk\n[i for i in dir(vtk)]                    # returns 3593 functions\n[i for i in dir(vtk) if \"Writer\" in i]   # returns 104 functions\nWe will see an example of using the original VTK library below. But first let us consider a simple example of writing data on a Cartesian mesh (ImageData in VTK speak). For this we can use a more lightweight library called PyEVTK which is dedicated library for exporting data stored in numpy arrays to VTK files.\nimport numpy as np\nfrom pyevtk.hl import imageToVTK\nnx, ny, nz = 30, 30, 30\nncells = nx * ny * nz\nnpoints = (nx+1) * (ny+1) * (nz+1)\npressure = np.random.rand(ncells).reshape((nx, ny, nz))      # double precision\ntemp = np.random.rand(npoints).reshape((nx+1, ny+1, nz+1))   # double precision\nimageToVTK(\"image\", cellData = {\"pressure\": pressure}, pointData = {\"temp\": temp})\nTry loading this file into ParaView.\n\nNow let’s try writing a StructuredGrid dataset to a file:\nfrom pyevtk.hl import gridToVTK\nimport numpy as np\n\nnx, ny, nz = 30, 30, 30\nxside, yside, zside = 1.0, 1.0, 1.0\n\nncells = nx * ny * nz\nnpoints = (nx+1) * (ny+1) * (nz+1)\n\nX = np.linspace(0, xside, nx+1, dtype='float64')   # three coordinate axes\nY = np.linspace(0, yside, ny+1, dtype='float64')\nZ = np.linspace(0, zside, nz+1, dtype='float64')\n\nx, y, z = np.meshgrid(X,Y,Z)   # 3D coordinate arrays\n\n# perturb the grid to make it more interesting\nx += (0.5 - np.random.random(npoints).reshape(nx+1,ny+1,nz+1)) * 0.5 * xside/nx\ny += (0.5 - np.random.random(npoints).reshape(nx+1,ny+1,nz+1)) * 0.5 * yside/ny\nz += (0.5 - np.random.random(npoints).reshape(nx+1,ny+1,nz+1)) * 0.5 * zside/nz\n\npressure = np.random.rand(ncells).reshape((nx, ny, nz))\ntemp = np.random.rand(npoints).reshape((nx+1, ny+1, nz+1))\ngridToVTK(\"structured\", x, y, z, cellData = {\"pressure\" : pressure}, pointData = {\"temp\" : temp})\nFinally, here is the promised example with the original VTK library:\nimport networkx as nx\nfrom writeNodesEdges import writeObjects\n\nH = nx.complete_bipartite_graph(15,5) # two sets of nodes\nprint(nx.number_of_nodes(H), 'nodes and', nx.number_of_edges(H), 'edges')\n\npos = nx.spring_layout(H,dim=3,k=1)   # dictionary of positions keyed by node\nxyz = [list(pos[i]) for i in pos]     # convert to a nested list of positions\n\ndegree = [d for i,d in H.degree()]\nprint('degree =', degree)\nwriteObjects(xyz, edges=H.edges(), scalar=degree, name='degree', fileout='network')\nThis wrote to a PolygonalData file. Try loading this file into ParaView and displaying the network with nodes and edges.\nIf you want to write to an UnstructuredGrid file, replace the last line with:\nwriteObjects(xyz, edges=H.edges(), scalar=degree, name='degree', fileout='network', method = 'vtkUnstructuredGrid')"
-  },
-  {
-    "objectID": "scientificPython-menu.html",
-    "href": "scientificPython-menu.html",
-    "title": "Scientific Python",
+    "objectID": "solutions-bash.html#scripts-functions-and-variables",
+    "href": "solutions-bash.html#scripts-functions-and-variables",
+    "title": "Bash solutions",
     "section": "",
-    "text": "June 6th, 1:30pm–4:30pm Pacific Time\n\n\n\nBuilding on our Python level 1 course, this course will cover more advanced scientific computing in Python. We will talk about speeding up calculations and working with mathematical arrays with NumPy, working with dataframes in Pandas and Polars, basic plotting, working with scientific datasets with xarray, and a few other topics.\nInstructors: Alex Razoumov\nPrerequisites: This course assumes some basic knowledge of Python: for loops, if statements, writing functions, lists, dictionaries.\nSoftware: We will be using Python on our training cluster, so no need to install it on your computer. However, in the long run you would probably benefit from Python on your computer, so you might want to look into this. To access the training cluster, you will need a remote secure shell (SSH) client installed on your computer in order to participate in the course exercises. On Windows we recommend the free Home Edition of MobaXterm. On Mac and Linux computers SSH is usually pre-installed (try typing ssh in a terminal to make sure it is there)."
+    "text": "function swap() {\n    if [ -e $1 ] && [ -e $2 ] ; then\n        /bin/mv $2 $2.bak\n        /bin/mv $1 $2\n        /bin/mv $2.bak $1\n    else\n        echo at least one of these files does not exist ...\n    fi\n}\n\n\n\nfunction countfiles() {\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n    for dir in $@; do\n        echo in $dir we found $(find $dir -type f | wc -l) files\n    done\n}"
   },
   {
-    "objectID": "apptainer-menu.html",
-    "href": "apptainer-menu.html",
-    "title": "Working with Apptainer containers",
+    "objectID": "solutions-bash.html#text-manipulation",
+    "href": "solutions-bash.html#text-manipulation",
+    "title": "Bash solutions",
+    "section": "10. Text manipulation",
+    "text": "10. Text manipulation\n\n10.1\ncat wellsInvisibleMan.txt | tr -d \"[:punct:]\" | tr '[:upper:]' '[:lower:]' | \\\n  sed 's/ /\\'$'\\n/g' | sed '/^$/d' | sort | uniq -c | sort -gr &gt; frequency.txt\n\n\n10.3\nawk -F, '{print $1 \",\" $2}' cities.csv &gt; populations.csv\n\n\n10.4\nawk -F, 'NR%10==2' cities.csv\n\n\ncopy every 10th file\nfind /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%10==0'\n\n\narchive every 20th file\nThere are many solutions:\n# the downside of this solution is that it'll include paths (without the leading /) into the arhive\ntar cvf toy.tar $(find /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%20==0')\ncd /project/def-sponsor00/shared/toyModel   # if you are allowed to cd into that directory\ntar cvf ~/tmp/toy.tar $(find . -type f | sort | awk 'NR%20==0')\ncd -\nfind /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%20==0' &gt; list.txt\ntar cfz toy.tar --files-from=list.txt\n/bin/rm list.txt\n\n\n10.7\nfind . -type f | xargs /bin/ls -lSh | awk '{print $5 \"  \" $9}' | head -5"
+  },
+  {
+    "objectID": "badSpeedupSolution.html",
+    "href": "badSpeedupSolution.html",
+    "title": "Fixing poor parallel scaling in the Julia set",
     "section": "",
-    "text": "October 10th (Part 1) and October 17th (Part 2), 10am–noon Pacific Time\nInstructor: Alex Razoumov (SFU)\nTarget audience: general\nLevel: beginner\nPrerequisites: none\nThis course is a hands-on introduction to working with Apptainer containers in an HPC environment. Apptainer (formerly Singularity) is a great tool to create custom Linux environments and run off-the-shelf Docker containers on an HPC cluster. We will look at creating new container images, modifying existing images and installing software into them and – if time permits – running parallel codes inside a container.\nSoftware: All attendees will need a remote secure shell (SSH) client installed on their computer in order to participate in the course exercises. On Mac and Linux computers SSH is usually pre-installed (try typing ssh in a terminal to make sure it is there). Many versions of Windows also provide an OpenSSH client by default – try opening PowerShell and typing ssh to see if it is available. If not, then we recommend installing the free Home Edition of MobaXterm.",
-    "crumbs": [
-      "Front page"
-    ]
-  },
-  {
-    "objectID": "apptainer-menu.html#links",
-    "href": "apptainer-menu.html#links",
-    "title": "Working with Apptainer containers",
-    "section": "Links",
-    "text": "Links\n\nAlliance’s Apptainer wiki page\nOfficial Apptainer User Guide\nOur recent webinars:\n\nHiding large numbers of files in container overlays by Alex Razoumov (SFU) recorded on 2023-Jan-17\nApptainer by Paul Preney (SHARCNET) recorded on 2022-Apr-06: many best practices and a couple of complete workflows on our clusters using /localscratch, setting $APPTAINER_CACHEDIR and $APPTAINER_TMPDIR for best performance, using overlays for storing millions of small files\nContainer-based approach to bioinformatics applications by Tannistha Nandi (UofCalgary) recorded on 2021-Oct-13\n\nSome great tutorials:\n\nContainers in HPC from Pawsey Centre\nContainers on HPC Resources from Lehigh University\nCreating and running software containers with Singularity by Eduardo Arango-Gutierrez\nSingularity & MPI Applications from Harvard University\nCarpentries incubator tutorial – some material in our course was borrowed from this tutorial",
-    "crumbs": [
-      "Front page"
-    ]
-  },
-  {
-    "objectID": "wrf-container.html",
-    "href": "wrf-container.html",
-    "title": "Building instructions for a WRF container",
-    "section": "",
-    "text": "These instructions describe building an Apptainer image for WRF following the build script from https://github.com/Hos128/WRF-CMAQ-Installation.\nFirst, log in to the cluster, create a new temporary directory and from inside it start an interactive job:\nmkdir -p tmp && cd tmp\nmodule load apptainer/1.2.4\nsalloc --time=3:0:0 --mem-per-cpu=3600 --cpus-per-task=4 --account=def-...\nDownload the latest Ubuntu image and build an Apptainer sandbox from it:\napptainer build --sandbox wrf.dir docker://ubuntu\nNext, enter the sandbox with --fakeroot:\nunset APPTAINER_BIND\napptainer shell -e --fakeroot --writable wrf.dir\nInside, create the top-level installation directory and install some packages:\nmkdir -p /data && cd /data\napt-get update\napt-get -y install git make wget unzip emacs apt-utils   # answer few questions along the way\nDownload and fix the installation script:\ngit clone https://github.com/Hos128/WRF-CMAQ-Installation.git\ncd WRF-CMAQ-Installation\nsed -i.bak -e '200,214d' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|export HOME=`cd;pwd`|export HOME=`cd /data;pwd`|' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|echo $PASSWD \\| sudo -S ||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's| python2 python2-dev||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's| libncurses5||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's| mlocate||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|apt -y install python3 python3-dev|apt -y install python3 python3-dev python3-pip|' OfflineWRFCMAQ.sh\nmkdir -p /root/.config/pip\ncat &lt;&lt; EOF &gt; /root/.config/pip/pip.conf\n[global]\ntrusted-host = pypi.org\n               pypi.python.org\n               pypi.org\n               pypi.co\n               files.pythonhosted.org\n               pip.pypa.io\nEOF\nsed -i.bak -e 's|pip3 install python-dateutil|pip3 install --break-system-packages python-dateutil|' OfflineWRFCMAQ.sh\nwget --header=\"Host: drive.usercontent.google.com\" --header=\"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36\" --header=\"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\" --header=\"Accept-Language: en-US,en;q=0.9,fa;q=0.8\" --header=\"Connection: keep-alive\" \"https://drive.usercontent.google.com/download?id=1NkmRAeG7w_LLhh_HDW_X39jZwGYw8mml&export=download&authuser=2&confirm=t&uuid=a4f92a10-cbd5-4064-bb83-d79567b60537&at=APZUnTWngzWjzHFwWurVdIQsFaAL:1711680004113\" -c -O 'Downloads.zip'\nunzip Downloads.zip\n/bin/rm -rf Downloads.zip /data/WRF\nsed -i.bak '/Downloads.zip/d' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|mkdir $HOME/WRF|mkdir -p $HOME/WRF|' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|mkdir $WRF_FOLDER/MET|mkdir -p $WRF_FOLDER/MET|' OfflineWRFCMAQ.sh\nawk '/Missing one or more/{for(x=NR-1;x&lt;=NR+2;x++)d[x];}{a[NR]=$0}END{for(i=1;i&lt;=NR;i++)if(!(i in d))print a[i]}' OfflineWRFCMAQ.sh &gt; new.sh && mv new.sh OfflineWRFCMAQ.sh\nchmod u+x OfflineWRFCMAQ.sh\nFinally, run it (this will take a very, very long time, as it downloads and builds 47GB of software - everything but the kitchen sink):\n./OfflineWRFCMAQ.sh 2&gt;&1 | tee OfflineWRFCMAQ.log\n   Do you want to continue? - yes\n   Would you like to download the WPS Geographical Input Data for Specific Applications? - no\n   Would you like to download the GEOG Optional WPS Geographical Input Data? - no\n/bin/rm -rf Downloads\nOne of the downloads is MPICH. Inside the script, we are installing it entirely inside the container, not relying on the host’s OpenMPI. This means that we’ll be limited to MPI runs on one node.\nNow exit the container and the job.\nNext, start a batch job to convert the sandbox into a SIF image:\ncd scratch\ntar xvf wrf.tar\ncat &lt;&lt; EOF &gt; submit.sh\n#!/bin/bash\n#SBATCH --time=10:0:0\n#SBATCH --cpus-per-task=4\n#SBATCH --mem-per-cpu=3600\n#SBATCH --account=def-...\nmkdir -p \\$SLURM_TMPDIR/{tmp,cache}\nmodule load apptainer/1.2.4\nexport APPTAINER_TMPDIR=\\$SLURM_TMPDIR/tmp\nexport APPTAINER_CACHEDIR=\\$SLURM_TMPDIR/cache\napptainer build wrf.sif wrf.dir\nEOF\nsbatch submit.sh\nThe resulting image wrf.sif should be 8.1GB. To use it interactively from a job, do this:\ncd ~/scratch\nmodule load apptainer/1.2.4\nsalloc --time=1:0:0 --mem-per-cpu=3600 --account=def-...\napptainer shell wrf.sif"
-  },
-  {
-    "objectID": "julia-menu.html",
-    "href": "julia-menu.html",
-    "title": "Parallel computing in Julia",
-    "section": "",
-    "text": "March 20th (Part 1) and 27th (Part 2), 10:00am - noon Pacific Time\nJulia is a high-level programming language well suited for scientific computing and data science. Just-in-time compilation, among other things, makes Julia really fast yet interactive. For heavy computations, Julia supports multi-threaded and multi-process parallelism, both natively and via a number of external packages. It also supports memory arrays distributed across multiple processes either on the same or different nodes. In this hands-on workshop, we will start with Julia’s multi-threading features and then focus on Distributed multi-processing standard library and its large array of tools. We will demo parallelization using two problems: a slowly converging series and a Julia set. We will run examples on a multi-core laptop and an HPC cluster.\nInstructor: Alex Razoumov (SFU)\nPrerequisites: Ideally, some familiarity with the Alliance’s HPC cluster environment, in particular, with the Slurm scheduler. Having some previous serial Julia programming experience would help, but we will start slowly so you will be able to follow up even if you are new to Julia.\nSoftware: There are a couple of options:\n\nYou can run Julia on our training cluster, in which case you will need a remote secure shell (SSH) client installed on your computer. On Mac and Linux computers, SSH is usually pre-installed – try typing ssh in a terminal to make sure it is there. Many versions of Windows also provide an OpenSSH client by default –- try opening PowerShell and typing ssh to see if it is available. If not, then we recommend installing the free Home Edition of MobaXterm from https://mobaxterm.mobatek.net/download.html. We will provide guest accounts on our training cluster, and you would not need to install Julia on your computer in this setup.\nYou can run Julia on your own computer, in which case you can install it from https://julialang.org/downloads – this may take a while so please do this before the class.\n\n\n\n\n\nOur Julia webinars\nSince 2020, we’ve been teaching occasional webinars on parallel programming in Julia – watch the recordings here.\n\n\nExternal links\n\nThink Julia: How to Think Like a Computer Scientist by Ben Lauwens and Allen Downey is a very thorough introduction to non-parallel Julia for beginners\nJulia at Scale forum\nBaolai Ge’s (SHARCNET) November 2020 webinar Julia: Parallel computing revisited\nJulia performance tips\nHow to optimise Julia code: A practical guide\nA Deep Introduction to JIT Compilers",
-    "crumbs": [
-      "Front page"
-    ]
+    "text": "False sharing has no effect in this problem, as for most part individual threads are writing into array elements that are well separated in memory.\nThe row-major vs. column-major order does not matter in the Julia set problem, as it is dominated by computation of individual pixels: computing a single pixel on average takes much longer than writing to a random array element. The timings are virtually identical for row-major vs. column-major, whether in serial or in parallel with @threads. If you were to fill in these elements without computing, then the order would matter, e.g. consider this code:\nusing BenchmarkTools\nfunction testOrder(n::Int, order::Bool)\n    stability = zeros(Int32, n, n)\n    for i in 1:n\n        for j in 1:n\n            order ? stability[i,j] = i+j : stability[j,i] = i+j\n        end\n    end\n    return stability\nend\n@btime testOrder(30_000, true);    # 2.753 s\n@btime testOrder(30_000, false);   # 721.484 ms\n@btime testOrder(1000, true);    # 714.958 μs\n@btime testOrder(1000, false);   # 681.333 μs\nThe real culprit in the Julia set’s bad parallel scaling is the problem’s less-than-perfect load balancing. We know that @threads subdivides the large outer loop equally between the threads. However, some threads have fewer iterations to compute and finish faster, but they have to wait for the threads with more iterations in their pixels. If you modify the code in such a way that all pixels do the same large number of iterations, you will see perfect linear speedup with multi-threading.\nWith the unbalanced load, it is possible to improve performance somewhat with dynamic scheduling using either channels (not covered in our workshop) or Threads.@spawn but it’ll make the code a little bit more complex.\nThe following asynchronous solution was written by Jeremiah O’Neil (University of Ottawa):\nfunction juliaSet(height, width)\n    stability = zeros(Int32, height, width)\n    c = Channel{Int64}(nthreads()) do chnl\n        for i in 1:height\n            put!(chnl, i)\n        end\n    end\n    Threads.foreach(c) do i\n        for j in 1:width\n            point = (2*(j-0.5)/width-1) + (2*(i-0.5)/height-1)im\n            stability[i,j] = pixel(point)\n        end\n    end\n    return stability\nend\nshows better (but still less than linear) speedup."
   },
   {
     "objectID": "chapel-gpu.html",
@@ -1500,32 +1668,153 @@
     "text": "Links\n\nIntroduction to GPU Programming in Chapel\nChapel’s High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming\nGPU module functions and attributes"
   },
   {
-    "objectID": "badSpeedupSolution.html",
-    "href": "badSpeedupSolution.html",
-    "title": "Fixing poor parallel scaling in the Julia set",
+    "objectID": "julia-menu.html",
+    "href": "julia-menu.html",
+    "title": "Parallel computing in Julia",
     "section": "",
-    "text": "False sharing has no effect in this problem, as for most part individual threads are writing into array elements that are well separated in memory.\nThe row-major vs. column-major order does not matter in the Julia set problem, as it is dominated by computation of individual pixels: computing a single pixel on average takes much longer than writing to a random array element. The timings are virtually identical for row-major vs. column-major, whether in serial or in parallel with @threads. If you were to fill in these elements without computing, then the order would matter, e.g. consider this code:\nusing BenchmarkTools\nfunction testOrder(n::Int, order::Bool)\n    stability = zeros(Int32, n, n)\n    for i in 1:n\n        for j in 1:n\n            order ? stability[i,j] = i+j : stability[j,i] = i+j\n        end\n    end\n    return stability\nend\n@btime testOrder(30_000, true);    # 2.753 s\n@btime testOrder(30_000, false);   # 721.484 ms\n@btime testOrder(1000, true);    # 714.958 μs\n@btime testOrder(1000, false);   # 681.333 μs\nThe real culprit in the Julia set’s bad parallel scaling is the problem’s less-than-perfect load balancing. We know that @threads subdivides the large outer loop equally between the threads. However, some threads have fewer iterations to compute and finish faster, but they have to wait for the threads with more iterations in their pixels. If you modify the code in such a way that all pixels do the same large number of iterations, you will see perfect linear speedup with multi-threading.\nWith the unbalanced load, it is possible to improve performance somewhat with dynamic scheduling using either channels (not covered in our workshop) or Threads.@spawn but it’ll make the code a little bit more complex.\nThe following asynchronous solution was written by Jeremiah O’Neil (University of Ottawa):\nfunction juliaSet(height, width)\n    stability = zeros(Int32, height, width)\n    c = Channel{Int64}(nthreads()) do chnl\n        for i in 1:height\n            put!(chnl, i)\n        end\n    end\n    Threads.foreach(c) do i\n        for j in 1:width\n            point = (2*(j-0.5)/width-1) + (2*(i-0.5)/height-1)im\n            stability[i,j] = pixel(point)\n        end\n    end\n    return stability\nend\nshows better (but still less than linear) speedup."
+    "text": "March 20th (Part 1) and 27th (Part 2), 10:00am - noon Pacific Time\nJulia is a high-level programming language well suited for scientific computing and data science. Just-in-time compilation, among other things, makes Julia really fast yet interactive. For heavy computations, Julia supports multi-threaded and multi-process parallelism, both natively and via a number of external packages. It also supports memory arrays distributed across multiple processes either on the same or different nodes. In this hands-on workshop, we will start with Julia’s multi-threading features and then focus on Distributed multi-processing standard library and its large array of tools. We will demo parallelization using two problems: a slowly converging series and a Julia set. We will run examples on a multi-core laptop and an HPC cluster.\nInstructor: Alex Razoumov (SFU)\nPrerequisites: Ideally, some familiarity with the Alliance’s HPC cluster environment, in particular, with the Slurm scheduler. Having some previous serial Julia programming experience would help, but we will start slowly so you will be able to follow up even if you are new to Julia.\nSoftware: There are a couple of options:\n\nYou can run Julia on our training cluster, in which case you will need a remote secure shell (SSH) client installed on your computer. On Mac and Linux computers, SSH is usually pre-installed – try typing ssh in a terminal to make sure it is there. Many versions of Windows also provide an OpenSSH client by default –- try opening PowerShell and typing ssh to see if it is available. If not, then we recommend installing the free Home Edition of MobaXterm from https://mobaxterm.mobatek.net/download.html. We will provide guest accounts on our training cluster, and you would not need to install Julia on your computer in this setup.\nYou can run Julia on your own computer, in which case you can install it from https://julialang.org/downloads – this may take a while so please do this before the class.\n\n\n\n\n\nOur Julia webinars\nSince 2020, we’ve been teaching occasional webinars on parallel programming in Julia – watch the recordings here.\n\n\nExternal links\n\nThink Julia: How to Think Like a Computer Scientist by Ben Lauwens and Allen Downey is a very thorough introduction to non-parallel Julia for beginners\nJulia at Scale forum\nBaolai Ge’s (SHARCNET) November 2020 webinar Julia: Parallel computing revisited\nJulia performance tips\nHow to optimise Julia code: A practical guide\nA Deep Introduction to JIT Compilers",
+    "crumbs": [
+      "Front page"
+    ]
   },
   {
-    "objectID": "solutions-bash.html",
-    "href": "solutions-bash.html",
-    "title": "Bash solutions",
+    "objectID": "wrf-container.html",
+    "href": "wrf-container.html",
+    "title": "Building instructions for a WRF container",
     "section": "",
-    "text": "function swap() {\n    if [ -e $1 ] && [ -e $2 ] ; then\n        /bin/mv $2 $2.bak\n        /bin/mv $1 $2\n        /bin/mv $2.bak $1\n    else\n        echo at least one of these files does not exist ...\n    fi\n}\n\n\n\nfunction countfiles() {\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n    for dir in $@; do\n        echo in $dir we found $(find $dir -type f | wc -l) files\n    done\n}"
+    "text": "These instructions describe building an Apptainer image for WRF following the build script from https://github.com/Hos128/WRF-CMAQ-Installation.\nFirst, log in to the cluster, create a new temporary directory and from inside it start an interactive job:\nmkdir -p tmp && cd tmp\nmodule load apptainer/1.2.4\nsalloc --time=3:0:0 --mem-per-cpu=3600 --cpus-per-task=4 --account=def-...\nDownload the latest Ubuntu image and build an Apptainer sandbox from it:\napptainer build --sandbox wrf.dir docker://ubuntu\nNext, enter the sandbox with --fakeroot:\nunset APPTAINER_BIND\napptainer shell -e --fakeroot --writable wrf.dir\nInside, create the top-level installation directory and install some packages:\nmkdir -p /data && cd /data\napt-get update\napt-get -y install git make wget unzip emacs apt-utils   # answer few questions along the way\nDownload and fix the installation script:\ngit clone https://github.com/Hos128/WRF-CMAQ-Installation.git\ncd WRF-CMAQ-Installation\nsed -i.bak -e '200,214d' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|export HOME=`cd;pwd`|export HOME=`cd /data;pwd`|' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|echo $PASSWD \\| sudo -S ||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's| python2 python2-dev||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's| libncurses5||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's| mlocate||' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|apt -y install python3 python3-dev|apt -y install python3 python3-dev python3-pip|' OfflineWRFCMAQ.sh\nmkdir -p /root/.config/pip\ncat &lt;&lt; EOF &gt; /root/.config/pip/pip.conf\n[global]\ntrusted-host = pypi.org\n               pypi.python.org\n               pypi.org\n               pypi.co\n               files.pythonhosted.org\n               pip.pypa.io\nEOF\nsed -i.bak -e 's|pip3 install python-dateutil|pip3 install --break-system-packages python-dateutil|' OfflineWRFCMAQ.sh\nwget --header=\"Host: drive.usercontent.google.com\" --header=\"User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36\" --header=\"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7\" --header=\"Accept-Language: en-US,en;q=0.9,fa;q=0.8\" --header=\"Connection: keep-alive\" \"https://drive.usercontent.google.com/download?id=1NkmRAeG7w_LLhh_HDW_X39jZwGYw8mml&export=download&authuser=2&confirm=t&uuid=a4f92a10-cbd5-4064-bb83-d79567b60537&at=APZUnTWngzWjzHFwWurVdIQsFaAL:1711680004113\" -c -O 'Downloads.zip'\nunzip Downloads.zip\n/bin/rm -rf Downloads.zip /data/WRF\nsed -i.bak '/Downloads.zip/d' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|mkdir $HOME/WRF|mkdir -p $HOME/WRF|' OfflineWRFCMAQ.sh\nsed -i.bak -e 's|mkdir $WRF_FOLDER/MET|mkdir -p $WRF_FOLDER/MET|' OfflineWRFCMAQ.sh\nawk '/Missing one or more/{for(x=NR-1;x&lt;=NR+2;x++)d[x];}{a[NR]=$0}END{for(i=1;i&lt;=NR;i++)if(!(i in d))print a[i]}' OfflineWRFCMAQ.sh &gt; new.sh && mv new.sh OfflineWRFCMAQ.sh\nchmod u+x OfflineWRFCMAQ.sh\nFinally, run it (this will take a very, very long time, as it downloads and builds 47GB of software - everything but the kitchen sink):\n./OfflineWRFCMAQ.sh 2&gt;&1 | tee OfflineWRFCMAQ.log\n   Do you want to continue? - yes\n   Would you like to download the WPS Geographical Input Data for Specific Applications? - no\n   Would you like to download the GEOG Optional WPS Geographical Input Data? - no\n/bin/rm -rf Downloads\nOne of the downloads is MPICH. Inside the script, we are installing it entirely inside the container, not relying on the host’s OpenMPI. This means that we’ll be limited to MPI runs on one node.\nNow exit the container and the job.\nNext, start a batch job to convert the sandbox into a SIF image:\ncd scratch\ntar xvf wrf.tar\ncat &lt;&lt; EOF &gt; submit.sh\n#!/bin/bash\n#SBATCH --time=10:0:0\n#SBATCH --cpus-per-task=4\n#SBATCH --mem-per-cpu=3600\n#SBATCH --account=def-...\nmkdir -p \\$SLURM_TMPDIR/{tmp,cache}\nmodule load apptainer/1.2.4\nexport APPTAINER_TMPDIR=\\$SLURM_TMPDIR/tmp\nexport APPTAINER_CACHEDIR=\\$SLURM_TMPDIR/cache\napptainer build wrf.sif wrf.dir\nEOF\nsbatch submit.sh\nThe resulting image wrf.sif should be 8.1GB. To use it interactively from a job, do this:\ncd ~/scratch\nmodule load apptainer/1.2.4\nsalloc --time=1:0:0 --mem-per-cpu=3600 --account=def-...\napptainer shell wrf.sif"
   },
   {
-    "objectID": "solutions-bash.html#scripts-functions-and-variables",
-    "href": "solutions-bash.html#scripts-functions-and-variables",
-    "title": "Bash solutions",
+    "objectID": "apptainer-menu.html",
+    "href": "apptainer-menu.html",
+    "title": "Working with Apptainer containers",
     "section": "",
-    "text": "function swap() {\n    if [ -e $1 ] && [ -e $2 ] ; then\n        /bin/mv $2 $2.bak\n        /bin/mv $1 $2\n        /bin/mv $2.bak $1\n    else\n        echo at least one of these files does not exist ...\n    fi\n}\n\n\n\nfunction countfiles() {\n    if [ $# -eq 0 ]; then\n        echo \"No arguments given. Usage: countfiles dir1 dir2 ...\"\n        return 1\n    fi\n    for dir in $@; do\n        echo in $dir we found $(find $dir -type f | wc -l) files\n    done\n}"
+    "text": "October 10th (Part 1) and October 17th (Part 2), 10am–noon Pacific Time\nInstructor: Alex Razoumov (SFU)\nTarget audience: general\nLevel: beginner\nPrerequisites: none\nThis course is a hands-on introduction to working with Apptainer containers in an HPC environment. Apptainer (formerly Singularity) is a great tool to create custom Linux environments and run off-the-shelf Docker containers on an HPC cluster. We will look at creating new container images, modifying existing images and installing software into them and – if time permits – running parallel codes inside a container.\nSoftware: All attendees will need a remote secure shell (SSH) client installed on their computer in order to participate in the course exercises. On Mac and Linux computers SSH is usually pre-installed (try typing ssh in a terminal to make sure it is there). Many versions of Windows also provide an OpenSSH client by default – try opening PowerShell and typing ssh to see if it is available. If not, then we recommend installing the free Home Edition of MobaXterm.",
+    "crumbs": [
+      "Front page"
+    ]
   },
   {
-    "objectID": "solutions-bash.html#text-manipulation",
-    "href": "solutions-bash.html#text-manipulation",
-    "title": "Bash solutions",
-    "section": "10. Text manipulation",
-    "text": "10. Text manipulation\n\n10.1\ncat wellsInvisibleMan.txt | tr -d \"[:punct:]\" | tr '[:upper:]' '[:lower:]' | \\\n  sed 's/ /\\'$'\\n/g' | sed '/^$/d' | sort | uniq -c | sort -gr &gt; frequency.txt\n\n\n10.3\nawk -F, '{print $1 \",\" $2}' cities.csv &gt; populations.csv\n\n\n10.4\nawk -F, 'NR%10==2' cities.csv\n\n\ncopy every 10th file\nfind /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%10==0'\n\n\narchive every 20th file\nThere are many solutions:\n# the downside of this solution is that it'll include paths (without the leading /) into the arhive\ntar cvf toy.tar $(find /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%20==0')\ncd /project/def-sponsor00/shared/toyModel   # if you are allowed to cd into that directory\ntar cvf ~/tmp/toy.tar $(find . -type f | sort | awk 'NR%20==0')\ncd -\nfind /project/def-sponsor00/shared/toyModel -type f | sort | awk 'NR%20==0' &gt; list.txt\ntar cfz toy.tar --files-from=list.txt\n/bin/rm list.txt\n\n\n10.7\nfind . -type f | xargs /bin/ls -lSh | awk '{print $5 \"  \" $9}' | head -5"
+    "objectID": "apptainer-menu.html#links",
+    "href": "apptainer-menu.html#links",
+    "title": "Working with Apptainer containers",
+    "section": "Links",
+    "text": "Links\n\nAlliance’s Apptainer wiki page\nOfficial Apptainer User Guide\nOur recent webinars:\n\nHiding large numbers of files in container overlays by Alex Razoumov (SFU) recorded on 2023-Jan-17\nApptainer by Paul Preney (SHARCNET) recorded on 2022-Apr-06: many best practices and a couple of complete workflows on our clusters using /localscratch, setting $APPTAINER_CACHEDIR and $APPTAINER_TMPDIR for best performance, using overlays for storing millions of small files\nContainer-based approach to bioinformatics applications by Tannistha Nandi (UofCalgary) recorded on 2021-Oct-13\n\nSome great tutorials:\n\nContainers in HPC from Pawsey Centre\nContainers on HPC Resources from Lehigh University\nCreating and running software containers with Singularity by Eduardo Arango-Gutierrez\nSingularity & MPI Applications from Harvard University\nCarpentries incubator tutorial – some material in our course was borrowed from this tutorial",
+    "crumbs": [
+      "Front page"
+    ]
+  },
+  {
+    "objectID": "scientificPython-menu.html",
+    "href": "scientificPython-menu.html",
+    "title": "Scientific Python",
+    "section": "",
+    "text": "June 6th, 1:30pm–4:30pm Pacific Time\n\n\n\nBuilding on our Python level 1 course, this course will cover more advanced scientific computing in Python. We will talk about speeding up calculations and working with mathematical arrays with NumPy, working with dataframes in Pandas and Polars, basic plotting, working with scientific datasets with xarray, and a few other topics.\nInstructors: Alex Razoumov\nPrerequisites: This course assumes some basic knowledge of Python: for loops, if statements, writing functions, lists, dictionaries.\nSoftware: We will be using Python on our training cluster, so no need to install it on your computer. However, in the long run you would probably benefit from Python on your computer, so you might want to look into this. To access the training cluster, you will need a remote secure shell (SSH) client installed on your computer in order to participate in the course exercises. On Windows we recommend the free Home Edition of MobaXterm. On Mac and Linux computers SSH is usually pre-installed (try typing ssh in a terminal to make sure it is there)."
+  },
+  {
+    "objectID": "formats-20221104.html",
+    "href": "formats-20221104.html",
+    "title": "What format to choose to save your data",
+    "section": "",
+    "text": "Friday, November 4th, 2022, 1:00pm - 2:30pm\nYou can find this page at   https://folio.vastcloud.org/formats\nAbstract: Which file format should you use when saving your research dataset? Besides the obvious question of how to encode your data structures in a file, you might also want to consider portability (the ability to write/read data across different operating systems and different programming languages and libraries), the inclusion of metadata (data description), I/O bandwidth and file sizes, compression, and the ability to read/write data in parallel for large datasets. In this introductory in-person workshop, we will cover all these aspects starting from the very basic file formats and ending with scalable scientific dataset formats. We will cover CSV, JSON, YAML, XML, BSON, VTK, NetCDF, HDF5, using both structured and unstructured datasets and demoing all examples in Python."
+  },
+  {
+    "objectID": "formats-20221104.html#links",
+    "href": "formats-20221104.html#links",
+    "title": "What format to choose to save your data",
+    "section": "Links",
+    "text": "Links\n\nFall 2022 training schedule: https://bit.ly/wg2022b\nResearch computing autumn in November: https://autumnschool2022.westdri.ca (free registration)\nTraining materials: https://training.westdri.ca (upcoming and archived events, ~100 recorded webinars)\nDocumentation: https://docs.alliancecan.ca\nEmail: training “at” westdri “dot” ca"
+  },
+  {
+    "objectID": "formats-20221104.html#requirements",
+    "href": "formats-20221104.html#requirements",
+    "title": "What format to choose to save your data",
+    "section": "Requirements",
+    "text": "Requirements\nIn the demos we will use Python and quite a few Python libraries to write into all these file formats. If you are comfortable with running Python and installing Python libraries on your computer, we will mention the libraries as we go during the workshop. For everyone else, we will provide access to a remote system with all these libraries installed – all you’ll need is a browser."
+  },
+  {
+    "objectID": "formats-20221104.html#themes",
+    "href": "formats-20221104.html#themes",
+    "title": "What format to choose to save your data",
+    "section": "Themes",
+    "text": "Themes\n\nMain theme:  tabular data  ⮕  Python data structures (hierarchical dictionaries)  ⮕  large arrays\nParallel theme:  ASCII  ⮕  binary  ⮕  scientific formats with metadata, compression, parallel I/O\nAlso to consider:  file sizes, bandwidth (I/O speed), portability"
+  },
+  {
+    "objectID": "formats-20221104.html#remote-system",
+    "href": "formats-20221104.html#remote-system",
+    "title": "What format to choose to save your data",
+    "section": "Remote system",
+    "text": "Remote system\nLog in to the remote system and copy the workshop files into your home directory:\ncp /home/user19/shared/formats/{jeopardy.csv,mandelbulb300.nc,writeNodesEdges.py} .\nIn a Python notebook in our JupyterHub, use:\n!cp /home/user19/shared/formats/{jeopardy.csv,mandelbulb300.nc,writeNodesEdges.py} ."
+  },
+  {
+    "objectID": "formats-20221104.html#python-packages",
+    "href": "formats-20221104.html#python-packages",
+    "title": "What format to choose to save your data",
+    "section": "Python packages",
+    "text": "Python packages\npyyaml bson dict2xml pickle netCDF4 networkx numpy pandas xarray vtk pyevtk"
+  },
+  {
+    "objectID": "formats-20221104.html#csv",
+    "href": "formats-20221104.html#csv",
+    "title": "What format to choose to save your data",
+    "section": "CSV",
+    "text": "CSV\n\ntabular data, such as a spreadsheet or database\nASCII format  ⇨  good for small datasets\n\nimport csv\nfilename = \"jeopardy.csv\"  # from https://domohelp.domo.com/hc/en-us/articles/360043931814-Fun-Sample-DataSets\nrows = []\nwith open(filename, 'r') as csvfile:  # open the CSV file in READ mode\n    csvreader = csv.reader(csvfile)   # create a CSV reader iterator\n    fields = next(csvreader)          # extract first row; advance the iterator to the next row\n    for row in csvreader:             # extract each row one by one\n        rows.append(row)\n\nprint(\"total number of rows:\", len(rows))\nprint(\"field names are:\", fields)\n\nfor row in rows[:5]:   # print first 5 rows\n    print(row)\n\nfor col in rows[0]:    # cycle through the first-row columns\n    print(col)\n\nwith open(\"short.csv\", 'w') as csvfile:\n    csvwriter = csv.writer(csvfile)   # create a CSV writer object\n    csvwriter.writerow(fields)        # write the fields\n    csvwriter.writerows(rows[:10])    # write the data rows\nThere is alternative syntax:\ncsvfile = open(\"short.csv\", 'w')\ncsvwriter = csv.writer(csvfile)\ncsvwriter.writerow(fields)\ncsvwriter.writerows(rows[:10])\ncsvfile.close()\nLet’s now use pandas dataframes for processing our rows and columns:\nimport pandas as pd\ndata = pd.read_csv(\"jeopardy.csv\")\ndata.shape   # 216930 rows, 7 columns\ndata.head(10)   # first 10 rows\ndata.columns    # names of the columns\ndata.loc[data['Category']=='HISTORY'].shape   # 349 matches\ndata.loc[data['Category']=='HISTORY'].to_csv(\"history.csv\")   # write to a file\nSimple Python dictionaries can be stored as 2-column tables. Here is an example of writing a Python dictionary to CSV:\ncentres = {'Vancouver': 2463, 'Calgary': 1393, 'Toronto': 5928, 'Montreal': 4099, 'Halifax': 413} # Python dictionary\nwith open('cities.csv', 'w') as f:   # open a stream for writing\n    for key in centres.keys():\n        f.write(\"%s, %s\\n\" % (key, centres[key]))\n\n\n\n\n\n\nExercise Header\n\n\n\n\n\nModify the last Python script to add a header “city, population” to this CSV file.\n\n\n\n\nHow about a more complex Python dictionary, with some hierarchical structure? For that a CSV file won’t work, but you can use JSON files."
+  },
+  {
+    "objectID": "formats-20221104.html#json",
+    "href": "formats-20221104.html#json",
+    "title": "What format to choose to save your data",
+    "section": "JSON",
+    "text": "JSON\n\nJavaScript Object Notation, inspired by JavaScript object literal syntax, although not part of JavaScript\nhuman-readable text, although can contain non-ASCII characters\nvery popular for encoding all sorts of data among web developers\ninternal mapping is similar to that of a Python dictionary, with key-value pairs\n\nLet’s start again with a simple dictionary:\nimport json\ncentres = {'Vancouver': 2463, 'Calgary': 1393, 'Toronto': 5928, 'Montreal': 4099, 'Halifax': 413} # Python dictionary\ny = json.dumps(centres)      # convert it to a JSON string\ntype(y)                      # it is string, as far as Python is concerned\njson.loads(y)[\"Vancouver\"]   # back to a Python dictionary that we can subset\ntype(json.loads(y))          # it is really a dictionary\n\n# convert more complex Python object to a JSON string\na = ['something', {'more': ('complex', None, 1.0, 2)}]\njson.dumps(a)\n\n# can use custom separators\njson.dumps(a, separators=(\"; \", \" &gt; \"), sort_keys=True)\nYou can convert into JSON strings the following Python objects: int, float, string, logical, tuple, list, dict, None.\nimport json\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"divorced\": False,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\njstring = json.dumps(x)\nprint(jstring)\n\n# write the string to a file\nwith open('personal.json', 'w') as f:\n    f.write(jstring)\n\n# read the file\nwith open('personal.json', 'r') as f:\n    data = f.read()\n\ntype(data)             # it is a (JSON) string\ng = json.loads(data)   # convert to a dictionary\ng[\"name\"]\n\n\n\n\n\n\nExercise Open-close\n\n\n\n\n\nConvert the last write operation from a stream to an “open-close” block.\n\n\n\n\n\n\n\n\nYou can also write the dictionary directly to a file, without creating a JSON string:\nwith open('personal.json', 'w') as outfile:\n    json.dump(x, outfile)\n\nwith open('personal.json') as file:   # read from a file into a dictionary\n    data = json.load(file)\n\nprint(data)\nTo summarize:\n\njson.dumps() converts a Python object to a JSON string\njson.loads() converts a JSON string to a Python object\njson.dump() writes a Python object to a stream as a JSON string\njson.load() loads a Python object from a JSON string stream\n\nFinally, let’s write a large multidimensional numpy array into JSON. The converter json.dumps() is not aware of the numpy data format. If you try to run f.write(json.dumps(x)), you will receive “TypeError: Object of type ndarray is not JSON serializable”. However, you can convert this array to a list:\nimport numpy as np\nx = np.zeros((100,100,100), dtype=np.float32)   # allocate single-precision 100^3 array\nx[:] = np.random.random(size=x.shape)   # fill it with random numbers drawn from a uniform [0,1) distribution\nx.dtype   # single precision\nx.shape   # (100, 100, 100)\n\nimport json\nf = open(\"array.json\", 'w')\nf.write(json.dumps(x.tolist()))\nf.close()   # the new file is 20,289,659 bytes - remember this number\nTo read it:\nimport json\nf = open(\"array.json\", 'r')\ndata = f.read()\nf.close()\nb = json.loads(data)   # convert to a nested list\ntype(b)        # it is a list\nlen(b)         # it has 100 elements (2D slices)\nlen(b[0])      # of which the first element also has 100 elements (1D columns)\nlen(b[0][0])   # of which the first element also has 100 elements (individual numbers)"
+  },
+  {
+    "objectID": "formats-20221104.html#yaml",
+    "href": "formats-20221104.html#yaml",
+    "title": "What format to choose to save your data",
+    "section": "YAML",
+    "text": "YAML\n\nstands for YAML Ain’t Markup Language\nuses indentation to define structured data\noften used as a format for configuration files\nsimpler replacement for the JSON format\nhttps://www.cloudbees.com/blog/yaml-tutorial-everything-you-need-get-started\n\npip install pyyaml\nimport yaml\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"divorced\": False,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\nyaml.dump(x)                            # dump to the terminal\nwith open('personal.yaml', 'w') as f:   # write to a file\n    yaml.dump(x, f, sort_keys=False, default_flow_style=False)\nSetting default_flow_style=True would give you a more compact notation with separators, but it’ll be more difficult to read with a naked eye.\nLet’s now read it. There are different readers (“loaders”) ordered by their security level:\n\nBaseLoader loads all the basic YAML scalars as strings\nSafeLoader loads subset of the YAML safely, mainly used if the input is from an untrusted source; cannot deal with Python tuples\nFullLoader loads the full YAML but avoids arbitrary code execution; still poses a potential risk when used for the untrusted input\nUnsafeLoader is the original loader, generally used for backward compatibility\n\nimport yaml\nfrom yaml.loader import FullLoader\nwith open('personal.yaml') as f:\n    data = yaml.load(f, Loader=FullLoader)\n\nprint(data)\nLet’s try writing 2 documents into a YAML file:\nx2 = {'this': 77, 'there': 45, 'hi': 10, 'at': 23, 'Hello': 7}\nwith open('personal.yaml', 'w') as f:   # write to a file\n    data = yaml.dump_all([x,x2], f, sort_keys=False, default_flow_style=False)\nYou can read them with:\nimport yaml\nfrom yaml.loader import FullLoader\nwith open('personal.yaml', 'r') as f:\n    data = list(yaml.load_all(f, Loader=FullLoader))\n\nprint(len(data))\nprint(data)"
+  },
+  {
+    "objectID": "formats-20221104.html#xml",
+    "href": "formats-20221104.html#xml",
+    "title": "What format to choose to save your data",
+    "section": "XML",
+    "text": "XML\n\neXtensible Markup Language\nuses a tag to define the structure, just like HTML\n3rd popular serialization format https://www.csestack.org/yaml-vs-json-vs-xml-difference\nwrite/read XML from Python\n\nhttps://stackabuse.com/reading-and-writing-xml-files-in-python\nhttps://www.geeksforgeeks.org/serialize-python-dictionary-to-xml\n\n\nHere let’s consider only a quick write example:\npip install xml-python\nimport xml.etree.ElementTree as ET\n\ndata = ET.Element('data')\nitems = ET.SubElement(data, 'items')\nitem1 = ET.SubElement(items, 'item')\nitem2 = ET.SubElement(items, 'item')\nitem1.set('name','item1')\nitem2.set('name','item2')\nitem1.text = 'item1-some-text'\nitem2.text = 'item2-some-text'\n\nmydata = ET.tostring(data)\ntype(mydata)                        # it is a `bytes` object\nmyfile = open(\"items.xml\", \"wb\")   # write it into a string\nmyfile.write(mydata)\nmyfile.close()\npip install dict2xml\nfrom dict2xml import dict2xml\nx = {\n  \"name\": \"John\",\n  \"age\": 30,\n  \"married\": True,\n  \"divorced\": False,\n  \"children\": (\"Ann\",\"Billy\"),\n  \"pets\": None,\n  \"cars\": [\n    {\"model\": \"BMW 230\", \"mpg\": 27.5},\n    {\"model\": \"Ford Edge\", \"mpg\": 24.1}\n  ]\n}\nxml = dict2xml(x)\nprint(xml)\nmyfile = open(\"personal.xml\", \"w\")\nmyfile.write(xml)\nmyfile.close()"
+  },
+  {
+    "objectID": "formats-20221104.html#bson",
+    "href": "formats-20221104.html#bson",
+    "title": "What format to choose to save your data",
+    "section": "BSON",
+    "text": "BSON\n\nbinary Javascript Object Notation, i.e. binary-encoded serialization of JSON documents\ndata storage, main format for MongoDB\ncan even send/receive BSON objects over network sockets from Python\nused heavily for sending/receiving data in web development\na list of ordered elements containing a field name, type, and value\nmaximum structure size is 2GB (not very good …)\n\npip install bson\nIt is very easy to write into BSON files:\nimport bson\nx = {\"a\": [1, 2, 3, 4, 5, \"6\", {\"some\": \"text\"}]}\na = bson.dumps(x)   # convert dictionary -&gt; BSON object (string of binary codes)\nf = open(\"test.bson\", 'wb')\nf.write(a)\nf.close()\nReading is a reverse process:\nimport bson\nf = open(\"test.bson\", 'rb')\ndata = f.read()    # read a BSON string\nf.close()\nbson.loads(data)   # extract our dictionary\nLet’s consider a larger numpy array. If you try to pass it via a dictionary value to BSON, it’ll crash with an error, as BSON library is not smart enough to understand a numpy array wrapped into a dictionary. However, you can encode this numpy array into a byte stream with a numpy-aware pickle library (https://docs.python.org/3/library/pickle.html):\nimport numpy as np\nx = np.zeros((100,100,100), dtype=np.float32)   # allocate single-precision 100^3 array\nx[:] = np.random.random(size=x.shape)   # fill it with random numbers drawn from a uniform [0,1) distribution\nx.dtype   # single precision\n\nimport pickle   # binary protocols for serializing (converting into a byte stream) and de-serializing Python object structures\nimport bson\ntable = {\"random\": pickle.dumps(x)}\nf = open(\"array.bson\", 'wb')\nf.write(bson.dumps(table))\nf.close()   # the new file is 4,000,181 bytes - compare this to an earlier JSON example (20 MB)\n\n\n\n\n\n\nNote\n\n\n\nNote: For those wondering if we could convert a “pickled” numpy array to BSON, without using a dictionary, e.g.\nxstream = pickle.dumps(x)\nbson.dumps(xstream)\nthe answer is “no”, as the second command would produce “AttributeError: ‘bytes’ object has no attribute ‘keys’”, i.e. bson.dumps() expects a dictionary.\n\n\nNow, let’s read from BSON:\nimport pickle, bson\nf = open(\"array.bson\", 'rb')\ndata = f.read()\nf.close()\nnewTable = bson.loads(data)            # convert BSON -&gt; dictionary\nb = pickle.loads(newTable[\"random\"])   # de-serialize the value back into a numpy array\ntype(b)   # numpy array\nb.dtype   # single precision\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise Network\n\n\n\n\n\nHow would you store a network as a Python data structure?\n1. list of node coordinates\n2. list of connections, each with two node IDs\n3. optionally can wrap the previous two into a dictionary\n4. try to write it into a BSON file"
+  },
+  {
+    "objectID": "formats-20221104.html#netcdf-and-hdf5",
+    "href": "formats-20221104.html#netcdf-and-hdf5",
+    "title": "What format to choose to save your data",
+    "section": "NetCDF (and HDF5)",
+    "text": "NetCDF (and HDF5)\nPreviously, we saw that storing a large data array was very efficient with BSON (as far as file sizes are concerned), but we had to jump through a number of hoops:\n\nput our array into a byte stream\nuse this byte stream as a value in a dictionary\nconvert this dictionary to BSON\nwrite this BSON to disk\n\nThere is a much better approach for large arrays: use a dedicated scientific array format library such as NetCDF or HDF5. These are available from (virtually) all programming languages. What they provide:\n\ndata description\ndata portability\ndata compression\nmultiple variables in a single file\nmultiple timesteps in a single file (if desired)\noptionally, parallel I/O\n\nNetCDF and HDF5 are related to each other and heavily borrow from each other’s source code. There are some differences too, e.g.\n\nNetCDF has an ecosystem of conventions, e.g. a CF (climate-forecast) convention\nNetCDF is understood natively by ParaView, HDF5 not so easily\nHDF5 was developed specifically for storing hierarchical/nested data\n\nHere we only show NetCDF.\npip install netCDF4\nimport numpy as np\nimport netCDF4 as nc\nf = nc.Dataset(\"array.nc\", 'w', format='NETCDF4')\nf.createDimension('x', 100)\nf.createDimension('y', 100)\nf.createDimension('z', 100)\nrho = f.createVariable('density', 'f4', ('x', 'y', 'z'))   # f4 stands for 4-byte float\nrho[:,:,:] = np.random.random(size=(100,100,100))\nf.close()   # 4,008,192 bytes\nNow let’s read it:\nimport netCDF4 as nc\nds = nc.Dataset(\"array.nc\")\nprint(ds)  # can see the dimensions, variables, precision\nprint(ds[\"density\"].shape)\nprint(ds[\"density\"][:])   # it is a numpy array\n\n\n\n\n\n\nExercise Compression 1\n\n\n\n\n\nTurn on compression when saving the variable. Did it change the file size?\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise Compression 2\n\n\n\n\n\nRead a highly compressed dataset from file mandelbulb300.nc. Compare the file size to the size of embedded data – do they agree? Give a reason behind that.\n\n\n\nIf you want the functionality of pandas (easy 2D table manipulation) in a multidimensional array, then you can use xarray Python library. Xarray library is built on top of numpy and pandas. There are two main data structures in xarray:\n\nxarray.DataArray is a fancy, labelled version of numpy.ndarray\nxarray.Dataset is a collection of multiple xarray.DataArray’s that share dimensions\n\npip install xarray\nimport xarray as xa\nimport numpy as np\ndata = xa.DataArray(\n    np.random.random(size=(8,6)),\n    dims=(\"y\",\"x\"),  # dimension names (row,col); we want `y` to represent rows and `x` columns\n    coords={\"x\": [10,11,12,13,14,15], \"y\": [10,20,30,40,50,60,70,80]}  # coordinate labels/values\n)\ndata\nWe can access various attributes of this array:\ndata.values                 # the 2D numpy array\ndata.values[0,0] = 0.53     # can modify in-place\ndata.dims                   # ('y', 'x')\ndata.coords               # all coordinates, cannot modify!\ndata.coords['x'][1]       # a number\ndata.x[1]                 # the same\nArray subsetting:\n\nisel() selects by index, could be replaced by [index1] or [index1,…]\nsel() selects by value\ninterp() interpolates by value\n\ndata.isel()      # same as `data`\ndata.isel(y=1)   # second row\ndata.isel(y=0, x=[-2,-1])    # first row, last two columns\nVectorized operations:\ndata + 100      # element-wise like numpy arrays\n(data - data.mean()) / data.std()    # normalize the data\ndata - data[0,:]      # use numpy broadcasting =&gt; subtract first row from all rows\nLet’s initialize two 2D arrays with the identical dimensions:\ncoords = {\"x\": np.linspace(0,1,5), \"y\": np.linspace(0,1,5)}\ntemp = xa.DataArray(      # first 2D array\n    20 + np.random.randn(5,5),\n    dims=(\"y\",\"x\"),\n    coords=coords\n)\npres = xa.DataArray(       # second 2D array\n    100 + 10*np.random.randn(5,5),\n    dims=(\"y\",\"x\"),\n    coords=coords\n)\nFrom these we can form a dataset:\nds = xa.Dataset({\"temperature\": temp, \"pressure\": pres,\n                 \"bar\": (\"x\", 200+np.arange(5)), \"pi\": np.pi})\nds\nSubsetting works the usual way:\nds.sel(x=0)     # each 2D array becomes 1D array, the 1D array becomes a number, plus a number\nds.temperature.sel(x=0)     # 'temperature' is now a 1D array\nds.temperature.sel(x=0.25, y=0.5)     # one element of `temperature`\nWe can save this dataset to a file:\nds.to_netcdf(\"double.nc\")\nReading it is very easy:\nnew = xa.open_dataset(\"double.nc\")\nWe can even try opening this 2D dataset in ParaView - select (x,y) and deselect Spherical.\nSo far we’ve been working with datasets in Cartesian coordinates. How about spherical geometry – how do we initialize and store a dataset in spherical coordinates (longitude - latitude - elevation)? Very easy: define these coordinates and your data arrays on top, put everything into an xarray dataset, and then specify the following units:\nds.lat.attrs[\"units\"] = \"degrees_north\"   # this line is important to adhere to CF convention\nds.lon.attrs[\"units\"] = \"degrees_east\"    # this line is important to adhere to CF convention\n\n\n\n\n\n\nExercise NetCDF CF convention\n\n\n\n\n\nCreate a \\(100\\times 300\\) (nlat\\(\\times\\)nlon) spherical dataset with two variables adhering to the NetCDF CF convention."
+  },
+  {
+    "objectID": "formats-20221104.html#vtk-versatile-format-for-spatially-defined-data",
+    "href": "formats-20221104.html#vtk-versatile-format-for-spatially-defined-data",
+    "title": "What format to choose to save your data",
+    "section": "VTK = versatile format for spatially defined data",
+    "text": "VTK = versatile format for spatially defined data\nVTK is a computer graphics and visualization library that’s been around since early 1990s. Originally it was C++ only, but now there are interfaces from other languages as well, including Python.\n\n\nlegacy VTK: ASCII or binary data, ASCII metadata, could write manually or through APIs\nXML VTK: usually binary data, compression, parallel I/O, write via API\n\nIn simple cases using the original VTK library is probably an overkill, as doing even simple things could involve quite a few function calls. VTK is a very powerful library, but there is also a very steep learning curve. Consider the number of functions inside VTK’s Python interface:\npip install vtk pyevtk\nimport vtk\n[i for i in dir(vtk)]                    # returns 3593 functions\n[i for i in dir(vtk) if \"Writer\" in i]   # returns 104 functions\nWe will see an example of using the original VTK library below. But first let us consider a simple example of writing data on a Cartesian mesh (ImageData in VTK speak). For this we can use a more lightweight library called PyEVTK which is dedicated library for exporting data stored in numpy arrays to VTK files.\nimport numpy as np\nfrom pyevtk.hl import imageToVTK\nnx, ny, nz = 30, 30, 30\nncells = nx * ny * nz\nnpoints = (nx+1) * (ny+1) * (nz+1)\npressure = np.random.rand(ncells).reshape((nx, ny, nz))      # double precision\ntemp = np.random.rand(npoints).reshape((nx+1, ny+1, nz+1))   # double precision\nimageToVTK(\"image\", cellData = {\"pressure\": pressure}, pointData = {\"temp\": temp})\nTry loading this file into ParaView.\n\nNow let’s try writing a StructuredGrid dataset to a file:\nfrom pyevtk.hl import gridToVTK\nimport numpy as np\n\nnx, ny, nz = 30, 30, 30\nxside, yside, zside = 1.0, 1.0, 1.0\n\nncells = nx * ny * nz\nnpoints = (nx+1) * (ny+1) * (nz+1)\n\nX = np.linspace(0, xside, nx+1, dtype='float64')   # three coordinate axes\nY = np.linspace(0, yside, ny+1, dtype='float64')\nZ = np.linspace(0, zside, nz+1, dtype='float64')\n\nx, y, z = np.meshgrid(X,Y,Z)   # 3D coordinate arrays\n\n# perturb the grid to make it more interesting\nx += (0.5 - np.random.random(npoints).reshape(nx+1,ny+1,nz+1)) * 0.5 * xside/nx\ny += (0.5 - np.random.random(npoints).reshape(nx+1,ny+1,nz+1)) * 0.5 * yside/ny\nz += (0.5 - np.random.random(npoints).reshape(nx+1,ny+1,nz+1)) * 0.5 * zside/nz\n\npressure = np.random.rand(ncells).reshape((nx, ny, nz))\ntemp = np.random.rand(npoints).reshape((nx+1, ny+1, nz+1))\ngridToVTK(\"structured\", x, y, z, cellData = {\"pressure\" : pressure}, pointData = {\"temp\" : temp})\nFinally, here is the promised example with the original VTK library:\nimport networkx as nx\nfrom writeNodesEdges import writeObjects\n\nH = nx.complete_bipartite_graph(15,5) # two sets of nodes\nprint(nx.number_of_nodes(H), 'nodes and', nx.number_of_edges(H), 'edges')\n\npos = nx.spring_layout(H,dim=3,k=1)   # dictionary of positions keyed by node\nxyz = [list(pos[i]) for i in pos]     # convert to a nested list of positions\n\ndegree = [d for i,d in H.degree()]\nprint('degree =', degree)\nwriteObjects(xyz, edges=H.edges(), scalar=degree, name='degree', fileout='network')\nThis wrote to a PolygonalData file. Try loading this file into ParaView and displaying the network with nodes and edges.\nIf you want to write to an UnstructuredGrid file, replace the last line with:\nwriteObjects(xyz, edges=H.edges(), scalar=degree, name='degree', fileout='network', method = 'vtkUnstructuredGrid')"
+  },
+  {
+    "objectID": "3dayPython-menu.html",
+    "href": "3dayPython-menu.html",
+    "title": "Introduction to Python",
+    "section": "",
+    "text": "February 26th-28th, 9:00am - 11:00am Pacific Time each day\nDescription: Python can be used in many humanities and social sciences workflows, and it is an easy and fun language to learn. This introductory 3-day, 6-hour course will walk you through the basics of programming in Python starting at the beginner’s level. We will cover the main language features – variables and data types, conditionals, lists, for/while loops, list comprehensions, dictionaries, writing functions, and working with external libraries, doing many exercises along the way. In the second part we will take a look at some of the libraries in more details, including pandas for working with large tables, simple plotting with matplotlib, and few others.\nInstructor: Alex Razoumov (SFU)\nPrerequisites: None\nSoftware: We will be using Python on our training cluster, so no need to install it on your computer. However, in the long run you would probably benefit from Python on your computer, so you might want to look into this. To access the training cluster, you will need a remote secure shell (SSH) client installed on your computer in order to participate in the course exercises. On Windows we recommend the free Home Edition of MobaXterm. On Mac and Linux computers SSH is usually pre-installed (try typing ssh in a terminal to make sure it is there)."
+  },
+  {
+    "objectID": "3dayPython-menu.html#links",
+    "href": "3dayPython-menu.html#links",
+    "title": "Introduction to Python",
+    "section": "Links",
+    "text": "Links\n\nWhat format to choose to save your data workshop from November 2022\nYouTube channel Python Tutorials for Digital Humanities by William Mattingly"
   },
   {
     "objectID": "chapel2/chapel-01-intro.html",
@@ -2819,5 +3108,214 @@
     "title": "Distributed file storage with git-annex",
     "section": "Cheat sheet",
     "text": "Cheat sheet\n\n&lt;items&gt; could be any collection of files and/or directories\n&lt;annex&gt; is the name of a git-annex, e.g. earth or mars or venus\n\nga init &lt;name&gt;\nga add &lt;items&gt;\nga sync\n\nga unannex &lt;items&gt;            # replace the link with the actual file content\nga unused                     # show all unlinked files in the annex\nga unused --used-refspec=+master   # same, but ignore these files being checked out in other annexes\nga dropunused --force &lt;num&gt;   # drop the unused file with a given index\nga drop --force &lt;items&gt;       # drop a local copy (object)\n\nga find                       # list all local files\nga whereis &lt;items&gt;            # locate file(s) or dir(s)\nga whereis | grep -A 1 \"1 copy\"                          # show all files with only one copy\nga whereis | grep -A 1 \"1 copy\" | grep -B 2 \"\\[here\\]\"   # show local files with only one copy\necho $(ga whereis) | sed 's/whereis/\\n/g'                # print one file per line\nga whereis --json | jq '.file + \" \" + (.whereis|map(.description)|join(\",\"))' # print name + annex\nga info &lt;items&gt;               # show local + global disk usage\n\nga copy &lt;items&gt; --to here\nga copy &lt;items&gt; --to &lt;annex&gt;\nga move &lt;items&gt; --to here\nga move &lt;items&gt; --to &lt;annex&gt;\nga get --auto --numcopies=2 &lt;items&gt;\n\ngit-annex walkthrough is a good introduction to using git-annex from the command line."
+  },
+  {
+    "objectID": "python3/python-06-loops.html",
+    "href": "python3/python-06-loops.html",
+    "title": "Loops",
+    "section": "",
+    "text": "For loops are very common in Python and are similar to for in other languages, but one nice twist with Python is that you can iterate over any collection, e.g., a list, a character string, etc.\nThis is equivalent to:\nWhat will this do:\nLet’s sum numbers 1 to 10:",
+    "crumbs": [
+      "DAY 2",
+      "Loops"
+    ]
+  },
+  {
+    "objectID": "python3/python-06-loops.html#while-loops",
+    "href": "python3/python-06-loops.html#while-loops",
+    "title": "Loops",
+    "section": "While loops",
+    "text": "While loops\nSince we talk about loops, we should also briefly mention while loops, e.g.\nx = 2\nwhile x &gt; 1.:\n    x /= 1.1\n    print(x)\n\n\n\n\n\n\nExercise 6.4\n\n\n\n\n\nRemove all occurrences of a specific item in a list, e.g. in this case number 20 in the list [5, 20, 15, 20, 25, 50, 20], so it becomes [5, 15, 25, 50].\nHint: use while to check if 20 is still in the list.",
+    "crumbs": [
+      "DAY 2",
+      "Loops"
+    ]
+  },
+  {
+    "objectID": "python3/python-06-loops.html#more-on-lists-in-loops",
+    "href": "python3/python-06-loops.html#more-on-lists-in-loops",
+    "title": "Loops",
+    "section": "More on lists in loops",
+    "text": "More on lists in loops\nYou can also form a zip object of tuples from two lists of the same length:\nfor i, j in zip(a,b):\n    print(i,j)\nAnd you can create an enumerate object from a list:\nfor i, j in enumerate(b):    # creates a list of tuples with an iterator as the first element\n    print(i,j)\n\n\n\n\n\n\n\n\n\nExercise 6.5\n\n\n\n\n\nWrite a program to add two lists index-wise, e.g. ['M', 'na', 'i', 'Stu'] and ['y', 'me', 's', 'art'] should produce a single list ['My', 'name', 'is', 'Stuart'].\n\n\n\n\n\n\n\n\n\n\n\nList comprehensions\nIt’s a compact way to create new lists based on existing lists/collections. Let’s list squares of numbers from 1 to 10:\n[x**2 for x in range(1,11)]\nOf these, list only odd squares:\n[x**2 for x in range(1,11) if x%2==1]\nThe first list in the previous section was also generated via a list comprehension:\nevents = [random.randint(0,2024) for i in range(10)]\nYou can also use list comprehensions to combine information from two or more lists:\nweek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']\nweekend = ['Sat', 'Sun']\nprint([day for day in week])                         # the entire week\nprint([day for day in week if day not in weekend])   # only the weekdays\nprint([day for day in week if day in weekend])       # in both lists\nThe syntax is:\n[something(i) for i in list1 if i [not] in list2 if i [not] in list3 ...]\n\n\n\n\n\n\nExercise 6.6\n\n\n\n\n\nRemove empty strings from the list of strings, e.g. [\"Mike\", \"\", \"Emma\", \"Kelly\", \"\", \"Brad\"] should become [\"Mike\", \"Emma\", \"Kelly\", \"Brad\"].\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 6.7\n\n\n\n\n\nWrite a one-line code to sum up the squares of numbers from 1 to 100.\n\n\n\n\n\n\n\n\n\nExercise 6.8\n\n\n\n\n\nWrite a script to build a list of words that are shorter than n characters from a given list of words ['red', 'green', 'white', 'black', 'pink', 'yellow'].\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 6.9\n\n\n\n\n\nWrite a program to flatten a nested list, e.g. [[11, 21.0, 3.5], ['Mercury', 'Venus', 'Earth'], 'hello'] should become [11, 21.0, 3.5, 'Mercury', 'Venus', 'Earth', 'hello'].\nHint: try two nested loops, or maybe extend two nested loops to a nested list comprehension.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 6.10\n\n\n\n\n\nWrite a program to convert a list of multiple integers into a single integer with all their digits combined, e.g. a list [11, 33, 50] should become 113350.",
+    "crumbs": [
+      "DAY 2",
+      "Loops"
+    ]
+  },
+  {
+    "objectID": "python3/python-08-functions.html",
+    "href": "python3/python-08-functions.html",
+    "title": "Writing functions",
+    "section": "",
+    "text": "functions encapsulate complexity so that we can treat it as a single thing\nfunctions enable re-use: write one time, use many times\n\nFirst define:\ndef greeting():\n    print('Hello!')\nand then we can run it:\ngreeting()\ndef printDate(year, month, day):\n    joined = str(year) + '/' + str(month) + '/' + str(day)\n    print(joined)\nprintDate(1871, 3, 19)\nEvery function returns something, even if it’s None.\na = printDate(1871, 3, 19)\nprint(a)\nHow do we actually return a value from a function?\ndef average(values):   # the argument is a list\n    if len(values) == 0:\n        return None\n    return sum(values) / len(values)\nprint('average of actual values:', average([1, 3, 4]))\nHere is an example of a more complex calendar function returning an alphabetical day of the week:\ndef dayOfTheWeek(year, month, day):\n    import datetime\n    week = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']\n    return week[datetime.datetime(year, month, day).weekday()]\ndayOfTheWeek(2022, 11, 10)   # 'Thu'\n\n\n\n\n\n\nExercise 8.1\n\n\n\n\n\nWrite a function to convert from Fahrenheit to Celsius, e.g. typing celsius(77) would produce 25.\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 8.2\n\n\n\n\n\nWrite a function to convert from Celsius to Fahrenheit. Test it with celcius(), e.g. by converting Fahrenheit → Celsius → Fahrenheit, or Celsius → Fahrenheit → Celsius.\n\n\n\n\n\n\n\n\n\nExercise 8.3\n\n\n\n\n\nNow modify celsius() to take a list of Fahrenheit temperatures, e.g., celcius([70,80,90,100]), to return a list of Celsius temperatures.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 8.4\n\n\n\n\n\nWrite a function that takes two lists and returns True if they have at least one common member.\n\n\n\nFunction arguments in Python can take default values becoming optional:\ndef addNumber(a, b=1):\n    return a+b\nprint(addNumber(5))\nprint(addNumber(5,3))\nWith several optional arguments it is important to be able to differentiate them:\ndef modify(a, b=1, coef=1):\n    return a*coef + b\nprint(modify(10))\nprint(modify(10, 1))   # which argument did we add?\nprint(modify(10, coef=2))\nprint(modify(10, coef=2, b=5))\nAny complex python function will have many optional arguments, for example:\n?print",
+    "crumbs": [
+      "DAY 2",
+      "Writing functions"
+    ]
+  },
+  {
+    "objectID": "python3/python-04-conditionals.html",
+    "href": "python3/python-04-conditionals.html",
+    "title": "Conditionals",
+    "section": "",
+    "text": "Python implements conditionals via if, elif (short for “else if”) and else. Use an if statement to control whether some block of code is executed or not. Let’s consider the boundary between the Antiquity and the Middle Ages:\nyear = 830\nif year &gt; 476:\n    print('year', year, 'falls into the medieval era')\nLet’s modify the year:\nyear = 205\nif year &gt; 476:\n    print('year', year, 'falls into the medieval era')\nAdd an else statement:\nyear = 205\nif year &gt; 476:\n    print('year', year, 'falls into the medieval era')\nelse:\n    print('year', year, 'falls into the classical antiquity period')\nAdd an elif statement:\nyear = 1500\nif year &gt; 1450:\n    print('year', year, 'falls into the modern era')\nelif year &gt; 476:\n    print('year', year, 'falls into the medieval era')\nelse:\n    print('year', year, 'falls into the classical antiquity period')\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nExercise 4.1\n\n\n\n\n\nComplete this code:\nname = input(\"Please enter your name\")\n...\nto print “Welcome on board 007” if you enter any combination of upper/lower case “Bond”, otherwise do not print anything.\n\n\n\n\n\n\n\n\n\n\nExercise 4.2\n\n\n\n\n\nWhat is the problem with the following code?\ngrade = 85\nif grade &gt;= 70:\n    print('grade is C')\nelif grade &gt;= 80:\n    print('grade is B')\nelif grade &gt;= 90:\n    print('grade is A')",
+    "crumbs": [
+      "DAY 1",
+      "Conditionals"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html",
+    "href": "python3/python-14-matplotlib.html",
+    "title": "Plotting with matplotlib",
+    "section": "",
+    "text": "There are hundreds of visualization libraries in Python. Check out this diagram of the Python Visualization Landscape (circa 2017, by Nicolas Rougier) which focuses on 1D+2D packages at the time (and only barely mentions 3D sci-vis packages).\nIf you want more advanced 3D rendering, in Python there are libraries to create 3D scientific visualizations, and in the Alliance federation we provide free-of-charge support should you require help with these tools.\nOne of the most widely used Python plotting libraries is matplotlib. Matplotlib is open source and produces static images (and non-interactive animations).",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html#simple-linescatter-plots",
+    "href": "python3/python-14-matplotlib.html#simple-linescatter-plots",
+    "title": "Plotting with matplotlib",
+    "section": "Simple line/scatter plots",
+    "text": "Simple line/scatter plots\n%matplotlib inline\nimport matplotlib.pyplot as plt\nplt.figure(figsize=(10,8))\nfrom numpy import linspace, sin\nx = linspace(0.01,1,300)\ny = sin(1/x)\nplt.plot(x, y, 'bo-')\nplt.xlabel('x', fontsize=18)\nplt.ylabel('f(x)', fontsize=18)\n# plt.show()       # not needed inside the Jupyter notebook\n# plt.savefig('tmp.png')\n\n\nOffscreen plotting - You can create the same plot with offscreen rendering directly to a file:\nimport matplotlib as mpl\nimport matplotlib.pyplot as plt\nmpl.use('Agg')   # enable PNG backend\nplt.figure(figsize=(10,8))\nfrom numpy import linspace, sin\nx = linspace(0.01,1,300)\ny = sin(1/x)\nplt.plot(x, y, 'bo-')\nplt.xlabel('x', fontsize=18)\nplt.ylabel('f(x)', fontsize=18)\nplt.savefig('tmp.png')\n\nLet’s add the second line, the labels, and the legend. Note that matplotlib automatically adjusts the axis ranges to fit both plots:\n%matplotlib inline\nimport matplotlib.pyplot as plt\nplt.figure(figsize=(10,8))\nfrom numpy import linspace, sin\nx = linspace(0.01,1,300)\ny = sin(1/x)\nplt.plot(x, y, 'bo-', label='one')\nplt.plot(x+0.3, 2*sin(10*x), 'r-', label='two')\nplt.legend(loc='lower right')\nplt.xlabel('x', fontsize=18)\nplt.ylabel('f(x)', fontsize=18)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nLet’s plot these two functions side-by-side:\n%matplotlib inline\nimport matplotlib.pyplot as plt\nfig = plt.figure(figsize=(12,4))\nfrom numpy import linspace, sin\nx = linspace(0.01,1,300)\ny = sin(1/x)\n\nax = fig.add_subplot(121)   # on 1x2 layout create plot #1 (`axes` object with some data space)\nplt.plot(x, y, 'bo-', label='one')\nax.set_ylim(-1.5, 1.5)\nplt.xlabel('x')\nplt.ylabel('f1')\nplt.legend(loc='lower right')\n\nfig.add_subplot(122)   # on 1x2 layout create plot #2\nplt.plot(x+0.2, 2*sin(10*x), 'r-', label='two')\nplt.xlabel('x')\nplt.ylabel('f2')\nplt.legend(loc='lower right')\nThere is also an option to specify absolute coordinates of each plot with fig.add_axes():\n\nreplace the first ax = fig.add_subplot(121) with ax = fig.add_axes([0.1, 0.7, 0.8, 0.3])   # left, bottom, width, height\nreplace the second fig.add_subplot(122) with fig.add_axes([0.1, 0.2, 0.8, 0.4])   # left, bottom, width, height\n\nThe 3rd option for more fine-grained control is plt.axes() – it creates an axes object (a region of the figure with some data space). These two lines are equivalent - both create a new figure with one subplot:\nfig = plt.figure(figsize=(8,8)); ax = fig.add_subplot(111)\nfig = plt.figure(figsize=(8,8)); ax = plt.axes()\nShortly we will see that we can pass additional flags to fig.add_subplot() and plt.axes() for more coordinate system control.\n\n\n\n\n\n\nExercise 14.1\n\n\n\n\n\nBreak the plot into two subplots, the fist taking 1/3 of the space on the left, the second one 2/3 of the space on the right.\n\n\n\nLet’s plot a simple line in the x-y plane:\nimport matplotlib.pyplot as plt\nimport numpy as np\nfig = plt.figure(figsize=(12,12))\nax = fig.add_subplot(111)\nx = np.linspace(0,1,100)\nplt.plot(2*np.pi*x, x, 'b-')\nplt.xlabel('x')\nplt.ylabel('f1')\nReplace ax = fig.add_subplot(111) with ax = fig.add_subplot(111, projection='polar'). Now we have a plot in the phi-r plane, i.e. in polar coordinates. Phi goes [0,2\\(\\pi\\)], whereas r goes [0,1].\n?fig.add_subplot    # look into `projection` parameter\nimport matplotlib.pyplot as plt\nimport numpy as np\nfig = plt.figure(figsize=(12,12))\nax = fig.add_subplot(111, projection='mollweide')\nlon = np.radians(np.linspace(30,90,10))\nlat = np.radians(np.linspace(15,18,10))\nplt.plot(lon, lat, 'go-')\nYou can use this projection parameter together with cartopy package to process 2D geospatial data to produce maps, while all plotting is still being done by Matplotlib. We teach cartopy in a separate workshop.\nLet’s try a scatter plot:\n%matplotlib inline\nimport matplotlib.pyplot as plt\nimport numpy as np\nplt.figure(figsize=(10,8))\nx = np.random.random(size=1000)   # 1D array of 1000 random numbers in [0,1]\ny = np.random.random(size=1000)\nsize = 1 + 50*np.random.random(size=1000)\nplt.scatter(x, y, s=size, color='lightblue')\nFor other plot types, click on any example in the Matplotlib gallery.\nFor colours, see Choosing Colormaps in Matplotlib.",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html#heatmaps",
+    "href": "python3/python-14-matplotlib.html#heatmaps",
+    "title": "Plotting with matplotlib",
+    "section": "Heatmaps",
+    "text": "Heatmaps\nLet’s plot a heatmap of monthly temperatures at the South Pole:\n%matplotlib inline\nimport matplotlib.pyplot as plt\nfrom matplotlib import cm\nimport numpy as np\nplt.figure(figsize=(15,10))\n\nmonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Year']\nrecordHigh = [-14.4,-20.6,-26.7,-27.8,-25.1,-28.8,-33.9,-32.8,-29.3,-25.1,-18.9,-12.3,-12.3]\naverageHigh = [-26.0,-37.9,-49.6,-53.0,-53.6,-54.5,-55.2,-54.9,-54.4,-48.4,-36.2,-26.3,-45.8]\ndailyMean = [-28.4,-40.9,-53.7,-57.8,-58.0,-58.9,-59.8,-59.7,-59.1,-51.6,-38.2,-28.0,-49.5]\naverageLow = [-29.6,-43.1,-56.8,-60.9,-61.5,-62.8,-63.4,-63.2,-61.7,-54.3,-40.1,-29.1,-52.2]\nrecordLow = [-41.1,-58.9,-71.1,-75.0,-78.3,-82.8,-80.6,-79.3,-79.4,-72.0,-55.0,-41.1,-82.8]\n\nvlabels = ['record high', 'average high', 'daily mean', 'average low', 'record low']\n\nZ = np.stack((recordHigh,averageHigh,dailyMean,averageLow,recordLow))\nplt.imshow(Z, cmap=cm.winter)\nplt.colorbar(orientation='vertical', shrink=0.45, aspect=20)\nplt.xticks(range(13), months, fontsize=15)\nplt.yticks(range(5), vlabels, fontsize=12)\nplt.ylim(-0.5, 4.5)\n\nfor i in range(len(months)):\n    for j in range(len(vlabels)):\n        text = plt.text(i, j, Z[j,i],\n                       ha=\"center\", va=\"center\", color=\"w\", fontsize=14, weight='bold')\n\n\n\n\n\n\nExercise 14.2\n\n\n\n\n\nChange the text colour to black in the brightest (green) rows and columns. You can do this either by specifying rows/columns explicitly, or (better) by setting a threshold background colour.\n\n\n\n\n\n\n\n\n\nExercise 14.3\n\n\n\n\n\nThis is a take-home exercise. Modify the code to display only 4 seasons instead of the individual months.",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html#d-topographic-elevation",
+    "href": "python3/python-14-matplotlib.html#d-topographic-elevation",
+    "title": "Plotting with matplotlib",
+    "section": "3D topographic elevation",
+    "text": "3D topographic elevation\nFor this we need a data file – let’s download it. Open a terminal inside your Jupyter dashboard. Inside the terminal, type:\nwget http://bit.ly/pythfiles -O pfiles.zip\nunzip pfiles.zip && rm pfiles.zip        # this should unpack into the directory data-python/\nThis will download and unpack the ZIP file into your home directory. You can now close the terminal panel. Let’s switch back to our Python notebook and check our location:\n%pwd       # run `pwd` bash command\n%ls        # make sure you see data-python/\nLet’s plot tabulated topographic elevation data:\nfrom matplotlib import cm\nfrom matplotlib.colors import LightSource\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\n\ntable = pd.read_csv('data-python/mt_bruno_elevation.csv')\nz = np.array(table)\nnrows, ncols = z.shape\nx = np.linspace(0,1,ncols)\ny = np.linspace(0,1,nrows)\nx, y = np.meshgrid(x, y)\nrgb = LightSource(270, 45).shade(z, cmap=cm.gist_earth, vert_exag=0.1, blend_mode='soft')\n\nfig, ax = plt.subplots(subplot_kw=dict(projection='3d'), figsize=(10,10))    # figure with one subplot\nax.view_init(20, 30)      # (theta, phi) viewpoint\nsurf = ax.plot_surface(x, y, z, facecolors=rgb, linewidth=0, antialiased=False, shade=False)\n\n\n\n\n\n\n\n\nExercise 14.4\n\n\n\n\n\nReplace fig, ax = plt.subplots() with fig = plt.figure() followed by ax = fig.add_subplot(). Don’t forget about the 3d projection. This one is a little tricky – feel free to google the problem, or even better use our earlier examples.\n\n\n\n\n\n\n\nLet’s add the following to the previous code (running this takes ~10s on my laptop):\nfor angle in range(90):\n    print(angle)\n    ax.view_init(20, 30+angle)\n    plt.savefig('frame%04d'%(angle)+'.png')\nAnd then we can create a movie in bash:\nffmpeg -r 30 -i frame%04d.png -c:v libx264 -pix_fmt yuv420p -vf \"scale=trunc(iw/2)*2:trunc(ih/2)*2\" spin.mp4",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html#matplotlibs-built-in-animation",
+    "href": "python3/python-14-matplotlib.html#matplotlibs-built-in-animation",
+    "title": "Plotting with matplotlib",
+    "section": "Matplotlib’s built-in animation",
+    "text": "Matplotlib’s built-in animation\nMatplotlib can do live animation with one of its Animation classes:\n\nFuncAnimation class\nFuncAnimation creates an animation by repeatedly calling a function.\nimport numpy as np\nimport matplotlib.pyplot as plt\nfrom matplotlib import animation\n\nfig = plt.figure(figsize=(8,5))\nax = plt.subplot(111)\n\nax.set_xlim(( 0, 2))            \nax.set_ylim((-2, 2))\nax.set_xlabel('time')\nax.set_ylabel('magnitude')\n\n# create an empty title and 2 empty plots\ntitle = ax.set_title('')\nline1 = ax.plot([], [], 'b', lw=1)[0]   # `ax.plot` returns a list of 2D line objects\nline2 = ax.plot([], [], 'r', lw=2)[0]\n\nax.legend(['sin','cos'])\n\ndef drawframe(j):\n    x = np.linspace(0, 2, 100)\n    y1 = np.sin(2 * np.pi * (x-0.01*j))\n    y2 = np.cos(2 * np.pi * (x-0.01*j))\n    line1.set_data(x, y1)\n    line2.set_data(x, y2)\n    title.set_text('frame = {0:4d}'.format(j))\n    return (line1,line2,title)   # the animation function must return a sequence of Artist objects\n\n# blit=True re-draws only the parts that have changed, update every 20ms, calls drawframe() with j=0..99\nanim = animation.FuncAnimation(fig, drawframe, frames=100, interval=20, blit=True)\n\n# ---\n\n# Output option 1: Python shell, open a new window\nplt.show()\n\n# Output option 2: Jupyter notebook\nfrom IPython.display import HTML\nHTML(anim.to_html5_video())\n\n# Output option 3: save to a file\nanim.save(\"twoLines.mp4\")\n\n# Output option 4: save to a file, more granular control\nwriter = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)\nanim.save(\"twoLines.mp4\", writer=writer)\n\n\nArtistAnimation class\nArtistAnimation creates an animation by using a fixed set of Artist objects.\nimport matplotlib.pyplot as plt\nimport numpy as np\nfrom matplotlib import animation\n\nfig, ax = plt.subplots()\n\ndef f(x, y):\n    return np.sin(x) + np.cos(y)\n\nx = np.linspace(0, 2 * np.pi, 120)\ny = np.linspace(0, 2 * np.pi, 100).reshape(-1, 1)\n\nims = []   # list of rows, each row is a list of artists (images) to draw in the current frame\nfor i in range(60):\n    x += np.pi / 15\n    y += np.pi / 30\n    im = ax.imshow(f(x, y), animated=True)\n    if i == 0:\n        ax.imshow(f(x, y))  # show an initial one first\n    ims.append([im])\n\n# blit=True re-draws only the parts that have changed, update every 50ms\nanim = animation.ArtistAnimation(fig, ims, interval=50, blit=True)\n\n# ---\n\n# Output option 1: Python shell, open a new window\nplt.show()\n\n# Output option 2: Jupyter notebook\nfrom IPython.display import HTML\nHTML(anim.to_html5_video())\n\n# Output option 3: save to a file\nanim.save(\"movingPlane.mp4\")\n\n# Output option 4: save to a file, more granular control\nwriter = animation.FFMpegWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)\nanim.save(\"movingPlane.mp4\", writer=writer)",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html#d-parametric-plot",
+    "href": "python3/python-14-matplotlib.html#d-parametric-plot",
+    "title": "Plotting with matplotlib",
+    "section": "3D parametric plot",
+    "text": "3D parametric plot\nHere is something visually very different, still using ax.plot_surface():\nfrom matplotlib import cm\nfrom matplotlib.colors import LightSource\nimport matplotlib.pyplot as plt\nfrom numpy import pi, sin, cos, mgrid\n\ndphi, dtheta = pi/250, pi/250    # 0.72 degrees\n[phi, theta] = mgrid[0:pi+dphi*1.5:dphi, 0:2*pi+dtheta*1.5:dtheta]\n        # define two 2D grids: both phi and theta are (252,502) numpy arrays\nr = sin(4*phi)**3 + cos(2*phi)**3 + sin(6*theta)**2 + cos(6*theta)**4\nx = r*sin(phi)*cos(theta)   # x is also (252,502)\ny = r*cos(phi)              # y is also (252,502)\nz = r*sin(phi)*sin(theta)   # z is also (252,502)\n\nrgb = LightSource(270, 45).shade(z, cmap=cm.gist_earth, vert_exag=0.1, blend_mode='soft')\n\nfig, ax = plt.subplots(subplot_kw=dict(projection='3d'), figsize=(10,10))\nax.view_init(20, 30)\nsurf = ax.plot_surface(x, y, z, facecolors=rgb, linewidth=0, antialiased=False, shade=False)\n\n\n\n\n\n\nExercise 14.5\n\n\n\n\n\nCreate an animation in which you change the light source position.",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-14-matplotlib.html#more-examples",
+    "href": "python3/python-14-matplotlib.html#more-examples",
+    "title": "Plotting with matplotlib",
+    "section": "More examples",
+    "text": "More examples\nFor more 3D examples in matplotlib, click on any example in the 3D gallery to see the code behind that plot. Try pasting it into your Jupyter notebook and running it, and try to modify the code.\n\nMatplotlib cheatsheets and handouts",
+    "crumbs": [
+      "DAY 3",
+      "Plotting with matplotlib"
+    ]
+  },
+  {
+    "objectID": "python3/python-03-builtin.html",
+    "href": "python3/python-03-builtin.html",
+    "title": "Built-in functions and help",
+    "section": "",
+    "text": "Python comes with a number of built-in functions.\nA function may take zero or more arguments.\n\nprint('hello')\nprint()\nprint(max(1,2,3,10))\nprint(min(5,2,10))\nprint(min('a', 'A', '0'))   # works with characters, the order is (0-9, A-Z, a-z)\nprint(max(1, 'a'))    # can't compare these\nround(3.712)      # to the nearest integer\nround(3.712, 1)   # can specify the number of decimal places\nhelp(round)       # works everywhere, including the command line\nround?            # Jupyter Notebook's additional syntax\n?round            # same\n\nEvery function returns something, whether it is a variable or None:\n\nresult = print('example')\nprint('result of print is', result)   # what happened here? Answer: print returns None",
+    "crumbs": [
+      "DAY 1",
+      "Built-in functions and help"
+    ]
+  },
+  {
+    "objectID": "python3/python-10-libraries.html",
+    "href": "python3/python-10-libraries.html",
+    "title": "Libraries",
+    "section": "",
+    "text": "Most of the power of a programming language is in its libraries. This is especially true for Python which is an interpreted language and is therefore very slow (compared to compiled languages). However, the libraries are often compiled (can be written in compiled languages such as C/C++) and therefore offer much faster performance than native Python code.\nA library is a collection of functions that can be used by other programs. Python’s standard library includes many functions we worked with before (print, int, round, …) and is included with Python. There are many other additional modules in the standard library such as math:\nYou can also import math’s items directly:\nYou can also create an alias from the library:",
+    "crumbs": [
+      "DAY 2",
+      "Libraries, virtual environments and packaging"
+    ]
+  },
+  {
+    "objectID": "python3/python-10-libraries.html#virtual-environments-and-packaging",
+    "href": "python3/python-10-libraries.html#virtual-environments-and-packaging",
+    "title": "Libraries",
+    "section": "Virtual environments and packaging",
+    "text": "Virtual environments and packaging\n\n\nTo install a 3rd-party library into the current Python environment from inside a Jupyter notebook, simply do (you will probably need to restart the kernel before you can use the package):\n%pip install &lt;packageName&gt;   # e.g. try bson\nIn Python you can create an isolated environment for each project, into which all of its dependencies will be installed. This could be useful if your several projects have very different sets of dependencies. On the computer running your Jupyter notebooks, open the terminal and type:\n(Important: on a cluster you must do this on the login node, not inside the JupyterLab terminal.)\nmodule load python/3.9.6    # specific to HPC clusters\npip install virtualenv\nvirtualenv --no-download climate   # create a new virtual environment in your current directory\nsource climate/bin/activate\nwhich python && which pip\npip install --no-index netcdf4 ...\n...\ndeactivate\nTo use this environment in the terminal, you would do:\nsource climate/bin/activate\n...\ndeactivate\nOptionally, you can add your environment to Jupyter:\npip install --no-index ipykernel    # install ipykernel (IPython kernel for Jupyter) into this environment\npython -m ipykernel install --user --name=climate --display-name \"My climate project\" # add your env to Jupyter\n...\ndeactivate\nQuit all your currently running Jupyter notebooks and the Jupyter dashboard, and then restart. One of the options in New below Python 3 should be climate.\nTo delete the environment, in the terminal type:\njupyter kernelspec list                  # `climate` should be one of them\njupyter kernelspec uninstall climate     # remove your environment from Jupyter\n/bin/rm -rf climate",
+    "crumbs": [
+      "DAY 2",
+      "Libraries, virtual environments and packaging"
+    ]
+  },
+  {
+    "objectID": "python3/python-10-libraries.html#quick-overview-of-some-of-the-libraries",
+    "href": "python3/python-10-libraries.html#quick-overview-of-some-of-the-libraries",
+    "title": "Libraries",
+    "section": "Quick overview of some of the libraries",
+    "text": "Quick overview of some of the libraries\n\n\n\n\n\nPython lists are very general and flexible, which is great for high-level programming, but it comes at a cost. The Python interpreter can’t make any assumptions about what will come next in a list, so it treats everything as a generic object with its own type and size. As lists get longer, eventually performance takes a hit.\nPython does not have any mechanism for a uniform/homogeneous list, where – to jump to element #1000 – you just take the memory address of the very first element and then increment it by (element size in bytes) x 999. NumPy library fills this gap by adding the concept of homogenous collections to python – numpy.ndarrays – which are multidimensional, homogeneous arrays of fixed-size items (most commonly numbers, but could be strings too). This brings huge performance benefits!\nTo speed up calculations with NumPy, typically you perform operations on entire arrays, and this by extension applies the same operation to each array element. Since NumPy was written in C, it is much faster for processing multiple data elements than manually looping over these elements in Python.\nLearning NumPy is outside the scope of this introductory workshop, but there are many packages built on top of NumPy that could be used in HSS:\n\npandas is a library for working with 2D tables / spreadsheets, built on top of numpy\nscikit-image is a collection of algorithms for image processing, built on top of numpy\nMatplotlib and Plotly are two plotting packages for Python\nxarray is a library for working with labelled multi-dimensional arrays and datasets in Python\n\n“pandas for multi-dimensional arrays”\ngreat for large scientific datasets; writes into NetCDF files\nwe won’t study it in this workshop\n\n\nWe’ll also take a look at these two libraries (not based on NumPy): - requests is an HTTP library to download HTML data from the web - Beautiful Soup is a library to parse these HTML data",
+    "crumbs": [
+      "DAY 2",
+      "Libraries, virtual environments and packaging"
+    ]
+  },
+  {
+    "objectID": "python3/python-02-variables.html",
+    "href": "python3/python-02-variables.html",
+    "title": "Variables and data types",
+    "section": "",
+    "text": "Python is a dynamically typed language: all variables have types, but types can change on the fly\npossible names for variables\n\ndon’t use built-in function names for variables, e.g. setting a sum variable will prevent you from using the built-in sum() function\n\nPython is case-sensitive\n\nage = 100\nfirstName = 'Jason'\nprint(firstName, 'is', age, 'years old')\na = 1; b = 2    # can use ; to separate multiple commands in one line\na, b = 1, 2   # assign variables in a tuple notation; same as last line\na = b = 10    #  assign a value to multiple variables at the same time\nb = \"now I am a string\"    # variables can change their type on the fly\n\nvariables persist between cells\nvariables must be defined before use\nvariables can be used in calculations\n\nage = age + 3   # another syntax: age += 3\nprint('age in three years:', age)\n\n\n\n\n\n\nExercise 2.1\n\n\n\n\n\nWhat is the final value of position in the program below? (Try to predict the value without running the program, then check your prediction.)\ninitial = \"left\"\nposition = initial\ninitial = \"right\"\n\n\n\nWith simple variables in Python, assigning var2 = var1 will create a new object in memory var2. Here we have two distinct objects in memory: initial and position.\n\n\n\n\n\n\nNote\n\n\n\nWith more complex (mutable) objects, its name could be a pointer. E.g. when we study lists, we’ll see that initial and new below really point to the same list in memory:\ninitial = [1,2,3]\nnew = initial        # create a pointer to the same object\ninitial.append(4)    # change the original list to [1, 2, 3, 4]\nprint(new)           # [1, 2, 3, 4]\nnew = initial[:]     # one way to create a new object in memory\nimport copy\nnew = copy.deepcopy(initial)   # another way to create a new object in memory\n\n\nUse square brackets to get a substring:\nelement = 'helium'\nprint(element[0])     # single character\nprint(element[0:3])   # a substring\n\nPython is case-sensitive\nuse meaningful variable names",
+    "crumbs": [
+      "DAY 1",
+      "Variables and data types"
+    ]
+  },
+  {
+    "objectID": "python3/python-02-variables.html#variables-and-assignment",
+    "href": "python3/python-02-variables.html#variables-and-assignment",
+    "title": "Variables and data types",
+    "section": "",
+    "text": "Python is a dynamically typed language: all variables have types, but types can change on the fly\npossible names for variables\n\ndon’t use built-in function names for variables, e.g. setting a sum variable will prevent you from using the built-in sum() function\n\nPython is case-sensitive\n\nage = 100\nfirstName = 'Jason'\nprint(firstName, 'is', age, 'years old')\na = 1; b = 2    # can use ; to separate multiple commands in one line\na, b = 1, 2   # assign variables in a tuple notation; same as last line\na = b = 10    #  assign a value to multiple variables at the same time\nb = \"now I am a string\"    # variables can change their type on the fly\n\nvariables persist between cells\nvariables must be defined before use\nvariables can be used in calculations\n\nage = age + 3   # another syntax: age += 3\nprint('age in three years:', age)\n\n\n\n\n\n\nExercise 2.1\n\n\n\n\n\nWhat is the final value of position in the program below? (Try to predict the value without running the program, then check your prediction.)\ninitial = \"left\"\nposition = initial\ninitial = \"right\"\n\n\n\nWith simple variables in Python, assigning var2 = var1 will create a new object in memory var2. Here we have two distinct objects in memory: initial and position.\n\n\n\n\n\n\nNote\n\n\n\nWith more complex (mutable) objects, its name could be a pointer. E.g. when we study lists, we’ll see that initial and new below really point to the same list in memory:\ninitial = [1,2,3]\nnew = initial        # create a pointer to the same object\ninitial.append(4)    # change the original list to [1, 2, 3, 4]\nprint(new)           # [1, 2, 3, 4]\nnew = initial[:]     # one way to create a new object in memory\nimport copy\nnew = copy.deepcopy(initial)   # another way to create a new object in memory\n\n\nUse square brackets to get a substring:\nelement = 'helium'\nprint(element[0])     # single character\nprint(element[0:3])   # a substring\n\nPython is case-sensitive\nuse meaningful variable names",
+    "crumbs": [
+      "DAY 1",
+      "Variables and data types"
+    ]
+  },
+  {
+    "objectID": "python3/python-02-variables.html#data-types-and-type-conversion",
+    "href": "python3/python-02-variables.html#data-types-and-type-conversion",
+    "title": "Variables and data types",
+    "section": "Data Types and Type Conversion",
+    "text": "Data Types and Type Conversion\nprint(type(52))\nprint(type(52.))\nprint(type('52'))\nprint(name+' Smith')   # can add strings\nprint(name*10)         # can replicate strings by mutliplying by a number\nprint(len(name))       # strings have lengths\nprint(1+'a')        # cannot add strings and numbers\nprint(str(1)+'a')   # this works\nprint(1+int('2'))   # this works\n\n\n\n\n\n\nExercise 2.2\n\n\n\n\n\nIf you assign some arbitrary integer value to a, e.g. a=123 or a=87236, write a code to get the second digit of a.",
+    "crumbs": [
+      "DAY 1",
+      "Variables and data types"
+    ]
   }
 ]
