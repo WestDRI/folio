@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Python Basics for Humanists – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-4df3b0c4fafa0f66eafcead0ee6cff11.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-python" id="toc-why-python" class="nav-link active" data-scroll-target="#why-python">Why Python?</a>
+  <ul class="collapse">
+  <li><a href="#python-vs.-excel" id="toc-python-vs.-excel" class="nav-link" data-scroll-target="#python-vs.-excel">Python vs.&nbsp;Excel</a></li>
+  <li><a href="#python-vs.-other-programming-languages" id="toc-python-vs.-other-programming-languages" class="nav-link" data-scroll-target="#python-vs.-other-programming-languages">Python vs.&nbsp;other programming languages</a></li>
+  </ul></li>
+  <li><a href="#installing-python" id="toc-installing-python" class="nav-link" data-scroll-target="#installing-python">Installing Python</a></li>
+  <li><a href="#starting-python" id="toc-starting-python" class="nav-link" data-scroll-target="#starting-python">Starting Python</a></li>
+  <li><a href="#navigating-jupyter-interface" id="toc-navigating-jupyter-interface" class="nav-link" data-scroll-target="#navigating-jupyter-interface">Navigating Jupyter interface</a></li>
+  <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting help</a></li>
+  <li><a href="#high-level-data-collections" id="toc-high-level-data-collections" class="nav-link" data-scroll-target="#high-level-data-collections">High-level data collections</a>
+  <ul class="collapse">
+  <li><a href="#lists" id="toc-lists" class="nav-link" data-scroll-target="#lists">Lists</a></li>
+  <li><a href="#dictionaries" id="toc-dictionaries" class="nav-link" data-scroll-target="#dictionaries">Dictionaries</a></li>
+  </ul></li>
+  <li><a href="#working-with-strings" id="toc-working-with-strings" class="nav-link" data-scroll-target="#working-with-strings">Working with strings</a></li>
+  <li><a href="#libraries" id="toc-libraries" class="nav-link" data-scroll-target="#libraries">Libraries</a></li>
+  <li><a href="#installing-libraries-and-creating-virtual-python-environments" id="toc-installing-libraries-and-creating-virtual-python-environments" class="nav-link" data-scroll-target="#installing-libraries-and-creating-virtual-python-environments">Installing libraries and creating virtual Python environments</a></li>
+  <li><a href="#quick-overview-of-some-external-libraries" id="toc-quick-overview-of-some-external-libraries" class="nav-link" data-scroll-target="#quick-overview-of-some-external-libraries">Quick overview of some external libraries</a></li>
+  <li><a href="#numpy" id="toc-numpy" class="nav-link" data-scroll-target="#numpy">Numpy</a></li>
+  <li><a href="#pandas" id="toc-pandas" class="nav-link" data-scroll-target="#pandas">Pandas</a></li>
+  <li><a href="#image-manipulation-with-scikit-image" id="toc-image-manipulation-with-scikit-image" class="nav-link" data-scroll-target="#image-manipulation-with-scikit-image">Image manipulation with <code>scikit-image</code></a></li>
+  <li><a href="#working-with-more-complex-data-formats" id="toc-working-with-more-complex-data-formats" class="nav-link" data-scroll-target="#working-with-more-complex-data-formats">Working with more complex data formats</a></li>
+  <li><a href="#working-with-time" id="toc-working-with-time" class="nav-link" data-scroll-target="#working-with-time">Working with time</a></li>
+  <li><a href="#web-scraping" id="toc-web-scraping" class="nav-link" data-scroll-target="#web-scraping">Web scraping</a>
+  <ul class="collapse">
+  <li><a href="#more-advanced-extracting-all-links-from-a-standalone-html-file" id="toc-more-advanced-extracting-all-links-from-a-standalone-html-file" class="nav-link" data-scroll-target="#more-advanced-extracting-all-links-from-a-standalone-html-file">More advanced: extracting all links from a standalone HTML file</a></li>
+  </ul></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Python Basics for Humanists</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Thursday, February 15, 2024, 2:00-3:00pm EST</strong></p>
+<p>You can find this page at &nbsp; <span style="font-size:1.8em;">https://folio.vastcloud.org/humanitiespython</span></p>
+<p><strong>Presented by</strong>: Alex Razoumov (SFU)</p>
+<p><strong>Description</strong>: In this short session, we will demo some of Python’s capabilities to researchers new to the language, starting with multiple ways to run Python, high-level data collections such as lists and dictionaries, using Python for data processing and manipulation, and data visualization. This short lecture-style course will be followed by a separate, full-day interactive Python workshop in which we will thoroughly study all these topics through hands-on exercises. This follow-up workshop will occur in the weeks after the 2024 HSS Winter Series.</p>
+<hr>
+<p>The goal of today’s workshop is to demo some Python functionality, to give you a taste of the language’s capabilities. We are not learning Python today, and we will not be doing any hands-on exercises, so please relax and watch the presentation. The <a href="https://hss24.netlify.app/program/#february-26-28" target="_blank">three followup sessions</a> on February 26-28 will teach you Python with many hands-on exercises (6 hours in total).</p>
+<section id="why-python" class="level2">
+<h2 class="anchored" data-anchor-id="why-python">Why Python?</h2>
+<p>Python is a free, open-source programming language first developed in the late 1980s and 90s that became really popular for scientific computing in the past 15 years. With Python in a few minutes you can: - analyze thousands of texts, - process tables with billions of records, - manipulate thousands of images, - restructure and process data any way you want.</p>
+<section id="python-vs.-excel" class="level3">
+<h3 class="anchored" data-anchor-id="python-vs.-excel">Python vs.&nbsp;Excel</h3>
+<ul>
+<li>Unlike Excel, Python can read any type of data, both structured and unstructured.</li>
+<li>Python is free and open-source, so no artificial limitations on where/how you run it.</li>
+<li>Python works on all platforms: Windows, Mac, Linux, Android, etc.</li>
+<li>Data manipulation is much easier in Python. There are hundreds of data processing, machine learning, and visualization libraries.</li>
+<li>Python can handle much larger amounts of data: limited not by Python, but by your available computing resources. In addition, Python can run at scale (in parallel) on larger systems.</li>
+<li>Python is more reproducible (rerun / modify the script).</li>
+</ul>
+<!-- Python code is easier to reproduce -->
+<!-- Python is faster doing difficult calculations. -->
+<!-- Python is easier than vba. -->
+<!-- Python works better with big data. -->
+<!-- Python is open source and has access to an enormous amount of libraries. -->
+<!-- On the other hand. -->
+<!-- Excel is known by more people. -->
+<!-- Excel is faster for simple calculations, graphs etc. -->
+</section>
+<section id="python-vs.-other-programming-languages" class="level3">
+<h3 class="anchored" data-anchor-id="python-vs.-other-programming-languages">Python vs.&nbsp;other programming languages</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 64%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Python pros</th>
+<th>Python cons</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>elegant scripting language</td>
+<td>slow (interpreted, dynamically typed)</td>
+</tr>
+<tr class="even">
+<td>easy to write and read code</td>
+<td>uses indentation for code blocks</td>
+</tr>
+<tr class="odd">
+<td>powerful, compact constructs for many tasks</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>very popular across all fields</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>huge number of external libraries</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</section>
+</section>
+<section id="installing-python" class="level2">
+<h2 class="anchored" data-anchor-id="installing-python">Installing Python</h2>
+<p><strong>Option 1</strong>: Install Python from https://www.python.org/downloads making sure to check the option “Add Python to PATH” during the installation.</p>
+<p><strong>Option 2</strong>: Install Python and the packages via Anaconda from https://www.anaconda.com/download.</p>
+<p><strong>Option 3</strong>: Install Python via your favourite package manager, e.g.&nbsp;in MacOS – assuming you have <a href="https://brew.sh">Homebrew</a> installed – run the command <code>brew install python</code>.</p>
+<p><strong>Post-installation</strong>: Install 3rd-party Python packages in the Command Prompt / terminal via <code>pip install &lt;packageName&gt;</code>, e.g.&nbsp;to be able to run Python inside a Jupyter Notebook run <code>pip install jupyter</code>.</p>
+<p><br></p>
+</section>
+<section id="starting-python" class="level2">
+<h2 class="anchored" data-anchor-id="starting-python">Starting Python</h2>
+<p>There are many ways to run Python commands:</p>
+<ul>
+<li>from a Unix shell you can start a Python shell and type commands there,</li>
+<li>you can launch Python scripts saved in plain text *.py files,</li>
+<li>you can execute Python cells inside a Jupyter notebook; the code is stored inside JSON files, displayed as HTML</li>
+</ul>
+<!-- Today we will be using a Jupyter notebook at https://jupyter.pyten.calculquebec.cloud (English) or -->
+<!-- https://jupyter.pytfr.calculquebec.cloud (French). -->
+<!-- 1. we will distribute the usernames and password now -->
+<!-- 1. please login with your unique username -->
+<!-- 1. start a new Python 3 notebook -->
+<p><br></p>
+</section>
+<section id="navigating-jupyter-interface" class="level2">
+<h2 class="anchored" data-anchor-id="navigating-jupyter-interface">Navigating Jupyter interface</h2>
+<p>Typically you can launch a new Jupyter Notebook via <code>jupyter notebook</code>. In recent MacOS + Homebrew there is a known issue that you can solve by running this command instead:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">jupyter</span> lab <span class="at">--app-dir</span> /opt/homebrew/share/jupyter/lab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>However you start your Jupyter session, the interface should be quite intuitive:</p>
+<ul>
+<li>File | Save As - to rename your notebook</li>
+<li>File | Download - download the notebook to your computer</li>
+<li>File | New Launcher - to open a new launcher dashboard, e.g.&nbsp;to start a terminal</li>
+<li>File | Logout - to terminate your job (everything is running inside a Slurm job!)</li>
+</ul>
+<p>Explain: tab completion, annotating code, displaying figures inside the notebook.</p>
+<ul>
+<li><font size="+2">Esc</font> - leave the cell (border changes colour) to the control mode</li>
+<li><font size="+2">A</font> - insert a cell above the current cell</li>
+<li><font size="+2">B</font> - insert a cell below the current cell</li>
+<li><font size="+2">X</font> - delete the current cell</li>
+<li><font size="+2">M</font> - turn the current cell into the markdown cell</li>
+<li><font size="+2">H</font> - to display help</li>
+<li><font size="+2">Enter</font> - re-enter the cell (border becomes green) from the control mode</li>
+<li>you can enter Latex equations in a markdown cell, e.g.&nbsp;<span class="math inline">\(int_0^\infty f(x)dx\)</span></li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">2</span>)   <span class="co"># to run all commands in the cell, either use the Run button, or press shift+return</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><br></p>
+</section>
+<section id="getting-help" class="level2">
+<h2 class="anchored" data-anchor-id="getting-help">Getting help</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(<span class="bu">print</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>?<span class="bu">print</span>    <span class="co"># only inside Jupyter</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><br></p>
+</section>
+<section id="high-level-data-collections" class="level2">
+<h2 class="anchored" data-anchor-id="high-level-data-collections">High-level data collections</h2>
+<p>Python has a number of built-in composite data structures: tuples, lists, sets, dictionaries. Here we take a look at <em>lists</em> and <em>dictionaries</em>.</p>
+<section id="lists" class="level3">
+<h3 class="anchored" data-anchor-id="lists">Lists</h3>
+<p>A list stores many values in a single structure:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>events <span class="op">=</span> [<span class="dv">267</span>, <span class="dv">1332</span>, <span class="dv">1772</span>, <span class="dv">1994</span>, <span class="dv">493</span>, <span class="dv">1373</span>, <span class="dv">1044</span>, <span class="dv">156</span>, <span class="dv">1515</span>, <span class="dv">1788</span>]  <span class="co"># array of years</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'events:'</span>, events)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'length:'</span>, <span class="bu">len</span>(events))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'first item of events is'</span>, events[<span class="dv">0</span>])   <span class="co"># indexing starts witgh 0</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>events[<span class="dv">2</span>] <span class="op">=</span> <span class="dv">1773</span>   <span class="co"># individual elements are mutable</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'events is now:'</span>, events)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>events.append(<span class="dv">1239</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>events.append(<span class="dv">606</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'events is now:'</span>, events)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>events.pop(<span class="dv">4</span>)      <span class="co"># remove element #4</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'events is now:'</span>, events)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>events.remove(...)   <span class="co"># remove by value (first occurrence)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Lists can be inhomogeneous:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> []</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>a.append(<span class="dv">1</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>a.append(<span class="st">'Vancouver'</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>a.append(<span class="fl">3.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and can even be nested (contain other lists):</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>a.append([<span class="st">'Mercury'</span>, <span class="st">'Venus'</span>, <span class="st">'Earth'</span>, <span class="st">'Mars'</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>a</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>a[<span class="op">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can search inside a list:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">'Venus'</span> <span class="kw">in</span> a[<span class="op">-</span><span class="dv">1</span>]       <span class="co"># returns True</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">'Pluto'</span> <span class="kw">in</span> a[<span class="op">-</span><span class="dv">1</span>]       <span class="co"># returns False</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>a[<span class="op">-</span><span class="dv">1</span>].index(<span class="st">'Venus'</span>)   <span class="co"># returns 1 (position index)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>planets <span class="op">=</span> a[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>planets.sort()         <span class="co">#  you sort lists alphabetically</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The initial list I showed you was generated via a <em>list comprehension</em>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>[random.randint(<span class="dv">0</span>,<span class="dv">2024</span>) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>)]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>[x<span class="op">**</span><span class="dv">2</span> <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">31</span>)]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>[x<span class="op">**</span><span class="dv">2</span> <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">11</span>) <span class="cf">if</span> x<span class="op">%</span><span class="dv">2</span><span class="op">==</span><span class="dv">1</span>]   <span class="co"># list only odd number squares</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>colours <span class="op">=</span> [<span class="st">'red'</span>, <span class="st">'green'</span>, <span class="st">'white'</span>, <span class="st">'black'</span>, <span class="st">'pink'</span>, <span class="st">'yellow'</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>[c <span class="cf">for</span> c <span class="kw">in</span> colours <span class="cf">if</span> <span class="bu">len</span>(c) <span class="op">&lt;=</span> <span class="dv">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s compute a difference between two lists, i.e.&nbsp;find unique elements in each:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">10</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> a:</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="kw">not</span> <span class="kw">in</span> b:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(i, <span class="st">"is not in b"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> b:</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="kw">not</span> <span class="kw">in</span> a:</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(i, <span class="st">"is not in a"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In Python very often you can have multiple solutions to the same problem. E.g., let’s write a script to get the frequency of all elements in a given list:</p>
+<p><strong>Solution 1:</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">77</span>, <span class="dv">9</span>, <span class="dv">23</span>, <span class="dv">67</span>, <span class="dv">73</span>, <span class="dv">21</span>, <span class="dv">23</span>, <span class="dv">9</span>]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>a.count(<span class="dv">77</span>)        <span class="co"># prints 1</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>a.count(<span class="dv">9</span>)         <span class="co"># prints 2</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> a:</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    a.count(i)    <span class="co"># counts the frequency of 'i' in list 'a' ... redundant output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Solution 2:</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">77</span>, <span class="dv">9</span>, <span class="dv">23</span>, <span class="dv">67</span>, <span class="dv">73</span>, <span class="dv">21</span>, <span class="dv">23</span>, <span class="dv">9</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">set</span>(a):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(i, <span class="st">"is seen"</span>, a.count(i))   <span class="co"># no redundant output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Solution 3:</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> [<span class="dv">77</span>, <span class="dv">9</span>, <span class="dv">23</span>, <span class="dv">67</span>, <span class="dv">73</span>, <span class="dv">21</span>, <span class="dv">23</span>, <span class="dv">9</span>]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> collections</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(collections.Counter(a))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="dictionaries" class="level3">
+<h3 class="anchored" data-anchor-id="dictionaries">Dictionaries</h3>
+<p>As you just saw, Python’s <strong>lists</strong> are ordered sets of objects that you access via their position/index. <strong>Dictionaries</strong> are unordered sets in which the objects are accessed via their keys. In other words, dictionaries are unordered key-value pairs.</p>
+<p>Consider two lists:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> [<span class="st">'Mary'</span>, <span class="st">'John'</span>, <span class="st">'Eric'</span>, <span class="st">'Jeff'</span>, <span class="st">'Anne'</span>]               <span class="co"># people</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>colours <span class="op">=</span> [<span class="st">'orange'</span>, <span class="st">'green'</span>, <span class="st">'blue'</span>, <span class="st">'burgundy'</span>, <span class="st">'turquoise'</span>] <span class="co"># and their respective favourite colours</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>There is nothing connecting these two lists, as far as figuring a person’s favourite colour goes. You could do something like this using indices:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>colours[names.index(<span class="st">'Eric'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>but this is a little too convoluted … A dictionary can help you connect the two datasets directly:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>fav <span class="op">=</span> {}  <span class="co"># start with an empty dictionary</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, colour <span class="kw">in</span> <span class="bu">zip</span>(names, colours):   <span class="co"># go through both lists simultaneously</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    fav[name] <span class="op">=</span> colour</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>fav   <span class="co"># {'Mary': 'orange', 'John': 'green', 'Eric': 'blue', 'Jeff': 'burgundy', 'Anne': 'turquoise'}</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>fav[<span class="st">'John'</span>]      <span class="co"># returns 'green'</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>fav[<span class="st">'Mary'</span>]      <span class="co"># returns 'orange'</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> key <span class="kw">in</span> fav:</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(key, fav[key])   <span class="co"># will print the names (keys) and the colours (values)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>There are other ways to organize the same information using dictionaries. For example, you can create a list of dictionaries, one dictionary per person:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> [<span class="st">'Mary'</span>, <span class="st">'John'</span>, <span class="st">'Eric'</span>, <span class="st">'Jeff'</span>, <span class="st">'Anne'</span>]                 <span class="co"># people names</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>colours <span class="op">=</span> [<span class="st">'orange'</span>, <span class="st">'green'</span>, <span class="st">'blue'</span>, <span class="st">'burgundy'</span>, <span class="st">'turquoise'</span>]   <span class="co"># and their respective favourite colours</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>ages <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">23</span>, <span class="dv">27</span>, <span class="dv">32</span>, <span class="dv">26</span>]                                       <span class="co"># let's include a third attribute</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> []</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, colour, age <span class="kw">in</span> <span class="bu">zip</span>(names, colours, ages):   <span class="co"># go through both lists simultaneously</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    data.append({<span class="st">'name'</span>: name, <span class="st">'colour'</span>: colour, <span class="st">'age'</span>: age})</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>person <span class="op">=</span> data[<span class="dv">0</span>]</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(person)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(person[<span class="st">"name"</span>], person[<span class="st">"colour"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The benefit of this approach is that you can have many more attributes per person, that just <code>name</code> and <code>colour</code>, and this is very common way to organize structured and/or hierarchical data in Python. The downside is that – to search for by name – you have to do it explicitly:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> person <span class="kw">in</span> data:</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> person[<span class="st">"name"</span>]<span class="op">==</span><span class="st">"Jeff"</span>: <span class="bu">print</span>(person[<span class="st">"colour"</span>], person[<span class="st">"age"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>or in a single line:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>[(person[<span class="st">"colour"</span>], person[<span class="st">"age"</span>]) <span class="cf">for</span> person <span class="kw">in</span> data <span class="cf">if</span> person[<span class="st">"name"</span>]<span class="op">==</span><span class="st">"Jeff"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, if you want <strong>performance</strong>, this will be the fastest way:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(<span class="bu">filter</span>(<span class="kw">lambda</span> person: person[<span class="st">"name"</span>] <span class="op">==</span> <span class="st">"Jeff"</span>, data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<!-- Here we apply the anonymous "lambda" function `lambda person: person["name"] == "Jeff"` to each item in the -->
+<!-- collection `data` and return an *iterator* yielding only those items in `data` that evaluate to `true` when -->
+<!-- applying the lambda funtion. -->
+<p>Here we: 1. apply the anonymous “lambda” function <code>lambda person: person["name"] == "Jeff"</code> to each item in the collection <code>data</code>; it returns True or False, 2. create an <em>iterator</em> yielding only those items in <code>data</code> that produced True, and 3. create a list from this iterator, in this case containing only one element.</p>
+<p>You can see where <em>dictionary</em> got its name:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>concepts <span class="op">=</span> {}</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>concepts[<span class="st">'list'</span>] <span class="op">=</span> <span class="st">'an ordered collection of values'</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>concepts[<span class="st">'dictionary'</span>] <span class="op">=</span> <span class="st">'a collection of key-value pairs'</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>concepts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s modify values:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>concepts[<span class="st">'list'</span>] <span class="op">=</span> concepts[<span class="st">'list'</span>] <span class="op">+</span> <span class="st">' - very simple'</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>concepts[<span class="st">'dictionary'</span>] <span class="op">=</span> concepts[<span class="st">'dictionary'</span>] <span class="op">+</span> <span class="st">' - used widely in Python'</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>concepts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Values can also be numerical:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>grades <span class="op">=</span> {}</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>grades[<span class="st">'Mary'</span>] <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>grades[<span class="st">'John'</span>] <span class="op">=</span> <span class="fl">4.5</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>grades</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And so can be the keys:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>grades[<span class="dv">1</span>] <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>grades</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><br></p>
+</section>
+</section>
+<section id="working-with-strings" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-strings">Working with strings</h2>
+<div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>event <span class="op">=</span> <span class="st">"HSS Winter Series"</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>event.<span class="op">&lt;</span>hit TAB once <span class="kw">or</span> twice<span class="op">&gt;</span>   <span class="co"># strings can access a number of methods = functions</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>event.capitalize()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>event.count(<span class="st">"S"</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>event.find(<span class="st">"S"</span>)       <span class="co"># the first occurrence</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>event.find(<span class="st">"hello"</span>)   <span class="co"># -1 = not found</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>event <span class="op">=</span> event.replace(<span class="st">"HSS"</span>, <span class="st">"Humanities and Social Sciences"</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>event <span class="op">+=</span> <span class="st">" 2024"</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>event.lower()</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>event.upper()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can do all of this manipulation in one line:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>event <span class="op">=</span> <span class="st">"HSS Winter Series"</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>(event.replace(<span class="st">"HSS"</span>, <span class="st">"Humanities and Social Sciences"</span>)<span class="op">+</span><span class="st">" 2024"</span>).upper()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>At this point you might ask about finding all occurrences of “S” inside <code>events</code>. One possible solution:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re   <span class="co"># regular expressions library</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>[m.start() <span class="cf">for</span> m <span class="kw">in</span> re.finditer(<span class="st">"S"</span>, event)]   <span class="co"># [1, 2, 11]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s now split our string:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> event.split()   <span class="co"># split into words</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">'_'</span>.join(words)         <span class="co"># join these words into a string with the `-` separator</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This <code>.join()</code> syntax is useful for many purposes, e.g.&nbsp;you can use it to convert a list to a string:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> [<span class="st">"Good"</span>, <span class="st">"morning"</span>]</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>(sentence)        <span class="co"># this is not what we want ...</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co">" "</span>.join(sentence)   <span class="co"># this works!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In tomorrow’s <a href="https://hss24.netlify.app/program/#february-16" target="_blank">3D Visualization workshop</a> you will see some more complex text manipulation.</p>
+<p><br></p>
+</section>
+<section id="libraries" class="level2">
+<h2 class="anchored" data-anchor-id="libraries">Libraries</h2>
+<p>A library is a collection of functions that can be used by other programs. Python’s <em>standard library</em> includes many functions we worked with before (<code>print</code>, <code>list</code>, …) and is included with Python. There are many other additional modules in the standard library such as math:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'pi is'</span>, pi)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'pi is'</span>, math.pi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can also import math’s items directly:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> pi, sin</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'pi is'</span>, pi)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>sin(pi<span class="op">/</span><span class="dv">6</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>cos(pi)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(math)   <span class="co"># help for libraries works just like help for functions</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can also create an alias from the library:</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math <span class="im">as</span> m</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(m.pi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><br></p>
+</section>
+<section id="installing-libraries-and-creating-virtual-python-environments" class="level2">
+<h2 class="anchored" data-anchor-id="installing-libraries-and-creating-virtual-python-environments">Installing libraries and creating virtual Python environments</h2>
+<p>To install a 3rd-party library into the current Python environment, in the OS shell run the command:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="op">&lt;</span>packageName<span class="op">&gt;</span>   <span class="co"># e.g. try bson</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you are inside a Jupyter notebook, you can try:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%pip</span> install <span class="op">&lt;</span>packageName<span class="op">&gt;</span>   <span class="co"># e.g. try bson</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and you will probably need to restart the kernel before you can use the package.</p>
+<p>In Python you can create an isolated environment for each project, into which all of its dependencies will be installed. This could be useful if your several projects have very different sets of dependencies. On the computer running your Jupyter notebooks, open a terminal and type:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install virtualenv</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">virtualenv</span> hss   <span class="co"># create a new virtual environment in your current directory</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> hss/bin/activate</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> python <span class="kw">&amp;&amp;</span> <span class="fu">which</span> pip</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install numpy ...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Optionally, you can add your environment to Jupyter:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>pip install ipykernel    <span class="co"># install ipykernel (IPython kernel for Jupyter) into this environment</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m ipykernel install <span class="op">--</span>user <span class="op">--</span>name<span class="op">=</span>hss <span class="op">--</span>display<span class="op">-</span>name <span class="st">"My HSS project"</span>   <span class="co"># add your environment to Jupyter</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To use this environment in the terminal, you would do:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>source hss<span class="op">/</span><span class="bu">bin</span><span class="op">/</span>activate</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>deactivate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>To use this environment via Jupyter, you would open the notebook dashboard, and one of the options in <code>New</code> below <code>Python 3</code> should be <code>My HSS project</code>.</p>
+<p>To delete the environment, in the terminal type:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">jupyter</span> kernelspec list                  <span class="co"># `hss` should be one of them</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">jupyter</span> kernelspec uninstall hss     <span class="co"># remove your environment from Jupyter</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-rf</span> hss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><br></p>
+</section>
+<section id="quick-overview-of-some-external-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="quick-overview-of-some-external-libraries">Quick overview of some external libraries</h2>
+<ul>
+<li><code>numpy</code> is a library for working with large, multi-dimensional arrays, along with a large collection of linear algebra functions
+<ul>
+<li>provides missing uniform collections (arrays) in Python, along with a large number of ways to quickly process these collections ⮕ great for speeding up calculations in Python</li>
+</ul></li>
+<li><code>pandas</code> is a library for working with 2D tables / spreadsheets, built on top of numpy</li>
+<li><code>scikit-image</code> is a collection of algorithms for image processing, built on top of numpy</li>
+<li><code>matplotlib</code> and <code>plotly</code> are two plotting packages for Python</li>
+<li><code>scikit-image</code> is a collection of algorithms for image processing</li>
+<li><code>xarray</code> is a library for working with labelled multi-dimensional arrays and datasets in Python
+<ul>
+<li>“<code>pandas</code> for multi-dimensional arrays”</li>
+<li>great for large scientific datasets; writes into NetCDF files</li>
+</ul></li>
+</ul>
+<p><br></p>
+</section>
+<section id="numpy" class="level2">
+<h2 class="anchored" data-anchor-id="numpy">Numpy</h2>
+<p>Python lists are very general and flexible, which is great for high-level programming, but it comes at a cost. The Python interpreter can’t make any assumptions about what will come next in a list, so it treats everything as a generic object with its own type and size. As lists get longer, eventually performance takes a hit.</p>
+<p>Python does not have any mechanism for a uniform/homogeneous list, where – to jump to element #1000 – you just take the memory address of the very first element and then increment it by (element size in bytes) x 999. <strong>Numpy</strong> library fills this gap by adding the concept of homogenous collections to python – <code>numpy.ndarray</code>s – which are multidimensional, homogeneous arrays of fixed-size items (most commonly numbers, but could be strings too). This brings huge performance benefits!</p>
+<p>To speed up calculations with numpy, typically you perform operations on entire arrays, and this by extension applies the same operation to each array element. Since numpy was written in C, it is much faster for processing multiple data elements than manually looping over these elements in Python.</p>
+<p>Learning numpy is outside the scope of this introductory workshop, but there are many packages built on top of numpy that could be used in HSS.</p>
+<p><br></p>
+</section>
+<section id="pandas" class="level2">
+<h2 class="anchored" data-anchor-id="pandas">Pandas</h2>
+<p>Let’s try reading some public-domain data about Jeopardy questions with <code>pandas</code> (31MB file, so it might take a while):</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/razoumov/publish/master/jeopardy.csv"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>data.shape      <span class="co"># 216930 rows, 7 columns</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>data.head(<span class="dv">10</span>)   <span class="co"># first 10 rows</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>data.tail()     <span class="co"># last 5 rows</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>data.iloc[<span class="dv">2</span>:<span class="dv">5</span>]  <span class="co"># rows 2-4</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>data.columns    <span class="co"># names of the columns</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'Category'</span>]</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'Category'</span>]<span class="op">==</span><span class="st">'HISTORY'</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>data.loc[data[<span class="st">'Category'</span>]<span class="op">==</span><span class="st">'HISTORY'</span>].shape   <span class="co"># 349 matches</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>data.loc[data[<span class="st">'Category'</span>]<span class="op">==</span><span class="st">'HISTORY'</span>].to_csv(<span class="st">"history.csv"</span>)   <span class="co"># write to a file</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s check what time period is covered by these data:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>data[<span class="st">"Air Date"</span>]</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">"Air Date"</span>][<span class="dv">0</span>][<span class="op">-</span><span class="dv">2</span>:]   <span class="co"># first row, last two digits is the year</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>year <span class="op">=</span> data[<span class="st">"Air Date"</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="op">-</span><span class="dv">2</span>:])   <span class="co"># last two digits of the year from all rows</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>year.<span class="bu">min</span>()<span class="op">;</span> year.<span class="bu">max</span>()     <span class="co"># '00' and '99' - not very informative, wraps at the turn of the century</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> y <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    twoDigits <span class="op">=</span> <span class="bu">str</span>(y).zfill(<span class="dv">2</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(twoDigits, <span class="bu">sum</span>(year<span class="op">==</span>twoDigits))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This shows that this table covers years from 1984 to 2012.</p>
+<p><br></p>
+</section>
+<section id="image-manipulation-with-scikit-image" class="level2">
+<h2 class="anchored" data-anchor-id="image-manipulation-with-scikit-image">Image manipulation with <code>scikit-image</code></h2>
+<!-- pip install scikit-image matplotlib -->
+<p>Several image-processing libraries use numpy data structures underneath, e.g.&nbsp;<code>Pillow</code> and <code>skimage.io</code>. Let’s take a look at the latter.</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> io   <span class="co"># scikit-image is a collection of algorithms for image processing</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> io.imread(fname<span class="op">=</span><span class="st">"https://raw.githubusercontent.com/razoumov/publish/master/grids.png"</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(image)   <span class="co"># numpy array</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>image.shape   <span class="co"># 1024^2 image, with three colour (RGB) channels</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s plot this image using matplotlib:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>io.imshow(image)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># io.show()   # only if working in a terminal</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="co"># io.imsave("tmp.png", image)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Using numpy, you can easily manipulate pixels, e.g.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>image[:,:,<span class="dv">2</span>] <span class="op">=</span> <span class="dv">255</span> <span class="op">-</span> image[:,:,<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and then plot it again.</p>
+<p><br></p>
+</section>
+<section id="working-with-more-complex-data-formats" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-more-complex-data-formats">Working with more complex data formats</h2>
+<!-- show hierarchical data structures and how to save them to disk -->
+<p>We already saw Python dictionaries. You can save them in a file using a variety of techniques. One of the most popular techniques, especially among web developers, is JSON (JavaScript Object Notation), as its internal mapping is similar to that of a Python dictionary, with key-value pairs. In the file all data are stored as human-readable text, including any non-ASCII (Unicode) characters.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> {</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"name"</span>: <span class="st">"John"</span>,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"age"</span>: <span class="dv">30</span>,</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"married"</span>: <span class="va">True</span>,</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"children"</span>: (<span class="st">"Ann"</span>,<span class="st">"Billy"</span>),</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"pets"</span>: <span class="va">None</span>,</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"cars"</span>: [</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"model"</span>: <span class="st">"BMW 230"</span>, <span class="st">"mpg"</span>: <span class="fl">27.5</span>},</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"model"</span>: <span class="st">"Ford Edge"</span>, <span class="st">"mpg"</span>: <span class="fl">24.1</span>}</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(x)     <span class="co"># 6 key-value pairs</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>x.keys()   <span class="co"># here are the keys</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>filename <span class="op">=</span> <span class="bu">open</span>(<span class="st">"personal.json"</span>, <span class="st">"w"</span>)</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>json.dump(x, filename, indent <span class="op">=</span> <span class="dv">2</span>)   <span class="co"># serialize `x` as a JSON-formatted stream to `filename`</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># `indent` sets field offsets in the file (for human readability)</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>filename.close()</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>filename <span class="op">=</span> <span class="bu">open</span>(<span class="st">"personal.json"</span>, <span class="st">"r"</span>)</span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> json.load(filename)   <span class="co"># read into a new dictionary</span></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>filename.close()</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> data:</span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(k, data[k])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you want to read larger and/or binary data, there is BSON format. Going step further, there are popular scientific data formats such as NetCDF and HDF5 for storing large multi-dimensional arrays and/or large hierarchical datasets, but we won’t study them here.</p>
+<p><br></p>
+</section>
+<section id="working-with-time" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-time">Working with time</h2>
+<p>In its standard library Python has high-level functions to work with time and dates:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>gmtime(<span class="dv">0</span>)   <span class="co"># show the starting epoch on my system (typically 1970-Jan-01 on Unix-like systems)</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>time()      <span class="co"># number of seconds since then = current time</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>ctime(time())   <span class="co"># convert that to human-readable time</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>ctime()         <span class="co"># same = current time</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>local <span class="op">=</span> localtime()   <span class="co"># convert current date/time to a structure</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>local.tm_year, local.tm_mon, local.tm_mday</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>local.tm_hour, local.tm_min, local.tm_sec</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>local.tm_zone     <span class="co"># my time zone</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>local.tm_isdst    <span class="co"># Daylight Saving Time 1=on or 0=off</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can find many more examples <a href="https://realpython.com/python-time-module" target="_blank">here</a>.</p>
+<!-- could also cover Pendulum library https://pendulum.eustace.io -->
+<p><br></p>
+</section>
+<section id="web-scraping" class="level2">
+<h2 class="anchored" data-anchor-id="web-scraping">Web scraping</h2>
+<!-- Marie's Web scraping with Python https://mint.westdri.ca/python/ws_webscraping -->
+<p><em>Web scraping</em> refers to extracting data from the web in a semi-automatic fashion. There is some programming involved, but Python web-scraping tools attempt to make this as painless as possible.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests                 <span class="co"># to download the html data from a site</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup   <span class="co"># to parse these html data</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd             <span class="co"># to store our data in a dataframe</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://arxiv.org/list/econ/new"</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> requests.get(url)</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>r   <span class="co"># &lt;Response [200]&gt; means our request was successful</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r.text[:<span class="dv">200</span>])   <span class="co"># the first 200 characters in the raw data</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>mainpage <span class="op">=</span> BeautifulSoup(r.text, <span class="st">"html.parser"</span>)</span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>mainpage.prettify()   <span class="co"># still very messy ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>There is a lot of text there, and it’s not particularly readable even after <code>.prettify()</code>! At this point we need to identify relevant markers in the HTML from which we could extract interesting data. There are several ways of doing this, e.g.&nbsp;you can use <a href="https://selectorgadget.com">SelectorGadget</a> bookmarklet on your site and mouse over various elements on the page, but here I will just look at the HTML source.</p>
+<p>In Firefox I load https://arxiv.org/list/econ/new, select <strong>Tools</strong> | <strong>Browser Tools</strong> | <strong>Page Source</strong> and then try to identify relevant tags. For example, I might see some useful text inside the <code>&lt;div&gt;</code> container tag:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>&lt;div class="list-title mathjax"&gt;</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>&lt;span class="descriptor"&gt;Title:&lt;/span&gt; This is the first article's title</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>&lt;/div&gt;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s search for all <code>&lt;div&gt;</code> tags with an attribute <code>class</code> starting with “list-title”:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>divs <span class="op">=</span> mainpage.findAll(<span class="st">"div"</span>, attrs<span class="op">=</span>{<span class="st">'class'</span>:<span class="st">'list-title'</span>})</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(divs)   <span class="co"># number of article titles on this page</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s inspect the first title:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>div[<span class="dv">0</span>]</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>div[<span class="dv">0</span>].text           <span class="co"># get the actual text inside this container</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>div[<span class="dv">0</span>].text.strip()   <span class="co"># remove leading and trailing whitespaces and end-of-line characters</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>div[<span class="dv">0</span>].text.strip().replace(<span class="st">'Title: '</span>, <span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can wrap this in a loop through all titles:</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> div <span class="kw">in</span> divs:</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(div.text.strip().replace(<span class="st">'Title: '</span>, <span class="st">''</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s store our data in a dataframe with three columns:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>titles <span class="op">=</span> []</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>divs <span class="op">=</span> mainpage.findAll(<span class="st">"div"</span>, attrs<span class="op">=</span>{<span class="st">'class'</span>:<span class="st">'list-title'</span>})</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> div <span class="kw">in</span> divs:</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    titles.append(div.text.strip().replace(<span class="st">'Title: '</span>, <span class="st">''</span>))</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>authors <span class="op">=</span> []</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>divs <span class="op">=</span> mainpage.findAll(<span class="st">"div"</span>, attrs<span class="op">=</span>{<span class="st">'class'</span>:<span class="st">'list-authors'</span>})</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> div <span class="kw">in</span> divs:</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    authors.append(div.text.strip().replace(<span class="st">'Authors:'</span>, <span class="st">''</span>).replace(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>, <span class="st">''</span>))</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>subjects <span class="op">=</span> []</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>divs <span class="op">=</span> mainpage.findAll(<span class="st">"div"</span>, attrs<span class="op">=</span>{<span class="st">'class'</span>:<span class="st">'list-subjects'</span>})</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> div <span class="kw">in</span> divs:</span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a>    subjects.append(div.text.strip().replace(<span class="st">'Subjects: '</span>, <span class="st">''</span>))</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> {<span class="st">'titles'</span>: titles, <span class="st">'authors'</span>: authors, <span class="st">'subjects'</span>: subjects}</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>papers <span class="op">=</span> pd.DataFrame(d)</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>papers</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, let’s filter articles based on a topic:</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> [<span class="st">"Machine Learning"</span> <span class="kw">in</span> subject <span class="cf">for</span> subject <span class="kw">in</span> papers.subjects]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>papers[mask]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="more-advanced-extracting-all-links-from-a-standalone-html-file" class="level3">
+<h3 class="anchored" data-anchor-id="more-advanced-extracting-all-links-from-a-standalone-html-file">More advanced: extracting all links from a standalone HTML file</h3>
+<div class="sourceCode" id="cb52"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests                 <span class="co"># to download the html data from a site</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup   <span class="co"># to parse these html data</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd             <span class="co"># to store our data in a dataframe</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> requests.adapters <span class="im">import</span> HTTPAdapter</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> urllib3.response <span class="im">import</span> HTTPResponse</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FileAdapter(HTTPAdapter):</span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> send(<span class="va">self</span>, request, <span class="op">*</span>args, <span class="op">**</span>kwargs):</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>        resp <span class="op">=</span> HTTPResponse(body<span class="op">=</span><span class="bu">open</span>(request.url[<span class="dv">7</span>:], <span class="st">'rb'</span>), status<span class="op">=</span><span class="dv">200</span>, preload_content<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.build_response(request, resp)</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> requests.Session()</span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>session.mount(<span class="st">'file://'</span>, FileAdapter())</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> session.get(<span class="st">'file:///path/to/file.html'</span>)</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>mainpage <span class="op">=</span> BeautifulSoup(r.text, <span class="st">"html.parser"</span>)</span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>links <span class="op">=</span> mainpage.findAll(<span class="st">"a"</span>, href<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> link <span class="kw">in</span> links:</span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(link[<span class="st">'href'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><br></p>
+</section>
+</section>
+<section id="visualization" class="level2">
+<h2 class="anchored" data-anchor-id="visualization">Visualization</h2>
+<p>There are hundreds of visualization libraries in Python. Rather than demo one library here, let me walk you through several popular choices:</p>
+<ul>
+<li><a href="https://matplotlib.org/stable/gallery" target="_blank">Matplotlib</a> is a good starting point, creates non-interactive images and movies</li>
+<li><a href="https://plotly.com/python" target="_blank">Plotly</a> if you want HTML interactivity</li>
+<li><a href="https://seaborn.pydata.org/examples" target="_blank">Seaborn</a> is based on matplotlib with a high-level interface for statistical graphics</li>
+<li><a href="https://plotnine.org/gallery" target="_blank">Plotnine</a> is an implementation of a grammar of graphics in Python based on R’s ggplot2</li>
+</ul>
+<p>If you want more advanced 3D rendering, in Python there are libraries to create <a href="https://ccvis.netlify.app" target="_blank">3D scientific visualizations</a>, and in the Alliance federation we provide free-of-charge support should you require help with these tools.</p>
+<p>In tomorrow’s <a href="https://hss24.netlify.app/program/#february-16" target="_blank">3D Visualization workshop</a> I will demo using Python for analyzing a set of texts, building a global dictionary for all these texts, positioning each paragraph in this dictionary, and then visualizing differences between these paragraphs’ vocabularies as a 3D scatter plot:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/withGospels.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Four English and four Greek texts, each node representing a paragraph</figcaption>
+</figure>
+</div>
+</div>
+<p>and as a 3D graph:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/a5.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Lines connect paragraphs with at least 15 words in common</figcaption>
+</figure>
+</div>
+</div>
+<p><br></p>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<ul>
+<li><a href="./formats" target="_blank">What format to choose to save your data</a> workshop from November 2022</li>
+<li><a href="https://www.youtube.com/c/pythontutorialsfordigitalhumanities" target="_blank">Python Tutorials for Digital Humanities</a> by William Mattingly</li>
+<li><a href="https://www.youtube.com/playlist?list=PL2jE_DQZemnU6WqEpqWaYQsjhyheDsVsc" target="_blank">2024 HSS Winter Series playlist</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

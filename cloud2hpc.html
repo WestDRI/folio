@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.33">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>From cloud to HPC – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ea385d0e468b0dd5ea5bf0780b1290d9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-4df3b0c4fafa0f66eafcead0ee6cff11.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#building-a-gpu-enabled-container-on-arbutus" id="toc-building-a-gpu-enabled-container-on-arbutus" class="nav-link active" data-scroll-target="#building-a-gpu-enabled-container-on-arbutus">… building a GPU-enabled container on Arbutus</a></li>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#spinning-up-a-vm-with-a-gpu" id="toc-spinning-up-a-vm-with-a-gpu" class="nav-link" data-scroll-target="#spinning-up-a-vm-with-a-gpu">Spinning up a VM with a GPU</a></li>
+  <li><a href="#installing-chapel-with-gpu-support-natively" id="toc-installing-chapel-with-gpu-support-natively" class="nav-link" data-scroll-target="#installing-chapel-with-gpu-support-natively">Installing Chapel with GPU support natively</a></li>
+  <li><a href="#building-a-chapel-gpu-container" id="toc-building-a-chapel-gpu-container" class="nav-link" data-scroll-target="#building-a-chapel-gpu-container">Building a Chapel GPU container</a></li>
+  <li><a href="#testing-on-the-vm" id="toc-testing-on-the-vm" class="nav-link" data-scroll-target="#testing-on-the-vm">Testing on the VM</a></li>
+  <li><a href="#testing-on-fir" id="toc-testing-on-fir" class="nav-link" data-scroll-target="#testing-on-fir">Testing on Fir</a></li>
+  <li><a href="#testing-on-rorqual" id="toc-testing-on-rorqual" class="nav-link" data-scroll-target="#testing-on-rorqual">Testing on Rorqual</a></li>
+  <li><a href="#using-grigorys-2-step-build-now-as-a-1-step-build" id="toc-using-grigorys-2-step-build-now-as-a-1-step-build" class="nav-link" data-scroll-target="#using-grigorys-2-step-build-now-as-a-1-step-build">Using Grigory’s 2-step build, now as a 1-step build</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">From cloud to HPC</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="building-a-gpu-enabled-container-on-arbutus" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-gpu-enabled-container-on-arbutus">… building a GPU-enabled container on Arbutus</h2>
+<p>This webinar (90% ready) was scheduled for 2025-Mar-11, but then cancelled as I was sick.</p>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>In this beginner-friendly webinar I will walk through the steps of creating a GPU container on a virtual machine (VM) on Arbutus that can be deployed on HPC clusters with NVIDIA GPUs. This webinar will teach you how to:</p>
+<ol type="1">
+<li>create a VM on Arbutus cloud,</li>
+<li>create an Apptainer sandbox from scratch in Linux,</li>
+<li>install NVIDIA drivers and CUDA into the container,</li>
+<li>compile GPU-enabled, single-locale Chapel in the container,</li>
+<li>convert the sandbox into a SIF container,</li>
+<li>compile and run Chapel codes inside the container, both on the VM and on production HPC clusters.</li>
+</ol>
+</section>
+<section id="spinning-up-a-vm-with-a-gpu" class="level2">
+<h2 class="anchored" data-anchor-id="spinning-up-a-vm-with-a-gpu">Spinning up a VM with a GPU</h2>
+<ol type="1">
+<li>https://arbutus.cloud.alliancecan.ca/project/instances # log in with CCDB credentials</li>
+<li>to CCInternal-magic-castle-training project</li>
+<li>Compute | Instances | Launch Instance</li>
+<li>Instance Name = alex-gpu-webinar</li>
+<li>Source = AlmaLinux-9.4-x64-2024-05</li>
+<li>Flavor = g1-8gb-c4-22gb</li>
+<li>Networks = CCInternal-magic-castle-training-network</li>
+<li>Security Groups = default</li>
+<li>Key Pairs = alex20240821</li>
+<li>click Launch (may take a few mins)</li>
+<li>Instances -&gt; in the drop-down menu select Associate Floating IP</li>
+<li>Network | Security Groups | on the ``default’’ row click Manage Rules</li>
+<li>Add Rule | pick SSH from the first drop-down menu | click Add</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 600 ~/.ssh/alex20240821.pem</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-i</span> ~/.ssh/alex20240821.pem almalinux@206.12.91.229</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf check-update              <span class="co"># check which packages have pending updates</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf update <span class="at">-y</span>                 <span class="co"># update these</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install <span class="at">-y</span> epel-release   <span class="co"># enable Extra Packages for Enterprise Linux (EPEL)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install <span class="at">-y</span> git apptainer cmake bat</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install <span class="at">-y</span> htop nano wget tmux emacs-nox netcdf netcdf-devel</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> reboot</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@bitbucket.org:razoumov/synchpc.git syncHPC</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> syncHPC/bashrc ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="bu">source</span> ~/.bashrc</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.emacs <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> syncHPC/emacs ~/.emacs</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> syncHPC/startSingleLocaleGPU.sh startSingleLocaleGPU.sh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Volumes | Volumes | Create a volume, name=razoumovVol, no source, empty volume, type default, 300 GB, click Create from your instance Attach Volume: pick “razoumovVol” Compute | Instances | Attach volume, select razoumovVol, click Attach Compute | Instances | Volumes Attached, check which device it is attached to, e.g.&nbsp;/dev/vdb</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> alma</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> fdisk <span class="at">-l</span>               <span class="co"># find your volume/device</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> fdisk /dev/vdb         <span class="co"># type "g" to create a partition, then "w" to write and exit</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkfs.ext4 /dev/vdb     <span class="co"># format the partition</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mount /dev/vdb /data   <span class="co"># mount the parition</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span> <span class="at">-hT</span> /data                <span class="co"># check it</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data/work</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown almalinux.almalinux <span class="at">-R</span> /data/work</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>“The Nouveau GPU driver is an open-source graphics driver for NVIDIA GPUs, developed as part of the Linux kernel. It provides support for NVIDIA graphics cards without requiring NVIDIA’s proprietary driver. However, Nouveau is often slower and lacks full support for newer GPU features compared to the official NVIDIA driver.”</p>
+<p>The GPU driver details below are from https://docs.alliancecan.ca/wiki/Using_cloud_vGPUs</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prevent loading of the buggy Nouveau GPU driver when the system boots</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sh <span class="at">-c</span> <span class="st">"echo 'blacklist nouveau' &gt; /etc/modprobe.d/blacklist-nouveau.conf"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> sh <span class="at">-c</span> <span class="st">"echo 'options nouveau modeset=0' &gt;&gt; /etc/modprobe.d/blacklist-nouveau.conf"</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dracut <span class="at">-fv</span> <span class="at">--omit-drivers</span> nouveau</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf <span class="at">-y</span> update</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># sudo dnf -y install epel-release   # already done</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> reboot</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># install the vGPU driver</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># sudo dnf remove libglvnd-gles-1:1.3.4-1.el9.x86_64</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># sudo dnf remove libglvnd-glx-1:1.3.4-1.el9.x86_64</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf <span class="at">-y</span> install http://repo.arbutus.cloud.alliancecan.ca/pulp/repos/alma9/Packages/a/arbutus-cloud-vgpu-repo-1.0-1.el9.noarch.rpm   <span class="co"># install the Arbutus vGPU Cloud repository</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf <span class="at">-y</span> install nvidia-vgpu-gridd.x86_64 nvidia-vgpu-tools.x86_64 nvidia-vgpu-kmod.x86_64</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre class="output"><code>+-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 550.54.15              Driver Version: 550.54.15      CUDA Version: 12.4     |
+|-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  GRID V100D-8C                  On  |   00000000:00:05.0 Off |                    0 |
+| N/A   N/A    P0             N/A /  N/A  |       0MiB /   8192MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install CUDA</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">SRC</span><span class="op">=</span>https://developer.download.nvidia.com/compute/cuda/12.4.0/local_installers</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="va">$SRC</span>/cuda-repo-rhel9-12-4-local-12.4.0_550.54.14-1.x86_64.rpm   <span class="co"># 4.6GB download</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf <span class="at">-y</span> install cuda-repo-rhel9-12-4-local-12.4.0_550.54.14-1.x86_64.rpm</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf clean all</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf <span class="at">-y</span> install cuda-toolkit-12-4</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> do <span class="ex">not</span> delete cuda-repo-rhel9-12-4-local-12.4.0_550.54.14-1.x86_64.rpm <span class="er">(</span><span class="ex">will</span> be needed later<span class="kw">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>now there is <code>/usr/local/cuda-12.4/bin/nvcc</code></p>
+</section>
+<section id="installing-chapel-with-gpu-support-natively" class="level2">
+<h2 class="anchored" data-anchor-id="installing-chapel-with-gpu-support-natively">Installing Chapel with GPU support natively</h2>
+<p>This step is optional, just to test GPU Chapel without installing it into the container.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">almalinux@alex-gpu-testing</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/chapel-lang/chapel/releases/download/2.3.0/chapel-2.3.0.tar.gz</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> xvfz chapel-2.3.0.tar.gz</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> chapel-2.3.0</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> util/setchplenv.bash</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_LLVM</span><span class="op">=</span>bundled</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_COMM</span><span class="op">=</span>none</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_TARGET_CPU</span><span class="op">=</span>none   <span class="co"># full list https://chapel-lang.org/docs/usingchapel/chplenv.html#chpl-target-cpu</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_LOCALE_MODEL</span><span class="op">=</span>gpu</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_GPU</span><span class="op">=</span>nvidia</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_CUDA_PATH</span><span class="op">=</span>/usr/local/cuda-12.4</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/c1/chapel-2.3.0 <span class="kw">&amp;&amp;</span> <span class="ex">/bin/rm</span> <span class="at">-rf</span> ~/c1/chapel-2.3.0/<span class="pp">*</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure</span> <span class="at">--chpl-home</span><span class="op">=</span><span class="va">$HOME</span>/c1/chapel-2.3.0   <span class="co"># inspect the settings</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="at">-j4</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> install</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/startSingleLocaleGPU.sh</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@bitbucket.org:razoumov/chapel.git ~/chapelCourse</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/chapelCourse/gpu</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> probeGPU.chpl</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../juliaSet</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetSerial.chpl</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetGPU.chpl</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span> <span class="at">--n</span><span class="op">=</span>8000   <span class="co"># 9.28693s</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetGPU</span> <span class="at">--n</span><span class="op">=</span>8000      <span class="co"># 0.075753s</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../primeFactorization</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000   <span class="co"># 0.04065s; A = 4561 1428578 5000001 4894 49</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="building-a-chapel-gpu-container" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-chapel-gpu-container">Building a Chapel GPU container</h2>
+<p><code>--nv</code> does not work with <code>--writable</code>, so you can’t create a writable sandbox that mounts the host’s GPU drivers and libraries, and into which you would install GPU Chapel. There are some solutions around this:</p>
+<ol type="1">
+<li><p>You could do this via a writable overlay image, creating and then starting an immutable SIF container with <code>--nv</code> and then installing GPU Chapel into the overlay. It works, but in my experience this is not the best option from the performance standpoint.</p></li>
+<li><p>You can install the NVIDIA Container Toolkit:</p></li>
+</ol>
+<div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">URL</span><span class="op">=</span>https://nvidia.github.io/libnvidia-container/stable/rpm/nvidia-container-toolkit.repo</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-L</span> <span class="va">$URL</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/yum.repos.d/nvidia-container-toolkit.repo</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> dnf install <span class="at">-y</span> nvidia-container-toolkit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and then combine <code>--nv</code> and <code>--writable</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> build <span class="at">--sandbox</span> almalinux.dir docker://almalinux</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">NVIDIA_DRIVER_CAPABILITIES</span><span class="op">=</span><span class="st">"compute,utility"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--writable</span> <span class="at">--nv</span> <span class="at">--nvccli</span> almalinux.dir</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>but I don’t see <code>nvcc</code> inside the container (maybe I am missing something obvious?).</p>
+<ol start="3" type="1">
+<li><p>You can bootstrap from an NVIDIA development image, and compile GPU Chapel in there.</p></li>
+<li><p>Install CUDA into the container and use it to compile GPU Chapel:</p></li>
+</ol>
+<div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /data/work</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> tmp</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_TMPDIR</span><span class="op">=</span>/data/work/tmp</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> build <span class="at">--sandbox</span> almalinux.dir docker://almalinux   <span class="co"># sudo not yet required</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> almalinux.dir/source</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> ~/cuda-repo-rhel9-12-4-local-12.4.0_550.54.14-1.x86_64.rpm almalinux.dir/source/</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--writable</span> almalinux.dir</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> dnf check-update</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>           <span class="ex">dnf</span> update <span class="at">-y</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>           <span class="ex">dnf</span> install <span class="at">-y</span> cmake gcc g++ python3 wget</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>           <span class="co"># install CUDA inside the container</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>           <span class="ex">dnf</span> <span class="at">-y</span> install /source/cuda-repo-rhel9-12-4-local-12.4.0_550.54.14-1.x86_64.rpm</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>           <span class="ex">dnf</span> clean all   <span class="co"># remove cached package data</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>           <span class="ex">dnf</span> <span class="at">-y</span> install cuda-toolkit-12-4</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>           <span class="ex">/bin/rm</span> /source/cuda-repo-rhel9-12-4-local-12.4.0_550.54.14-1.x86_64.rpm</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> almalinux.dir/c1/</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> ~/chapel-2.3.0.tar.gz almalinux.dir/source</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--writable</span> almalinux.dir</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> cd /source</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">tar</span> xvfz chapel-2.3.0.tar.gz</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>           <span class="bu">cd</span> chapel-2.3.0</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>           <span class="bu">source</span> util/setchplenv.bash</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>           <span class="bu">export</span> <span class="va">CHPL_LLVM</span><span class="op">=</span>bundled</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>           <span class="bu">export</span> <span class="va">CHPL_COMM</span><span class="op">=</span>none</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>           <span class="bu">export</span> <span class="va">CHPL_TARGET_CPU</span><span class="op">=</span>none</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>           <span class="bu">export</span> <span class="va">CHPL_LOCALE_MODEL</span><span class="op">=</span>gpu</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>           <span class="bu">export</span> <span class="va">CHPL_GPU</span><span class="op">=</span>nvidia</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>           <span class="bu">export</span> <span class="va">CHPL_CUDA_PATH</span><span class="op">=</span>/usr/local/cuda-12.4</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>           <span class="fu">mkdir</span> <span class="at">-p</span> /c1/chapel-2.3.0 <span class="kw">&amp;&amp;</span> <span class="ex">/bin/rm</span> <span class="at">-rf</span> /c1/chapel-2.3.0/<span class="pp">*</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>           <span class="ex">./configure</span> <span class="at">--chpl-home</span><span class="op">=</span>/c1/chapel-2.3.0</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>           <span class="fu">make</span> <span class="at">-j4</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>           <span class="fu">make</span> install</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>           <span class="ex">/bin/rm</span> <span class="at">-r</span> /source</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer build almalinux.sif almalinux.dir</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--nv</span> almalinux.sif</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> nvidia-smi   <span class="co"># should show the same info as above</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="testing-on-the-vm" class="level2">
+<h2 class="anchored" data-anchor-id="testing-on-the-vm">Testing on the VM</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--nv</span> /data/work/almalinux.sif</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> chapelCourse/gpu</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /c1/chapel-2.3.0/util/setchplenv.bash</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_GPU</span><span class="op">=</span>nvidia</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_CUDA_PATH</span><span class="op">=</span>/usr/local/cuda-12.4</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$CHPL_CUDA_PATH</span>/bin:<span class="va">$PATH</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> probeGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../juliaSet</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetSerial.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span> <span class="at">--n</span><span class="op">=</span>8000   <span class="co"># 9.36665s</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetGPU</span> <span class="at">--n</span><span class="op">=</span>8000      <span class="co"># 0.06692s</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../primeFactorization</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000   <span class="co"># 0.039443s; A = 4561 1428578 5000001 4894 49</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /data/work</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> almalinux.sif razoumov@fir.alliancecan.ca:/project/6003910/razoumov/apptainerImages/chapelGPU202503</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> almalinux.sif razoumov@rorqual.alliancecan.ca:scratch</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="testing-on-fir" class="level2">
+<h2 class="anchored" data-anchor-id="testing-on-fir">Testing on Fir</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">fir</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/6003910/razoumov/apptainerImages/chapelGPU202503</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc --time=0:30:0 --mem-per-cpu=3600 --gpus-per-node=1 --account=def-razoumov-ac</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:1 <span class="dt">\</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug <span class="at">--reservation</span><span class="op">=</span>asasfu_756</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--nv</span> <span class="at">-B</span> <span class="va">$SLURM_TMPDIR</span> almalinux.sif</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /c1/chapel-2.3.0/util/setchplenv.bash</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_GPU</span><span class="op">=</span>nvidia</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_CUDA_PATH</span><span class="op">=</span>/usr/local/cuda-12.4</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:/usr/local/cuda-12.4/bin</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> <span class="at">-r</span> ~/chapelCourse <span class="va">$SLURM_TMPDIR</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$SLURM_TMPDIR</span>/chapelCourse/gpu</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> probeGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../juliaSet</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetSerial.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span> <span class="at">--n</span><span class="op">=</span>8000   <span class="co"># 12.4182s</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetGPU</span> <span class="at">--n</span><span class="op">=</span>8000      <span class="co"># 0.083108s</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../primeFactorization</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000   <span class="co"># 0.166764s; A = 4561 1428578 5000001 4894 49</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="testing-on-rorqual" class="level2">
+<h2 class="anchored" data-anchor-id="testing-on-rorqual">Testing on Rorqual</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rorqual</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/chapelCourse/codes</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--nodes</span><span class="op">=</span>1 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>1 <span class="at">--account</span><span class="op">=</span>cc-debug</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CDIR</span><span class="op">=</span>~/scratch/chapelGPU20240826</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--nv</span> <span class="at">--overlay</span> <span class="va">${CDIR}</span>/extra.img:ro <span class="va">${CDIR}</span>/almalinux.sif</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /extra/c1/chapel-2.3.0/util/setchplenv.bash</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_GPU</span><span class="op">=</span>nvidia</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_CUDA_PATH</span><span class="op">=</span>/usr/local/cuda-12.4</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:/usr/local/cuda-12.4/bin</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/2024/</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> probeGPU.chpl <span class="at">-L</span>/usr/local/cuda-12.4/targets/x86_64-linux/lib/stubs</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetGPU.chpl <span class="at">-L</span>/usr/local/cuda-12.4/targets/x86_64-linux/lib/stubs</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetGPU</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetGPU</span> <span class="at">--height</span><span class="op">=</span>8000</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="using-grigorys-2-step-build-now-as-a-1-step-build" class="level2">
+<h2 class="anchored" data-anchor-id="using-grigorys-2-step-build-now-as-a-1-step-build">Using Grigory’s 2-step build, now as a 1-step build</h2>
+<ul>
+<li>multi-stage builds https://docs.sylabs.io/guides/latest/user-guide/definition_files.html#multi-stage-builds</li>
+<li>available containers https://catalog.ngc.nvidia.com/orgs/nvidia/containers/nvhpc/tags</li>
+<li>new one is nvcr.io/nvidia/nvhpc:25.1-devel-cuda_multi-ubuntu24.04</li>
+<li>older one nvcr.io/nvidia/nvhpc:23.11-devel-cuda_multi-ubuntu22.04</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /data/work</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_TMPDIR</span><span class="op">=</span>/data/work/tmp</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> build <span class="at">--nv</span> test.sif docker://nvcr.io/nvidia/nvhpc:24.3-devel-cuda_multi-ubuntu22.04</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--nv</span> test.sif</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> / <span class="at">-name</span> nvcc   <span class="co"># check if their CUDA installation includes `nvcc` (needed for GPU Chapel runtime)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /data/work</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> create <span class="ex">single.def</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>BootStrap: docker   # this is `single.def`</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>From: nvcr.io/nvidia/nvhpc:24.3-devel-cuda_multi-ubuntu22.04</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>Stage: build</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>%post</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    . /.singularity.d/env/10-docker*.sh</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    apt update -y</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    apt install -y python3</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    mkdir /source &amp;&amp; cd /source</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    wget https://github.com/chapel-lang/chapel/releases/download/2.3.0/chapel-2.3.0.tar.gz</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    tar xvfz chapel-2.3.0.tar.gz</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    cd chapel-2.3.0</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    . util/setchplenv.sh</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    export CHPL_LLVM=bundled</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    export CHPL_COMM=none</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    export CHPL_TARGET_CPU=none</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    export CHPL_LOCALE_MODEL=gpu</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    export CHPL_GPU=nvidia</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    export CHPL_CUDA_PATH=/opt/nvidia/hpc_sdk/Linux_x86_64/24.3/cuda/12.3</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    mkdir -p /c1/chapel-2.3.0</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    ./configure --chpl-home=/c1/chapel-2.3.0</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    make -j4</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    make install</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    /bin/rm -r /source</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_TMPDIR</span><span class="op">=</span>/data/work/tmp</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> build <span class="at">--nv</span> ubuntu.sif single.def</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apptainer shell <span class="at">--nv</span> /data/work/ubuntu.sif</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> chapelCourse/gpu</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /c1/chapel-2.3.0/util/setchplenv.bash</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_GPU</span><span class="op">=</span>nvidia</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CHPL_CUDA_PATH</span><span class="op">=</span>/opt/nvidia/hpc_sdk/Linux_x86_64/24.3/cuda/12.3</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$CHPL_CUDA_PATH</span>/bin/:<span class="va">$PATH</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> probeGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../juliaSet</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> clean</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetSerial.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span> <span class="at">--n</span><span class="op">=</span>8000   <span class="co"># 9.36665s</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetGPU</span> <span class="at">--n</span><span class="op">=</span>8000      <span class="co"># 0.06692s</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../primeFactorization</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl <span class="at">-L</span><span class="va">${CHPL_CUDA_PATH}</span>/targets/x86_64-linux/lib/stubs</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000   <span class="co"># 0.039443s; A = 4561 1428578 5000001 4894 49</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /data/work</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> ubuntu.sif razoumov@fir.alliancecan.ca:/project/6003910/razoumov/apptainerImages/chapelGPU202503</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> ubuntu.sif razoumov@rorqual.alliancecan.ca:scratch</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
