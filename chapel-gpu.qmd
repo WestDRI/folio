@@ -516,22 +516,22 @@ will return 101, and so on.
 
 ```chpl
 proc primeFactorizationSum(n: int) {
-  var num = n, output = 0, count = 0;
+  var num = n, total = 0, count = 0;
   while num % 2 == 0 {
     num /= 2;
     count += 1;
   }
-  for j in 1..count do output += 2;
+  for j in 1..count do total += 2;
   for i in 3..(sqrt(n:real)):int by 2 {
     count = 0;
     while num % i == 0 {
       num /= i;
       count += 1;
     }
-    for j in 1..count do output += i;
+    for j in 1..count do total += i;
   }
-  if num > 2 then output += num;
-  return output;
+  if num > 2 then total += num;
+  return total;
 }
 ```
 
