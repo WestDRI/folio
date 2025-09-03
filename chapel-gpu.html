@@ -726,22 +726,22 @@ A = 49501 49604 49709 49816 49925 50036 50149 50264 50381 50500</code></pre>
 <p>Now let’s compute a more interesting problem where we do some significant processing of each element, but independently of other elements – this will port nicely to a GPU.</p>
 <p><em>Prime factorization</em> of an integer number is finding all its prime factors. For example, the prime factors of 60 are 2, 2, 3, and 5. Let’s write a function that takes an integer number and returns the <em>sum</em> of all its prime factors. For example, for 60 it will return 2+2+3+5 = 12, for 91 it will return 7+13 = 20, for 101 it will return 101, and so on.</p>
 <pre class="chpl"><code>proc primeFactorizationSum(n: int) {
-  var num = n, output = 0, count = 0;
+  var num = n, total = 0, count = 0;
   while num % 2 == 0 {
     num /= 2;
     count += 1;
   }
-  for j in 1..count do output += 2;
+  for j in 1..count do total += 2;
   for i in 3..(sqrt(n:real)):int by 2 {
     count = 0;
     while num % i == 0 {
       num /= i;
       count += 1;
     }
-    for j in 1..count do output += i;
+    for j in 1..count do total += i;
   }
-  if num &gt; 2 then output += num;
-  return output;
+  if num &gt; 2 then total += num;
+  return total;
 }</code></pre>
 <p>We can test it quickly:</p>
 <pre class="chpl"><code>writeln(primeFactorizationSum(60));
