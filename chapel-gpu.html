@@ -328,7 +328,7 @@ window.Quarto = {
   <li><a href="#finer-control" id="toc-finer-control" class="nav-link" data-scroll-target="#finer-control">Finer control</a></li>
   <li><a href="#multiple-locales-and-multiple-gpus" id="toc-multiple-locales-and-multiple-gpus" class="nav-link" data-scroll-target="#multiple-locales-and-multiple-gpus">Multiple locales and multiple GPUs</a>
   <ul class="collapse">
-  <li><a href="#running-multi-gpu-code-on-cedar" id="toc-running-multi-gpu-code-on-cedar" class="nav-link" data-scroll-target="#running-multi-gpu-code-on-cedar">Running multi-GPU code on Cedar</a></li>
+  <li><a href="#running-multi-gpu-code-on-fir" id="toc-running-multi-gpu-code-on-fir" class="nav-link" data-scroll-target="#running-multi-gpu-code-on-fir">Running multi-GPU code on Fir</a></li>
   <li><a href="#distributed-a_on_host-array" id="toc-distributed-a_on_host-array" class="nav-link" data-scroll-target="#distributed-a_on_host-array">Distributed <code>A_on_host</code> array</a></li>
   </ul></li>
   <li><a href="#julia-set-problem" id="toc-julia-set-problem" class="nav-link" data-scroll-target="#julia-set-problem">Julia set problem</a>
@@ -374,7 +374,8 @@ window.Quarto = {
 <p>In general, you need to configure and compile Chapel for your specific GPU type and your specific cluster interconnect. For NVIDIA and AMD GPUs (the only ones currently supported), you must use LLVM as the backend compiler. With NVIDIA GPUs, you must build LLVM to use LLVM’s <a href="https://llvm.org/docs/NVPTXUsage.html">NVPTX backend</a> to support GPU programming, so usually you cannot use the system-provided LLVM module – instead you should set <code>CHPL_LLVM=bundled</code> during Chapel compilation.</p>
 <p>As of this writing, on the Alliance systems, you can use GPUs from Chapel on the following systems:</p>
 <ol type="1">
-<li>native multi-locale on Cedar, Graham, Béluga, Narval; the binaries might not be in place everywhere, so please get in touch if you want to run it on a specific system</li>
+<li>native multi-locale on Fir, Rorqual, Narval; the binaries might not be in place everywhere, so please get in touch if you want to run it on a specific system</li>
+<li>native single-locale on Nibi</li>
 <li>on an Arbutus VM in a project with access to vGPUs (our plan for today)</li>
 <li>via a single-locale GPU Chapel container on any Alliance system (clusters, cloud) with NVIDIA GPUs; let me know if you would like to access this container</li>
 </ol>
@@ -817,6 +818,37 @@ watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 </tbody>
 </table>
 <!-- A = 6673 78398 310591 328 56 -->
+<p>and on Fir’s full H100-80GB-HBM3 GPUs:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>n</th>
+<th>CPU time in sec</th>
+<th>GPU time in sec</th>
+<th>speedup factor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1_000_000</td>
+<td>0.5330</td>
+<td>0.000717</td>
+<td>743</td>
+</tr>
+<tr class="even">
+<td>10_000_000</td>
+<td>16.49</td>
+<td>0.017904</td>
+<td>921</td>
+</tr>
+<tr class="odd">
+<td>100_000_000</td>
+<td>516.8</td>
+<td>0.545646</td>
+<td>947</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="finer-control" class="level2">
 <h2 class="anchored" data-anchor-id="finer-control">Finer control</h2>
@@ -879,15 +911,14 @@ coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
 
 var lastFewDigits = if n &gt; 5 then n-4..n else 2..n;   // last 5 or fewer digits
 writeln("last few A elements: ", A_on_host[lastFewDigits]);</code></pre>
-<section id="running-multi-gpu-code-on-cedar" class="level3">
-<h3 class="anchored" data-anchor-id="running-multi-gpu-code-on-cedar">Running multi-GPU code on Cedar</h3>
-<p>When we run this code on 2 Cedar nodes with 2 GPUs per node:</p>
+<section id="running-multi-gpu-code-on-fir" class="level3">
+<h3 class="anchored" data-anchor-id="running-multi-gpu-code-on-fir">Running multi-GPU code on Fir</h3>
+<p>When we run this code on 2 Fir nodes with 2 GPUs per node:</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /home/razoumov/startMultiLocaleGPU.sh</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--nodes</span><span class="op">=</span>2 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:2 <span class="dt">\</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--nodes</span><span class="op">=</span>2 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:2 <span class="dt">\</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <!-- `--reservation=asasfu_756` -->
 <p>we get the following output:</p>
 <pre class="output"><code>loc = LOCALE0   chunk = 2..501
