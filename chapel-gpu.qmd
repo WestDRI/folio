@@ -31,8 +31,9 @@ system-provided LLVM module -- instead you should set `CHPL_LLVM=bundled` during
 
 As of this writing, on the Alliance systems, you can use GPUs from Chapel on the following systems:
 
-1. native multi-locale on Cedar, Graham, Béluga, Narval; the binaries might not be in place everywhere, so
+1. native multi-locale on Fir, Rorqual, Narval; the binaries might not be in place everywhere, so
    please get in touch if you want to run it on a specific system
+1. native single-locale on Nibi
 1. on an Arbutus VM in a project with access to vGPUs (our plan for today)
 1. via a single-locale GPU Chapel container on any Alliance system (clusters, cloud) with NVIDIA GPUs; let me
    know if you would like to access this container
@@ -616,6 +617,15 @@ are my timings on Cedar's V100 GPU:
 
 <!-- A = 6673 78398 310591 328 56 -->
 
+and on Fir's full H100-80GB-HBM3 GPUs:
+
+| n | CPU time in sec | GPU time in sec | speedup factor |
+--- | --- | --- | ---
+| 1_000_000 | 0.5330 | 0.000717 | 743 |
+| 10_000_000 | 16.49 | 0.017904 | 921 |
+| 100_000_000 | 516.8 | 0.545646 | 947 |
+
+
 
 
 
@@ -722,13 +732,12 @@ var lastFewDigits = if n > 5 then n-4..n else 2..n;   // last 5 or fewer digits
 writeln("last few A elements: ", A_on_host[lastFewDigits]);
 ```
 
-### Running multi-GPU code on Cedar
+### Running multi-GPU code on Fir
 
-When we run this code on 2 Cedar nodes with 2 GPUs per node:
+When we run this code on 2 Fir nodes with 2 GPUs per node:
 
 ```sh
 source /home/razoumov/startMultiLocaleGPU.sh
-cd ~/scratch
 salloc --time=0:15:0 --nodes=2 --cpus-per-task=1 --mem-per-cpu=3600 --gpus-per-node=v100l:2 \
 	   --account=cc-debug
 chpl --fast primesGPU-distributed.chpl
