@@ -698,7 +698,7 @@ Numerical problem
 <p>Running <code>nvidia-smi</code> on the GPU node, we see GPU utilization at 100%, and power consumption of 263W / 316W/ 318W / 267W (different stages of the same job) out of max 700W.</p>
 <section id="moving-some-of-the-calculations-to-the-host" class="level3">
 <h3 class="anchored" data-anchor-id="moving-some-of-the-calculations-to-the-host">Moving some of the calculations to the host</h3>
-<p>Divide the entire range <code>2..n</code> into 100 groups. In each group, the first 9 items are processed on the GPU, and the last item on the CPU in serial – a nice demo of Amdahl’s Law.</p>
+<p>Divide the entire range <code>2..n</code> into 100 groups. Next, divide each group into 10 items (each still being a range), of which the first 9 items are processed on the GPU, and the last one on the CPU in serial – a nice demo of Amdahl’s Law.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode c chpl code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>use Time<span class="op">;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>import RangeChunk<span class="op">.</span>chunks<span class="op">;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>var watch<span class="op">:</span> stopwatch<span class="op">;</span></span>
