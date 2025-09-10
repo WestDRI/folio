@@ -328,8 +328,9 @@ Running `nvidia-smi` on the GPU node, we see GPU utilization at 100%, and power 
 
 ### Moving some of the calculations to the host
 
-Divide the entire range `2..n` into 100 groups. In each group, the first 9 items are processed on the GPU, and
-the last item on the CPU in serial -- a nice demo of Amdahl's Law.
+Divide the entire range `2..n` into 100 groups. Next, divide each group into 10 items (each still being a
+range), of which the first 9 items are processed on the GPU, and the last one on the CPU in serial -- a nice
+demo of Amdahl's Law.
 
 ```{.c .chpl}
 use Time;
