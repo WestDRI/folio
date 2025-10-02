@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,18 +67,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-3824aa816de5134366ccfe78104cf7a8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -121,7 +122,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -324,7 +325,9 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../"></a> 
         <div class="sidebar-tools-main">
@@ -591,9 +594,9 @@ const mesh: domain(2) = {1..n, 1..n}; // a 2D domain defined in shared memory on
 var T: [mesh] real;                   // a 2D array of reals defined in shared memory on a single locale (mapped onto this domain)
 forall t in T do                      // go in parallel through all n^2 elements of T
   writeln(t, ' ', t.locale.id);</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl <span class="at">-o</span> test</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl <span class="at">-o</span> test</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch distributed.sh</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>0.0 0
 0.0 0
 0.0 0
@@ -649,14 +652,14 @@ const largerMesh: domain(2) dmapped new blockDist(boundingBox=mesh) = {0..n+1,0.
 <p><img src="../fig/domains.png" class="img-fluid"></p>
 <p>but let us not worry about this for now.</p>
 <p>Running our code on 3 locales, with 2 cores per locale, produces the following output:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -668,14 +671,14 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>If we were to run it on 4 locales, with 2 cores per locale, we might see something like this:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2</span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>2-node4-2   2-node4-2   2-node4-2   2-node4-2   3-node3-2   3-node3-2   3-node3-2   3-node3-2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>As we see, the domain <code>distributedMesh</code> (along with the string array <code>A</code> on top of it) was decomposed into 3x1 blocks stored on the three nodes, respectively. Equally important, for each element <code>a</code> of the array, the line of code filling in that element ran on the same locale where that element was stored. In other words, this code ran via the parallel <code>forall</code> loop on 3 nodes, using up to 2 cores on each node (or whatever you specified) to fill in the corresponding array elements. Once the parallel loop is finished, the last command <code>writeln(A)</code> runs on locale 0 gathering remote elements from the other locales and printing them to standard output.</p>
@@ -694,17 +697,17 @@ forall a in A with (+ reduce count) { // go in parallel through all n^2 elements
 }
 writeln("actual number of threads = ", count);</code></pre>
 <p>If our <code>n=8</code> is sufficiently large, there are probably enough array elements per node (<span class="math inline">\(8*8/3\approx 21\)</span> in our case) to fully utilize the two available cores on each node, so our output might be:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl <span class="at">-o</span> test</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl <span class="at">-o</span> test</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch distributed.sh</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>actual number of threads = 6</code></pre>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question Data.2
+<span class="screen-reader-only">Caution</span>Question Data.2
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -730,17 +733,17 @@ forall a in A2 {
   a = a.locale.id:string + '-' + here.name[0..4]:string + '-' + here.maxTaskPar:string + '  ';
 }
 writeln(A2);</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">-o</span> test test.chpl</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">-o</span> test test.chpl</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch distributed.sh</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb22"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2   2-node3-2</span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2   1-node2-2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -752,14 +755,14 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>With 4 locales, we might see something like this:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__</span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__</span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2   0-node1-2   1-node4-2__</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2   2-node2-2   3-node3-2__</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p>As the name <code>CyclicDist</code> suggests, the domain was mapped to locales in a cyclic, round-robin pattern. We can also print the range of indices for each sub-domain by adding the following to our code:</p>
@@ -839,13 +842,14 @@ Note
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

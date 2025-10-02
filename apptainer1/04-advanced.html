@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,18 +67,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-3824aa816de5134366ccfe78104cf7a8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -295,7 +296,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../"></a> 
         <div class="sidebar-tools-main">
@@ -408,17 +411,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="bind-mounting-gpu-drivers" class="level3">
 <h3 class="anchored" data-anchor-id="bind-mounting-gpu-drivers">Bind-mounting GPU drivers</h3>
 <p>Apptainer supports Nvidia GPUs through bind-mounting the GPU drivers and the base CUDA libraries. The <code>--nv</code> flag does it transparently to the user, e.g.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull tensorflow.sif docker://tensorflow/tensorflow</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull tensorflow.sif docker://tensorflow/tensorflow</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> tensorflow.sif   <span class="co"># 415M</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--gres</span><span class="op">=</span>gpu:p100:1 <span class="at">--cpus-per-task</span><span class="op">=</span>8 <span class="at">--mem</span><span class="op">=</span>40Gb <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--account</span><span class="op">=</span>...</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">--nv</span> <span class="at">-B</span> /scratch/<span class="va">${USER}</span>:/scratch tensorflow.sif python my-tf.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">--nv</span> <span class="at">-B</span> /scratch/<span class="va">${USER}</span>:/scratch tensorflow.sif python my-tf.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Key point
+<span class="screen-reader-only">Important</span>Key point
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -429,8 +432,8 @@ Key point
 <section id="pre-built-nvidia-containers" class="level3">
 <h3 class="anchored" data-anchor-id="pre-built-nvidia-containers">Pre-built NVIDIA containers</h3>
 <p><a href="https://catalog.ngc.nvidia.com">NVIDIA NGC</a> (NVIDIA’s hub for GPU-optimized software) provides prebuilt containers for a large number of HPC applications. Try searching for TensorFlow, GAMESS (quantum chemistry), GROMACS and NAMD (molecular dynamics), VMD, ParaView, NVIDIA IndeX (visualization). Their GPU-accelerated containers are quite large, so it might take a while to build them, e.g.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull tensorflow-22.06-tf1-py3.sif docker://nvcr.io/nvidia/tensorflow:22.06-tf1-py3</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> tensorflow-22.06-tf1-py3.sif   <span class="co"># 5.9G (very large!)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull tensorflow-22.06-tf1-py3.sif docker://nvcr.io/nvidia/tensorflow:22.06-tf1-py3</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> tensorflow-22.06-tf1-py3.sif   <span class="co"># 5.9G (very large!)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- Grigory's slides 23, 24 -->
 <!-- Paul's slide 19 -->
 <!-- https://developer.nvidia.com/blog/how-to-run-ngc-deep-learning-containers-with-apptainer -->
@@ -451,7 +454,7 @@ Key point
 <li>installed Chapel into an overlay image (we’ll study overlays below)</li>
 </ul>
 <p>Here is how I would use it on Cedar:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--nodes</span><span class="op">=</span>1 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:1 <span class="dt">\</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug <span class="at">--reservation</span><span class="op">=</span>asasfu_756</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span>   <span class="co"># verify that we can see the GPU on the node</span></span>
@@ -468,7 +471,7 @@ Key point
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:/usr/local/cuda-12.4/bin</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$SLURM_TMPDIR</span>/gpu</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> probeGPU.chpl <span class="at">-L</span>/usr/local/cuda-12.4/targets/x86_64-linux/lib/stubs</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ex">./probeGPU</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let me know if you are interested in playing with it on a machine with an NVIDIA GPU, and I can share both container files with you.</p>
 </section>
 </section>
@@ -481,7 +484,7 @@ Key point
 <h3 class="anchored" data-anchor-id="rely-on-mpi-inside-the-container">1. Rely on MPI inside the container</h3>
 <!-- least interesting, won't work across multiple nodes. -->
 <p>In the <strong>MPI-inside-the-container</strong> mode you would start a single Apptainer process on the host:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">-B</span> ... <span class="at">--pwd</span> ... container.sif mpirun <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> ./mpicode</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">-B</span> ... <span class="at">--pwd</span> ... container.sif mpirun <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> ./mpicode</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <code>cgroup</code> limitations from the Slurm job are passed into the container which sets the number of available CPU cores inside the container. In this setup the command <code>mpirun</code> uses all available (to this job) CPU cores.</p>
 <ul>
 <li><img src="../fig/no.png" class="img-fluid"> limited to a single node …<br>
@@ -495,7 +498,7 @@ Key point
 <h3 class="anchored" data-anchor-id="hybrid-mode">2. Hybrid mode</h3>
 <p><strong>Hybrid mode</strong> uses host’s MPI to spawn MPI processes, and MPI inside the container to compile the code and provide runtime MPI libraries. In this mode you would start a separate Apptainer process for each MPI rank:</p>
 <!-- Call the parallel launcher (`srun`) on the container itself, e.g. -->
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> apptainer exec <span class="at">-B</span> ... <span class="at">--pwd</span> ... container.sif ./mpicode</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> apptainer exec <span class="at">-B</span> ... <span class="at">--pwd</span> ... container.sif ./mpicode</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><img src="../fig/yes.png" class="img-fluid"> can span multiple nodes<br>
 </li>
@@ -525,7 +528,7 @@ Key point
 <!-- cd /project/6003910/razoumov/apptainerImages/apptainerCourse202410 -->
 <!-- scp mpi.sif user01@cass.vastcloud.org:/project/def-sponsor00/shared -->
 <!-- ``` -->
-<div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load openmpi apptainer</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/introHPC.zip codes/distributedPi.c</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> codes</span>
@@ -536,7 +539,7 @@ Key point
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="va">$CONTAINER</span> mpicc <span class="at">-O2</span> distributedPi.c <span class="at">-o</span> distributedPi</span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>0:5:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>1200</span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> ./distributedPi   <span class="co"># error: compiled for Ubuntu, cannot run on Rocky Linux</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> apptainer exec <span class="va">$CONTAINER</span> ./distributedPi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> apptainer exec <span class="va">$CONTAINER</span> ./distributedPi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- > ### <font style="color:blue">Exercise 3</font> -->
 <!-- > Compare the following two commands. What do they do differently? -->
 <!-- > ```sh -->
@@ -563,7 +566,7 @@ Key point
 <h3 class="anchored" data-anchor-id="example-wrf-container-with-self-contained-mpich">Example: WRF container with self-contained MPICH</h3>
 <p><a href="../wrf-container.html" target="_blank">These instructions</a> describe building a WRF Apptainer image following <a href="https://github.com/Hos128/WRF-CMAQ-Installation" target="_blank">this build script</a>. This container is large (8.1GB compressed SIF file, 47GB uncompressed sandbox) and includes everything but the kitchen sink, including multiple perl and Python 3 libraries and 3rd-party packages. It was created for a support ticket, but what’s important for us is that it also installs MPICH entirely inside the container, not relying on host’s OpenMPI. This means that we’ll be limited to MPI runs on one node.</p>
 <p>To run an MPI code inside this container, it is important to pass <code>-e</code> to Apptainer to avoid loading MPI from the host:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer/1.2.4</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>1:0:0 <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--account</span><span class="op">=</span>def-razoumov-ac</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINERENV_NTASKS</span><span class="op">=</span><span class="va">$SLURM_NTASKS</span></span>
@@ -602,7 +605,7 @@ Key point
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="ex">mpicc</span> distributedPi.c <span class="at">-o</span> mpi</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$NTASKS</span> ./mpi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$NTASKS</span> ./mpi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="overlays" class="level2">
@@ -642,12 +645,12 @@ Note
 </div>
 </div>
 <!-- Narval's compute nodes don't have Internet access, but we can copy a usable SIF image from elsewhere. -->
-<div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull ubuntu.sif docker://ubuntu:latest</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--size</span> 512 small.img   <span class="co"># create a 0.5GB overlay image file</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> small.img ubuntu.sif</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> small.img ubuntu.sif</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- Alternatively, we could add a writable overlay partition directly to an existing SIF image: -->
 <!-- ```sh -->
 <!-- apptainer overlay create --size 512 --create-dir /data ubuntu.sif -->
@@ -655,7 +658,7 @@ Note
 <!-- ``` -->
 <!-- but this comes with a number of limitations, so we won't use this option. -->
 <p>Inside the container any newly-created top-level directory will go into the overlay filesystem:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span>             <span class="co"># the overlay should be mounted inside the container</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span>             <span class="co"># the overlay should be mounted inside the container</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> mkdir <span class="at">-p</span> /data     <span class="co"># by default this will go into the overlay image</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> cd /data</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .           <span class="co"># using overlay; check for available space</span></span>
@@ -664,16 +667,16 @@ Note
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>             <span class="co"># generate a binary file (1-33)MB in size</span></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>             <span class="fu">dd</span> if=/dev/urandom of=test<span class="st">"</span><span class="va">$num</span><span class="st">"</span> bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>           <span class="cf">done</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .     <span class="co"># should take ~300-400 MB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .     <span class="co"># should take ~300-400 MB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you exit the container and then mount the overlay again, your files will be there:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> small.img ubuntu.sif</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> small.img ubuntu.sif</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> ls /data     <span class="co"># here is your data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> ls /data     <span class="co"># here is your data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can also create a new overlay image with a directory inside with something like:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--create-dir</span> /data <span class="at">--size</span> 512 overlay.img   <span class="co"># create an overlay with a directory</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--create-dir</span> /data <span class="at">--size</span> 512 overlay.img   <span class="co"># create an overlay with a directory</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you want to mount the overlay in the read-only mode:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> small.img:ro ubuntu.sif</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span>  touch /data/test.txt    <span class="co"># error: read-only file system</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> small.img:ro ubuntu.sif</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span>  touch /data/test.txt    <span class="co"># error: read-only file system</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -688,15 +691,15 @@ Note
 </div>
 </div>
 <p>To see the help page on overlays (these two commands are equivalent):</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> help overlay create</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--help</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> help overlay create</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--help</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="sparse-overlay-images" class="level3">
 <h3 class="anchored" data-anchor-id="sparse-overlay-images">Sparse overlay images</h3>
 <p>Sparse images use disk more efficiently when blocks allocated to them are mostly empty. As you add more data to a sparse image, it can grow (<em>but not shrink!</em>) in size. Let’s create a sparse overlay image:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--size</span> 512 <span class="at">--sparse</span> sparse.img</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--size</span> 512 <span class="at">--sparse</span> sparse.img</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> sparse.img                   <span class="co"># its apparent size is 512MB</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> <span class="at">--apparent-size</span> sparse.img   <span class="co"># same</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> sparse.img                   <span class="co"># its actual size is much smaller (17MB)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> sparse.img                   <span class="co"># its actual size is much smaller (17MB)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s mount it and fill with some data, now creating fewer files:</p>
 <pre><code>apptainer shell --overlay sparse.img ubuntu.sif
 
@@ -733,7 +736,7 @@ Note
 <li>still might not be the most efficient use of resources (non-optimized binaries)</li>
 </ul>
 <p>Here is one way you could install Conda into an overlay image:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull ubuntu.sif docker://ubuntu:latest</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--size</span> 1200 conda.img   <span class="co"># create a 1200M overlay image</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh <span class="at">-O</span> miniconda.sh</span>
@@ -747,21 +750,21 @@ Note
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">use</span> /conda/miniconda3 for the installation path</span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">no</span> to initialize Miniconda3</span>
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> find /conda/miniconda3/ <span class="at">-type</span> f <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span>   <span class="co"># 22,637 files</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .   <span class="co"># uses ~695M once finished, but more was used during installation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .   <span class="co"># uses ~695M once finished, but more was used during installation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>These 22k+ files appear as a single file to the Lustre metadata server (which is great!).</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell ubuntu.sif</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell ubuntu.sif</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> ls /conda                            <span class="co"># no such file or directory</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--overlay</span> conda.img ubuntu.sif</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> source /conda/miniconda3/bin/activate</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">base</span><span class="kw">)</span> <span class="ex">Apptainer</span><span class="op">&gt;</span> type python   <span class="co"># /conda/miniconda3/bin/python</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">base</span><span class="kw">)</span> <span class="ex">Apptainer</span><span class="op">&gt;</span> python        <span class="co"># works</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">base</span><span class="kw">)</span> <span class="ex">Apptainer</span><span class="op">&gt;</span> python        <span class="co"># works</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you want to install large Python packages, you probably want to resize the image:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">e2fsck</span> <span class="at">-f</span> conda.img         <span class="co"># check your overlay's filesystem first (required step)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">e2fsck</span> <span class="at">-f</span> conda.img         <span class="co"># check your overlay's filesystem first (required step)</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">resize2fs</span> <span class="at">-p</span> conda.img 2G   <span class="co"># resize your overlay</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> conda.img             <span class="co"># should be 2GB</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> conda.img             <span class="co"># should be 2GB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next mount the resized overlay into the container, and make sure to pass the <code>-C</code> flag to force writing config files locally (and not to the host):</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">-C</span> <span class="at">--overlay</span> conda.img ubuntu.sif   <span class="co"># /home/$USER won't be available</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">-C</span> <span class="at">--overlay</span> conda.img ubuntu.sif   <span class="co"># /home/$USER won't be available</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> cd /conda/miniconda3</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> source bin/activate</span>
@@ -769,13 +772,13 @@ Note
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">base</span><span class="kw">)</span> <span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .   <span class="co"># so far used 1.8G out of 2.0G</span></span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">base</span><span class="kw">)</span> <span class="ex">Apptainer</span><span class="op">&gt;</span> python</span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> import <span class="ex">numpy</span> as np</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> np.pi</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> np.pi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="running-container-instances" class="level2">
 <h2 class="anchored" data-anchor-id="running-container-instances">Running container instances</h2>
 <p>You can also run backgrounded processes within your container while <em>not being</em> inside your container. You can start/terminate these with <code>instance start</code>/<code>instance stop</code>. All these processes will terminate once your job ends.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> instance start ubuntu.sif test01     <span class="co"># start a container instance test01</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell instance://test01   <span class="co"># start an interactive shell in that instance</span></span>
@@ -785,7 +788,7 @@ Note
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec instance://test01 tail <span class="at">-3</span> dump.txt   <span class="co"># and again</span></span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell instance://test01                   <span class="co"># poke around the instance</span></span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> instance list</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> instance stop test01</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> instance stop test01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="best-practices-on-production-clusters" class="level2">
 <h2 class="anchored" data-anchor-id="best-practices-on-production-clusters">Best practices on production clusters</h2>
@@ -799,13 +802,13 @@ Note
 <ul>
 <li>on your own computer or on a production cluster’s login node:</li>
 </ul>
-<div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /localscratch/tmp</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell/exec/run ... <span class="at">-W</span> /localscratch/tmp <span class="op">&lt;</span>image.sif<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /localscratch/tmp</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell/exec/run ... <span class="at">-W</span> /localscratch/tmp <span class="op">&lt;</span>image.sif<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>inside a Slurm job:</li>
 </ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="va">$SLURM_TMPDIR</span>/tmp</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell/exec/run ... <span class="at">-W</span> <span class="va">$SLURM_TMPDIR</span>/tmp <span class="op">&lt;</span>image.sif<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="va">$SLURM_TMPDIR</span>/tmp</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell/exec/run ... <span class="at">-W</span> <span class="va">$SLURM_TMPDIR</span>/tmp <span class="op">&lt;</span>image.sif<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -820,13 +823,13 @@ Note
 </div>
 </div>
 <p>You can use an environment variable in lieu of <code>-W</code>:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_TMPDIR</span><span class="op">=</span><span class="va">$SLURM_TMPDIR</span>/tmp</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell/exec/run ... <span class="op">&lt;</span>image.sif<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_TMPDIR</span><span class="op">=</span><span class="va">$SLURM_TMPDIR</span>/tmp</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell/exec/run ... <span class="op">&lt;</span>image.sif<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="sample-job-submission-script" class="level3">
 <h3 class="anchored" data-anchor-id="sample-job-submission-script">Sample job submission script</h3>
 <p>Of all clusters in the Alliance only Cedar has Internet access from compute nodes – this might limit your options of where to build a container. You can move your SIF file to other clusters after having built it.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=...</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=...</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=def-...</span></span>
@@ -836,7 +839,7 @@ Note
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_CACHEDIR</span><span class="op">=</span><span class="va">${PWD}</span>/cache   <span class="co"># replaces default `$HOME/.apptainer/cache`</span></span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>build <span class="ex">the</span> container in this directory<span class="op">&gt;</span>  <span class="co"># run on Cedar if docker:// access is needed</span></span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>run <span class="ex">your</span> workflow inside the container<span class="op">&gt;</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>copy <span class="ex">out</span> your results<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>copy <span class="ex">out</span> your results<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="placeholder-running-multi-locale-chapel-from-a-container" class="level2">
@@ -924,13 +927,14 @@ Note
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

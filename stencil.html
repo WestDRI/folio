@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,18 +67,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3824aa816de5134366ccfe78104cf7a8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -121,7 +122,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -391,11 +392,11 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="parallelstencil.jl-basics">ParallelStencil.jl basics</h2>
 <!-- const USE_GPU = true -->
 <p>I will start the demo on my laptop’s GPU:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="pp">@init_parallel_stencil</span>(Metal, <span class="dt">Float32</span>, <span class="fl">3</span>);   <span class="co"># creates Data module with all the correct types</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>Data.<span class="dt">Number</span>   <span class="co"># Float32</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Data.<span class="dt">Array</span>    <span class="co"># Metal.MtlArray{Float32}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Data.<span class="dt">Array</span>    <span class="co"># Metal.MtlArray{Float32}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The call to <code>@init_parallel_stencil</code> creates <code>Data</code> module for the selected parallel method, precision and dimensionality, with Data.Number, Data.Array, Data.CellArray inside.</p>
 <ul>
 <li>1st argument specifies your parallel package: Threads, Polyester, CUDA, AMDGPU, or Metal</li>
@@ -407,33 +408,33 @@ window.Quarto = {
 <li>3rd argument specifies dimensionality for the stencil computations: 1, 2, or 3</li>
 </ul>
 <p>You can initialize Data.Array objects via <span class="citation" data-cites="zeros">@zeros</span>, <span class="citation" data-cites="ones">@ones</span>, <span class="citation" data-cites="rand">@rand</span>, <span class="citation" data-cites="fill">@fill</span>, e.g.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">5</span>;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">5</span>;</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> <span class="pp">@zeros</span>(n, n, n);</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(A)   <span class="co"># Metal.MtlArray{Float32, 3, Metal.PrivateStorage}, or Array{Float32, 3}, or ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(A)   <span class="co"># Metal.MtlArray{Float32, 3, Metal.PrivateStorage}, or Array{Float32, 3}, or ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>or by converting from Julia’s usual arrays:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [i<span class="op">+</span>j for i<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, j<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, k<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n]   <span class="co"># array comprehension</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> [i<span class="op">+</span>j for i<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, j<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, k<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n]   <span class="co"># array comprehension</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(B)   <span class="co"># usual Julia's 2D Matrix{Int64} = Array{Int64, 2}</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>(B)     <span class="co"># (5, 5, 5)</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> Data.<span class="fu">Array</span>(B)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(A)   <span class="co">#  MtlMatrix{Float32, Metal.PrivateStorage}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(A)   <span class="co">#  MtlMatrix{Float32, Metal.PrivateStorage}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can also take an initialized Data.Array and assign to it element-wise from another Data.Array:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">5</span>;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">5</span>;</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> <span class="pp">@zeros</span>(n, n, n);</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>A <span class="op">.=</span> <span class="fl">0.1f0</span> <span class="op">.+</span> Data.<span class="fu">Array</span>([i<span class="op">+</span>j<span class="op">+</span>k for i<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n, j<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n, k<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n]);</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">size</span>(A)          <span class="co"># (5, 5, 5)</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>A[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]   <span class="co"># you can use the usual subsetting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>A[<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>]   <span class="co"># you can use the usual subsetting</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="parallel-stencil-processing" class="level3">
 <h3 class="anchored" data-anchor-id="parallel-stencil-processing">Parallel stencil processing</h3>
 <p>Let’s switch to 2D (need to restart Julia!) and try some parallel stencil calculations.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="pp">@init_parallel_stencil</span>(Metal, <span class="dt">Float32</span>, <span class="fl">2</span>);   <span class="co"># create Data module with all the correct types</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil.FiniteDifferences2D</span>    <span class="co"># also 1D and 3D available</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>?<span class="pp">@inn</span>   <span class="co"># select the inner elements of A</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>?<span class="pp">@inn</span>   <span class="co"># select the inner elements of A</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You cannot just say <code>@inn(A)</code> in the main scope – instead you need to use it from a parallel function (that would launch a GPU kernel if running on a GPU):</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">inner!</span>(A, B)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">inner!</span>(A, B)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@inn</span>(B) <span class="op">=</span> <span class="pp">@inn</span>(A);</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol type="1">
 <li>our function will launch a GPU kernel (if running on a GPU)</li>
 <li>the last statement must be <code>return</code> or <code>return nothing</code> or <code>nothing</code></li>
@@ -441,11 +442,11 @@ window.Quarto = {
 <li><span class="citation" data-cites="parallel_indices">@parallel_indices</span> supports any kind of statements in the kernels (less efficient)</li>
 </ol>
 <p>This is how you would use it:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">4</span>;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">4</span>;</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> Data.<span class="fu">Array</span>([i<span class="op">+</span>j for i<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n, j<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n])</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> <span class="pp">@zeros</span>(n, n);</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="fu">inner!</span>(A, B)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>B</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>B</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>4×4 Metal.MtlMatrix{Float32, Metal.PrivateStorage}:
  0.0  0.0  0.0  0.0
  0.0  4.0  5.0  0.0
@@ -465,14 +466,14 @@ Note
 <p>This last example works on Metal but breaks on Threads, for the reasons that will become clear in a minute.</p>
 </div>
 </div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">inner2all!</span>(A, B)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">inner2all!</span>(A, B)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@all</span>(B) <span class="op">=</span> <span class="pp">@inn</span>(A);</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> <span class="pp">@zeros</span>(n, n);</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="fu">inner2all!</span>(A, B)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>B</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>B</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>4×4 Metal.MtlMatrix{Float32, Metal.PrivateStorage}:
  4.0  5.0  6.0  0.0
  5.0  6.0  7.0  0.0
@@ -482,18 +483,18 @@ Note
 <ul>
 <li><code>Array()</code> copy a GPU Data.Array to a CPU</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">1</span>,<span class="fl">3</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">2</span>,<span class="fl">4</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">1</span>,<span class="fl">3</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">2</span>,<span class="fl">4</span>]</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">2</span>,<span class="fl">3</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">3</span>,<span class="fl">4</span>]</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">3</span>,<span class="fl">3</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">4</span>,<span class="fl">4</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">3</span>,<span class="fl">3</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">4</span>,<span class="fl">4</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and then wraps around into the x-dimension with a shift in y-dimension:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">4</span>,<span class="fl">1</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">1</span>,<span class="fl">3</span>]   <span class="co"># true</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">4</span>,<span class="fl">2</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">1</span>,<span class="fl">4</span>]   <span class="co"># true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">4</span>,<span class="fl">1</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">1</span>,<span class="fl">3</span>]   <span class="co"># true</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">4</span>,<span class="fl">2</span>] <span class="op">==</span> <span class="fu">Array</span>(A)[<span class="fl">1</span>,<span class="fl">4</span>]   <span class="co"># true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To me, this is <strong>counter-intuitive</strong> – I would prefer for it to copy zeros into these last 5 elements – but I guess it makes sense from the performance standpoint, especially on a GPU (where you want to keep things simple), as it just keep incrementing the memory indices. This means that you as a programmer have to be careful when assigning a <em>smaller array</em> to a <em>larger array</em> with these parallel constructs on a GPU, or even better never do this!</p>
 </section>
 <section id="first-order-derivatives" class="level3">
 <h3 class="anchored" data-anchor-id="first-order-derivatives">First-order derivatives</h3>
 <p>Let’s compute a 1st-order derivative in x-direction:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>?<span class="pp">@d_xa</span>   <span class="co"># compute differences between adjacent elements of A along the x-dimension</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>?<span class="pp">@d_xa</span>   <span class="co"># compute differences between adjacent elements of A along the x-dimension</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">ddx!</span>(A, B, h)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@inn</span>(B) <span class="op">=</span> <span class="pp">@d_xa</span>(A) <span class="op">/</span> h;</span>
@@ -506,7 +507,7 @@ Note
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> <span class="pp">@zeros</span>(n, n);</span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="fu">ddx!</span>(A, B, h);</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>B</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>B</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>As expected, this code results only in the inner elements of B getting assigned the derivatives:</p>
 <pre class="output"><code>4×4 Metal.MtlMatrix{Float32, Metal.PrivateStorage}:
  0.0  0.0        0.0       0.0
@@ -514,13 +515,13 @@ Note
  0.0  1.13448    0.613478  0.0
  0.0  0.0        0.0       0.0</code></pre>
 <p>Upon closer examination, the first non-zero derivative element turns out to be:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">2</span>,<span class="fl">2</span>] <span class="op">==</span> (<span class="fu">Array</span>(A)[<span class="fl">2</span>,<span class="fl">1</span>]<span class="fu">-Array</span>(A)[<span class="fl">1</span>,<span class="fl">1</span>]) <span class="op">/</span> h   <span class="co"># true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">2</span>,<span class="fl">2</span>] <span class="op">==</span> (<span class="fu">Array</span>(A)[<span class="fl">2</span>,<span class="fl">1</span>]<span class="fu">-Array</span>(A)[<span class="fl">1</span>,<span class="fl">1</span>]) <span class="op">/</span> h   <span class="co"># true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>i.e.&nbsp;we get a weird derivative <code>B[i,j] == (A[i,j-1] - A[i-1,j-1]) / h</code>.</p>
 <p>To get the backward Euler derivative <code>B[i,j] == (A[i,j] - A[i-1,j]) / h</code>, you can use:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>@d_xi(A): Compute differences between adjacent elements of A along the</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>@d_xi(A): Compute differences between adjacent elements of A along the</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>dimension x and select the inner elements of A in the remaining dimension.</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>Corresponds to @inn_y(@d_xa(A)).</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb17"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">ddx!</span>(A, B, h)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>Corresponds to @inn_y(@d_xa(A)).</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">ddx!</span>(A, B, h)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@inn</span>(B) <span class="op">=</span> <span class="pp">@d_xi</span>(A) <span class="op">/</span> h;</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
@@ -529,9 +530,9 @@ Note
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="fu">ddx!</span>(A, B, h);</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>B</span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">2</span>,<span class="fl">2</span>] <span class="op">==</span> (<span class="fu">Array</span>(A)[<span class="fl">2</span>,<span class="fl">2</span>]<span class="fu">-Array</span>(A)[<span class="fl">1</span>,<span class="fl">2</span>]) <span class="op">/</span> h   <span class="co"># true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">Array</span>(B)[<span class="fl">2</span>,<span class="fl">2</span>] <span class="op">==</span> (<span class="fu">Array</span>(A)[<span class="fl">2</span>,<span class="fl">2</span>]<span class="fu">-Array</span>(A)[<span class="fl">1</span>,<span class="fl">2</span>]) <span class="op">/</span> h   <span class="co"># true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To get the forward Euler derivative <code>B[i,j] == (A[i+1,j] - A[i,j]) / h</code>, on a GPU (breaks on Threads) you could use:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">ddx!</span>(A, B, h)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">ddx!</span>(A, B, h)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@all</span>(B) <span class="op">=</span> <span class="pp">@d_xa</span>(A) <span class="op">/</span> h;</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
@@ -541,7 +542,7 @@ Note
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>B</span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> <span class="fu">Array</span>(A)</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>[<span class="fu">Array</span>(B)[i,j] <span class="op">==</span> (C[i<span class="op">+</span><span class="fl">1</span>,j] <span class="op">-</span> C[i,j]) <span class="op">/</span> h for i<span class="op">=</span><span class="fl">2</span><span class="op">:</span>n<span class="op">-</span><span class="fl">1</span>, j<span class="op">=</span><span class="fl">2</span><span class="op">:</span>n<span class="op">-</span><span class="fl">1</span>]   <span class="co"># array of 1==true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>[<span class="fu">Array</span>(B)[i,j] <span class="op">==</span> (C[i<span class="op">+</span><span class="fl">1</span>,j] <span class="op">-</span> C[i,j]) <span class="op">/</span> h for i<span class="op">=</span><span class="fl">2</span><span class="op">:</span>n<span class="op">-</span><span class="fl">1</span>, j<span class="op">=</span><span class="fl">2</span><span class="op">:</span>n<span class="op">-</span><span class="fl">1</span>]   <span class="co"># array of 1==true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>along with setting the proper boundary conditions, as assigning to <code>@all</code> will give you weird “wrap-around” derivatives along the edges as we saw earlier.</p>
 <!-- ```output -->
 <!-- in Metal: ----- -->
@@ -600,7 +601,7 @@ Note
 <section id="second-order-derivatives" class="level3">
 <h3 class="anchored" data-anchor-id="second-order-derivatives">Second-order derivatives</h3>
 <p>Let’s compute the Laplacian of a Gaussian function centred on (0.5, 0.5):</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">laplacian!</span>(A, B, h)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@parallel</span> <span class="kw">function</span> <span class="fu">laplacian!</span>(A, B, h)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="pp">@inn</span>(B) <span class="op">=</span> (<span class="pp">@d2_xi</span>(A) <span class="op">+</span> <span class="pp">@d2_yi</span>(A))<span class="op">/</span>h<span class="op">^</span><span class="fl">2</span>;</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
@@ -619,12 +620,12 @@ Note
 <span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">println</span>(i, <span class="st">" "</span>, j, <span class="st">" "</span>,</span>
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isapprox</span>(<span class="fu">Array</span>(B)[i,j], (C[i<span class="op">-</span><span class="fl">1</span>,j]<span class="op">-</span><span class="fl">2</span><span class="op">*</span>C[i,j]<span class="op">+</span>C[i<span class="op">+</span><span class="fl">1</span>,j])<span class="op">/</span>h<span class="op">^</span><span class="fl">2</span> <span class="op">+</span> (C[i,j<span class="op">-</span><span class="fl">1</span>]<span class="op">-</span><span class="fl">2</span><span class="op">*</span>C[i,j]<span class="op">+</span>C[i,j<span class="op">+</span><span class="fl">1</span>])<span class="op">/</span>h<span class="op">^</span><span class="fl">2</span>))</span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="plotting-a-2d-array" class="level3">
 <h3 class="anchored" data-anchor-id="plotting-a-2d-array">Plotting a 2D array</h3>
 <p>Makie package can plot a 2D array:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">100</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="fl">100</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> <span class="fl">1.0f0</span><span class="op">/</span>(n<span class="op">-</span><span class="fl">1</span>);   <span class="co"># Float32</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> Data.<span class="fu">Array</span>([<span class="fu">exp</span>(<span class="fu">-2*</span>(((i<span class="op">-</span><span class="fl">0.5</span>)<span class="op">/</span>n<span class="op">-</span><span class="fl">0.5</span>)<span class="op">^</span><span class="fl">2</span><span class="fu">+</span>((j<span class="op">-</span><span class="fl">0.5</span>)<span class="op">/</span>n<span class="op">-</span><span class="fl">0.5</span>)<span class="op">^</span><span class="fl">2</span>)) for i<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n, j<span class="op">=</span><span class="fl">1</span><span class="op">:</span>n]);</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> <span class="pp">@zeros</span>(n, n);</span>
@@ -637,7 +638,7 @@ Note
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> <span class="fu">Figure</span>(resolution<span class="op">=</span>(<span class="fl">3</span><span class="fu">*size</span>(cpuArray)[<span class="fl">1</span>]<span class="op">+</span><span class="fl">100</span>, <span class="fl">3</span><span class="fu">*size</span>(cpuArray)[<span class="fl">2</span>]<span class="op">+</span><span class="fl">100</span>))</span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> <span class="fu">Axis</span>(fig[<span class="fl">1</span>, <span class="fl">1</span>], xlabel <span class="op">=</span> <span class="st">"x"</span>, ylabel <span class="op">=</span> <span class="st">"y"</span>, title <span class="op">=</span> <span class="st">"Laplacian"</span>)</span>
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap!</span>(ax, cpuArray, colormap <span class="op">=</span> <span class="op">:</span>viridis)</span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(<span class="st">"laplacian.png"</span>, fig)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(<span class="st">"laplacian.png"</span>, fig)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="d-and-3d-heat-diffusion-solver" class="level2">
@@ -650,7 +651,7 @@ Note
 <li>zero boundary at the left/right sides</li>
 <li>non-zero boundary at the top and bottom</li>
 </ul>
-<div class="sourceCode" id="cb21"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">true</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">true</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ANIMATION <span class="op">=</span> <span class="cn">true</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ParallelStencil.FiniteDifferences2D</span></span>
@@ -711,22 +712,22 @@ Note
 <span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
 <span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
 <span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a><span class="fu">diffusion2D</span>();</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a><span class="fu">diffusion2D</span>();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>First, let’s run this problem with the following parameters:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">true</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">true</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ANIMATION <span class="op">=</span> <span class="cn">true</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>n, nt, nout <span class="op">=</span> <span class="fl">500</span>, <span class="fl">50_000</span>, <span class="fl">100</span>;   <span class="co"># resolution, max time steps, plotting frequency</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver2D.jl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>n, nt, nout <span class="op">=</span> <span class="fl">500</span>, <span class="fl">50_000</span>, <span class="fl">100</span>;   <span class="co"># resolution, max time steps, plotting frequency</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver2D.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The animation <code>gaussian.mp4</code> with 501 frames.</p>
 <section id="d-benchmarking" class="level3">
 <h3 class="anchored" data-anchor-id="d-benchmarking">2D benchmarking</h3>
 <p>This 2D problem runs very fast. Let’s increase the resolution to <span class="math inline">\(8192^2\)</span> and run on CPU without animation:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">false</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">false</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> ANIMATION <span class="op">=</span> <span class="cn">false</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>n, nt, nout <span class="op">=</span> <span class="fl">8192</span>, <span class="fl">100</span>, <span class="fl">10</span>;   <span class="co"># resolution, max time steps, plotting frequency</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver2D.jl</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>n, nt, nout <span class="op">=</span> <span class="fl">8192</span>, <span class="fl">100</span>, <span class="fl">10</span>;   <span class="co"># resolution, max time steps, plotting frequency</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver2D.jl</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">-t</span> 2 heatDiffusionSolver2D.jl</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>17.51 seconds on 1 CPU core</li>
 <li>9.08 seconds on 2 CPU cores</li>
@@ -740,7 +741,7 @@ Note
 <!-- heatDiffusionSolver2D.chpl -->
 <!-- ``` -->
 <p>Moving to the M1 GPU gives a small speed-up:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">true</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> USE_GPU <span class="op">=</span> <span class="cn">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>3.32 seconds on M1’s GPU</li>
 </ul>
@@ -749,7 +750,7 @@ Note
 <section id="d-benchmarking-1" class="level3">
 <h3 class="anchored" data-anchor-id="d-benchmarking-1">3D benchmarking</h3>
 <p>Copy the 2D code <code>heatDiffusionSolver2D</code>.jl to <code>heatDiffusionSolver3D.jl</code> and make the following changes:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>&lt; using ParallelStencil.FiniteDifferences2D</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>&lt; using ParallelStencil.FiniteDifferences2D</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>&gt; using ParallelStencil.FiniteDifferences3D</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -817,7 +818,7 @@ Note
 <span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a>&lt;             ANIMATION &amp;&amp; plotArray(Array(T), Int32(it/nout));</span>
 <span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>&gt;             ANIMATION &amp;&amp; plotArray(Array(T[:,:,Int32(n/2)]), Int32(it/nout));</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>&gt;             ANIMATION &amp;&amp; plotArray(Array(T[:,:,Int32(n/2)]), Int32(it/nout));</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On my laptop, at <span class="math inline">\(512^3\)</span> I get the following runtimes:</p>
 <ul>
 <li>46.51 seconds on 1 CPU core</li>
@@ -837,7 +838,7 @@ Note
 <h3 class="anchored" data-anchor-id="d-benchmarking-on-a-cluster">3D benchmarking on a cluster</h3>
 <p>Setting up Julia with CUDA may require some work – you can find more information at https://docs.alliancecan.ca/wiki/Julia#Using_GPUs_with_Julia</p>
 <p>Here is what worked for me on the training cluster on Arbutus:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|Metal|CUDA|'</span> heatDiffusionSolver3D.jl</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|Metal|CUDA|'</span> heatDiffusionSolver3D.jl</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load gcc/13.3</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load cudacore/.12.2.2</span>
@@ -862,23 +863,23 @@ Note
 <span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span></span>
 <span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a><span class="ex">using</span> CUDA</span>
-<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a><span class="fu">CUDA.versioninfo()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a><span class="fu">CUDA.versioninfo()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The last command will report the device (GRID V100D-8C) and the software versions for NVIDIA drivers, CUDA libraries, Julia, and LLVM. When running CUDA codes, if you will get warnings:</p>
 <pre class="output"><code>Warning: You are using a non-official build of Julia.
 This may cause issues with CUDA.jl.</code></pre>
 <p>but things seem to run Ok.</p>
 <p>Go back on the login node, copy <code>heatDiffusionSolver3D.jl</code> to the cluster and set:</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>USE_GPU <span class="op">=</span> <span class="cn">false</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>USE_GPU <span class="op">=</span> <span class="cn">false</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Run the code with Base.Threads:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--cpus-per-task</span><span class="op">=</span>4</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--cpus-per-task</span><span class="op">=</span>4</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver3D.jl</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">-t</span> 2 heatDiffusionSolver3D.jl</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">-t</span> 4 heatDiffusionSolver3D.jl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">-t</span> 4 heatDiffusionSolver3D.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and then with CUDA:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|USE_GPU = false|USE_GPU = true|'</span> heatDiffusionSolver3D.jl</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|USE_GPU = false|USE_GPU = true|'</span> heatDiffusionSolver3D.jl</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>1</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span>   <span class="co"># running on V100D-8C</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver3D.jl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> heatDiffusionSolver3D.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>At <span class="math inline">\(512^3\)</span> I get the following runtimes:</p>
 <ul>
 <li>140.9 seconds on 1 CPU core</li>
@@ -899,7 +900,7 @@ This may cause issues with CUDA.jl.</code></pre>
 \]</span></p>
 <p>Let’s take a look at the code in <code>acoustic3D.jl</code>!</p>
 <p>To run it:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> acoustic3D.jl   <span class="co"># 16m4s seconds on M1's GPU</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> acoustic3D.jl   <span class="co"># 16m4s seconds on M1's GPU</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The movie <code>advection.mp4</code> shows the numerical solution.</p>
 </section>
 <section id="distributed-parallelization-multi-node" class="level2">
@@ -927,7 +928,7 @@ This may cause issues with CUDA.jl.</code></pre>
 <div style="text-align: center;">
 <p><img src="./fig/arrays.png" class="img-fluid" style="width:80.0%"></p>
 </div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ImplicitGlobalGrid</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">ImplicitGlobalGrid</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">MPI</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Printf</span></span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -972,12 +973,12 @@ This may cause issues with CUDA.jl.</code></pre>
 <span id="cb34-43"><a href="#cb34-43" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-44"><a href="#cb34-44" aria-hidden="true" tabindex="-1"></a><span class="fu">test</span>()</span>
 <span id="cb34-45"><a href="#cb34-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>MPI.<span class="fu">Finalize</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb34-46"><a href="#cb34-46" aria-hidden="true" tabindex="-1"></a>MPI.<span class="fu">Finalize</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Running this code on 4 cores:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/.julia/packages/MPI/TKXAj/bin</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/.julia/packages/MPI/TKXAj/bin</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="bu">unalias</span> julia</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:/Applications/Julia-1.11.app/Contents/Resources/julia/bin</span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mpiexecjl</span> <span class="at">-n</span> 4 julia globalGridDemo.jl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mpiexecjl</span> <span class="at">-n</span> 4 julia globalGridDemo.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>will produce the following output:</p>
 <pre class="output"><code>me=1  nprocs=4  dims=[2, 2, 1]  coords=[0, 1, 0]
 me=0  nprocs=4  dims=[2, 2, 1]  coords=[0, 0, 0]
@@ -1052,7 +1053,7 @@ me=0 &gt;&gt; from 0.000000 0.000000 to 0.571429 0.571429
 <li>remove animation to keep the code compact (some extra work needed to animate multiple local arrays)</li>
 <li>we are solving the equation on the same physical domain (unit square); assuming fixed local array size, the global grid resolution depends on the number of ranks stacked in each dimension, so now we have variables grid steps <code>dx</code> and <code>dy</code></li>
 </ol>
-<div class="sourceCode" id="cb37"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>&lt;     h = 1f0 / (n-1);   # grid step</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>&lt;     h = 1f0 / (n-1);   # grid step</span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>---</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>&gt;     dx = 1/(nx_g()-1);   # grid step in x</span>
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>&gt;     dy = 1/(ny_g()-1);   # grid step in y</span>
@@ -1067,11 +1068,11 @@ me=0 &gt;&gt; from 0.000000 0.000000 to 0.571429 0.571429
 <span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>&lt;         @parallel computeNewTemperature!(Tnew, T, dt, h);</span>
 <span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>&gt;         @parallel computeNewTemperature!(Tnew, T, dt, dx, dy);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>&gt;         @parallel computeNewTemperature!(Tnew, T, dt, dx, dy);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="4" type="1">
 <li>few other small changes:</li>
 </ol>
-<div class="sourceCode" id="cb38"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>&gt; using ImplicitGlobalGrid</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>&gt; using ImplicitGlobalGrid</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>&gt; import MPI</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1112,12 +1113,12 @@ me=0 &gt;&gt; from 0.000000 0.000000 to 0.571429 0.571429
 <span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a>&gt;             me == 0 &amp;&amp; @printf("%d steps total = %f\n", it, total)</span>
 <span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>&gt;     finalize_global_grid();</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>&gt;     finalize_global_grid();</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To run this code with 4 MPI ranks:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/.julia/packages/MPI/TKXAj/bin</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:<span class="va">$HOME</span>/.julia/packages/MPI/TKXAj/bin</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="bu">unalias</span> julia</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span><span class="va">$PATH</span>:/Applications/Julia-1.11.app/Contents/Resources/julia/bin</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mpiexecjl</span> <span class="at">-n</span> 4 julia distributed2D.jl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="ex">mpiexecjl</span> <span class="at">-n</span> 4 julia distributed2D.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To run this code on the cluster, you need to configure Julia’s MPI to use system’s MPI libraries as described in https://docs.alliancecan.ca/wiki/Julia#Running_Julia_with_MPI.</p>
 </section>
 <section id="further-parallelization-with-multiple-threads-on-each-mpi-rank" class="level3">
@@ -1128,8 +1129,8 @@ me=0 &gt;&gt; from 0.000000 0.000000 to 0.571429 0.571429
 <h3 class="anchored" data-anchor-id="further-parallelization-with-gpus-on-each-mpi-rank">Further parallelization with GPUs on each MPI rank</h3>
 <p><code>update_halo!(T)</code> will fail, as it will try to update the inner ghost zones of objects of type Data.Array that it knows nothing about.</p>
 <p>If you have a CUDA-aware MPI (for Nvidia GPUs), then you can turn it on with the following:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">JULIA_CUDA_MEMORY_POOL</span><span class="op">=</span>none   <span class="co"># disable the memory pool</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">IGG_CUDAAWARE_MPI</span><span class="op">=</span>1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">JULIA_CUDA_MEMORY_POOL</span><span class="op">=</span>none   <span class="co"># disable the memory pool</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">IGG_CUDAAWARE_MPI</span><span class="op">=</span>1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This <em>should</em> make ImplicitGlobalGrid.jl also aware of GPU arrays. I have not tested it myself (most Alliance’s production clusters have been under maintenance for the past couple of weeks) – let me know if this something you would like to explore.</p>
 <!-- more on this topic https://discourse.julialang.org/t/parallelstencil-implicitglobalgrid-with-multiple-gpus/96585 -->
 </section>
@@ -1212,13 +1213,14 @@ me=0 &gt;&gt; from 0.000000 0.000000 to 0.571429 0.571429
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

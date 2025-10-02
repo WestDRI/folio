@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,18 +67,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3824aa816de5134366ccfe78104cf7a8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -121,7 +122,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -396,26 +397,26 @@ window.Quarto = {
 <p>Here we’ll focus on Ray, a unified framework for scaling AI and general Python workflows. Since this is not a machine learning workshop, we will not touch Ray’s AI capabilities, but will focus on its core distributed runtime and data libraries. We will learn several different approaches to parallelizing purely numerical (and therefore CPU-bound) workflows, both with and without reduction. We will also look at I/O-bound workflows.</p>
 <section id="initializing-ray" class="level2">
 <h2 class="anchored" data-anchor-id="initializing-ray">Initializing Ray</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ray.init()   <span class="co"># start a Ray cluster  and connect to it</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>             <span class="co"># no longer necessary, will run by default when you first use it</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>             <span class="co"># no longer necessary, will run by default when you first use it</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>However, <code>ray.init()</code> is very useful for passing options at initialization. For example, Ray is quite verbose when you do things in it. To turn off this logging output to the terminal, you can do</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ray.init(configure_logging<span class="op">=</span><span class="va">False</span>)   <span class="co"># hide Ray's copious logging output</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ray.init(configure_logging<span class="op">=</span><span class="va">False</span>)   <span class="co"># hide Ray's copious logging output</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can run <code>ray.init()</code> only once. If you want to re-run it, first you need to run <code>ray.shutdown()</code>. Alternatively, you can pass the argument <code>ignore_reinit_error=True</code> to the call.</p>
 <p>You can specify the number of cores for Ray to use, and you can combine multiple options, e.g.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>By default Ray will use all available CPU cores, e.g.&nbsp;on my laptop <code>ray.init()</code> will start 8 ray::IDLE processes (workers), and you can monitor these in a separate shell with <code>htop --filter "ray::IDLE"</code> command (you may want to hide threads – typically thrown in green – with Shift+H).</p>
 <blockquote class="blockquote">
 <h3 id="discussion" class="anchored">Discussion</h3>
 <p>How many “ray::IDLE” processes do you see, and why? Recall that you can use <code>srun --jobid=&lt;jobID&gt; --pty bash</code> to open an interactive shell process inside your currently running job, and run <code>htop --filter "ray::IDLE"</code> there.</p>
 </blockquote>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question 11
+<span class="screen-reader-only">Caution</span>Question 11
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -432,7 +433,7 @@ Question 11
 <section id="ray-tasks" class="level2">
 <h2 class="anchored" data-anchor-id="ray-tasks">Ray tasks</h2>
 <p>In Ray you can execute any Python function asynchronously on separate workers. Such functions are called <strong>Ray remote functions</strong>, and their asynchronous invocations are called <strong>Ray tasks</strong>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ray.init(configure_logging<span class="op">=</span><span class="va">False</span>)   <span class="co"># optional</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>             <span class="co"># declare that we want to run this function remotely</span></span>
@@ -441,20 +442,20 @@ Question 11
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> square.remote(<span class="dv">10</span>)   <span class="co"># launch/schedule a remote calculation (non-blocking call)</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(r)                 <span class="co"># ray._raylet.ObjectRef (object reference)</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ray.get(r)              <span class="co"># retrieve the result (=100) (blocking call)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>ray.get(r)              <span class="co"># retrieve the result (=100) (blocking call)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The calculation may happen any time between <code>&lt;function&gt;.remote()</code> and <code>ray.get()</code> calls, i.e.&nbsp;it does not necessarily start when you launch it. This is called <strong>lazy execution</strong>: the operation is often executed when you try to access the result.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> square.remote(<span class="dv">10</span>)   <span class="co"># launch a remote calculation</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> square.remote(<span class="dv">10</span>)   <span class="co"># launch a remote calculation</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ray.cancel(a)           <span class="co"># cancel it</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ray.get(a)              <span class="co"># either error or 100, depending on whether the calculation</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        <span class="co"># has finished before cancellation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                        <span class="co"># has finished before cancellation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can launch several Ray tasks at once, to be executed in parallel in the background, and you can retrieve their results either individually or through the list:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [square.remote(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]   <span class="co"># launch four parallel tasks (non-blocking call)</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [square.remote(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]   <span class="co"># launch four parallel tasks (non-blocking call)</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([ray.get(r[i]) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)])   <span class="co"># retrieve the results (multiple blocking calls)</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r))          <span class="co"># more compact way to do the same (single blocking call)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r))          <span class="co"># more compact way to do the same (single blocking call)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="task-output" class="level3">
 <h3 class="anchored" data-anchor-id="task-output">Task output</h3>
 <p>Consider a code in which each Ray task sleeps for 10 seconds, prints a message and returns its task ID:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> sleep, time</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -462,19 +463,19 @@ Question 11
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nap():</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    sleep(<span class="dv">10</span>)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"almost done"</span>)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ray.get_runtime_context().get_task_id()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ray.get_runtime_context().get_task_id()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s run it with timing on:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [nap.remote() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>I get 10.013 seconds since I have enough cores to run all of them in parallel. However, most likely, I see printout (“almost done”) from only one process and a message “repeated 3x across cluster”. To enable print messages from all tasks, you need set the bash shell environment variable <code>export RAY_DEDUP_LOGS=0</code>.</p>
 <p>Notice that Ray task IDs are not integers but 48-character hexadecimal numbers.</p>
 </section>
 <section id="distributed-progress-bars" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-progress-bars">Distributed progress bars</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ray.experimental.tqdm_ray <span class="im">import</span> tqdm</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ray.experimental.tqdm_ray <span class="im">import</span> tqdm</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> busy(name):</span>
@@ -482,15 +483,15 @@ Question 11
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">100</span>), desc<span class="op">=</span>name):</span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        sleep(<span class="fl">0.1</span>)</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>[busy.remote(<span class="st">"task 1"</span>), busy.remote(<span class="st">"task 2"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>[busy.remote(<span class="st">"task 1"</span>), busy.remote(<span class="st">"task 2"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A side effect of <code>tqdm()</code> is that these tasks start running immediately.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question 11b
+<span class="screen-reader-only">Caution</span>Question 11b
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -528,7 +529,7 @@ Note
 <section id="parallelizing-the-slow-series-with-ray-tasks" class="level3">
 <h3 class="anchored" data-anchor-id="parallelizing-the-slow-series-with-ray-tasks">Parallelizing the slow series with Ray tasks</h3>
 <p>Let’s perform our slow series calculation as a Ray task. This is our original serial implementation, now with a Ray remote function running on one of the workers:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -545,15 +546,15 @@ Note
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> ray.get(r)</span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We should get the same timing as before (~6-7 seconds). You can call <code>ray.get()</code> on the previously computed result again without having to redo the calculation:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> ray.get(r)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))   <span class="co"># 0.001 seconds</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tmp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tmp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s speed up this calculation with parallel Ray tasks! Instead of doing the full sum over <code>range(1,n+1)</code>, let’s calculate a partial sum on each task:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> psutil, ray</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -563,17 +564,17 @@ Note
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(interval[<span class="dv">0</span>],interval[<span class="dv">1</span>]<span class="op">+</span><span class="dv">1</span>):</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="kw">not</span> <span class="st">"9"</span> <span class="kw">in</span> <span class="bu">str</span>(i):</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            total <span class="op">+=</span> <span class="fl">1.0</span> <span class="op">/</span> i</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This would be a serial calculation:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100_000_000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100_000_000</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> slow.remote((<span class="dv">1</span>, n))   <span class="co"># takes in one argument</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> ray.get(r)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To launch it in parallel, we need to subdivide the interval:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ncores <span class="op">=</span> psutil.cpu_count(logical<span class="op">=</span><span class="va">False</span>)   <span class="co"># good option on a standalone computer</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ncores <span class="op">=</span> psutil.cpu_count(logical<span class="op">=</span><span class="va">False</span>)   <span class="co"># good option on a standalone computer</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ncores <span class="op">=</span> <span class="dv">4</span>                                 <span class="co"># on a cluster</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> n<span class="op">//</span>ncores   <span class="co"># size of each batch</span></span>
@@ -585,15 +586,15 @@ Note
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="bu">sum</span>(ray.get(r))   <span class="co"># compute total sum</span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On 8 cores I get the average runtime of 1.282 seconds – not too bad, considering that some of the cores are low-efficiency (slower) cores.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question 12
+<span class="screen-reader-only">Caution</span>Question 12
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -608,7 +609,7 @@ Question 12
 <h3 class="anchored" data-anchor-id="running-numba-compiled-functions-as-ray-tasks">Running Numba-compiled functions as Ray tasks</h3>
 <p>We ended Part 1 with a Numba-compiled version of the slow series code that works almost as well as a Julia/Chapel code. As you just saw, Ray itself can distribute the calculation, speeding up the code with parallel execution, but individual tasks still run native Python code that is slow.</p>
 <p>Wouldn’t it be great if we could use Ray to distribute execution of Numba-compiled functions to workers? It turns out <em>we can</em>, but we have to be careful with syntax. We would need to define remote compiled functions, but neither Ray, nor Numba let you combine their decorators (<code>@ray.remote</code> and <code>@numba.jit</code>, respectively) for a single function. You can do this in two steps:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> jit</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
@@ -622,9 +623,9 @@ Question 12
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> square(<span class="dv">5</span>)</span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> runCompiled.remote()</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here we “jit” the function on the main process and send it to workers for execution. Alternatively, you can “jit” on workers:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> jit</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
@@ -638,15 +639,15 @@ Question 12
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> compiledSquare(<span class="dv">5</span>)</span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> runCompiled.remote()</span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In my tests with more CPU-intensive functions, both versions produce equivalent runtimes.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question Combining Numba and Ray remotes for the slow series (big one!)
+<span class="screen-reader-only">Caution</span>Question Combining Numba and Ray remotes for the slow series (big one!)
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -657,12 +658,12 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 3. Ray-enabled remote function <code>runCompiled(interval)</code> to launch partial sums on workers.<br>
 4. Very important step: you must do small <code>runCompiled()</code> runs on workers to copy code over to them – no need to time these runs. Without this “pre-compilation” step you will not get fast execution on workers on the bigger problem.<br>
 5. The rest of the code will look familiar:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [runCompiled.remote(intervals[i]) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(ncores)]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="bu">sum</span>(ray.get(r))   <span class="co"># compute total sum</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -727,7 +728,7 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <section id="getting-partial-results-from-ray-tasks" class="level3">
 <h3 class="anchored" data-anchor-id="getting-partial-results-from-ray-tasks">Getting partial results from Ray tasks</h3>
 <p>Consider the following code:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray, random</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
@@ -736,48 +737,48 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    sleep(duration)   <span class="co"># sleep for this number of seconds</span></span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"I slept for </span><span class="sc">{</span>duration<span class="sc">}</span><span class="ss"> seconds"</span></span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>refs <span class="op">=</span> [longSleep.remote() <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">21</span>)]   <span class="co"># start 20 tasks</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>refs <span class="op">=</span> [longSleep.remote() <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">21</span>)]   <span class="co"># start 20 tasks</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If we now call <code>ray.get(refs)</code>, that would block until all of these remote tasks finish. If we want to, let’s say, one of them to finish and then continue on the main task, we can do:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ready_refs, remaining_refs <span class="op">=</span> ray.wait(refs, num_returns<span class="op">=</span><span class="dv">1</span>, timeout<span class="op">=</span><span class="va">None</span>) <span class="co"># wait for one of them to finish</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ready_refs, remaining_refs <span class="op">=</span> ray.wait(refs, num_returns<span class="op">=</span><span class="dv">1</span>, timeout<span class="op">=</span><span class="va">None</span>) <span class="co"># wait for one of them to finish</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ready_refs, remaining_refs)   <span class="co"># print the IDs of the finished task, and the other 19 IDs</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>ray.get(ready_refs)                 <span class="co"># get finished results</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>ray.get(ready_refs)                 <span class="co"># get finished results</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s wait for the first 5 answers:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ready_refs, remaining_refs <span class="op">=</span> ray.wait(refs, num_returns<span class="op">=</span><span class="dv">5</span>, timeout<span class="op">=</span><span class="va">None</span>) <span class="co"># wait for 5 of them to finish</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ready_refs, remaining_refs <span class="op">=</span> ray.wait(refs, num_returns<span class="op">=</span><span class="dv">5</span>, timeout<span class="op">=</span><span class="va">None</span>) <span class="co"># wait for 5 of them to finish</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>ray.get(ready_refs)                 <span class="co"># get finished results</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> remaining_refs:</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    ray.cancel(i)   <span class="co"># cancel the unfinished ones</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    ray.cancel(i)   <span class="co"># cancel the unfinished ones</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="multiple-returns-from-ray-tasks" class="level3">
 <h3 class="anchored" data-anchor-id="multiple-returns-from-ray-tasks">Multiple returns from Ray tasks</h3>
 <p>Similar to normal Python functions, Ray tasks can return tuples:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> threeNumbers():</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> threeNumbers.remote()</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r)[<span class="dv">0</span>])        <span class="co"># get the result (tuple) and show its first element</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r)[<span class="dv">0</span>])        <span class="co"># get the result (tuple) and show its first element</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Alternatively, you can pipe each number to a separate object ref (<em>tell the decorator!</em>):</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>(num_returns<span class="op">=</span><span class="dv">3</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>(num_returns<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> threeNumbers():</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>r1, r2, r3 <span class="op">=</span> threeNumbers.remote()</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>ray.get(r1)   <span class="co"># get the first result only</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>ray.get(r1)   <span class="co"># get the first result only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can also create a remote generator that will return only one number at a time, to reduce memory usage:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>(num_returns<span class="op">=</span><span class="dv">3</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>(num_returns<span class="op">=</span><span class="dv">3</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> threeNumbers():</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):   <span class="co"># should return 10,20,30</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> (i<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">10</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>r1, r2, r3 <span class="op">=</span> threeNumbers.remote()</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>ray.get(r1)   <span class="co"># get the first number only</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>ray.get(r1)   <span class="co"># get the first number only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="linking-remote-tasks" class="level3">
 <h3 class="anchored" data-anchor-id="linking-remote-tasks">Linking remote tasks</h3>
 <p>In addition to values, object refs can also be passed to remote functions. Define two functions:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> one():</span>
@@ -785,15 +786,15 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> increment(value):</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> value <span class="op">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> value <span class="op">+</span> <span class="dv">1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In by-now familiar syntax:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> one.remote()                    <span class="co"># create the first Ray task</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> one.remote()                    <span class="co"># create the first Ray task</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> increment.remote(ray.get(r1))   <span class="co"># pass its result as an argument to another Ray task</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can also shorten this syntax:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> one.remote()           <span class="co"># create the first Ray task</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>r1 <span class="op">=</span> one.remote()           <span class="co"># create the first Ray task</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> increment.remote(r1)   <span class="co"># pass its object ref as an argument to another Ray task</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r2))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>As the second task depends on the output of the first task, Ray will not execute the second task until the first task has finished.</p>
 <!-- ```py -->
 <!-- # start = time() -->
@@ -824,7 +825,7 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <!-- In Ray, you can store an array on a worker between two function calls using actor-based state -->
 <!-- management. Since Ray functions (remote tasks) are stateless by default, you need an actor to persist the -->
 <!-- array across calls. -->
-<div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>ray.init()</span>
@@ -844,13 +845,13 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>ray.get(storage_actor.store_array.remote(arr))   <span class="co"># store an array</span></span>
 <span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> ray.get(storage_actor.get_array.remote())    <span class="co"># retrieve the stored array</span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r)  <span class="co"># Output: [1 2 3 4 5]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r)  <span class="co"># Output: [1 2 3 4 5]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- ```py -->
 <!-- print(f"Actor {worker1_actor_id} on Node {worker1_node_id} stored array: {retrieved_arr1}") -->
 <!-- print(f"Actor {worker2_actor_id} on Node {worker2_node_id} stored array: {retrieved_arr2}") -->
 <!-- ``` -->
 <p>To scale this to multiple workers, we can do the same with an array of workers:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>workers <span class="op">=</span> [ArrayStorage.remote() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)]   <span class="co"># create two instances of the actor</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>workers <span class="op">=</span> [ArrayStorage.remote() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)]   <span class="co"># create two instances of the actor</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [workers[i].store_array.remote(np.ones(<span class="dv">5</span>)<span class="op">*</span>(i<span class="op">+</span><span class="dv">1</span>)) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)]</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r))</span>
@@ -859,16 +860,16 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(workers[<span class="dv">1</span>].get_array.remote()))   <span class="co"># [2. 2. 2. 2. 2.]</span></span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [workers[i].get_array.remote() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)]</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r))   <span class="co"># both arrays in one go</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r))   <span class="co"># both arrays in one go</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If we want to make sure that these arrays stay on the same workers, we can retrieve and print their IDs and the node IDs by adding these two functions to the actor class:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>...</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>...</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_actor_id(<span class="va">self</span>):</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.actor_id</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_node_id(<span class="va">self</span>):</span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.node_id   <span class="co"># the node ID where this actor is running</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>...</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb30"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([ray.get(workers[i].get_actor_id.remote()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)])   <span class="co"># actor IDs</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([ray.get(workers[i].get_node_id.remote()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)])    <span class="co"># node IDs</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([ray.get(workers[i].get_actor_id.remote()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)])   <span class="co"># actor IDs</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([ray.get(workers[i].get_node_id.remote()) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)])    <span class="co"># node IDs</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- Full class example: -->
 <!-- ```py -->
 <!-- @ray.remote -->
@@ -908,7 +909,7 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <!--         self.b = np.concatenate([[self.b[0]+ghostValue], self.b[1:]]) -->
 <!-- ``` -->
 <p>You can even use NumPy on workers. For example, if we were to implement a linear algebra solver on a worker and <em>wanted to have the solution array stored there permanently</em>, we could do it this way:</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">2</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
@@ -937,9 +938,9 @@ Question Combining Numba and Ray remotes for the slow series (big one!)
 <span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>worker.store_b.remote(b)</span>
 <span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>worker.localSolve.remote()</span>
 <span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> ray.get(worker.get_u.remote())</span>
-<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The solution is"</span>, u)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"The solution is"</span>, u)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Finally, you can delete a Ray actor with:</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ray.kill(worker)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>ray.kill(worker)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -976,7 +977,7 @@ Note
 </div>
 <section id="creating-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="creating-datasets">Creating datasets</h3>
-<div class="sourceCode" id="cb33"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">1000</span>)   <span class="co"># create a dataset from a range</span></span>
@@ -984,11 +985,11 @@ Note
 <span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>ds.count()        <span class="co"># explicitly count the number of rows; might be expensive (to load the dataset into memory)</span></span>
 <span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>ds.take(<span class="dv">3</span>)        <span class="co"># return first 3 rows as a list of dictionaries; default keys are often 'id' or 'item'</span></span>
 <span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(ds.take())    <span class="co"># default is 20 rows</span></span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">3</span>)        <span class="co"># first 3 rows in a different format (one row per line)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">3</span>)        <span class="co"># first 3 rows in a different format (one row per line)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Until recently, you could easily displays the number of blocks in a dataset, but now you have to <em>materialize</em> it first, and the number of blocks can change during execution:</p>
-<div class="sourceCode" id="cb34"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ds.materialize().num_blocks()   <span class="co"># will show the number of blocks; might be expensive</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>ds.materialize().num_blocks()   <span class="co"># will show the number of blocks; might be expensive</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Rows can be generated from arbitrary items:</p>
-<div class="sourceCode" id="cb35"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ray.data.from_items([<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>]).take()   <span class="co"># [{'item': 10}, {'item': 20}, {'item': 30}]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ray.data.from_items([<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>]).take()   <span class="co"># [{'item': 10}, {'item': 20}, {'item': 30}]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Rows can have multiple key-value pairs:</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1003,9 +1004,9 @@ Note
 <p>Recall: each row is a dictionary, and dictionaries can have multiple entries.</p>
 </div>
 </div>
-<div class="sourceCode" id="cb36"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>listOfDict <span class="op">=</span> [{<span class="st">"col1"</span>: i, <span class="st">"col2"</span>: i <span class="op">**</span> <span class="dv">2</span>} <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>)] <span class="co"># each dict contains 2 pairs</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>listOfDict <span class="op">=</span> [{<span class="st">"col1"</span>: i, <span class="st">"col2"</span>: i <span class="op">**</span> <span class="dv">2</span>} <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>)] <span class="co"># each dict contains 2 pairs</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.from_items(listOfDict)</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A dataset can also be loaded from a file:</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1020,9 +1021,9 @@ Note
 <p>This example works on my computer (<code>pyenv activate hpc-env</code>), but not on the training cluster where <code>arrow/19.0.1</code> was compiled without S3 support.</p>
 </div>
 </div>
-<div class="sourceCode" id="cb37"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>dd <span class="op">=</span> ray.data.read_csv(<span class="st">"s3://anonymous@air-example-data/iris.csv"</span>)   <span class="co"># load a predefined dataset</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>dd <span class="op">=</span> ray.data.read_csv(<span class="st">"s3://anonymous@air-example-data/iris.csv"</span>)   <span class="co"># load a predefined dataset</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>dd</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>dd.show()   <span class="co"># might pause to read data, default is 20 rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>dd.show()   <span class="co"># might pause to read data, default is 20 rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="transforming-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="transforming-datasets">Transforming datasets</h3>
@@ -1033,13 +1034,13 @@ Note
 <!--                               (3) grouping via groupby() -->
 <!--                               (4) shuffling operations, e.g. sort(), random_shuffle(), and repartition() -->
 <p>Ray datasets become useful once you start processing them. Let’s initialize a simple dataset from a range:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">1000</span>)   <span class="co"># create a dataset</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We will apply a function to each row in this dataset. This function <em>must</em> return a dictionary that will form each row in the new dataset:</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: row).show(<span class="dv">3</span>)                  <span class="co"># takes a row, returns the same row</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: row).show(<span class="dv">3</span>)                  <span class="co"># takes a row, returns the same row</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: {<span class="st">"key"</span>: row[<span class="st">"id"</span>]}).show(<span class="dv">3</span>)   <span class="co"># takes a row, returns a similar row;</span></span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                       <span class="co"># `row["id"]` is needed to refer to the value in each</span></span>
@@ -1048,34 +1049,34 @@ Note
 <span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: {<span class="st">"long"</span>: <span class="bu">str</span>(row[<span class="st">"id"</span>])<span class="op">*</span><span class="dv">3</span>})  <span class="co"># takes a row, returns a dict with 'id' values</span></span>
 <span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>                                                    <span class="co"># converted to strings and repeated 3X</span></span>
 <span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>a   <span class="co"># it is a new dataset</span></span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>a.show(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>a.show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With <code>.map()</code> you can also use familiar non-lambda (i.e.&nbsp;non-anonymous) functions:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> squares(row):</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> squares(row):</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">'squares'</span>: row[<span class="st">'id'</span>]<span class="op">**</span><span class="dv">2</span>}</span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(squares).show(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(squares).show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Your function can also add new key-value pairs to the existing rows, instead of returning brand new rows:</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">1000</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">1000</span>)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> addSquares(row):</span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>    row[<span class="st">'square'</span>] <span class="op">=</span> row[<span class="st">'id'</span>]<span class="op">**</span><span class="dv">2</span>   <span class="co"># add a new entry to each row</span></span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row                       </span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ds.<span class="bu">map</span>(addSquares)</span>
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)  <span class="co"># original dataset</span></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>b.show(<span class="dv">5</span>)   <span class="co"># contains both the original entries and the squares</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>b.show(<span class="dv">5</span>)   <span class="co"># contains both the original entries and the squares</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You might have already noticed by now that all processing in Ray Data is lazy, i.e.&nbsp;it happens when we request results:</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">10_000_000</span>)   <span class="co"># define a bigger dataset</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">10_000_000</span>)   <span class="co"># define a bigger dataset</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(addSquares)   <span class="co"># no visible calculation, just a request, not consuming results</span></span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(addSquares).show()   <span class="co"># print results =&gt; start calculation</span></span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(addSquares).show()   <span class="co"># previous results were not stored, so this will re-run the calculation</span></span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ds.<span class="bu">map</span>(addSquares)   <span class="co"># this does not start calculation</span></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>b.show()                 <span class="co"># this starts calculation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>b.show()                 <span class="co"># this starts calculation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Every time you print or use <code>b</code>, it’ll re-do the calculation. For this reason, you can think of <code>b</code> not as a variable with a value but as a <em>data stream</em>.</p>
 <p>How can you do the calculation once and store the results for repeated use? You can convert <code>b</code> into a more permanent (not a data stream) object, e.g.&nbsp;a list:</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ds.<span class="bu">map</span>(addSquares)   <span class="co"># this does not start calculation</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ds.<span class="bu">map</span>(addSquares)   <span class="co"># this does not start calculation</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.take()             <span class="co"># create a list, fast (only first 20 elements)</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.take(<span class="dv">10_000_000</span>)   <span class="co"># takes a couple of minutes, runs in parallel</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.take(<span class="dv">10_000_000</span>)   <span class="co"># takes a couple of minutes, runs in parallel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This is not very efficient … certainly, computing 10,000,000 squares should not take a couple of minutes in parallel! The problem is that we have too many rows, and – similar to Python lists – <strong>Ray datasets perform poorly with too many rows</strong>. Think about subdividing your large computation into a number of chunks where each chunk comes with its own computational and communication overhead – you want to keep their number small.</p>
 <p>Let’s rewrite this problem:</p>
 <!-- ```py -->
@@ -1087,7 +1088,7 @@ Note
 <!-- print("Time in seconds:", round(end-start,3)) -->
 <!-- print(b[-10:]) -->
 <!-- ``` -->
-<div class="sourceCode" id="cb44"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">10_000_000</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">10_000_000</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>n1 <span class="op">=</span> n <span class="op">//</span> <span class="dv">2</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>n2 <span class="op">=</span> n <span class="op">-</span> n1</span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1103,7 +1104,7 @@ Note
 <span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ds.<span class="bu">map</span>(squares).take()</span>
 <span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
-<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(b)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now the runtime is 0.072 seconds.</p>
 <!-- ```py -->
 <!-- c.materialize()   # read all blocks into memory ... not clear -->
@@ -1149,7 +1150,7 @@ Note
 <section id="slow-series-with-ray-data" class="level3">
 <h3 class="anchored" data-anchor-id="slow-series-with-ray-data">Slow series with Ray Data</h3>
 <p>Let’s start with a serial implementation:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>ray.init(configure_logging<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1169,9 +1170,9 @@ Note
 <span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> partial.take()[<span class="dv">0</span>][<span class="st">'sum'</span>]   <span class="co"># request the result =&gt; start the calculation on 1 CPU core</span></span>
 <span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>I get the average runtime of 6.978 seconds. To parallelize this, you can redefine <code>intervals</code>:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>intervals <span class="op">=</span> ray.data.from_items([</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>intervals <span class="op">=</span> ray.data.from_items([</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"a"</span>: <span class="dv">1</span>, <span class="st">"b"</span>: <span class="dv">50_000_000</span>},</span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">"a"</span>: <span class="dv">50_000_001</span>, <span class="st">"b"</span>: <span class="dv">100_000_000</span>},</span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>])</span>
@@ -1181,15 +1182,15 @@ Note
 <span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>total <span class="op">=</span> <span class="bu">sum</span>([p[<span class="st">'sum'</span>] <span class="cf">for</span> p <span class="kw">in</span> partial.take()])   <span class="co"># request the result =&gt; start the calculation on 2 CPU cores</span></span>
 <span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))   <span class="co"># 4.322, 4.857, 4.782 and 3.852 3.812 3.823</span></span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On 2 cores I get the average time of 3.765 seconds.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question 14
+<span class="screen-reader-only">Caution</span>Question 14
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -1305,12 +1306,12 @@ Question 14
 <h2 class="anchored" data-anchor-id="running-ray-workflows-on-a-single-node">Running Ray workflows on a single node</h2>
 <!-- Launching a single-node ray cluster -->
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Question 15
+<span class="screen-reader-only">Caution</span>Question 15
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -1319,11 +1320,11 @@ Question 15
 <p>Let’s try running the slow series without Numba-compiled functions on the training cluster as a batch job.<br>
 1. Save the entire Python code for the slow series problem into <code>rayPartialMap.py</code><br>
 2. Modify the code to take <ncores> as a command-line argument:</ncores></p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>ncores <span class="op">=</span> <span class="bu">int</span>(sys.argv[<span class="dv">1</span>])</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span>ncores, configure_logging<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span>ncores, configure_logging<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and test it from the command line inside your interactive job</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> rayPartialMap.py <span class="va">$SLURM_CPUS_PER_TASK</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> rayPartialMap.py <span class="va">$SLURM_CPUS_PER_TASK</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="3" type="1">
 <li>Quit the interactive job.<br>
 </li>
@@ -1427,20 +1428,20 @@ Question 15
 <li>removed GPUs.</li>
 </ol>
 <p>Let’s quit our current Slurm job (if any), back on the login node start the following interactive job, and then run the following commands:</p>
-<div class="sourceCode" id="cb49"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/hpc-env/bin/activate</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--nodes</span> 2 <span class="at">--ntasks-per-node</span><span class="op">=</span>1 <span class="at">--cpus-per-task</span><span class="op">=</span>2 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--time</span><span class="op">=</span>0:60:0</span>
 <span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HEAD_NODE</span><span class="op">=</span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span>   <span class="co"># head node's address -- different from the login node!</span></span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAY_PORT</span><span class="op">=</span>34567          <span class="co"># a port to start Ray on the head node </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAY_PORT</span><span class="op">=</span>34567          <span class="co"># a port to start Ray on the head node </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next, we will start a Ray cluster on the head node as a background process:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ray</span> start <span class="at">--head</span> <span class="at">--node-ip-address</span><span class="op">=</span><span class="va">$HEAD_NODE</span> <span class="at">--port</span><span class="op">=</span><span class="va">$RAY_PORT</span> <span class="at">--num-cpus</span><span class="op">=</span><span class="va">$SLURM_CPUS_PER_TASK</span> <span class="at">--block</span> <span class="kw">&amp;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ray</span> start <span class="at">--head</span> <span class="at">--node-ip-address</span><span class="op">=</span><span class="va">$HEAD_NODE</span> <span class="at">--port</span><span class="op">=</span><span class="va">$RAY_PORT</span> <span class="at">--num-cpus</span><span class="op">=</span><span class="va">$SLURM_CPUS_PER_TASK</span> <span class="at">--block</span> <span class="kw">&amp;</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sleep</span> 10   <span class="co"># wait for the prompt; it'll ask to enable usage stats collection</span></span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eventually should say "Ray runtime started."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eventually should say "Ray runtime started."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then on each node inside our Slurm job, except the head node, we launch the worker nodes of the Ray cluster:</p>
-<div class="sourceCode" id="cb51"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOF</span> <span class="op">&gt;</span> launchRay.sh</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOF</span> <span class="op">&gt;</span> launchRay.sh</span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="st">#!/bin/bash</span></span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="st">module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span></span>
 <span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="st">source /project/def-sponsor00/shared/hpc-env/bin/activate</span></span>
@@ -1455,17 +1456,17 @@ Question 15
 <span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
 <span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> u+x launchRay.sh</span>
 <span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> launchRay.sh <span class="kw">&amp;</span></span>
-<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="va">ray_cluster_pid</span><span class="op">=</span><span class="va">$!</span>   <span class="co"># get its process ID</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a><span class="va">ray_cluster_pid</span><span class="op">=</span><span class="va">$!</span>   <span class="co"># get its process ID</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next, we launch a Python script that connects to the Ray cluster, checks the nodes and all available CPUs:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>ray.init(address<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>os<span class="sc">.</span>environ[<span class="st">'HEAD_NODE'</span>]<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>os<span class="sc">.</span>environ[<span class="st">'RAY_PORT'</span>]<span class="sc">}</span><span class="ss">"</span>,_node_ip_address<span class="op">=</span>os.environ[<span class="st">'HEAD_NODE'</span>])</span>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>...</span>
 <span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Eventually should say "Connected to Ray cluster."</span></span>
 <span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Nodes in the Ray cluster:"</span>, ray.nodes())   <span class="co"># should see two nodes with 'Alive' status</span></span>
-<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.available_resources())                  <span class="co"># should see 4 CPUs and 2 nodes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.available_resources())                  <span class="co"># should see 4 CPUs and 2 nodes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Finally, from bash, we shut down the Ray worker nodes:</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="bu">kill</span> <span class="va">$ray_cluster_pid</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="bu">kill</span> <span class="va">$ray_cluster_pid</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and terminate the job.</p>
 </section>
 <section id="distributed-data-processing-on-ray-and-io-bound-workflows" class="level2">
@@ -1473,7 +1474,7 @@ Question 15
 <section id="simple-distributed-dataset-example" class="level3">
 <h3 class="anchored" data-anchor-id="simple-distributed-dataset-example">Simple distributed dataset example</h3>
 <p>With multiple CPU cores available, run the following Python code line by line, while watching memory usage in a separate window with <code>htop --filter "ray::IDLE"</code>:</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>ray.init(configure_logging<span class="op">=</span><span class="va">False</span>, _system_config<span class="op">=</span>{ <span class="st">'automatic_object_spilling_enabled'</span>:<span class="va">False</span> })</span>
@@ -1490,13 +1491,13 @@ Question 15
 <span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row</span>
 <span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.<span class="bu">map</span>(initArray)</span>
-<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>c.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>c.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We’ll see the two arrays being initialized in memory, on two processes, with a couple of GBs of memory consumed per process. Ray writes (“spills”) objects to storage once they are no longer in use, as it tries to minimize the total number of “materialized” (in-memory) blocks. On Linux and MacOS, the temporary spill folder is <code>/tmp/ray</code>, but you can customize its location as described <a href="https://docs.ray.io/en/latest/ray-core/objects/object-spilling.html">here</a>.</p>
 <p>With the automatic object spilling to disk disabled (our second flag to <code>ray.init()</code> above), these arrays will stay in memory.</p>
 <p>With that flag removed, and hence with the usual automatic object spilling to disk, these array blocks will be automatically written to disk, and the memory usage goes back to zero after a fraction of a second. If next you try to access these arrays, e.g.</p>
-<div class="sourceCode" id="cb55"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> c.take()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb55"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> c.take()</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(d[<span class="dv">0</span>][<span class="st">'array'</span>])   <span class="co"># numpy.ndarray</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>d[<span class="dv">0</span>][<span class="st">'array'</span>].shape   <span class="co"># (800, 800, 800)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>d[<span class="dv">0</span>][<span class="st">'array'</span>].shape   <span class="co"># (800, 800, 800)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>they will be loaded temporarily into memory, which you can monitor with <code>htop --filter "ray::IDLE"</code>.</p>
 <!-- Ray uses "streaming execution" 
 
@@ -1509,20 +1510,20 @@ Question 15
 <section id="pandas-on-ray-modin" class="level3">
 <h3 class="anchored" data-anchor-id="pandas-on-ray-modin">Pandas on Ray (Modin)</h3>
 <p>You can run many types of I/O workflows on top of Ray. One famous example is “Modin” (previously called Pandas on Ray) which is a drop-in replacement for Pandas on top of Ray. We won’t study here, but it will run all your pandas workflows, and you don’t need to modify your code, except importing the library, e.g.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"filename.csv"</span>, <span class="op">&lt;</span>other flags<span class="op">&gt;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"filename.csv"</span>, <span class="op">&lt;</span>other flags<span class="op">&gt;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>will become</p>
-<div class="sourceCode" id="cb57"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> modin.pandas <span class="im">as</span> pd</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb57"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> modin.pandas <span class="im">as</span> pd</span>
 <span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"filename.csv"</span>, <span class="op">&lt;</span>other flags<span class="op">&gt;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">"filename.csv"</span>, <span class="op">&lt;</span>other flags<span class="op">&gt;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Modin will run your workflows using Ray tasks on multiple cores, potentially speeding up large workflows. You can find more information at https://github.com/modin-project/modin</p>
 <p>Similarly, many other Ray Data read functions will read your data in parallel, distributing it to multiple processes if necessary for larger processing:</p>
-<div class="sourceCode" id="cb58"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>&gt;&gt;&gt; import ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb58"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>&gt;&gt;&gt; import ray</span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>&gt;&gt;&gt; ray.data.read_</span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>ray.data.read_api                 ray.data.read_databricks_tables(  ray.data.read_mongo(              ray.data.read_sql(</span>
 <span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>ray.data.read_bigquery(           ray.data.read_datasource(         ray.data.read_numpy(              ray.data.read_text(</span>
 <span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>ray.data.read_binary_files(       ray.data.read_images(             ray.data.read_parquet(            ray.data.read_tfrecords(</span>
-<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>ray.data.read_csv(                ray.data.read_json(               ray.data.read_parquet_bulk(       ray.data.read_webdataset(</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>ray.data.read_csv(                ray.data.read_json(               ray.data.read_parquet_bulk(       ray.data.read_webdataset(</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- - Mars (a tensor-based framework to scale NumPy, Pandas, and scikit-learn applications) can run on top of Ray, -->
 <!-- - Dask tasks can run on top of Ray, -->
 </section>
@@ -1543,7 +1544,7 @@ Note
 </div>
 <p>Here is a simple example of processing a directory with images with Ray Data. Suppose we have a <span class="math inline">\(2874\times
 2154\)</span> image <code>tuscany.avif</code>. Let’s crop 100 random <span class="math inline">\(300\times 300\)</span> images out of it:</p>
-<div class="sourceCode" id="cb59"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="va">tmpdir</span><span class="op">=</span><span class="va">${RANDOM}${RANDOM}</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="va">tmpdir</span><span class="op">=</span><span class="va">${RANDOM}${RANDOM}</span></span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/<span class="va">$tmpdir</span> <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> ~/<span class="va">$tmpdir</span></span>
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> activate hpc-env</span>
 <span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1560,34 +1561,34 @@ Note
 <span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a>    <span class="va">y</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"scale=8; </span><span class="va">$RANDOM</span><span class="st"> / 32767 * (</span><span class="va">$height</span><span class="st">-300)"</span> <span class="kw">|</span> <span class="fu">bc</span><span class="va">)</span></span>
 <span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>    <span class="va">y</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="va">$y</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{print int($1+0.5)}'</span><span class="va">)</span></span>
 <span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>    <span class="ex">convert</span> tuscany.jpg <span class="at">-crop</span> 300x300+<span class="va">$x</span>+<span class="va">$y</span> images/small<span class="va">$num</span>.png</span>
-<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now we will load these images into Ray Data. First, let’s set <code>export RAY_DEDUP_LOGS=0</code>, and then do:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.read_images(<span class="st">"images/"</span>)</span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>ds   <span class="co"># 100 rows (one image per row) split into ... blocks</span></span>
 <span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>ds.take(<span class="dv">1</span>)[<span class="dv">0</span>]                  <span class="co"># first image</span></span>
 <span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(ds.take(<span class="dv">1</span>)[<span class="dv">0</span>][<span class="st">"image"</span>])   <span class="co"># stored as a numpy array</span></span>
 <span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>ds.take(<span class="dv">1</span>)[<span class="dv">0</span>][<span class="st">"image"</span>].shape   <span class="co"># 300x300 and three channels (RGB)</span></span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>ds.take(<span class="dv">1</span>)[<span class="dv">0</span>][<span class="st">"image"</span>].<span class="bu">max</span>()   <span class="co"># 255 =&gt; they are stored as 8-bit images (0..255)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>ds.take(<span class="dv">1</span>)[<span class="dv">0</span>][<span class="st">"image"</span>].<span class="bu">max</span>()   <span class="co"># 255 =&gt; they are stored as 8-bit images (0..255)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s print min/max values for all images:</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minmax(row):</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb61"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minmax(row):</span>
 <span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(row[<span class="st">"image"</span>].<span class="bu">min</span>(), row[<span class="st">"image"</span>].<span class="bu">max</span>())</span>
 <span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row  <span class="co"># must return a dictionary, otherwise `map` will fail</span></span>
 <span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> ds.<span class="bu">map</span>(minmax)   <span class="co"># on output; we scheduled the calculation, but have not started it yet</span></span>
-<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>b.materialize()      <span class="co"># force the calculation =&gt; now we see printouts from individual rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>b.materialize()      <span class="co"># force the calculation =&gt; now we see printouts from individual rows</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s compute their negatives:</p>
-<div class="sourceCode" id="cb62"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> negate(row):</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb62"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> negate(row):</span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">'image'</span>: <span class="dv">255</span><span class="op">-</span>row[<span class="st">'image'</span>]}</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>negative <span class="op">=</span> ds.<span class="bu">map</span>(negate)</span>
-<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>negative.write_images(<span class="st">"output"</span>, column<span class="op">=</span><span class="st">'image'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>negative.write_images(<span class="st">"output"</span>, column<span class="op">=</span><span class="st">'image'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In <code>output/</code> subdirectory you will find 100 negative images.</p>
 </section>
 <section id="coding-parallel-io-by-hand" class="level3">
 <h3 class="anchored" data-anchor-id="coding-parallel-io-by-hand">Coding parallel I/O by hand</h3>
 <p>In Ray Data you can also write your own parallel I/O workflows by hand, defining functions to process rows that will load certain data/file into a specific row, e.g.&nbsp;with something like this:</p>
-<div class="sourceCode" id="cb63"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ray.data.from_items([</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb63"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ray.data.from_items([</span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'file'</span>: <span class="st">'/path/to/file1'</span>},</span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'file'</span>: <span class="st">'/path/to/file2'</span>},</span>
 <span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>    {<span class="st">'file'</span>: <span class="st">'/path/to/file3'</span>}</span>
@@ -1599,7 +1600,7 @@ Note
 <span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> row</span>
 <span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> a.<span class="bu">map</span>(readFileInParallel)</span>
-<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>b.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>b.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="a-cpu-intensive-problem-without-reduction" class="level3">
 <h3 class="anchored" data-anchor-id="a-cpu-intensive-problem-without-reduction">A CPU-intensive problem without reduction</h3>
@@ -1635,7 +1636,7 @@ Note
 </div>
 <p>As you must be accustomed by now, this calculation runs much faster when implemented in a compiled language. I tried Julia (0.676s) and Chapel (0.489s), in both cases running the code on my laptop in serial (one CPU core), both with exactly the same workflow and the same <span class="math inline">\(2000^2\)</span> image size.</p>
 <p>Below is the serial implementation in Python – let’s save it as <code>juliaSetSerial.py</code>:</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb64"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>nx <span class="op">=</span> ny <span class="op">=</span> <span class="dv">2000</span>   <span class="co"># image size</span></span>
@@ -1666,7 +1667,7 @@ Note
 <span id="cb64-29"><a href="#cb64-29" aria-hidden="true" tabindex="-1"></a>f.createDimension(<span class="st">'y'</span>, ny)</span>
 <span id="cb64-30"><a href="#cb64-30" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> f.createVariable(<span class="st">'stability'</span>, <span class="st">'i4'</span>, (<span class="st">'x'</span>, <span class="st">'y'</span>))   <span class="co"># 4-byte integer</span></span>
 <span id="cb64-31"><a href="#cb64-31" aria-hidden="true" tabindex="-1"></a>output[:,:] <span class="op">=</span> stability</span>
-<span id="cb64-32"><a href="#cb64-32" aria-hidden="true" tabindex="-1"></a>f.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb64-32"><a href="#cb64-32" aria-hidden="true" tabindex="-1"></a>f.close()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here we are timing purely the computational part, not saving the image to a NetCDF file. Let’s run it and look at the result in ParaView! When running this on my laptop, it takes 9.220 seconds.</p>
 <p>How would you parallelize this problem with <code>ray.data</code>? The main points to remember are:</p>
 <ol type="1">
@@ -1794,13 +1795,14 @@ Note
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,18 +67,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-3824aa816de5134366ccfe78104cf7a8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -121,7 +122,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -324,7 +325,9 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      </a>
     <div class="sidebar-title mb-0 py-0">
       <a href="../"></a> 
         <div class="sidebar-tools-main">
@@ -532,7 +535,7 @@ m\)</span> matrix consisting of two parts of sizes <span class="math inline">\(m
 <!-- # 1. practical computing of inv() -->
 <!-- # 1. parallelize -->
 <p>For the right-hand side <span class="math inline">\(F\)</span>, we’ll use a constant piece in the middle, mimicking a uniform bar with empty spaces on each end.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">21</span>               <span class="co"># total number of points</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">21</span>               <span class="co"># total number of points</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">3</span>                <span class="co"># number of domains</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>ms <span class="op">=</span> <span class="fu">zeros</span>(<span class="dt">Int</span>, N)   <span class="co"># number of points in each domain</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ms[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>] <span class="op">=</span> [<span class="fl">7</span>,<span class="fl">7</span>]      <span class="co"># number of points in the first two domains, respectively</span></span>
@@ -583,13 +586,13 @@ m\)</span> matrix consisting of two parts of sizes <span class="math inline">\(m
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
 <span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fl">1</span><span class="op">:</span>m, exact, label <span class="op">=</span> <span class="st">"exact"</span>)</span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fl">1</span><span class="op">:</span>m, U, label<span class="op">=</span><span class="st">"approximate"</span>)   <span class="co"># overplot</span></span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">"serial.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">"serial.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="serial-additive-schwarz-method-with-structures" class="level3">
 <h3 class="anchored" data-anchor-id="serial-additive-schwarz-method-with-structures">Serial additive Schwarz method with structures</h3>
 <p>We will generalize our code to an arbitrary number of domains. Instead of using R1, R2, R3, we will define a structure <code>domainType</code> that will contain the restriction operator for each domain. It could contain other variables and matrices, but for now we don’t need any other elements in it.</p>
 <p>Similar to the previous version of the code, here we are still storing all sparse and Boolean matrices as dense matrices, which is Ok only for testing purposes (for real problems these matrices will be large).</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">21</span>               <span class="co"># total number of points</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">21</span>               <span class="co"># total number of points</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">3</span>                <span class="co"># number of domains</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ms <span class="op">=</span> <span class="fu">zeros</span>(<span class="dt">Int</span>, N)   <span class="co"># number of points in each domain</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>ms[<span class="fl">1</span><span class="op">:</span><span class="fl">2</span>] <span class="op">=</span> [<span class="fl">7</span>,<span class="fl">7</span>]      <span class="co"># number of points in the first two domains, respectively</span></span>
@@ -636,7 +639,7 @@ m\)</span> matrix consisting of two parts of sizes <span class="math inline">\(m
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">Plots</span></span>
 <span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fl">1</span><span class="op">:</span>m, exact, label <span class="op">=</span> <span class="st">"exact"</span>)</span>
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="fu">plot!</span>(<span class="fl">1</span><span class="op">:</span>m, U, label<span class="op">=</span><span class="st">"approximate"</span>)</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">"serial.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">"serial.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="parallel-additive-schwarz-method" class="level3">
 <h3 class="anchored" data-anchor-id="parallel-additive-schwarz-method">Parallel additive Schwarz method</h3>
@@ -657,14 +660,14 @@ m\)</span> ASM preconditioner <span class="math inline">\(M^{-1}_\textrm{ASM}\)<
 m_s\)</span> array, and the range of column indices on each worker is exactly the same as for the 1D arrays above.</li>
 </ol>
 <p>You can force (2) by replacing the line</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pre <span class="op">=</span> <span class="fu">dzeros</span>(<span class="dt">Float64</span>, ms, m);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pre <span class="op">=</span> <span class="fu">dzeros</span>(<span class="dt">Float64</span>, ms, m);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>with the following block</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>d1 <span class="op">=</span> <span class="pp">@spawnat</span> <span class="fl">2</span> <span class="fu">zeros</span>(<span class="dt">Float64</span>, ms, ms);</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>d1 <span class="op">=</span> <span class="pp">@spawnat</span> <span class="fl">2</span> <span class="fu">zeros</span>(<span class="dt">Float64</span>, ms, ms);</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>d2 <span class="op">=</span> <span class="pp">@spawnat</span> <span class="fl">3</span> <span class="fu">zeros</span>(<span class="dt">Float64</span>, ms, ms);</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>d3 <span class="op">=</span> <span class="pp">@spawnat</span> <span class="fl">4</span> <span class="fu">zeros</span>(<span class="dt">Float64</span>, ms, ms);</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pre <span class="op">=</span> <span class="fu">DArray</span>([d1 d2 d3]);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pre <span class="op">=</span> <span class="fu">DArray</span>([d1 d2 d3]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here is the entire parallel code:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">3</span>    <span class="co"># number of domains and processes</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="fl">3</span>    <span class="co"># number of domains and processes</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="fl">21</span>   <span class="co"># total number of points; must be a multiple of N</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="pp">@assert</span> m<span class="op">%</span>N <span class="op">==</span> <span class="fl">0</span> <span class="st">"m must be a multiple of N"</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>ms <span class="op">=</span> <span class="fu">round</span>(<span class="dt">Int</span>, m<span class="op">/</span>N)   <span class="co"># the size of each subdomain</span></span>
@@ -791,7 +794,7 @@ m_s\)</span> array, and the range of column indices on each worker is exactly th
 <span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>Ulocal <span class="op">=</span> <span class="fu">zeros</span>(<span class="dt">Float64</span>, m, <span class="fl">1</span>);</span>
 <span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>Ulocal <span class="op">.=</span> U</span>
 <span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fl">1</span><span class="op">:</span>m, Ulocal, label<span class="op">=</span><span class="st">"approximate"</span>)</span>
-<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">"parallel.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="fu">savefig</span>(<span class="st">"parallel.png"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>Ulocal</code> is necessary since the <code>plot()</code> function <strong>won’t take the distributed array</strong> <code>U</code> as an argument.</p>
 
 
@@ -869,13 +872,14 @@ m_s\)</span> array, and the range of column indices on each worker is exactly th
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

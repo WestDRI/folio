@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.25">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -67,18 +67,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="./">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-befe23ebd2f54d8af2c8a89d1a1611f1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3824aa816de5134366ccfe78104cf7a8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-1d547202ef5b81858b5cd4b4ce92205d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -371,9 +372,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>You will need Python 3, along with <em>some</em> Python package manager</li>
 <li>Use your favourite installer:</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install plotly</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install plotly</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> uv pip install plotly</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda install <span class="at">-c</span> conda-forge plotly</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda install <span class="at">-c</span> conda-forge plotly</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>Other recommended libraries to install for today’s session: <code>jupyter</code>, <code>numpy</code>, <code>pandas</code>, <code>networkx</code>, <code>scikit-image</code>, <code>kaleido</code></li>
 </ul>
@@ -385,17 +386,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- ``` -->
 <p>With Plotly, you can: 1. work inside a Python shell, 2. save your script into a *.py file and then run it, or 3. run code inside a Jupyter Notebook (start a notebook with <code>jupyter notebook</code> or even better <code>jupyter lab</code>).</p>
 <p>Plotly supports a number of renderers, and it will attempt to choose an appropriate renderer automatically (in my experience, not very successfully). You can examine the selected default renderer with:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pio.renderers   <span class="co"># show default and available renderers</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pio.renderers   <span class="co"># show default and available renderers</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can overwrite the default by setting it manually inside your session or inside your code, e.g.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'browser'</span>    <span class="co"># open each plot in a new browser tab</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'notebook'</span>   <span class="co"># plot inside a Jupyter notebook</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'browser'</span>    <span class="co"># open each plot in a new browser tab</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'notebook'</span>   <span class="co"># plot inside a Jupyter notebook</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you want to have this setting persistent across sessions (and not set it manually or in the code), you can create a file <code>~/.plotly_startup.py</code> with the following:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    pio.renderers.default <span class="op">=</span> <span class="st">"browser"</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and set <code>export PYTHONSTARTUP=~/.plotly_startup.py</code> in your <code>~/.bashrc</code> file.</p>
 <!-- 'iframe'               Shows plot inline (only in Jupyter) -->
 <!-- 'notebook_connected'   Full interactivity in Jupyter -->
@@ -403,7 +404,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- png_renderer.width = 500 -->
 <!-- png_renderer.height = 500 -->
 <p>Let’s create a simple line plot:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
@@ -413,9 +414,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig.write_image(<span class="st">"/Users/razoumov/tmp/lines.png"</span>, scale<span class="op">=</span><span class="dv">2</span>)   <span class="co"># static, supports svg, png, jpg/jpeg, webp, pdf</span></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>fig.write_html(<span class="st">"/Users/razoumov/tmp/lines.html"</span>)            <span class="co"># interactive</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig.write_json(<span class="st">"/Users/razoumov/tmp/2007.json"</span>)             <span class="co"># for further editing</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>fig.write_json(<span class="st">"/Users/razoumov/tmp/2007.json"</span>)             <span class="co"># for further editing</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In general, use <code>fig.show()</code> when working outside of a Jupyter Notebook, or when you want to save your plot to a file. If you want to display plots inline inside a Jupyter notebook, set <code>pio.renderers.default = 'notebook'</code> and use the command</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>that should display plots right inside the notebook, without a need for <code>fig.show()</code>.</p>
 <p>You can find more details at https://plotly.com/python/renderers .</p>
 </section>
@@ -425,29 +426,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><a href="https://plotly.com/python/plotly-express">Plotly Express</a> is a higher-level interface to Plotly.py that sits on top of Graph Objects and provides 30+ functions for creating different types of figures in a single function call. It works with NumPy arrays, Xarrays, Pandas dataframes, basic Python iterables, etc.</p>
 <!-- video tutorial https://plotly.com/python/plotly-express -->
 <p>Here is one way to create a line plot from above in Plotly Express, using just NumPy arrays:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can also use feed a dataframe into the plotting function:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'col1'</span>: x, <span class="st">'col2'</span>: sin(<span class="dv">1</span><span class="op">/</span>x)})</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(df, x<span class="op">=</span><span class="st">'col1'</span>, y<span class="op">=</span><span class="st">'col2'</span>, markers<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Or you can feed a dictionary:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> {<span class="st">'key1'</span>: x, <span class="st">'key2'</span>: sin(<span class="dv">1</span><span class="op">/</span>x)}</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(d, x<span class="op">=</span><span class="st">'key1'</span>, y<span class="op">=</span><span class="st">'key2'</span>, markers<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To see Plotly Express really shine, we should play with a slightly larger dataset containing several variables. The module <code>px.data</code> comes with several datasets included. Let’s take a look at the Gapminder data that contains one row per country per year.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.gapminder().query(<span class="st">"year==2007"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>px.line(df, x<span class="op">=</span><span class="st">"gdpPercap"</span>, y<span class="op">=</span><span class="st">"lifeExp"</span>, markers<span class="op">=</span><span class="va">True</span>)   <span class="co"># this should be familiar</span></span>
@@ -477,45 +478,45 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>px.treemap(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, values<span class="op">=</span><span class="st">"pop"</span>, path<span class="op">=</span>[<span class="st">"continent"</span>, <span class="st">"country"</span>],</span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>           hover_name<span class="op">=</span><span class="st">"country"</span>, height<span class="op">=</span><span class="dv">500</span>)</span>
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>px.choropleth(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, locations<span class="op">=</span><span class="st">"iso_alpha"</span>, hover_name<span class="op">=</span><span class="st">"country"</span>, height<span class="op">=</span><span class="dv">580</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>px.choropleth(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, locations<span class="op">=</span><span class="st">"iso_alpha"</span>, hover_name<span class="op">=</span><span class="st">"country"</span>, height<span class="op">=</span><span class="dv">580</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- - gridded data => heatmaps -->
 <!-- - polar plots -->
 <!-- - multivariate or categorical => parallel coordinates plot -->
 <!-- - ternary plots (below) -->
 <!-- - 3D data -->
 <p>Here is an ternary plot example with Montreal elections data (58 electoral districts, 3 candidates):</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.election()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.election()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>px.scatter_ternary(df, a<span class="op">=</span><span class="st">"Joly"</span>, b<span class="op">=</span><span class="st">"Coderre"</span>, c<span class="op">=</span><span class="st">"Bergeron"</span>, color<span class="op">=</span><span class="st">"winner"</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   size<span class="op">=</span><span class="st">"total"</span>, hover_name<span class="op">=</span><span class="st">"district"</span>, size_max<span class="op">=</span><span class="dv">15</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                   color_discrete_map<span class="op">=</span>{<span class="st">"Joly"</span>: <span class="st">"blue"</span>, <span class="st">"Bergeron"</span>: <span class="st">"green"</span>, <span class="st">"Coderre"</span>: <span class="st">"red"</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                   color_discrete_map<span class="op">=</span>{<span class="st">"Joly"</span>: <span class="st">"blue"</span>, <span class="st">"Bergeron"</span>: <span class="st">"green"</span>, <span class="st">"Coderre"</span>: <span class="st">"red"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="plotting-via-graph-objects" class="level2">
 <h2 class="anchored" data-anchor-id="plotting-via-graph-objects">Plotting via Graph Objects</h2>
 <p>While Plotly Express is excellent for quick data exploration, it has some limitations: it supports fewer plot types and does not allow combining different plot types directly in a single figure. Plotly Graph Objects, on the other hand, is a lower-level library that offers greater functionality and customization with layouts. In this section, we’ll explore Graph Objects, starting with 2D plots.</p>
 <p>Graph Objects supports many plot types:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">dir</span>(go)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>['AngularAxis', 'Annotation', 'Annotations', 'Bar', 'Barpolar', 'Box', 'Candlestick', 'Carpet', 'Choropleth', 'Choroplethmap', 'Choroplethmapbox', 'ColorBar', 'Cone', 'Contour', 'Contourcarpet', 'Contours', 'Data', 'Densitymap', 'Densitymapbox', 'ErrorX', 'ErrorY', 'ErrorZ', 'Figure', 'FigureWidget', 'Font', 'Frame', 'Frames', 'Funnel', 'Funnelarea', 'Heatmap', 'Histogram', 'Histogram2d', 'Histogram2dContour', 'Histogram2dcontour', 'Icicle', 'Image', 'Indicator', 'Isosurface', 'Layout', 'Legend', 'Line', 'Margin', 'Marker', 'Mesh3d', 'Ohlc', 'Parcats', 'Parcoords', 'Pie', 'RadialAxis', 'Sankey', 'Scatter', 'Scatter3d', 'Scattercarpet', 'Scattergeo', 'Scattergl', 'Scattermap', 'Scattermapbox', 'Scatterpolar', 'Scatterpolargl', 'Scattersmith', 'Scatterternary', 'Scene', 'Splom', 'Stream', 'Streamtube', 'Sunburst', 'Surface', 'Table', 'Trace', 'Treemap', 'Violin', 'Volume', 'Waterfall', 'XAxis', 'XBins', 'YAxis', 'YBins', 'ZAxis', 'bar', 'barpolar', 'box', 'candlestick', 'carpet', 'choropleth', 'choroplethmap', 'choroplethmapbox', 'cone', 'contour', 'contourcarpet', 'densitymap', 'densitymapbox', 'funnel', 'funnelarea', 'heatmap', 'histogram', 'histogram2d', 'histogram2dcontour', 'icicle', 'image', 'indicator', 'isosurface', 'layout', 'mesh3d', 'ohlc', 'parcats', 'parcoords', 'pie', 'sankey', 'scatter', 'scatter3d', 'scattercarpet', 'scattergeo', 'scattergl', 'scattermap', 'scattermapbox', 'scatterpolar', 'scatterpolargl', 'scattersmith', 'scatterternary', 'splom', 'streamtube', 'sunburst', 'surface', 'table', 'treemap', 'violin', 'volume', 'waterfall']</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">dir</span>(go)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>['AngularAxis', 'Annotation', 'Annotations', 'Bar', 'Barpolar', 'Box', 'Candlestick', 'Carpet', 'Choropleth', 'Choroplethmap', 'Choroplethmapbox', 'ColorBar', 'Cone', 'Contour', 'Contourcarpet', 'Contours', 'Data', 'Densitymap', 'Densitymapbox', 'ErrorX', 'ErrorY', 'ErrorZ', 'Figure', 'FigureWidget', 'Font', 'Frame', 'Frames', 'Funnel', 'Funnelarea', 'Heatmap', 'Histogram', 'Histogram2d', 'Histogram2dContour', 'Histogram2dcontour', 'Icicle', 'Image', 'Indicator', 'Isosurface', 'Layout', 'Legend', 'Line', 'Margin', 'Marker', 'Mesh3d', 'Ohlc', 'Parcats', 'Parcoords', 'Pie', 'RadialAxis', 'Sankey', 'Scatter', 'Scatter3d', 'Scattercarpet', 'Scattergeo', 'Scattergl', 'Scattermap', 'Scattermapbox', 'Scatterpolar', 'Scatterpolargl', 'Scattersmith', 'Scatterternary', 'Scene', 'Splom', 'Stream', 'Streamtube', 'Sunburst', 'Surface', 'Table', 'Trace', 'Treemap', 'Violin', 'Volume', 'Waterfall', 'XAxis', 'XBins', 'YAxis', 'YBins', 'ZAxis', 'bar', 'barpolar', 'box', 'candlestick', 'carpet', 'choropleth', 'choroplethmap', 'choroplethmapbox', 'cone', 'contour', 'contourcarpet', 'densitymap', 'densitymapbox', 'funnel', 'funnelarea', 'heatmap', 'histogram', 'histogram2d', 'histogram2dcontour', 'icicle', 'image', 'indicator', 'isosurface', 'layout', 'mesh3d', 'ohlc', 'parcats', 'parcoords', 'pie', 'sankey', 'scatter', 'scatter3d', 'scattercarpet', 'scattergeo', 'scattergl', 'scattermap', 'scattermapbox', 'scatterpolar', 'scatterpolargl', 'scattersmith', 'scatterternary', 'splom', 'streamtube', 'sunburst', 'surface', 'table', 'treemap', 'violin', 'volume', 'waterfall']</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="scatter-plots" class="level3">
 <h3 class="anchored" data-anchor-id="scatter-plots">Scatter plots</h3>
 <p>We already saw an example of a Scatter plot with Graph Objects:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>line <span class="op">=</span> go.Scatter(x<span class="op">=</span>x, y<span class="op">=</span>y, mode<span class="op">=</span><span class="st">'lines+markers'</span>, name<span class="op">=</span><span class="st">'sin(1/x)'</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s print the dataset <code>line</code>:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(line)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(line)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(line)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(line)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>It is a plotly object which is actually a Python dictionary, with all elements clearly identified (plot type, x numpy array, y numpy array, line type, legend line name). So, <code>go.Scatter</code> simply creates a dictionary with the corresponding <code>type</code> element. <strong>This variable/dataset <code>line</code> completely describes our plot!</strong>* Then we create a list of such objects and pass it to the plotting routine.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 1
+<span class="screen-reader-only">Caution</span>Exercise 1
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -539,12 +540,12 @@ Note
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 2
+<span class="screen-reader-only">Caution</span>Exercise 2
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -555,12 +556,12 @@ Exercise 2
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 3
+<span class="screen-reader-only">Caution</span>Exercise 3
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -571,12 +572,12 @@ Exercise 3
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 3b
+<span class="screen-reader-only">Caution</span>Exercise 3b
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -590,28 +591,28 @@ Exercise 3b
 <section id="bar-plots" class="level3">
 <h3 class="anchored" data-anchor-id="bar-plots">Bar plots</h3>
 <p>Let’s try a Bar plot, constructing <code>data</code> directly in one line from the dictionary:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>bar <span class="op">=</span> go.Bar(x<span class="op">=</span>[<span class="st">'Vancouver'</span>, <span class="st">'Calgary'</span>, <span class="st">'Toronto'</span>, <span class="st">'Montreal'</span>, <span class="st">'Halifax'</span>],</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>               y<span class="op">=</span>[<span class="dv">2463431</span>, <span class="dv">1392609</span>, <span class="dv">5928040</span>, <span class="dv">4098927</span>, <span class="dv">403131</span>])</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar])</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s plot inner city population vs.&nbsp;greater metro area for each city:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> [<span class="st">'Vancouver'</span>, <span class="st">'Calgary'</span>, <span class="st">'Toronto'</span>, <span class="st">'Montreal'</span>, <span class="st">'Halifax'</span>]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>proper <span class="op">=</span> [<span class="dv">662_248</span>, <span class="dv">1_306_784</span>, <span class="dv">2_794_356</span>, <span class="dv">1_762_949</span>, <span class="dv">439_819</span>]</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>metro <span class="op">=</span> [<span class="dv">3_108_926</span>, <span class="dv">1_688_000</span>, <span class="dv">6_491_000</span>, <span class="dv">4_615_154</span>, <span class="dv">530_167</span>]</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>bar1 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>proper, name<span class="op">=</span><span class="st">'inner city'</span>)</span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>bar2 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>metro, name<span class="op">=</span><span class="st">'greater area'</span>)</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar1,bar2])</span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s now do a stacked plot, with <em>outer city</em> population on top of <em>inner city</em> population:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>outside <span class="op">=</span> [m<span class="op">-</span>p <span class="cf">for</span> p,m <span class="kw">in</span> <span class="bu">zip</span>(proper,metro)]   <span class="co"># need to subtract</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>outside <span class="op">=</span> [m<span class="op">-</span>p <span class="cf">for</span> p,m <span class="kw">in</span> <span class="bu">zip</span>(proper,metro)]   <span class="co"># need to subtract</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>bar1 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>proper, name<span class="op">=</span><span class="st">'inner city'</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>bar2 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>outside, name<span class="op">=</span><span class="st">'outer city'</span>)</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar1,bar2], layout<span class="op">=</span>go.Layout(barmode<span class="op">=</span><span class="st">'stack'</span>))   <span class="co"># new element!</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>What else can we modify in the layout?</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(go.Layout)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(go.Layout)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>There are many attributes!</p>
 </section>
 <section id="heatmaps" class="level3">
@@ -621,7 +622,7 @@ Exercise 3b
 <li>go.Box() for <strong>basic box plots</strong></li>
 </ul>
 <p>Let’s plot a heatmap of monthly temperatures at the South Pole:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>months <span class="op">=</span> [<span class="st">'Jan'</span>, <span class="st">'Feb'</span>, <span class="st">'Mar'</span>, <span class="st">'Apr'</span>, <span class="st">'May'</span>, <span class="st">'Jun'</span>, <span class="st">'Jul'</span>, <span class="st">'Aug'</span>, <span class="st">'Sep'</span>, <span class="st">'Oct'</span>, <span class="st">'Nov'</span>, <span class="st">'Dec'</span>, <span class="st">'Year'</span>]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>recordHigh <span class="op">=</span> [<span class="op">-</span><span class="fl">14.4</span>,<span class="op">-</span><span class="fl">20.6</span>,<span class="op">-</span><span class="fl">26.7</span>,<span class="op">-</span><span class="fl">27.8</span>,<span class="op">-</span><span class="fl">25.1</span>,<span class="op">-</span><span class="fl">28.8</span>,<span class="op">-</span><span class="fl">33.9</span>,<span class="op">-</span><span class="fl">32.8</span>,<span class="op">-</span><span class="fl">29.3</span>,<span class="op">-</span><span class="fl">25.1</span>,<span class="op">-</span><span class="fl">18.9</span>,<span class="op">-</span><span class="fl">12.3</span>,<span class="op">-</span><span class="fl">12.3</span>]</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>averageHigh <span class="op">=</span> [<span class="op">-</span><span class="fl">26.0</span>,<span class="op">-</span><span class="fl">37.9</span>,<span class="op">-</span><span class="fl">49.6</span>,<span class="op">-</span><span class="fl">53.0</span>,<span class="op">-</span><span class="fl">53.6</span>,<span class="op">-</span><span class="fl">54.5</span>,<span class="op">-</span><span class="fl">55.2</span>,<span class="op">-</span><span class="fl">54.9</span>,<span class="op">-</span><span class="fl">54.4</span>,<span class="op">-</span><span class="fl">48.4</span>,<span class="op">-</span><span class="fl">36.2</span>,<span class="op">-</span><span class="fl">26.3</span>,<span class="op">-</span><span class="fl">45.8</span>]</span>
@@ -632,14 +633,14 @@ Exercise 3b
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>yticks <span class="op">=</span> [<span class="st">'record high'</span>, <span class="st">'aver.high'</span>, <span class="st">'daily mean'</span>, <span class="st">'aver.low'</span>, <span class="st">'record low'</span>]</span>
 <span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>heatmap <span class="op">=</span> go.Heatmap(z<span class="op">=</span>data, x<span class="op">=</span>months, y<span class="op">=</span>yticks)</span>
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([heatmap])</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 3c
+<span class="screen-reader-only">Caution</span>Exercise 3c
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -653,12 +654,12 @@ Exercise 3c
 <section id="contour-maps" class="level3">
 <h3 class="anchored" data-anchor-id="contour-maps">Contour maps</h3>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 4
+<span class="screen-reader-only">Caution</span>Exercise 4
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -672,14 +673,14 @@ Exercise 4
 <section id="download-data" class="level3">
 <h3 class="anchored" data-anchor-id="download-data">Download data</h3>
 <p>Open a terminal window inside Jupyter (New | Terminal) and run these commands:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://tinyurl.com/pvzip <span class="at">-O</span> paraview.zip</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://tinyurl.com/pvzip <span class="at">-O</span> paraview.zip</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> paraview.zip</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> data/<span class="pp">*</span>.<span class="dt">{csv</span><span class="op">,</span><span class="dt">nc}</span> .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> data/<span class="pp">*</span>.<span class="dt">{csv</span><span class="op">,</span><span class="dt">nc}</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="geographical-scatterplot" class="level3">
 <h3 class="anchored" data-anchor-id="geographical-scatterplot">Geographical scatterplot</h3>
 <p>Go back to your Python Jupyter Notebook. Now let’s do a scatterplot on top of a geographical map:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> log10</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'cities.csv'</span>)   <span class="co"># lists name,pop,lat,lon for 254 Canadian cities and towns</span></span>
@@ -712,14 +713,14 @@ Exercise 4
 <span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>                           subunitwidth <span class="op">=</span> <span class="dv">1</span>, subunitcolor <span class="op">=</span> <span class="st">"rgb(255,255,255)"</span>,   <span class="co"># province border</span></span>
 <span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>                           countrywidth <span class="op">=</span> <span class="dv">2</span>, countrycolor <span class="op">=</span> <span class="st">"rgb(255,255,255)"</span>))  <span class="co"># country border</span></span>
 <span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[cities], layout<span class="op">=</span>layout)</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 5
+<span class="screen-reader-only">Caution</span>Exercise 5
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -730,7 +731,7 @@ Exercise 5
 </div>
 </div>
 <p>Recall how we combined several scatter plots in one figure before. You can combine several plots on top of a single map – let’s <strong>combine scattergeo + choropleth</strong>:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'cities.csv'</span>)</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'text'</span>] <span class="op">=</span> df[<span class="st">'name'</span>] <span class="op">+</span> <span class="st">'&lt;br&gt;Population '</span> <span class="op">+</span> <span class="op">\</span></span>
@@ -759,12 +760,12 @@ Exercise 5
 <span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a>                          colorbar <span class="op">=</span> <span class="bu">dict</span>(tickprefix <span class="op">=</span> <span class="st">'$'</span>,title <span class="op">=</span> <span class="st">'GDP&lt;br&gt;Billions US$'</span>))</span>
 <span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(hovermode <span class="op">=</span> <span class="st">"x"</span>, showlegend <span class="op">=</span> <span class="va">False</span>)  <span class="co"># do not show legend for first plot</span></span>
 <span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[cities,countries], layout<span class="op">=</span>layout)</span>
-<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="d-topographic-elevation" class="level3">
 <h3 class="anchored" data-anchor-id="d-topographic-elevation">3D Topographic elevation</h3>
 <p>Let’s plot some tabulated topographic elevation data:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> pd.read_csv(<span class="st">'mt_bruno_elevation.csv'</span>)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>surface <span class="op">=</span> go.Surface(z<span class="op">=</span>table.values)  <span class="co"># use 2D numpy array format</span></span>
@@ -772,14 +773,14 @@ Exercise 5
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>                   width<span class="op">=</span><span class="dv">1200</span>, height<span class="op">=</span><span class="dv">1200</span>,    <span class="co"># image size</span></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>                   margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">65</span>, r<span class="op">=</span><span class="dv">10</span>, b<span class="op">=</span><span class="dv">65</span>, t<span class="op">=</span><span class="dv">90</span>))   <span class="co"># margins around the plot</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([surface], layout<span class="op">=</span>layout)</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exercise 6
+<span class="screen-reader-only">Caution</span>Exercise 6
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -793,7 +794,7 @@ Exercise 6
 <section id="elevated-2d-functions" class="level3">
 <h3 class="anchored" data-anchor-id="elevated-2d-functions">Elevated 2D functions</h3>
 <p>Let’s define a different colourmap by adding <code>colorscale='Viridis'</code> inside <code>go.Surface()</code>. This is our current code:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span>   <span class="co"># plot resolution</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="dv">0</span>,<span class="dv">1</span>,n)</span>
@@ -803,7 +804,7 @@ Exercise 6
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> go.Surface(z<span class="op">=</span>F, colorscale<span class="op">=</span><span class="st">'Viridis'</span>)</span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(width<span class="op">=</span><span class="dv">1000</span>, height<span class="op">=</span><span class="dv">1000</span>, scene<span class="op">=</span>go.layout.Scene(zaxis<span class="op">=</span>go.layout.scene.ZAxis(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>,<span class="dv">2</span>])))<span class="op">;</span></span>
 <span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[data], layout<span class="op">=</span>layout)</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="lighting-control" class="level3">
 <h3 class="anchored" data-anchor-id="lighting-control">Lighting control</h3>
@@ -820,7 +821,7 @@ Exercise 6
 <section id="d-parametric-plots" class="level3">
 <h3 class="anchored" data-anchor-id="d-parametric-plots">3D parametric plots</h3>
 <p>In plotly documentation you can find quite a lot of <a href="https://plot.ly/python/3d-charts">different 3D plot types</a>. Here is something visually very different, but it still uses <code>go.Surface(x,y,z)</code>:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> pi, sin, cos, mgrid</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>dphi, dtheta <span class="op">=</span> pi<span class="op">/</span><span class="dv">250</span>, pi<span class="op">/</span><span class="dv">250</span>    <span class="co"># 0.72 degrees</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>[phi, theta] <span class="op">=</span> mgrid[<span class="dv">0</span>:pi<span class="op">+</span>dphi<span class="op">*</span><span class="fl">1.5</span>:dphi, <span class="dv">0</span>:<span class="dv">2</span><span class="op">*</span>pi<span class="op">+</span>dtheta<span class="op">*</span><span class="fl">1.5</span>:dtheta]</span>
@@ -832,12 +833,12 @@ Exercise 6
 <span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>surface <span class="op">=</span> go.Surface(x<span class="op">=</span>x, y<span class="op">=</span>y, z<span class="op">=</span>z, colorscale<span class="op">=</span><span class="st">'Viridis'</span>)</span>
 <span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title<span class="op">=</span><span class="st">'parametric plot'</span>)</span>
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[surface], layout<span class="op">=</span>layout)</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="d-scatter-plots" class="level3">
 <h3 class="anchored" data-anchor-id="d-scatter-plots">3D scatter plots</h3>
 <p>Let’s take a look at a 3D scatter plot using the <code>country index</code> data from http://www.prosperity.com for 142 countries:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'legatum2015.csv'</span>)</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>spheres <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>df.economy,</span>
@@ -859,12 +860,12 @@ Exercise 6
 <span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>                                yaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'entrepreneurshipOpportunity'</span>),</span>
 <span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>                                zaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'governance'</span>)))</span>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[spheres], layout<span class="op">=</span>layout)</span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="d-graphs" class="level3">
 <h3 class="anchored" data-anchor-id="d-graphs">3D graphs</h3>
 <p>We can plot 3D graphs. Consider a Dorogovtsev-Goltsev-Mendes graph: <em>in each subsequent generation, every edge from the previous generation yields a new node, and the new graph can be made by connecting together three previous-generation graphs</em>.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>generation <span class="op">=</span> <span class="dv">5</span></span>
@@ -905,12 +906,12 @@ Exercise 6
 <span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>               zaxis<span class="op">=</span>go.layout.scene.ZAxis(axis)),</span>
 <span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span>go.layout.Margin(t<span class="op">=</span><span class="dv">100</span>))</span>
 <span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[edges,nodes], layout<span class="op">=</span>layout)</span>
-<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="d-functions" class="level3">
 <h3 class="anchored" data-anchor-id="d-functions">3D functions</h3>
 <p>Let’s create an isosurface of a <code>decoCube</code> function at f=0.03. Isosurfaces are returned as a list of polygons, and for plotting polygons in plotly we need to use <code>plotly.figure_factory.create_trisurf()</code> which replaces <code>plotly.graph_objs.Figure()</code>:</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotly <span class="im">import</span> figure_factory <span class="im">as</span> FF</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotly <span class="im">import</span> figure_factory <span class="im">as</span> FF</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> mgrid</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> measure</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>X,Y,Z <span class="op">=</span> mgrid[<span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>, <span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>, <span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>] <span class="co"># three 30^3 grids, each side [-1.2,1.2] in 30 steps</span></span>
@@ -921,7 +922,7 @@ Exercise 6
 <span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>x,y,z <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span>vertices)   <span class="co"># zip(*...) is opposite of zip(...): unzips a list of tuples</span></span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> FF.create_trisurf(x<span class="op">=</span>x, y<span class="op">=</span>y, z<span class="op">=</span>z, plot_edges<span class="op">=</span><span class="va">False</span>,</span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>                        simplices<span class="op">=</span>triangles, title<span class="op">=</span><span class="st">"Isosurface"</span>, height<span class="op">=</span><span class="dv">1200</span>, width<span class="op">=</span><span class="dv">1200</span>)</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Try switching <code>plot_edges=False</code> to <code>plot_edges=True</code> – you’ll see individual polygons!</p>
 <!-- ### NetCDF data -->
 <!-- #### 2D slices through a 3D dataset -->
@@ -1104,13 +1105,14 @@ Exercise 6
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
