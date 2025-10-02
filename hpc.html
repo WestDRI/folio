@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>list – Various courses</title>
+<title>Intro to high-performance computing (HPC) – Various courses</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -251,124 +251,229 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#longer-courses" id="toc-longer-courses" class="nav-link active" data-scroll-target="#longer-courses">Longer courses</a>
-  <ul class="collapse">
-  <li><a href="#linux-command-line" id="toc-linux-command-line" class="nav-link" data-scroll-target="#linux-command-line">Linux command line</a></li>
-  <li><a href="#high-performance-computing" id="toc-high-performance-computing" class="nav-link" data-scroll-target="#high-performance-computing">High-performance computing</a></li>
-  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
-  <li><a href="#julia" id="toc-julia" class="nav-link" data-scroll-target="#julia">Julia</a></li>
-  <li><a href="#chapel" id="toc-chapel" class="nav-link" data-scroll-target="#chapel">Chapel</a></li>
-  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
-  </ul></li>
-  <li><a href="#shorter-workshops-and-webinars" id="toc-shorter-workshops-and-webinars" class="nav-link" data-scroll-target="#shorter-workshops-and-webinars">Shorter workshops and webinars</a></li>
-  <li><a href="#pages-on-the-old-website" id="toc-pages-on-the-old-website" class="nav-link" data-scroll-target="#pages-on-the-old-website">Pages on the old website</a></li>
+  <li><a href="#videos-introduction" id="toc-videos-introduction" class="nav-link active" data-scroll-target="#videos-introduction">Videos: introduction</a></li>
+  <li><a href="#videos-overview-of-parallel-programming-frameworks" id="toc-videos-overview-of-parallel-programming-frameworks" class="nav-link" data-scroll-target="#videos-overview-of-parallel-programming-frameworks">Videos: overview of parallel programming frameworks</a></li>
+  <li><a href="#videos-slurm-job-scheduler" id="toc-videos-slurm-job-scheduler" class="nav-link" data-scroll-target="#videos-slurm-job-scheduler">Videos: Slurm job scheduler</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Intro to high-performance computing (HPC)</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
-<section id="longer-courses" class="level1">
-<h1>Longer courses</h1>
-<section id="linux-command-line" class="level3">
-<h3 class="anchored" data-anchor-id="linux-command-line">Linux command line</h3>
+</header>
+
+
+<!-- {{<cor>}}January 30<sup>th</sup> (Part 1), February 6<sup>th</sup> (Part 2) and February 13<sup>th</sup> (Part 3){{</cor>}}\ -->
+<!-- {{<cgr>}}All days 10:00am - noon Pacific Time{{</cgr>}} -->
+<!-- --- -->
+<p>This course is an introduction to High-Performance Computing on the Alliance clusters.</p>
+<p><strong>Abstract</strong>: This course is an introduction to High-Performance Computing (HPC) on the Alliance clusters. We will start with the cluster hardware overview, then talk about some basic tools and the software environment on our clusters. Next we’ll give a quick tour of various parallel programming frameworks such as OpenMP, MPI, Python Dask, newer parallel languages such as Chapel and Julia, and we’ll try to compile some serial, shared-memory and distributed-memory codes using makefiles. We’ll then proceed to working with the Slurm scheduler, submitting and benchmarking our previously compiled codes. We will learn about batch and interactive cluster usage, best practices for submitting a large number of jobs, estimating your job’s resource requirements, and managing file permissions in shared cluster filesystems. There will be many demos and hands-on exercises on our training cluster.</p>
+<p><strong>Instructor</strong>: Alex Razoumov (SFU)</p>
+<p><strong>Prerequisites:</strong> Working knowledge of the Linux Bash shell. We will provide guest accounts to one of our Linux systems.</p>
+<p><strong>Software</strong>: All attendees will need a remote secure shell (SSH) client installed on their computer in order to participate in the course exercises. On Mac and Linux computers SSH is usually pre-installed (try typing <code>ssh</code> in a terminal to make sure it is there). Many versions of Windows also provide an OpenSSH client by default – try opening PowerShell and typing <code>ssh</code> to see if it is available. If not, then we recommend installing <a href="https://mobaxterm.mobatek.net/download.html">the free Home Edition of MobaXterm</a>.</p>
+<p><strong>Materials</strong>: Please download a <a href="http://bit.ly/introhpc2">ZIP file</a> with all slides (single PDF combining all chapters) and sample codes. We will also download this ZIP file to the training cluster later in the course. First, let’s try to log in to the training cluster.</p>
+<!-- {{<cor>}}Part 1{{</cor>}} \ -->
+<!-- Click on a triangle to expand a question: -->
+<!-- {{< question num="1: cluster filesystems" >}} -->
+<!-- Let's log in to the training cluster. Try to access `/home`, `/scratch`, `/project` on the training cluster. Note that -->
+<!-- these only emulate the real production filesystems and have no speed benefits on the training cluster. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="2: edit a remote file" >}} -->
+<!-- Edit a remote file in `nano` or `vi` or `emacs`. Use `cat` or `more` to view its content in the terminal. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="3: gcc compiler" >}} -->
+<!-- Load the default GNU compiler with `module` command. Which version is it? Try to understand what the module does: run -->
+<!-- `module show` on it, `echo $PATH`, `which gcc`. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="4: Intel compiler" >}} -->
+<!-- Load the default Intel compiler. Which version is it? Does it work on the training cluster? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="5: third compiler?" >}} -->
+<!-- Can you spot the third compiler family when you do `module avail`? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="6: scipy-stack" >}} -->
+<!-- What other modules does `scipy-stack/2022a` load? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="7: python3" >}} -->
+<!-- How many versions of python3 do we have? What about python2? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="8: research software" >}} -->
+<!-- Think of a software package that you use. Check if it is installed on the cluster, and share your findings. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="9: file transfer" >}} -->
+<!-- Transfer a file to/from the cluster (we did this already in bash class) using either command line or GUI. Type "done" -->
+<!-- into the chat when done. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="10: why HPC?" >}} -->
+<!-- Can you explain (1-2 sentences) how HPC can help us solve problems? Why a desktop/workstation not sufficient? Maybe, you -->
+<!-- can give an example from your field? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="11: tmux" >}} -->
+<!-- Try left+right or upper+lower split panes in `tmux`. Edit a file in one and run bash commands in the -->
+<!-- other. Try disconnecting temporarily and then reconnecting to the same session. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="12: compiling" >}} -->
+<!-- In `introHPC/codes`, compile `{pi,sharedPi,distributedPi}.c` files. Try running a short serial code on the login node -->
+<!-- (not longer than a few seconds: modify the number of terms in the summation). -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="13a: make" >}} -->
+<!-- Write a makefile to replace these compilations commands with `make {serial,openmp,mpi}`. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="13b: make (cont.)" >}} -->
+<!-- Add target `all`. -->
+<!-- Add target `clean`. Try implementing `clean` for *all* executable files in the current directory, no matter what they -->
+<!-- are called. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="14: Julia" >}} -->
+<!-- Julia parallelism was not mentioned in the videos. Let's quickly talk about it (slide 29). -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="14b: parallelization" >}} -->
+<!-- Suggest a computational problem to parallelize. Which of the parallel tools mentioned in the videos would you use, and -->
+<!-- why? -->
+<!-- If you are not sure about the right tool, suggest a problem, and we can brainstorm the approach together. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="15: Python and R" >}} -->
+<!-- If you use Python or R in your work, try running a Python or R script in the terminal. -->
+<!-- If this script depends on packages, try installing them in your own directory with `virtualenv`. Probably, only a few of -->
+<!-- you should do this on the training cluster at the same time. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="16: other" >}} -->
+<!-- Any remaining questions? Type your question into the chat, ask via audio (unmute), or raise your hand in Zoom. -->
+<!-- {{< /question >}} -->
+<!-- {{< solution >}} -->
+<!-- ```sh -->
+<!-- function countfiles() { -->
+<!--     if [ $# -eq 0 ]; then -->
+<!--         echo "No arguments given. Usage: countfiles dir1 dir2 ..." -->
+<!--         return 1 -->
+<!--     fi -->
+<!--     for dir in $@; do -->
+<!--         echo in $dir we found $(find $dir -type f | wc -l) files -->
+<!--     done -->
+<!-- } -->
+<!-- ``` -->
+<!-- {{< /solution >}} -->
+<!-- {{<cor>}}Part 2{{</cor>}} \ -->
+<!-- Click on a triangle to expand a question: -->
+<!-- {{< question num="17: serial job" >}} -->
+<!-- Submit a serial job that runs `hostname` command. -->
+<!-- Try playing with `sq`, `squeue`, `scancel` commands. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="18: serial job (cont.)" >}} -->
+<!-- Submit a serial job based on `pi.c`. -->
+<!-- Try `sstat` on a currently running job. Try `seff` and `sacct` on a completed job. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="19: optimization timing" >}} -->
+<!-- Using a serial job, time optimized (`-O2`) vs. unoptimized code. Type your findings into the chat. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="20: Python vs. C timing" >}} -->
+<!-- Using a serial job, time `pi.c` vs. `pi.py` for the same number of terms (cannot be too large or too small -- why?). -->
+<!-- Python pros -- can you speed up `pi.py`? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="21: array job" >}} -->
+<!-- Submit an array job for different values of `n` (number of terms) with `pi.c`. How can you have different executable for -->
+<!-- each job inside the array? -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="22: OpenMP job" >}} -->
+<!-- Submit a shared-memory job based on `sharedPi.c`. Did you get any speedup? Type your answer into the chat. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="23: MPI job" >}} -->
+<!-- Submit an MPI job based on `distributedPi.c`. -->
+<!-- Try scaling 1 → 2 → 4 → 8 cores. Did you get any speedup? Type your answer into the chat. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="24: serial interactive job" >}} -->
+<!-- Test the serial code inside an interactive job. Please quit the job when done, as we have very few compute cores on the -->
+<!-- training cluster. -->
+<!-- Note: we have seen the training cluster become unstable when using too many interactive resources. Strictly speaking, -->
+<!-- this should not happen, however there is a small chance it might. We do have a backup. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="25: shared-memory interactive job" >}} -->
+<!-- Test the shared-memory code inside an interactive job. Please quit when done, as we have very few compute cores on the training cluster. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="26: MPI interactive job" >}} -->
+<!-- Test the MPI code inside an interactive job. Please quit when done, as we have very few compute cores on the training cluster. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="27: debugging and optimization" >}} -->
+<!-- Let's talk about debugging, profiling and code optimization. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="28: permissions and file sharing" >}} -->
+<!-- Let's talk about file permissions and file sharing. -->
+<!-- Share a file in your `~/projects` directory (make it readable) with all other users in `def-sponsor00` group. -->
+<!-- {{< /question >}} -->
+<!-- {{< question num="29: other" >}} -->
+<!-- Are there questions on any of the topics that we covered today? You can type your question into the chat, ask via audio -->
+<!-- (unmute), or raise your hand in Zoom. -->
+<!-- {{< /question >}} -->
+<section id="videos-introduction" class="level2">
+<h2 class="anchored" data-anchor-id="videos-introduction">Videos: introduction</h2>
+<p>These videos (recorded in 2020) cover the same materials we study in the course, but you can watch these at your own pace.</p>
 <ul>
-<li><a href="bash">Introduction to Bash command line</a></li>
+<li><a href="https://www.youtube.com/watch?v=dVMNSp98yRA">Introduction</a> (3 min)</li>
+<li><a href="https://www.youtube.com/watch?v=pLy3m9Nq4rM">Cluster hardware overview</a> (17 min)</li>
+<li><a href="https://www.youtube.com/watch?v=9StaWaE4KRw">Basic tools on HPC clusters</a> (18 min)</li>
+<li><a href="https://www.youtube.com/watch?v=SjANgOLA4lc">File transfer</a> (10 min)</li>
+<li><a href="https://www.youtube.com/watch?v=dhV0Jg8VLoU">Programming languages and tools</a> (16 min)</li>
+</ul>
+<p><strong>Updates</strong>:</p>
+<ol type="1">
+<li>Since April 1st, 2022, your instructors in this course are based at Simon Fraser University.</li>
+<li>Some of the slides and links in the video have changed – please make sure to download the <a href="http://bit.ly/introhpc2">latest version of the slides</a> (ZIP file).</li>
+<li>Compute Canada has been replaced by the Digital Research Alliance of Canada (the Alliance). All Compute Canada hardware and services are now provided to researchers by the Alliance and its regional partners. However, you will still see many references to Compute Canada in <a href="https://docs.alliancecan.ca">our documentation</a> and support system.</li>
+<li>New systems were added (e.g.&nbsp;Narval in Calcul Québec), and some older systems were replaced (Cedar → Fir, Béluga → Rorqual, Graham → Nibi, Niagara → Trillium)</li>
+</ol>
+</section>
+<section id="videos-overview-of-parallel-programming-frameworks" class="level2">
+<h2 class="anchored" data-anchor-id="videos-overview-of-parallel-programming-frameworks">Videos: overview of parallel programming frameworks</h2>
+<p>Here we give you a brief overview of various parallel programming tools. Our goal here is not to learn how to use these tools, but rather tell you at a high level what these tools do, so that you understand the difference between shared- and distributed-memory parallel programming models and know which tools you can use for each. Later, in the scheduler session, you will use this knowledge to submit parallel jobs to the queue.</p>
+<p>Feel free to skip some of these videos if you are not interested in parallel programming.</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=hrN8hYYI-GA">OpenMP</a> (3 min)</li>
+<li><a href="https://www.youtube.com/watch?v=0jTuecDVPYI">MPI (message passing interface)</a> (9 min)</li>
+<li><a href="https://www.youtube.com/watch?v=ptR9Wa-Saek">Chapel parallel programming language</a> (7 min)</li>
+<li><a href="https://www.youtube.com/watch?v=-kYclNmUuX0">Python Dask</a> (6 min)</li>
+<li><a href="https://www.youtube.com/watch?v=m_60GzGJn6E">Make build automation tool</a> (9 min)</li>
+<li><a href="https://www.youtube.com/watch?v=Ncwmx80zlGE">Other essential tools</a> (5 min)</li>
+<li><a href="https://www.youtube.com/watch?v=hqdvNMAaegI">Python and R on clusters</a> (6 min)</li>
 </ul>
 </section>
-<section id="high-performance-computing" class="level3">
-<h3 class="anchored" data-anchor-id="high-performance-computing">High-performance computing</h3>
+<section id="videos-slurm-job-scheduler" class="level2">
+<h2 class="anchored" data-anchor-id="videos-slurm-job-scheduler">Videos: Slurm job scheduler</h2>
 <ul>
-<li><a href="introhpc">Introduction to HPC</a></li>
-<li><a href="apptainer">Working with Apptainer containers</a></li>
+<li><a href="https://www.youtube.com/watch?v=Qd39UkdajwQ">Slurm intro</a> (8 min)</li>
+<li><a href="https://www.youtube.com/watch?v=GjI8Fmzo20A">Job billing with core equivalents</a> (2 min)</li>
+<li><a href="https://www.youtube.com/watch?v=sv5lUnoBV30">Submitting serial jobs</a> (12 min)</li>
+<li><a href="https://www.youtube.com/watch?v=rIxTP8d8PaM">Submitting shared-memory jobs</a> (9 min)</li>
+<li><a href="https://www.youtube.com/watch?v=7RWpRtCCPz8">Submitting MPI jobs</a> (8 min)</li>
+<li><a href="https://www.youtube.com/watch?v=zaYUIjsuKoU">Slurm jobs and memory</a> (8 min)</li>
+<li><a href="https://www.youtube.com/watch?v=-1g2WM9kG88">Hybrid and GPU jobs</a> (5 min)</li>
+<li><a href="https://www.youtube.com/watch?v=Ye7IrSxaN2k">Interactive jobs</a> (8 min)</li>
+<li><a href="https://www.youtube.com/watch?v=I_U5u9F-_no">Getting information and other Slurm commands</a> (6 min)</li>
+<li><a href="https://www.youtube.com/watch?v=G4dcMri-gDM">Best computing / storage practices and summary</a> (9 min)</li>
 </ul>
-</section>
-<section id="python" class="level3">
-<h3 class="anchored" data-anchor-id="python">Python</h3>
-<ul>
-<li><a href="intropython">Introduction to Python</a></li>
-<li><a href="scientificpython">Scientific Python</a></li>
-<li><a href="pythonhpc">Towards high-performance Python</a></li>
-<li><a href="ray">Distributed computing with Ray</a></li>
-</ul>
-</section>
-<section id="julia" class="level3">
-<h3 class="anchored" data-anchor-id="julia">Julia</h3>
-<ul>
-<li><a href="julia">Parallel computing in Julia</a></li>
-</ul>
-</section>
-<section id="chapel" class="level3">
-<h3 class="anchored" data-anchor-id="chapel">Chapel</h3>
-<ul>
-<li><a href="chapel">Parallel programming in Chapel</a></li>
-<li><a href="chapel-gpu">GPU computing with Chapel</a></li>
-</ul>
-</section>
-<section id="visualization" class="level3">
-<h3 class="anchored" data-anchor-id="visualization">Visualization</h3>
-<ul>
-<li>Scientific visualization with ParaView</li>
-<li>Large-scale and remote visualization on HPC clusters</li>
-<li>Scientific visualization with VisIt</li>
-</ul>
-</section>
-</section>
-<section id="shorter-workshops-and-webinars" class="level1">
-<h1>Shorter workshops and webinars</h1>
-<ul>
-<li><a href="bashscripting">Bash scripting for beginners</a></li>
-<li><a href="bashfeatures">Lesser known but very useful Bash features</a></li>
-<li><a href="bash-questions">Answering your Bash questions</a></li>
-<li><a href="make">Introduction to makefiles</a></li>
-<li><a href="plotly">Plot.ly for scientific visualization</a></li>
-<li><a href="programmable">Hands-on with ParaView’s Programmable Filter &amp; Source for scientific visualization</a></li>
-<li><a href="humanitiespython">Python basics for humanists</a></li>
-<li><a href="annex">Distributed file storage with git-annex</a></li>
-<li><a href="formats">What format to choose to save your data</a></li>
-<li><a href="imagemagick">Command-line image processing with ImageMagick</a></li>
-<li><a href="pytables">Managing large hierarchical datasets with PyTables</a></li>
-<li><a href="git-rcg">Using Git to contribute to the RCG website</a></li>
-<li><a href="cloud2hpc">From cloud to HPC … building a GPU-enabled container on Arbutus</a></li>
-<li><a href="clusterworkflows">Running parallel Ray workflows</a></li>
-<li><a href="stencil">High-level parallel stencil computations on CPUs and GPUs in Julia</a></li>
-<li><a href="globus">Globus-cli for file transfer</a></li>
-</ul>
-</section>
-<section id="pages-on-the-old-website" class="level1">
-<h1>Pages on the old website</h1>
-<p>Might convert these to Quarto later:</p>
-<ul>
-<li><a href="https://wgpages.netlify.app/hpc-in-summer" class="uri">https://wgpages.netlify.app/hpc-in-summer</a></li>
-<li><a href="https://wgpages.netlify.app/pythonlibraries" class="uri">https://wgpages.netlify.app/pythonlibraries</a></li>
-<li><a href="https://wgpages.netlify.app/julia-installation" class="uri">https://wgpages.netlify.app/julia-installation</a></li>
-<li><a href="https://wgpages.netlify.app/distributed" class="uri">https://wgpages.netlify.app/distributed</a></li>
-<li><a href="https://wgpages.netlify.app/darrays" class="uri">https://wgpages.netlify.app/darrays</a></li>
-</ul>
-<!-- ### maybe -->
-<!--     vis/ vis1.md vis2.md -->
-<!-- ### never -->
-<!--     chapel-original.md chapel1/ driConnect.md nationalJulia-202202.md nationalParaView-202110.md -->
-<!--     dataladIntro-202302.md dataladWebinar-20230328.md -->
-<!--     introPython-menu.md python1/ # an older course, replaced with 3dayPython-menu.md -->
-<!-- :::{layout="[[5, 5, 5, 5], [5, 5, 5, 5]]"} -->
-<!-- :::{.card .mb-3} -->
-<!-- :::{.card-body} -->
-<!-- [AI](/ai/index.qmd){.card-title .stretched-link} -->
-<!-- [Deep learning frameworks]{.text-muted} -->
-<!-- ::: -->
-<!-- ::: -->
-<!-- :::{.card .mb-3} -->
-<!-- :::{.card-body} -->
-<!-- [R](/r/index.qmd){.card-title .stretched-link} -->
-<!-- [Statistical programming]{.text-muted} -->
-<!-- ::: -->
-<!-- ::: -->
-<!-- ::: -->
+<!-- An interactive job will give you a bash shell on one the nodes that was allocated to your job. There you -->
+<!-- can start a test run, debug your code, start a VNC/ParaView/VisIt/etc server and connect to it from a -->
+<!-- client on your computer, etc. Note that interactive jobs typically have a short maximum runtime, usually -->
+<!-- 3 hours. -->
+<!-- One of the main takeaways from this course is to learn how to transition between `sbatch` and `salloc` -->
+<!-- commands. You may debug your workflow with `salloc`, transition to production jobs with `sbatch`, and -->
+<!-- then find that you need to use `salloc` again to debug problems and to analyze your large datasets. -->
 
 
 </section>
