@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>list – Various courses</title>
+<title>Scientific visualization with ParaView – Various courses</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -251,124 +251,103 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#longer-courses" id="toc-longer-courses" class="nav-link active" data-scroll-target="#longer-courses">Longer courses</a>
-  <ul class="collapse">
-  <li><a href="#linux-command-line" id="toc-linux-command-line" class="nav-link" data-scroll-target="#linux-command-line">Linux command line</a></li>
-  <li><a href="#high-performance-computing" id="toc-high-performance-computing" class="nav-link" data-scroll-target="#high-performance-computing">High-performance computing</a></li>
-  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
-  <li><a href="#julia" id="toc-julia" class="nav-link" data-scroll-target="#julia">Julia</a></li>
-  <li><a href="#chapel" id="toc-chapel" class="nav-link" data-scroll-target="#chapel">Chapel</a></li>
-  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
-  </ul></li>
-  <li><a href="#shorter-workshops-and-webinars" id="toc-shorter-workshops-and-webinars" class="nav-link" data-scroll-target="#shorter-workshops-and-webinars">Shorter workshops and webinars</a></li>
-  <li><a href="#pages-on-the-old-website" id="toc-pages-on-the-old-website" class="nav-link" data-scroll-target="#pages-on-the-old-website">Pages on the old website</a></li>
+  <li><a href="#workshop-materials" id="toc-workshop-materials" class="nav-link active" data-scroll-target="#workshop-materials">Workshop materials</a></li>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#remote-visualization" id="toc-remote-visualization" class="nav-link" data-scroll-target="#remote-visualization">Remote visualization</a></li>
+  <li><a href="#steps-for-partitioning-the-unstructured-dataset" id="toc-steps-for-partitioning-the-unstructured-dataset" class="nav-link" data-scroll-target="#steps-for-partitioning-the-unstructured-dataset">Steps for partitioning the unstructured dataset</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Scientific visualization with ParaView</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
-<section id="longer-courses" class="level1">
-<h1>Longer courses</h1>
-<section id="linux-command-line" class="level3">
-<h3 class="anchored" data-anchor-id="linux-command-line">Linux command line</h3>
+</header>
+
+
+<!-- {{<cor>}}October 4-5, 2021{{</cor>}}\ -->
+<!-- {{<cgr>}}Both days 10 am–1 pm Pacific{{</cgr>}} / -->
+<!-- {{<cgr>}}1pm–4 pm Eastern Time{{</cgr>}} / -->
+<!-- {{<cgr>}}2pm–5 pm Atlantic{{</cgr>}} -->
+<p><strong>Abstract</strong>: ParaView is an open source, multi-platform data analysis and visualization tool designed to run on a variety of hardware from an individual laptop to large supercomputers. With ParaView users can interactively visualize 2D and 3D datasets defined on structured, adaptive and unstructured meshes or particles, animate these datasets in time, and manipulate them with a variety of filters. ParaView supports both interactive (GUI) and scripted (including offscreen) visualization, and is an easy and fun tool to learn.</p>
+<p>The first half of this workshop will cover some intermediate and advanced topics in 3D scientific visualization with ParaView including (1) <strong>scripting</strong>, (2) <strong>animation</strong>, and (3) <strong>remote and distributed visualization</strong>. In the second half participants will apply their newly gained knowledge of making animations on different datasets including one from a CFD simulation of a tidal turbine.</p>
+<!-- Both sessions will be presented in English, with a French version to follow in November. -->
+<!-- - Oct-04 (Day 1) - formal introduction to animation, scripting, and remote visualization -->
+<!-- - Oct-05 (Day 2) - animating a turbine dataset (keyframe, camera movement, time evolution) -->
+<p><strong>Instructor</strong>: Alex Razoumov</p>
+<!-- **Helpers**: Jarno van der Kolk, Julie Faure-Lacroix, Marie-Hélène Burle, Tyson Whitehead -->
+<section id="workshop-materials" class="level2">
+<h2 class="anchored" data-anchor-id="workshop-materials">Workshop materials</h2>
+<p>The slides for Day 1 of this workshop (<code>slides2.pdf</code>) are included into the <a href="https://raw.githubusercontent.com/razoumov/publish/refs/heads/master/paraview.zip">main ZIP file</a> (~30 MB), along with sample datasets and various scripts.</p>
+<!-- In case of problems, check this [temporary mirror](https://transfer.sh/I7NwUJ/paraview.zip). -->
+<!-- Here are [the slides](../slides/HPC_and_Making_Scientific_Animations_in_ParaView.pdf) for Day 2. -->
+</section>
+<section id="prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
+<p>Please install ParaView 6.0.x from <a href="https://www.paraview.org/download" target="_blank">https://www.paraview.org/download</a> on your computer before the workshop.</p>
+<p>We expect participants to be somewhat familiar with the basics of ParaView: loading local datasets, interacting with their visualizations via the GUI, applying filters, and constructing basic visualization pipelines. We ask participants with no prior experience in ParaView to watch the following videos before attending the workshop:</p>
 <ul>
-<li><a href="bash">Introduction to Bash command line</a></li>
+<li><a href="https://youtu.be/FloAMW6niRM">Running ParaView (11 min)</a></li>
+<li><a href="https://youtu.be/gcqeOSTXUTQ">File formats and reading raw binary (7 min)</a></li>
+<li><a href="https://youtu.be/IRuZ4DiiwDs">VTK file formats: overview and legacy VTK (13 min)</a></li>
+<li><a href="https://youtu.be/3iiI7VUrgsM">VTK file formats: XML VTK (4 min)</a></li>
+<li><a href="https://youtu.be/_kJZRbPQsBE">Scientific file formats (5 min)</a></li>
+<li><a href="https://youtu.be/u7ui0Y4ysoE">ParaView filters (11 min)</a></li>
+<li><a href="https://youtu.be/r7cv1lX0Z4M">Store your visualization workflow with a state file (2 min)</a></li>
+<li><a href="https://youtu.be/YZHSufVi0aA">Side-by-side visualization (3 min)</a></li>
+<li><a href="https://youtu.be/QFlKiCOFHYc">Visualizing vectors (6 min)</a></li>
+<li><a href="https://youtu.be/C3WS2GajvBg">Creating better streamlines (3 min)</a></li>
+<li><a href="https://youtu.be/MqqduE3EnS8">Line integral convolution (LIC) (3 min)</a></li>
+<li><a href="https://youtu.be/1yrGH7w0rG4">Reading CSV data (6 min)</a></li>
+<li><a href="https://youtu.be/TWL2CMKSRaU">Putting your visualization online with ParaView Glance (5 min)</a></li>
+</ul>
+<section id="quick-knowledge-test-before-studying-the-workshop-materials" class="level4">
+<h4 class="anchored" data-anchor-id="quick-knowledge-test-before-studying-the-workshop-materials">Quick knowledge test – before studying the workshop materials</h4>
+<p>Start ParaView on your computer, load the dataset <code>data/disk_out_ref.ex2</code> and try to visualize temperature with a Clip and the velocity field with Stream Tracer With Custom Source and Glyph as shown in this image below:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/testImage.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Test your ParaView skills</figcaption>
+</figure>
+</div>
+</div>
+</section>
+</section>
+<section id="remote-visualization" class="level2">
+<h2 class="anchored" data-anchor-id="remote-visualization">Remote visualization</h2>
+<p>For remote visualization, if you already have a CC account, you can use it today, and we have also prepared guest accounts on Cedar – please pick an account and add your name to the line in the Goodle Doc (shared in Zoom chat) so that no one else uses it. If you already have a CC account, please add your username to the same Google Doc so that we could add you to the reservation.</p>
+<p>We have two reservations on Cedar until 2021-10-05T23:59:00 (Pacific):</p>
+<ul>
+<li>10-node CPU reservation <code>--account=def-training-wa_cpu --reservation=paraview-wr_cpu</code></li>
+<li>2-node GPU reservation <code>--account=def-training-wa_gpu --reservation=paraview-wr_gpu</code></li>
 </ul>
 </section>
-<section id="high-performance-computing" class="level3">
-<h3 class="anchored" data-anchor-id="high-performance-computing">High-performance computing</h3>
-<ul>
-<li><a href="introhpc">Introduction to HPC</a></li>
-<li><a href="apptainer">Working with Apptainer containers</a></li>
-</ul>
-</section>
-<section id="python" class="level3">
-<h3 class="anchored" data-anchor-id="python">Python</h3>
-<ul>
-<li><a href="intropython">Introduction to Python</a></li>
-<li><a href="scientificpython">Scientific Python</a></li>
-<li><a href="pythonhpc">Towards high-performance Python</a></li>
-<li><a href="ray">Distributed computing with Ray</a></li>
-</ul>
-</section>
-<section id="julia" class="level3">
-<h3 class="anchored" data-anchor-id="julia">Julia</h3>
-<ul>
-<li><a href="julia">Parallel computing in Julia</a></li>
-</ul>
-</section>
-<section id="chapel" class="level3">
-<h3 class="anchored" data-anchor-id="chapel">Chapel</h3>
-<ul>
-<li><a href="chapel">Parallel programming in Chapel</a></li>
-<li><a href="chapel-gpu">GPU computing with Chapel</a></li>
-</ul>
-</section>
-<section id="visualization" class="level3">
-<h3 class="anchored" data-anchor-id="visualization">Visualization</h3>
-<ul>
-<li><a href="paraview">Scientific visualization with ParaView</a></li>
-<li>Large-scale and remote visualization on HPC clusters</li>
-<li>Scientific visualization with VisIt</li>
-</ul>
-</section>
-</section>
-<section id="shorter-workshops-and-webinars" class="level1">
-<h1>Shorter workshops and webinars</h1>
-<ul>
-<li><a href="bashscripting">Bash scripting for beginners</a></li>
-<li><a href="bashfeatures">Lesser known but very useful Bash features</a></li>
-<li><a href="bash-questions">Answering your Bash questions</a></li>
-<li><a href="make">Introduction to makefiles</a></li>
-<li><a href="plotly">Plot.ly for scientific visualization</a></li>
-<li><a href="programmable">Hands-on with ParaView’s Programmable Filter &amp; Source for scientific visualization</a></li>
-<li><a href="humanitiespython">Python basics for humanists</a></li>
-<li><a href="annex">Distributed file storage with git-annex</a></li>
-<li><a href="formats">What format to choose to save your data</a></li>
-<li><a href="imagemagick">Command-line image processing with ImageMagick</a></li>
-<li><a href="pytables">Managing large hierarchical datasets with PyTables</a></li>
-<li><a href="git-rcg">Using Git to contribute to the RCG website</a></li>
-<li><a href="cloud2hpc">From cloud to HPC … building a GPU-enabled container on Arbutus</a></li>
-<li><a href="clusterworkflows">Running parallel Ray workflows</a></li>
-<li><a href="stencil">High-level parallel stencil computations on CPUs and GPUs in Julia</a></li>
-<li><a href="globus">Globus-cli for file transfer</a></li>
-</ul>
-</section>
-<section id="pages-on-the-old-website" class="level1">
-<h1>Pages on the old website</h1>
-<p>Might convert these to Quarto later:</p>
-<ul>
-<li><a href="https://wgpages.netlify.app/hpc-in-summer" class="uri">https://wgpages.netlify.app/hpc-in-summer</a></li>
-<li><a href="https://wgpages.netlify.app/pythonlibraries" class="uri">https://wgpages.netlify.app/pythonlibraries</a></li>
-<li><a href="https://wgpages.netlify.app/julia-installation" class="uri">https://wgpages.netlify.app/julia-installation</a></li>
-<li><a href="https://wgpages.netlify.app/distributed" class="uri">https://wgpages.netlify.app/distributed</a></li>
-<li><a href="https://wgpages.netlify.app/darrays" class="uri">https://wgpages.netlify.app/darrays</a></li>
-</ul>
-<!-- ### maybe -->
-<!--     vis/ vis1.md vis2.md -->
-<!-- ### never -->
-<!--     chapel-original.md chapel1/ driConnect.md nationalJulia-202202.md -->
-<!--     dataladIntro-202302.md dataladWebinar-20230328.md -->
-<!--     introPython-menu.md python1/ # an older course, replaced with 3dayPython-menu.md -->
-<!-- :::{layout="[[5, 5, 5, 5], [5, 5, 5, 5]]"} -->
-<!-- :::{.card .mb-3} -->
-<!-- :::{.card-body} -->
-<!-- [AI](/ai/index.qmd){.card-title .stretched-link} -->
-<!-- [Deep learning frameworks]{.text-muted} -->
-<!-- ::: -->
-<!-- ::: -->
-<!-- :::{.card .mb-3} -->
-<!-- :::{.card-body} -->
-<!-- [R](/r/index.qmd){.card-title .stretched-link} -->
-<!-- [Statistical programming]{.text-muted} -->
-<!-- ::: -->
-<!-- ::: -->
-<!-- ::: -->
+<section id="steps-for-partitioning-the-unstructured-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="steps-for-partitioning-the-unstructured-dataset">Steps for partitioning the unstructured dataset</h2>
+<ol type="1">
+<li>Load all <code>m114f105_AL_2d_tsr_5_*.vtu</code> files located in <code>/project/6052247/fbaratchi/paraview_training/unstructured</code> folder on Cedar</li>
+<li>Apply Cell Data to Point Data.</li>
+<li>Apply D3 filter.</li>
+<li>Save data as <code>A_NAME.PVTU</code> “decomposed”, write all timesteps as series, use fast compression.</li>
+</ol>
+<p>NOTE: Resulting partitioned data are located in <code>/project/6052247/fbaratchi/paraview_training/partitioned</code> on Cedar.</p>
 
 
 </section>
