@@ -1,0 +1,879 @@
+---
+title: "Globus-cli for file transfer"
+aliases:
+  - /globus
+---
+
+**Thursday, October 14<sup>th</sup>, 2025**
+
+<!-- You can find this page at &nbsp; -->
+<!-- <span style="font-size:1.8em;">https://folio.vastcloud.org/globus</span> -->
+
+**Abstract**: Globus is a widely used platform for secure, reliable, and high-performance data transfer across
+research systems. While the web interface is intuitive and remains our primary recommendation for most users,
+the command-line interface (CLI) offers advanced capabilities for automation, scripting, and managing
+large-scale workflows. In this webinar, we will present the globus-cli tool, show how to authenticate and
+configure your environment, and demonstrate key commands for transferring, monitoring, and managing files
+between endpoints. You will also learn tips for integrating globus-cli into scripts for repeatable and
+efficient data movement.
+
+
+
+
+
+
+## Advantages of Globus transfer over traditional `scp`/`sftp`/`rsync`
+
+In April, we hosted a webinar ["Introduction to Globus"](https://training.westdri.ca/tools/rdm). Here is a
+quick recap of why you might choose Globus over traditional file transfer tools:
+
+1. **Parallel, multi-stream transfers**: Globus automatically uses multiple TCP streams, tuning them for
+   wide-area networks, which can dramatically outperform single-threaded `scp` or `sftp` &nbsp;⮕&nbsp; great
+   for large-scale (multi-GB and multi-PB) datasets where `scp`/`sftp` typically fail or crawl. In short,
+   Globus will try to maximize the bandwidth between any two endpoints.
+1. If a transfer is interrupted (network drop, machine reboot, etc), Globus **resumes where it left off
+   without user intervention**.
+1. Automatic **checksum verification**.
+1. File **transfer happens in the background**, i.e. you can close your laptop and the transfer continues
+   server-to-server, unlike with `scp`/`sftp` where the session must stay open.
+   - you'll get an email notification when a task completes or fails
+1. Provides logs, progress tracking, notifications, and retry logic automatically.
+   - many research institutions use Globus for secure, auditable data movement that meets funding agency or
+     privacy requirements
+1. You can **share data** with collaborators who don't have direct system accounts.
+
+By default, Globus uses a Web-based interface to manage transfers via a web browser. However, this requires a
+lot of mouse clicking and sometimes navigating very large directory trees.
+
+<!-- There is also [Globus SDK for Python](https://globus-sdk-python.readthedocs.io) -- not covered in this presentation. -->
+
+There is also a [REST-style Application Programming Interface (API)](https://docs.globus.org/api/transfer)
+that supports submitting and monitoring file transfers and managing Globus Connect Personal collections. This
+could be used in scripting languages like Python and Ruby to integrate Globus into web portals. This is not
+covered in this presentation.
+
+In this webinar we will focus on using Globus from the command line to automate your transfers with shell
+commands and scripts/functions.
+
+::: {.callout-caution}
+## Caution
+Files aren't stored on Globus -- they reside on the underlying filesystem. If you don't intend to remove files
+from your directories, avoid deleting them through the Globus interface.
+:::
+
+
+
+
+
+
+## Install Globus CLI tools
+
+### On your computer
+
+```sh
+uv venv ~/env-globus --python 3.12   # create a new virtual environment
+source ~/env-globus/bin/activate
+uv pip install globus-cli
+...
+deactivate
+```
+
+### On a cluster
+
+```sh
+nibi
+module avail python                # several versions available
+module load python/3.12.4
+python -m venv ~/env-globus        # install Python tools in your $HOME/env-globus
+source ~/env-globus/bin/activate   # load the environment
+python -m pip install --upgrade pip --no-index
+python -m pip install --no-index globus_cli setuptools   # all these will go into your $HOME/env-globus
+...
+deactivate
+```
+
+
+
+
+
+
+## Getting help
+
+<!-- Quality-of-life settings -->
+
+```sh
+source ~/env-globus/bin/activate
+eval "$(globus --bash-completer)"   # enable tab completion in bash version 4.4 or newer
+globus --help             # or -h
+globus <command> --help   # or -h
+globus ls --help
+globus --help
+globus list-commands
+```
+
+
+
+
+
+
+
+## Starting up and authenticating
+
+In Globus there are two levels of authentication.
+
+(1) First, you need to log in to Globus itself:
+
+<!-- my primary identity is razoumov@computecanada.ca - it's not an email address -->
+
+```sh
+globus login   # log in to a Globus session through your browser
+globus whoami --verbose
+globus session show   # show all active sessions
+# globus logout   # might run this at some point if you no longer need Globus
+```
+
+(2) Second, when you access an endpoint (e.g. `globus ls ...`, `globus transfer ...`) inside a session, you
+will need to give permission to Globus to access that endpoint / filesystem on your behalf. Theoretically,
+these "consents" can be managed via https://auth.globus.org/consents (where you can see and revoke them
+individually), but in practice I find it very difficult to find out which one is which endpoint (it does not
+say!), so in practice the only way I can use this site is to remove all "consents".
+
+Let's see how consents work in practice. We define a couple of Globus tutorial collections through their IDs:
+
+```sh
+export T1=6c54cade-bde5-45c1-bdea-f4bd71dba2cc
+export T2=31ce9ba0-176d-45a5-add3-f37d233ba47d
+globus ls $T1
+```
+
+If this is your first time accessing this collection, you will likely get "The collection you are trying to
+access data on requires you to grant consent for the Globus CLI to access it"
+
+```sh
+globus session consent <authentication_scope>   # opens a browser page
+globus ls $T1                      # empty
+globus ls $T1:/home/share/godata   # three small files
+```
+
+<!-- missing consent scope ... -->
+
+::: {.callout-note}
+### From Globus manual
+- When the Globus CLI is used to interact with a collection, it may find that it has not been granted
+  sufficient permissions to access the collection. In these cases, the CLI will prompt you to run a login
+  command to grant it the necessary consent.
+- There are also other cases, such as strict authentication policies, in which the CLI dynamically discovers
+  requirements which require a new login flow.
+:::
+
+::: {.callout-note}
+### Infinite authentication loop
+Sometimes you might get stuck in an infinite authentication loop. After having logged into Globus, when trying
+to run `globus ls ...` or `globus transfer ...`, if you are missing that endpoint's consent, Globus **should
+tell you** to run a very specific command `globus session consent <authentication_scope>`. Sometimes, if some
+Globus machinery behind the scenes is not updated properly, you might get instead:
+```
+The resource you are trying to access requires you to re-authenticate with specific identities.
+message: Missing required data_access consent
+Please use "globus session update" to re-authenticate with specific identities
+```
+If you follow this advice, you will get stuck in an infinite authentication loop. In my experience, waiting
+for a day or so should automatically resolve the problem. Alternatively, email us at
+globus@tech.alliancecan.ca to open a support ticket.
+:::
+
+
+
+
+
+## Other synchronous (blocking) commands
+
+::: {.callout-note}
+`globus ls` works on directories, not files. `globus transfer` works with both directories and files, but
+there are some syntax limitations -- we will see these later.
+:::
+
+`globus ls "$COLLECTION"` is an example of a synchronous Globus command that waits for the completion of the
+task before exiting. Other synchronous command examples are:
+
+```sh
+globus mkdir "$COLLECTION:existing_path/new_dir_name"   # create a new directory
+globus rename "$COLLECTION" "old_dir_name" "new_dir_name"
+globus rename "$COLLECTION" "old_file_name" "new_file_name"
+globus rename "$COLLECTION" "old_path/old_file_name" "new_path/new_file_name" # can move files across directories
+globus rm "$COLLECTION:existing_path --recursive
+```
+
+::: {.callout-note}
+`globus delete` is a non-blocking version of `globus rm`, with all the same flags.
+:::
+
+
+
+
+
+
+## Single file transfer
+
+### All inside the tutorial endpoint
+
+**Note**: with `globus transfer` for a single file, it is very important to specify the full file path in the
+destination that includes the file name, not just the target directory. Without the file name, the transfer
+will eventually fail, after trying for 1 hour.
+
+```sh
+globus ls $T1    # empty
+globus ls $T1:/home/share/godata   # file1.txt file2.txt file3.txt
+globus mkdir $T1:test
+globus transfer $T1:/home/share/godata/file1.txt $T1:test/file1.txt
+```
+
+This command is non-blocking, i.e. it will exit back to the command prompt, while transfer will take place in
+the background. Note that you will receive an email when transfer is complete. If you want to block until
+transfer completion in the terminal, run:
+
+```sh
+globus task wait <taskID_from_the_previous_line>
+globus ls -l $T1:test
+
+globus rm -r $T1:test
+globus task wait <taskID_from_the_previous_line>
+```
+
+### Transfer a tutorial collection file to Fir
+
+```sh
+globus endpoint search alliance
+globus endpoint search alliance | grep fir   # use the ID of alliancecan#fir-globus in the next line
+
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+globus ls $FIR   # might or might not have access
+
+globus session consent 'urn:globus:auth:scope:transfer.api.globus.org:all[*https://auth.globus.org/scopes/8dec4129-9ab4-451d-a45f-5b4b8471f7a3/data_access]'   # select razoumov@computecanada.ca
+
+globus ls $FIR   # should see my Fir home directory
+globus ls $FIR:scratch
+globus transfer $T1:/home/share/godata/file1.txt $FIR:scratch/f1.txt
+globus task wait <taskID_from_the_previous_line>
+globus task show <taskID_from_the_previous_line>
+globus task show <taskID_from_the_previous_line> | grep -E 'Status|Faults'
+
+globus task list --filter-status ACTIVE   # show all my active tasks
+globus task show <taskID>
+```
+
+<!-- globus endpoint show $FIR -->
+<!-- globus endpoint show $T1 -->
+
+### Transfer a large (8.1GB) file from Fir to Nibi
+
+```sh
+globus endpoint search alliance | grep nibi
+export NIBI=07baf15f-d7fd-4b6a-bf8a-5b5ef2e229d3
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+globus transfer $FIR:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc $NIBI:scratch/2d_lonlat_20.nc
+```
+
+This command will fail if one or more endpoints require authentication. Fortunately, in this case you will be
+prompted to run the following command:
+
+```sh
+globus session consent <authentication_scope>   # in browser; select razoumov@computecanada.ca
+```
+
+Then you can rerun the transfer command:
+
+```sh
+globus transfer $FIR:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc $NIBI:scratch/2d_lonlat_20.nc
+globus task show ba064a80-9e6d-11f0-9016-0affca67c55f | grep -E 'Status|Faults'
+```
+
+
+
+
+
+
+## Multiple files
+
+Globus CLI does not support Unix shell wildmasks. However, you can achieve the same by copying a directory
+with a `--include` flag, e.g. this will copy only `*.sh` files:
+
+```sh
+globus transfer --recursive --include '*.sh' --exclude '*' $FIR:syncHPC/testEGL/ $LAPTOP:tmp/
+```
+
+::: {.callout-note}
+1. `--include` requires `--recursive`
+1. in my tests, `--exclude '*'` is needed to make sure no other files are copied
+1. you can specify many filters in a row, e.g. `--include '*.txt' --include '*.md'`
+:::
+
+Alternatively, you can use `--batch` to specify multiple files with their source and destination paths:
+
+```txt
+# store this as include.txt: a list of source paths followed by destination paths
+alexWithUpdatedDriver.sh alexWithUpdatedDriver.sh
+bartWithCorrection.sh bartWithCorrection.sh
+test.sh test.sh   # Slurm scripting for testing
+```
+
+```sh
+globus transfer $FIR:syncHPC/testEGL/ $LAPTOP:tmp/ --batch include.txt
+```
+
+With this approach, you can mix multiple paths in a single file, e.g.
+
+```txt
+alexWithUpdatedDriver.sh a/alexWithUpdatedDriver.sh
+bartWithCorrection.sh b/bartWithCorrection.sh
+test.sh test.sh   # Slurm scripting for testing
+```
+
+would create the subdirectories `a/` and `b/` inside `~/tmp/` as part of the transfer.
+
+You can also delete files in batch:
+
+```sh
+globus delete "COLLECTION:path/" --batch delete.txt
+```
+
+
+
+
+
+
+
+## Globus Connect Personal
+
+Globus Connect Personal (GCP) may be installed in order to turn a local machine into a Globus endpoint. This
+way you can transfer files with Globus from/to your computer.
+
+1. download Globus Connect Personal from https://app.globus.org/collections/gcp
+1. install and run "Globus Connect Personal" application
+1. click Log in, follow in the browser, create a name (I used "alexrsfu"), provide details, save, exit setup
+1. in the menu bar click Globus Connect Personal | Preferences...  
+    Access tab, specify directory access details  
+    Info tab | write down your Endpoint ID <!-- = 441e818f-5783-11f0-81e1-0affcfc1d1e5 -->
+1. continue running Globus Connect Personal in the background
+
+```sh
+globus endpoint search alexrsfu
+export LAPTOP=441e818f-5783-11f0-81e1-0affcfc1d1e5
+
+globus ls $LAPTOP:tmp       # my local files
+ls ~/tmp                    # should be the same
+
+globus ls -l $FIR:data/deepImpact
+globus transfer $FIR:data/deepImpact/yB31_oneblock_46521.vti $LAPTOP:tmp/   # won't succeed (destination != filename)
+globus task show <taskID> | grep -E 'Status|Faults'   # shows that it's ACTIVE but there are some Faults
+globus task event-list --filter-errors <taskID>       # shows the actual error
+globus task cancel <taskID>
+
+globus transfer $FIR:data/deepImpact/yB31_oneblock_46521.vti $LAPTOP:tmp/46521.vti   # this one works great!
+```
+
+You can create endpoints for any number of personal computers. However, transfer between two personal
+endpoints is not enabled by default. If you need this capability, please contact open a [Globs
+ticket](mailto:globus@tech.alliancecan.ca) to set up a **Globus Plus account**.
+
+### Transfer a large file from Fir to my laptop
+
+```sh
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+export LAPTOP=441e818f-5783-11f0-81e1-0affcfc1d1e5
+globus transfer $FIR:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc $LAPTOP:tmp/2d_lonlat_20.nc
+globus task show cb3dba5e-578a-11f0-939f-0e285752bd6d | grep -E 'Status|Faults'
+```
+
+
+
+
+
+
+
+<!-- ## Troubleshooting -->
+
+<!-- ```sh -->
+<!-- globus task cancel f09b98dd-5778-11f0-8b04-02fa2a4031ab -->
+<!-- globus transfer $T1:/home/share/godata/file1.txt $FIR:scratch/file1.txt   # restart -->
+<!-- globus task list --filter-status ACTIVE -->
+<!-- globus task show 44b6937d-5784-11f0-ad34-0affcfc1d1e5 | grep -E 'Status|Faults' -->
+<!-- globus task event-list --filter-errors 44b6937d-5784-11f0-ad34-0affcfc1d1e5   # see error messages -->
+<!-- ``` -->
+
+
+
+
+
+
+## Capturing task ID
+
+### Option 1: Capture at scheduling time
+
+Let's copy a file from a Globus tutorial collection to Fir's `/scratch`:
+
+```sh
+export T1=6c54cade-bde5-45c1-bdea-f4bd71dba2cc
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+taskid=$(globus transfer $T1:/home/share/godata/file1.txt $FIR:scratch/file1.txt | grep "Task ID" | awk '{print $3}')
+globus task show $taskid | grep -E 'Status|Faults'
+globus task wait $taskid
+```
+
+### Option 2: Use labels to filter current tasks
+
+1. assign a label to a Globus task
+1. filter all your Globus tasks by this label
+1. extract the taskID and use it for getting details on the task
+
+```sh
+label="copying a Globus tutorial file"
+label=$RANDOM$RANDOM$RANDOM   # labels don't have to be unique, but having a unique label helps
+globus transfer --label $label $T1:/home/share/godata/file1.txt $FIR:scratch/file1.txt
+taskid=$(globus task list --filter-label $label | tail -1 | awk '{print $1}')
+globus task show $taskid | grep -E 'Status|Faults'
+globus task wait $taskid
+```
+
+
+
+
+
+
+
+
+
+
+## Automating workflows
+
+Using one of these two approaches to handle task IDs, you can create a shell script to automate Globus
+transfers. However, be aware that you may occasionally encounter authentication or other issues, so treat
+these scripts as a convenience rather than a fully reliable black box.
+
+Everyone's workflow is different, so there is no one-size-fits-all script for every purpose. Instead, here are
+a few interactive functions that simplify my own day-to-day Globus workflows: `gcp()`, `gshow()`, `gwait()`,
+`gerror()` and `gcancel()`.
+
+The command `gcp`:
+
+1. provides a `scp`-like syntax, where `source` and `dest` could be "fir", "nibi", "rorqual", "trillium", "laptop"
+2. stores endpoint IDs (don't need to define these separately)
+3. checks if the source and destination extensions are the same &nbsp;⮕&nbsp; forces you to enter a valid file
+   name in the destination (providing just a directory will result in failed transfer)
+
+```sh
+function gcp() {
+    if [ $# -eq 0 ]; then
+	echo "No arguments specified ... Usage: gcp source:/path/to/src/file.ext dest:/path/to/dest/file.ext"
+	return 1
+    fi
+    SRC="${1%%:*}"    # endpoint name before the colon in the 1st argument
+    DEST="${2%%:*}"   # endpoint name before the colon in the 2nd argument
+    PATH1="${1#*:}"   # file path after the colon in the 1st argument
+    PATH2="${2#*:}"   # file path after the colon in the 2nd argument
+    echo $SRC $DEST
+    rename() {
+	SRC="${1//$3/$4}"
+	DEST="${2//$3/$4}"
+    }
+    rename "$SRC" "$DEST" fir 8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+    rename "$SRC" "$DEST" nibi 07baf15f-d7fd-4b6a-bf8a-5b5ef2e229d3
+    rename "$SRC" "$DEST" trillium ad462f99-8436-42b4-adc6-3644e36c1b67
+    rename "$SRC" "$DEST" rorqual 93b2625f-a4ba-47ac-90d4-0bbb5ae19451
+    rename "$SRC" "$DEST" laptop 441e818f-5783-11f0-81e1-0affcfc1d1e5
+    extension() {
+	filename=$(basename "$1")
+	if [[ "$filename" == *.* ]]; then
+	    extension="${filename##*.}"
+	else
+	    extension=""
+	fi
+	echo "$extension"
+    }
+    EXT1=$(extension "$PATH1")
+    EXT2=$(extension "$PATH2")
+    if [[ "$EXT1" != "$EXT2" ]]; then
+	echo "Extension mismatch ($EXT1 and $EXT2) ... exiting"
+	return 1
+    fi
+    globus transfer $SRC:$PATH1 $DEST:$PATH2
+}
+
+function gshow() {
+    if [ $# -eq 0 ]; then
+	echo "No arguments specified ... Usage: gv <taskID1> <taskID2> ..."
+	echo "Therefore, showing all active tasks:"
+	globus task list --filter-status ACTIVE
+	return 1
+    fi
+    for task in $@; do
+	globus task show $task | grep -E 'Status|Faults'
+    done
+}
+
+function gwait() {
+    globus task wait $1
+}
+
+function gerror() {
+    globus task event-list --filter-errors $1
+}
+
+function gcancel() {
+    globus task cancel $1
+}
+```
+
+With these functions defined, the last two transfers can be written as:
+
+```sh
+DATA=projects/def-razoumov-ac/razoumov/ieeevis2017-clouds   # same data directory for both transfers
+gcp fir:$DATA/2d_lonlat_20.nc nibi:scratch/2d_lonlat_20.nc
+gcp fir:$DATA/2d_lonlat_20.nc laptop:tmp/2d_lonlat_20.nc
+gshow                          # show all active tasks
+gshow taskID1 taskID2          # show details of these tasks
+gwait taskID1                  # block until taskID1 completes
+```
+
+
+
+
+
+
+## Syncing directories
+
+Globus sync makes the destination match the source:
+
+```sh
+globus transfer --sync-level <level> sourceEndpointID:/path/to/source/ destEndpointID:/path/to/dest/
+```
+
+<level> is one of:
+- exists → only send if destination file does not exist
+- size → send if size differs
+- mtime → send if modification time differs
+- checksum → compute checksums and send if they differ (slowest)
+
+::: {.callout-note}
+`--recursive` will include subdirectories.
+:::
+
+::: {.callout-note}
+Globus sync doesn't delete extra files on the destination, i.e. there is no `rsync --delete` equivalent.
+:::
+
+Here is a complete example:
+
+```sh
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+export LAPTOP=441e818f-5783-11f0-81e1-0affcfc1d1e5
+mkdir ~/tmp   # no need to create ~/tmp/testEGL
+globus transfer --sync-level size --recursive $FIR:syncHPC/testEGL/ $LAPTOP:tmp/testEGL/
+```
+
+To automate this, I would probably create a separate `gsync()` function.
+
+
+
+
+
+
+
+
+
+
+## Running globus-cli on a cluster
+
+Refer to an earlier section to install globus-cli in a virtual environment on a cluster.
+
+```sh
+source ~/env-globus/bin/activate   # load the environment
+
+globus login    # log in by pasting the URL into a browser; copy the code back into the terminal
+globus whoami   # returns razoumov@computecanada.ca
+
+globus endpoint search alliance | grep -e fir -e nibi
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+export NIBI=07baf15f-d7fd-4b6a-bf8a-5b5ef2e229d3
+globus ls $FIR   # prompts to run the following command
+globus session consent <authentication_scope>   # log in by pasting the URL into a browser; copy the code back
+globus ls $FIR   # works now!
+
+globus ls -l $FIR:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds | grep 2d_lonlat_20.nc   # 8.03GB
+globus transfer $FIR:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc $NIBI:scratch/2d_lonlat_20.nc
+globus task show 95ca1d32-9ee8-11f0-afcf-0e1cc5cf4f03 | grep -E 'Status|Faults'
+```
+
+Interestingly, if you are running Globus Connect Personal on your machine which is behind the firewall, you
+can still initialize transfer to/from your computer on the cluster, which will never work with
+`scp`/`sftp`/`rsync`:
+
+```sh
+export LAPTOP=441e818f-5783-11f0-81e1-0affcfc1d1e5
+globus transfer $NIBI:scratch/2d_lonlat_20.nc $LAPTOP:tmp/2d_lonlat_20.nc
+```
+
+
+
+
+
+
+
+
+## Globus sharing
+
+Globus sharing enables people to access files stored on your account on an Alliance cluster even if they don't
+have an account on that system. You can find some Web interface-specific details in our documentation
+<https://docs.alliancecan.ca/wiki/Globus#Globus_sharing>{target="_blank"}. You can share with individual
+Globus users and with groups. Here we'll demo sharing with users.
+
+::: {.callout-note}
+### Your collaborator's Globus userID
+You will need your collaborator's Globus userID to give them access. You can look it up yourself using their
+Globus username, e.g.
+
+```sh
+globus get-identities razoumov@computecanada.ca
+```
+
+or you can ask them for it. They can look it up via the web interface:
+
+1. log in to https://globus.alliancecan.ca
+1. Settings | Account | select Identity from the list | click the ↓ arrow to see your ID
+
+or in many different ways in the CLI:
+
+```sh
+globus get-identities <collaboratorUserName>
+globus whoami --verbose | grep ID
+globus session show
+```
+
+E.g., when I run these commands myself, all three return the same useID.
+<!-- 32b4419f-e34a-433d-905d-61478c6cd7af -->
+:::
+
+To demo sharing, I will use my alternative Globus ID (log in via <https://www.globus.org> and organization =
+Globus ID):
+
+```sh
+globus get-identities razoumov@globusid.org                  # userName ⟹ userID
+globus get-identities ae739fc4-d274-11e5-b957-ab0e5eadc80e   # userID ⟹ userName
+
+export COLLABORATOR=ae739fc4-d274-11e5-b957-ab0e5eadc80e  # could be user or group ID
+export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
+```
+
+::: {.callout-note}
+Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a
+subscription (typically a paid service). In short, by default you cannot share files hosted on your own
+computer. See details
+[here](https://docs.globus.org/api/transfer/gcp_management/#create_guest_collection). Alternatively, you can
+host a guest collection on a Globus Connect Server mapped collection (subscription required), which is how we
+have it set up on our clusters.
+:::
+
+You can share your files stored on an Alliance cluster with any Globus user in the world, even if that user
+does not have an account on that cluster.
+
+- `/home` -- yes on all general-purpose clusters (not sure on Trillium)
+- `/scratch` -- yes on Beluga, Narval, Rorqual, no on other clusters
+- `/project` -- on PI's request only (to prevent sharing other users' files)
+
+Here we will create a guest collections on Fir's `/home` and then we'll share it with our collaborator.
+
+On Fir, let's create `~/share` and place a file (e.g. `noise.silo`) there. In Globus, Fir is already
+registered as a Globus Connect Server v5 Mapped Collection, so you can create a new guest collection inside
+it:
+
+```sh
+globus collection create guest $FIR /home/razoumov/share project003   # create a new guest collection
+```
+
+At this point Globus might ask you to run `globus login --gcs ...` to verify who you are, and then you can
+rerun the command:
+
+```sh
+globus collection create guest $FIR /home/razoumov/share project003   # create a new guest collection
+# Display Name:                     project003
+# Owner:                            razoumov@computecanada.ca
+# ID:                               2342c760-b98b-40cc-b3f7-9550dce48c83
+# Collection Type:                  guest
+# ...
+# Public:                           True
+```
+
+
+<!-- abc -->
+<!-- running on Fir: -->
+<!-- Error: No such command 'create'. -->
+
+<!-- --principal all_authenticated_users -->
+<!-- Any logged-in Globus user -->
+<!-- Works on all Guest Collections -->
+<!-- --principal anonymous -->
+<!-- Anyone with the link (no login) -->
+<!-- Requires paid/subscribed mapped collection -->
+
+
+
+
+"Public" means that anyone with a Globus account can search for this collection with `globus endpoint search
+project002`, but they cannot see the files inside it. For file access, give your collaborator permission (`r`
+or `rw`) to access your collection, e.g. at its root level (that will point to `~/share`):
+
+```sh
+COLLECTION=2342c760-b98b-40cc-b3f7-9550dce48c83
+globus endpoint permission create --identity $COLLABORATOR --permissions rw $COLLECTION:/
+# Message: Access rule created successfully.
+# Rule ID: 228e0e90-a07f-11f0-b159-0affca67c55f
+```
+
+If instead you want to share with all logged-in Globus users:
+
+```sh
+globus endpoint permission create --permissions r --all-authenticated $COLLECTION:/
+```
+
+If you want to share with anyone (no login needed):
+
+```sh
+globus endpoint permission create --permissions r --anonymous $COLLECTION:/
+```
+
+::: {.callout-note}
+Keep the ruleID, as you will need it later to modify/revoke access.
+:::
+
+At this point your collaborator should be able to see the files inside your collection:
+
+```sh
+globus endpoint search project002   # if they have just the name => returns collectionID
+globus ls 0a13e15f-4848-4b63-aa87-31202640eff4   # should see noise.silo
+```
+
+and transfer files (download with `r` and download/upload with `rw`) with `globus transfer ...` or via the web
+interface.
+
+Since this is your own collection, you should be able to use it as well, e.g. -- after starting Globus Connect
+Personal -- you can transfer files between this collection and your computer:
+
+```sh
+export LAPTOP=441e818f-5783-11f0-81e1-0affcfc1d1e5
+globus transfer $COLLECTION:noise.silo $LAPTOP:tmp/n.silo   # download a file
+date > ~/tmp/test.txt
+globus transfer $LAPTOP:tmp/test.txt $COLLECTION:/test.txt   # upload a file
+```
+
+or, after adding "project002" to the `gcp()` shell function:
+
+```sh
+gcp project002:noise.silo laptop:tmp/n.silo    # download a file
+gcp laptop:tmp/test.txt project002:/test.txt   # upload a file
+```
+
+After your project is done, you might want to remove permissions:
+
+```sh
+globus endpoint permission list $COLLECTION   # show all permissions for this collection with ruleIDs
+globus endpoint permission delete $COLLECTION 228e0e90-a07f-11f0-b159-0affca67c55f   # collectionID ruleID
+```
+
+and eventually delete the guest collection:
+
+```sh
+globus collection delete $COLLECTION
+```
+
+::: {.callout-caution}
+If you delete the collection before removing its permissions, the permissions will get orphaned, and you will
+still see them listed (without ruleIDs) for any future collections created with the same shared directory -- I
+don't know how to delete these permissions in this case. Therefore, make sure to delete any associated
+permissions before deleting the collection.
+:::
+
+
+<!-- MARIE=9a894937-011d-4f84-a7cd-d4a79e114f47 -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Globus flows
+
+*Flow* is a series of steps that are performed in a specified order, e.g. you can run `tar`, delete files, add
+some other processing before / after transfer, share files, etc. A flow definition is a JSON document.
+
+- how to create a flow <https://docs.globus.org/guides/tutorials/flow-automation/create-a-flow>{target="_blank"}
+
+```sh
+cd ~/tmp
+git clone https://github.com/globus/globus-flows-trigger-examples.git
+globus flows create "My Transfer and Share Flow Example" transfer_share/definition.json --input-schema transfer_share/schema.json
+```
+
+- thir own example contains deprecated flow commands ... someone needs to update the script
+- too advanced for this webinar
+
+
+
+
+
+
+## Links
+
+<!-- https://docs.globus.org/faq -->
+<!-- https://docs.globus.org/cli/examples -->
+
+- [CLI front page](https://docs.globus.org/cli)
+- [CLI QuickStart Guide](https://docs.globus.org/cli/quickstart)
+- [CLI reference](https://docs.globus.org/cli/reference)
+- [CLI examples](https://docs.globus.org/cli/examples)
+- [Open a ticket](mailto:globus@tech.alliancecan.ca) with any Globus issue on an Alliance system
+- [High Assurance Collections for Protected Data](https://docs.globus.org/guides/overviews/high-assurance)
+  enable a subset of stricter security and compliance features
+  - requires MFA, provider restriction
+  - stricter endpoint access control
+  - detailed logging and auditing
+  - good for medical research institutions
+  - separate commercial subscription tier at an extra cost
+  - not covered today (except for Globus Connect Personal)
+
+
+
+
+
+
+
+
+
+
+<!-- ## Other topics and misc notes -->
+
+<!-- bookmarks -->
+
+<!-- ad462f99-8436-42b4-adc6-3644e36c1b67 | computecanada@globusid.org  | alliancecan#trillium -->
+<!-- e9b2685e-f741-4c25-b857-2ec83ebb0f0c | computecanada@globusid.org  | alliancecan#trillium_home -->
+<!-- b2759c38-0d00-455a-85c7-3523114e273e | computecanada@globusid.org  | alliancecan#trillium_project -->
+<!-- a8016fc2-8688-45ae-98e0-4e517961d3e1 | computecanada@globusid.org  | alliancecan#trillium_scratch -->
+<!-- 53fb2b74-f465-4dbf-8e9a-a1b01e442716 | computecanada@globusid.org  | alliancecan#trillium -->
+
+<!-- difference between a collection and an endpoint -->
+
+<!-- globus publish -->
+<!-- globus groups -->
+
+<!-- 1. login to Globus web interface -->
+<!-- 2. Settings | Manage Your Consents -->
+
+<!-- In the new architecture these two functions are cleanly separated with collections used for data access, and Globus Connect Server endpoints used for management. -->
