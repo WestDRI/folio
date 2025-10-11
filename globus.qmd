@@ -664,10 +664,10 @@ export COLLABORATOR=ae739fc4-d274-11e5-b957-ab0e5eadc80e  # could be user or gro
 export FIR=8dec4129-9ab4-451d-a45f-5b4b8471f7a3
 ```
 
-::: {.callout-note}
-Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a
-subscription (typically a paid service). In short, by default you cannot share files hosted on your own
-computer. See details
+::: {.callout-important}
+### Guest collections inside GCP
+Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a paid
+subscription. Without it, you cannot share files hosted on your own computer. See the details
 [here](https://docs.globus.org/api/transfer/gcp_management/#create_guest_collection). Alternatively, you can
 host a guest collection on a Globus Connect Server mapped collection (subscription required), which is how we
 have it set up on our clusters.
@@ -681,6 +681,33 @@ does not have an account on that cluster.
 - `/project` -- on PI's request only (to prevent sharing other users' files)
 
 Here we will create a guest collections on Fir's `/home` and then we'll share it with our collaborator.
+
+
+
+
+
+
+
+::: {.callout-caution}
+### Running this workflow on the cluster
+As of this moment, the default version of globus-cli on our clusters is slightly old, so the command `globus
+collection create ...` does not exist there. Therefore, you can either upgrade globus-cli in place yourself:
+
+```sh
+source ~/env-globus/bin/activate
+globus version   # 3.2.0, latest is 3.38.0
+globus update
+```
+
+or you can run this workflow on your own computer where presumably you have the latest version installed.
+:::
+
+
+
+
+
+
+
 
 On Fir, let's create `~/share` and place a file (e.g. `noise.silo`) there. In Globus, Fir is already
 registered as a Globus Connect Server v5 Mapped Collection, so you can create a new guest collection inside
@@ -704,22 +731,12 @@ globus collection create guest $FIR /home/razoumov/share project003   # create a
 ```
 
 
-<!-- abc -->
-<!-- running on Fir: -->
-<!-- Error: No such command 'create'. -->
-
-<!-- --principal all_authenticated_users -->
-<!-- Any logged-in Globus user -->
-<!-- Works on all Guest Collections -->
-<!-- --principal anonymous -->
-<!-- Anyone with the link (no login) -->
-<!-- Requires paid/subscribed mapped collection -->
 
 
 
 
 "Public" means that anyone with a Globus account can search for this collection with `globus endpoint search
-project002`, but they cannot see the files inside it. For file access, give your collaborator permission (`r`
+project003`, but they cannot see the files inside it. For file access, give your collaborator permission (`r`
 or `rw`) to access your collection, e.g. at its root level (that will point to `~/share`):
 
 ```sh
@@ -741,19 +758,34 @@ If you want to share with anyone (no login needed):
 globus endpoint permission create --permissions r --anonymous $COLLECTION:/
 ```
 
+
+<!-- abc -->
+<!-- --principal all_authenticated_users -->
+<!-- Any logged-in Globus user -->
+<!-- Works on all Guest Collections -->
+<!-- --principal anonymous -->
+<!-- Anyone with the link (no login) -->
+<!-- Requires paid/subscribed mapped collection -->
+
+
+
+
+
+
+
 ::: {.callout-note}
-Keep the ruleID, as you will need it later to modify/revoke access.
+Keep the permission's ruleID, as you will need it later to modify/revoke access.
 :::
 
 At this point your collaborator should be able to see the files inside your collection:
 
 ```sh
-globus endpoint search project002   # if they have just the name => returns collectionID
+globus endpoint search project003   # if they have just the name => returns collectionID
 globus ls 0a13e15f-4848-4b63-aa87-31202640eff4   # should see noise.silo
 ```
 
-and transfer files (download with `r` and download/upload with `rw`) with `globus transfer ...` or via the web
-interface.
+and transfer files (download with `r` and download/upload with `rw` permissions) with `globus transfer ...` or
+via the web interface.
 
 Since this is your own collection, you should be able to use it as well, e.g. -- after starting Globus Connect
 Personal -- you can transfer files between this collection and your computer:
@@ -765,11 +797,11 @@ date > ~/tmp/test.txt
 globus transfer $LAPTOP:tmp/test.txt $COLLECTION:/test.txt   # upload a file
 ```
 
-or, after adding "project002" to the `gcp()` shell function:
+or, after adding "project003" to the `gcp()` shell function:
 
 ```sh
-gcp project002:noise.silo laptop:tmp/n.silo    # download a file
-gcp laptop:tmp/test.txt project002:/test.txt   # upload a file
+gcp project003:noise.silo laptop:tmp/n.silo    # download a file
+gcp laptop:tmp/test.txt project003:/test.txt   # upload a file
 ```
 
 After your project is done, you might want to remove permissions:
@@ -858,7 +890,7 @@ globus flows create "My Transfer and Share Flow Example" transfer_share/definiti
 
 
 
-<!-- ## Other topics and misc notes -->
+<!-- ## Other topics and notes -->
 
 <!-- bookmarks -->
 
