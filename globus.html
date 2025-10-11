@@ -833,17 +833,17 @@ Note
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">COLLABORATOR</span><span class="op">=</span>ae739fc4-d274-11e5-b957-ab0e5eadc80e  <span class="co"># could be user or group ID</span></span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+<span class="screen-reader-only">Important</span>Guest collections inside GCP
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a subscription (typically a paid service). In short, by default you cannot share files hosted on your own computer. See details <a href="https://docs.globus.org/api/transfer/gcp_management/#create_guest_collection">here</a>. Alternatively, you can host a guest collection on a Globus Connect Server mapped collection (subscription required), which is how we have it set up on our clusters.</p>
+<p>Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a paid subscription. Without it, you cannot share files hosted on your own computer. See the details <a href="https://docs.globus.org/api/transfer/gcp_management/#create_guest_collection">here</a>. Alternatively, you can host a guest collection on a Globus Connect Server mapped collection (subscription required), which is how we have it set up on our clusters.</p>
 </div>
 </div>
 <p>You can share your files stored on an Alliance cluster with any Globus user in the world, even if that user does not have an account on that cluster.</p>
@@ -853,34 +853,49 @@ Note
 <li><code>/project</code> – on PI’s request only (to prevent sharing other users’ files)</li>
 </ul>
 <p>Here we will create a guest collections on Fir’s <code>/home</code> and then we’ll share it with our collaborator.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Running this workflow on the cluster
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As of this moment, the default version of globus-cli on our clusters is slightly old, so the command <code>globus collection create ...</code> does not exist there. Therefore, you can either upgrade globus-cli in place yourself:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-globus/bin/activate</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> version   <span class="co"># 3.2.0, latest is 3.38.0</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> update</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>or you can run this workflow on your own computer where presumably you have the latest version installed.</p>
+</div>
+</div>
 <p>On Fir, let’s create <code>~/share</code> and place a file (e.g.&nbsp;<code>noise.silo</code>) there. In Globus, Fir is already registered as a Globus Connect Server v5 Mapped Collection, so you can create a new guest collection inside it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project003   <span class="co"># create a new guest collection</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project003   <span class="co"># create a new guest collection</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>At this point Globus might ask you to run <code>globus login --gcs ...</code> to verify who you are, and then you can rerun the command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project003   <span class="co"># create a new guest collection</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Display Name:                     project003</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Owner:                            razoumov@computecanada.ca</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ID:                               2342c760-b98b-40cc-b3f7-9550dce48c83</span></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Collection Type:                  guest</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Public:                           True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project003   <span class="co"># create a new guest collection</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Display Name:                     project003</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Owner:                            razoumov@computecanada.ca</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ID:                               2342c760-b98b-40cc-b3f7-9550dce48c83</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Collection Type:                  guest</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Public:                           True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>“Public” means that anyone with a Globus account can search for this collection with <code>globus endpoint search project003</code>, but they cannot see the files inside it. For file access, give your collaborator permission (<code>r</code> or <code>rw</code>) to access your collection, e.g.&nbsp;at its root level (that will point to <code>~/share</code>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="va">COLLECTION</span><span class="op">=</span>2342c760-b98b-40cc-b3f7-9550dce48c83</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--identity</span> <span class="va">$COLLABORATOR</span> <span class="at">--permissions</span> rw <span class="va">$COLLECTION</span>:/</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Message: Access rule created successfully.</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rule ID: 228e0e90-a07f-11f0-b159-0affca67c55f</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If instead you want to share with all logged-in Globus users:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--permissions</span> r <span class="at">--all-authenticated</span> <span class="va">$COLLECTION</span>:/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If you want to share with anyone (no login needed):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--permissions</span> r <span class="at">--anonymous</span> <span class="va">$COLLECTION</span>:/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- abc -->
-<!-- running on Fir: -->
-<!-- Error: No such command 'create'. -->
 <!-- --principal all_authenticated_users -->
 <!-- Any logged-in Globus user -->
 <!-- Works on all Guest Collections -->
 <!-- --principal anonymous -->
 <!-- Anyone with the link (no login) -->
 <!-- Requires paid/subscribed mapped collection -->
-<p>“Public” means that anyone with a Globus account can search for this collection with <code>globus endpoint search project002</code>, but they cannot see the files inside it. For file access, give your collaborator permission (<code>r</code> or <code>rw</code>) to access your collection, e.g.&nbsp;at its root level (that will point to <code>~/share</code>):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="va">COLLECTION</span><span class="op">=</span>2342c760-b98b-40cc-b3f7-9550dce48c83</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--identity</span> <span class="va">$COLLABORATOR</span> <span class="at">--permissions</span> rw <span class="va">$COLLECTION</span>:/</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Message: Access rule created successfully.</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Rule ID: 228e0e90-a07f-11f0-b159-0affca67c55f</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If instead you want to share with all logged-in Globus users:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--permissions</span> r <span class="at">--all-authenticated</span> <span class="va">$COLLECTION</span>:/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If you want to share with anyone (no login needed):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--permissions</span> r <span class="at">--anonymous</span> <span class="va">$COLLECTION</span>:/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -891,26 +906,26 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Keep the ruleID, as you will need it later to modify/revoke access.</p>
+<p>Keep the permission’s ruleID, as you will need it later to modify/revoke access.</p>
 </div>
 </div>
 <p>At this point your collaborator should be able to see the files inside your collection:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search project002   <span class="co"># if they have just the name =&gt; returns collectionID</span></span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls 0a13e15f-4848-4b63-aa87-31202640eff4   <span class="co"># should see noise.silo</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>and transfer files (download with <code>r</code> and download/upload with <code>rw</code>) with <code>globus transfer ...</code> or via the web interface.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search project003   <span class="co"># if they have just the name =&gt; returns collectionID</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls 0a13e15f-4848-4b63-aa87-31202640eff4   <span class="co"># should see noise.silo</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>and transfer files (download with <code>r</code> and download/upload with <code>rw</code> permissions) with <code>globus transfer ...</code> or via the web interface.</p>
 <p>Since this is your own collection, you should be able to use it as well, e.g.&nbsp;– after starting Globus Connect Personal – you can transfer files between this collection and your computer:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$COLLECTION</span>:noise.silo <span class="va">$LAPTOP</span>:tmp/n.silo   <span class="co"># download a file</span></span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span> <span class="op">&gt;</span> ~/tmp/test.txt</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$LAPTOP</span>:tmp/test.txt <span class="va">$COLLECTION</span>:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>or, after adding “project002” to the <code>gcp()</code> shell function:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> project002:noise.silo laptop:tmp/n.silo    <span class="co"># download a file</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> laptop:tmp/test.txt project002:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$COLLECTION</span>:noise.silo <span class="va">$LAPTOP</span>:tmp/n.silo   <span class="co"># download a file</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span> <span class="op">&gt;</span> ~/tmp/test.txt</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$LAPTOP</span>:tmp/test.txt <span class="va">$COLLECTION</span>:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>or, after adding “project003” to the <code>gcp()</code> shell function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> project003:noise.silo laptop:tmp/n.silo    <span class="co"># download a file</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> laptop:tmp/test.txt project003:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>After your project is done, you might want to remove permissions:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission list <span class="va">$COLLECTION</span>   <span class="co"># show all permissions for this collection with ruleIDs</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission delete <span class="va">$COLLECTION</span> 228e0e90-a07f-11f0-b159-0affca67c55f   <span class="co"># collectionID ruleID</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission list <span class="va">$COLLECTION</span>   <span class="co"># show all permissions for this collection with ruleIDs</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission delete <span class="va">$COLLECTION</span> 228e0e90-a07f-11f0-b159-0affca67c55f   <span class="co"># collectionID ruleID</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and eventually delete the guest collection:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection delete <span class="va">$COLLECTION</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection delete <span class="va">$COLLECTION</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -932,9 +947,9 @@ Caution
 <ul>
 <li>how to create a flow <a href="https://docs.globus.org/guides/tutorials/flow-automation/create-a-flow" target="_blank">https://docs.globus.org/guides/tutorials/flow-automation/create-a-flow</a></li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/globus/globus-flows-trigger-examples.git</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> flows create <span class="st">"My Transfer and Share Flow Example"</span> transfer_share/definition.json <span class="at">--input-schema</span> transfer_share/schema.json</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/globus/globus-flows-trigger-examples.git</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> flows create <span class="st">"My Transfer and Share Flow Example"</span> transfer_share/definition.json <span class="at">--input-schema</span> transfer_share/schema.json</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>thir own example contains deprecated flow commands … someone needs to update the script</li>
 <li>too advanced for this webinar</li>
@@ -960,7 +975,7 @@ Caution
 <li>not covered today (except for Globus Connect Personal)</li>
 </ul></li>
 </ul>
-<!-- ## Other topics and misc notes -->
+<!-- ## Other topics and notes -->
 <!-- bookmarks -->
 <!-- ad462f99-8436-42b4-adc6-3644e36c1b67 | computecanada@globusid.org  | alliancecan#trillium -->
 <!-- e9b2685e-f741-4c25-b857-2ec83ebb0f0c | computecanada@globusid.org  | alliancecan#trillium_home -->
