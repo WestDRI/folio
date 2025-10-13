@@ -287,17 +287,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#advantages-of-globus-transfer-over-traditional-scpsftprsync" id="toc-advantages-of-globus-transfer-over-traditional-scpsftprsync" class="nav-link active" data-scroll-target="#advantages-of-globus-transfer-over-traditional-scpsftprsync">Advantages of Globus transfer over traditional <code>scp</code>/<code>sftp</code>/<code>rsync</code></a></li>
+  <li><a href="#different-ways-to-use-globus" id="toc-different-ways-to-use-globus" class="nav-link" data-scroll-target="#different-ways-to-use-globus">Different ways to use Globus:</a></li>
   <li><a href="#install-globus-cli-tools" id="toc-install-globus-cli-tools" class="nav-link" data-scroll-target="#install-globus-cli-tools">Install Globus CLI tools</a>
   <ul class="collapse">
   <li><a href="#on-your-computer" id="toc-on-your-computer" class="nav-link" data-scroll-target="#on-your-computer">On your computer</a></li>
   <li><a href="#on-a-cluster" id="toc-on-a-cluster" class="nav-link" data-scroll-target="#on-a-cluster">On a cluster</a></li>
   </ul></li>
   <li><a href="#getting-help" id="toc-getting-help" class="nav-link" data-scroll-target="#getting-help">Getting help</a></li>
+  <li><a href="#globus-terminology" id="toc-globus-terminology" class="nav-link" data-scroll-target="#globus-terminology">Globus terminology</a></li>
   <li><a href="#starting-up-and-authenticating" id="toc-starting-up-and-authenticating" class="nav-link" data-scroll-target="#starting-up-and-authenticating">Starting up and authenticating</a></li>
   <li><a href="#other-synchronous-blocking-commands" id="toc-other-synchronous-blocking-commands" class="nav-link" data-scroll-target="#other-synchronous-blocking-commands">Other synchronous (blocking) commands</a></li>
   <li><a href="#single-file-transfer" id="toc-single-file-transfer" class="nav-link" data-scroll-target="#single-file-transfer">Single file transfer</a>
   <ul class="collapse">
-  <li><a href="#all-inside-the-tutorial-endpoint" id="toc-all-inside-the-tutorial-endpoint" class="nav-link" data-scroll-target="#all-inside-the-tutorial-endpoint">All inside the tutorial endpoint</a></li>
+  <li><a href="#testing-within-the-tutorial-endpoint" id="toc-testing-within-the-tutorial-endpoint" class="nav-link" data-scroll-target="#testing-within-the-tutorial-endpoint">Testing within the tutorial endpoint</a></li>
   <li><a href="#transfer-a-tutorial-collection-file-to-fir" id="toc-transfer-a-tutorial-collection-file-to-fir" class="nav-link" data-scroll-target="#transfer-a-tutorial-collection-file-to-fir">Transfer a tutorial collection file to Fir</a></li>
   <li><a href="#transfer-a-large-8.1gb-file-from-fir-to-nibi" id="toc-transfer-a-large-8.1gb-file-from-fir-to-nibi" class="nav-link" data-scroll-target="#transfer-a-large-8.1gb-file-from-fir-to-nibi">Transfer a large (8.1GB) file from Fir to Nibi</a></li>
   </ul></li>
@@ -351,23 +353,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="advantages-of-globus-transfer-over-traditional-scpsftprsync">Advantages of Globus transfer over traditional <code>scp</code>/<code>sftp</code>/<code>rsync</code></h2>
 <p>In April, we hosted a webinar <a href="https://training.westdri.ca/tools/rdm">“Introduction to Globus”</a>. Here is a quick recap of why you might choose Globus over traditional file transfer tools:</p>
 <ol type="1">
-<li><strong>Parallel, multi-stream transfers</strong>: Globus automatically uses multiple TCP streams, tuning them for wide-area networks, which can dramatically outperform single-threaded <code>scp</code> or <code>sftp</code> &nbsp;⮕&nbsp; great for large-scale (multi-GB and multi-PB) datasets where <code>scp</code>/<code>sftp</code> typically fail or crawl. In short, Globus will try to maximize the bandwidth between any two endpoints.</li>
-<li>If a transfer is interrupted (network drop, machine reboot, etc), Globus <strong>resumes where it left off without user intervention</strong>.</li>
-<li>Automatic <strong>checksum verification</strong>.</li>
+<li><strong>Parallel, multi-stream transfers</strong>: Globus uses the GridFTP protocol with multiple TCP streams, tuning them for wide-area networks, which can dramatically outperform single-threaded <code>scp</code> or <code>sftp</code>. This makes it ideal for transferring large-scale (multi-GB and multi-PB) datasets where <code>scp</code>/<code>sftp</code> typically fail or crawl. In short, Globus will try to maximize bandwidth between any two endpoints.</li>
+<li><strong>Automatic retrying and resuming</strong>: If a transfer is interrupted (network drop, machine reboot, etc), Globus resumes where it left off without user intervention.</li>
+<li><strong>Checksum verification</strong>.</li>
 <li>File <strong>transfer happens in the background</strong>, i.e.&nbsp;you can close your laptop and the transfer continues server-to-server, unlike with <code>scp</code>/<code>sftp</code> where the session must stay open.
 <ul>
 <li>you’ll get an email notification when a task completes or fails</li>
+<li>can also check status with interactive commands</li>
 </ul></li>
-<li>Provides logs, progress tracking, notifications, and retry logic automatically.
+<li>Provides <strong>logs, progress tracking, notifications, and retry logic</strong> automatically.
 <ul>
 <li>many research institutions use Globus for secure, auditable data movement that meets funding agency or privacy requirements</li>
 </ul></li>
 <li>You can <strong>share data</strong> with collaborators who don’t have direct system accounts.</li>
 </ol>
-<p>By default, Globus uses a Web-based interface to manage transfers via a web browser. However, this requires a lot of mouse clicking and sometimes navigating very large directory trees.</p>
-<!-- There is also [Globus SDK for Python](https://globus-sdk-python.readthedocs.io) -- not covered in this presentation. -->
-<p>There is also a <a href="https://docs.globus.org/api/transfer">REST-style Application Programming Interface (API)</a> that supports submitting and monitoring file transfers and managing Globus Connect Personal collections. This could be used in scripting languages like Python and Ruby to integrate Globus into web portals. This is not covered in this presentation.</p>
-<p>In this webinar we will focus on using Globus from the command line to automate your transfers with shell commands and scripts/functions.</p>
+</section>
+<section id="different-ways-to-use-globus" class="level2">
+<h2 class="anchored" data-anchor-id="different-ways-to-use-globus">Different ways to use Globus:</h2>
+<ol type="1">
+<li>By default, Globus uses a Web-based interface to manage transfers via a web browser. However, this requires a lot of mouse clicking and sometimes navigating very large directory trees.</li>
+<li>There is also a <a href="https://docs.globus.org/api/transfer" target="_blank">REST-style Application Programming Interface (API)</a> that supports submitting and monitoring file transfers and managing Globus Connect Personal collections. This could be used in scripting languages like Python and Ruby to integrate Globus into web portals. This is not covered in this presentation.</li>
+<li>In this webinar we will focus on using Globus from the command line to automate your transfers with shell commands and scripts/functions.</li>
+</ol>
+<!-- There is also [Globus SDK for Python](https://globus-sdk-python.readthedocs.io) -- not covered in this -->
+<!-- presentation. -->
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -403,18 +412,50 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install <span class="at">--no-index</span> globus_cli setuptools   <span class="co"># all these will go into your $HOME/env-globus</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Updating on a cluster
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As of this moment, the default version of globus-cli on our clusters is slightly old, so some functionality mentioned today is not available there. Fortunately, you can upgrade globus-cli in place very easily:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-globus/bin/activate</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> version   <span class="co"># 3.2.0, latest is 3.38.0</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> update</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
 </section>
 </section>
 <section id="getting-help" class="level2">
 <h2 class="anchored" data-anchor-id="getting-help">Getting help</h2>
 <!-- Quality-of-life settings -->
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-globus/bin/activate</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">eval</span> <span class="st">"</span><span class="va">$(</span><span class="ex">globus</span> <span class="at">--bash-completer</span><span class="va">)</span><span class="st">"</span>   <span class="co"># enable tab completion in bash version 4.4 or newer</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> <span class="at">--help</span>             <span class="co"># or -h</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> <span class="op">&lt;</span>command<span class="op">&gt;</span> --help   <span class="co"># or -h</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">--help</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> <span class="at">--help</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> list-commands</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-globus/bin/activate</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">eval</span> <span class="st">"</span><span class="va">$(</span><span class="ex">globus</span> <span class="at">--bash-completer</span><span class="va">)</span><span class="st">"</span>   <span class="co"># enable tab completion in bash version 4.4 or newer</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> <span class="at">--help</span>             <span class="co"># or -h</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> <span class="op">&lt;</span>command<span class="op">&gt;</span> --help   <span class="co"># or -h</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">--help</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> <span class="at">--help</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> list-commands</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><a href="https://docs.globus.org/cli/reference" target="_blank">CLI reference</a> &nbsp;🡐&nbsp; index of all commands with detailed manual pages</li>
+</ul>
+</section>
+<section id="globus-terminology" class="level2">
+<h2 class="anchored" data-anchor-id="globus-terminology">Globus terminology</h2>
+<ul>
+<li><em>Endpoint</em> is a server or system where data can be transferred to/from, e.g.&nbsp;an HPC cluster or your own computer.</li>
+<li><em>Collection</em> is a named access point to a specific directory or dataset on an endpoint, with its own permissions and sharing settings.</li>
+</ul>
+<p>Sometimes the two are used interchangeably as you can you can transfer data to/from both, but they mean different things.</p>
+<p>There are two main types of collections:</p>
+<ol type="1">
+<li><em>Mapped collections</em> expose a specific directory for authenticated users on a multi-user system, e.g.&nbsp;your home folder on a cluster. You typically have read+write access to your own home/scratch/project directory mapped collection, but other Globus users don’t.</li>
+<li><em>Guest collections</em> are shared subsets of mapped collections, can be shared with other Globus users without giving full system access. An example would be a subdirectory in your home directory on a cluster that you open for read (or maybe write) access to your collaborator.</li>
+</ol>
 </section>
 <section id="starting-up-and-authenticating" class="level2">
 <h2 class="anchored" data-anchor-id="starting-up-and-authenticating">Starting up and authenticating</h2>
@@ -423,21 +464,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>First, you need to log in to Globus itself:</li>
 </ol>
 <!-- my primary identity is razoumov@computecanada.ca - it's not an email address -->
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> login   <span class="co"># log in to a Globus session through your browser</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> whoami <span class="at">--verbose</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session show   <span class="co"># show all active sessions</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># globus logout   # might run this at some point if you no longer need Globus</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> login   <span class="co"># log in to a Globus session through your browser</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> whoami</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> whoami <span class="at">--verbose</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session show   <span class="co"># show all active sessions</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># globus logout   # might run this at some point if you no longer need Globus</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>One person can have multiple Globus accounts, e.g.&nbsp;one with the Alliance, one with Google, one directly with Globus ID.</p>
 <ol start="2" type="1">
-<li>Second, when you access an endpoint (e.g.&nbsp;<code>globus ls ...</code>, <code>globus transfer ...</code>) inside a session, you will need to give permission to Globus to access that endpoint / filesystem on your behalf. Theoretically, these “consents” can be managed via https://auth.globus.org/consents (where you can see and revoke them individually), but in practice I find it very difficult to find out which one is which endpoint (it does not say!), so in practice the only way I can use this site is to remove all “consents”.</li>
+<li>Second, when you access an endpoint (e.g.&nbsp;<code>globus ls ...</code>, <code>globus transfer ...</code>) inside a session, you will need to give Globus permission to access that endpoint / filesystem on your behalf. Theoretically, these “consents” can be managed via <a href="https://auth.globus.org/consents" target="_blank">https://auth.globus.org/consents</a> where you can see and revoke them individually. In practice I find it somewhat difficult to tell which endpoint is which (since it does not name them!), so the only way I can effectively use this site is by removing all existing consents.</li>
 </ol>
 <p>Let’s see how consents work in practice. We define a couple of Globus tutorial collections through their IDs:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">T1</span><span class="op">=</span>6c54cade-bde5-45c1-bdea-f4bd71dba2cc</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">T2</span><span class="op">=</span>31ce9ba0-176d-45a5-add3-f37d233ba47d</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If this is your first time accessing this collection, you will likely get “The collection you are trying to access data on requires you to grant consent for the Globus CLI to access it”</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session consent <span class="op">&lt;</span>authentication_scope<span class="op">&gt;</span>   <span class="co"># opens a browser page</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>                      <span class="co"># empty</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>:/home/share/godata   <span class="co"># three small files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">T1</span><span class="op">=</span>6c54cade-bde5-45c1-bdea-f4bd71dba2cc   <span class="co"># provided by Globus</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">T2</span><span class="op">=</span>31ce9ba0-176d-45a5-add3-f37d233ba47d   <span class="co"># another mirror of the same collection</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If this is your first time accessing this collection after <code>globus login</code>, you will likely get <em>“The collection you are trying to access data on requires you to grant consent for the Globus CLI to access it”</em> along with a suggested command to run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session consent <span class="op">&lt;</span>authentication_scope<span class="op">&gt;</span>   <span class="co"># opens a browser page</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>                      <span class="co"># empty</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>:/home/share/godata   <span class="co"># three small files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- missing consent scope ... -->
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -465,7 +508,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Sometimes you might get stuck in an infinite authentication loop. After having logged into Globus, when trying to run <code>globus ls ...</code> or <code>globus transfer ...</code>, if you are missing that endpoint’s consent, Globus <strong>should tell you</strong> to run a very specific command <code>globus session consent &lt;authentication_scope&gt;</code>. Sometimes, if some Globus machinery behind the scenes is not updated properly, you might get instead:</p>
+<p>Sometimes you might get stuck in an infinite authentication loop. After having logged into Globus, when trying to list or transfer files, if you are missing that endpoint’s consent, Globus <strong>should tell you</strong> to run a very specific command <code>globus session consent &lt;authentication_scope&gt;</code>. Sometimes, if some Globus machinery behind the scenes is not updated properly, you might get instead:</p>
 <pre><code>The resource you are trying to access requires you to re-authenticate with specific identities.
 message: Missing required data_access consent
 Please use "globus session update" to re-authenticate with specific identities</code></pre>
@@ -475,6 +518,21 @@ Please use "globus session update" to re-authenticate with specific identities</
 </section>
 <section id="other-synchronous-blocking-commands" class="level2">
 <h2 class="anchored" data-anchor-id="other-synchronous-blocking-commands">Other synchronous (blocking) commands</h2>
+<p><code>globus ls "$COLLECTION"</code> is an example of a blocking Globus command that waits for the completion of the task before exiting. Other blocking command examples are:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>                      <span class="co"># empty: this is my own playground</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> mkdir <span class="va">$T1</span>:test              <span class="co"># create a new directory</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> mkdir <span class="va">$T1</span>:test/today        <span class="co"># create a subdirectory inside</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rename <span class="va">$T1</span> test/today test/tomorrow   <span class="co"># diff from Unix</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                                             <span class="co"># not moving files via Globus!</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>:test</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rename <span class="va">$T1</span> test/tomorrow tomorrow   <span class="co"># can move objects across directories</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rm <span class="at">--recursive</span> <span class="va">$T1</span>:test             <span class="co"># --recursive only needed when not empty</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rm <span class="at">--recursive</span> <span class="va">$T1</span>:tomorrow</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -485,84 +543,98 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><code>globus ls</code> works on directories, not files. <code>globus transfer</code> works with both directories and files, but there are some syntax limitations – we will see these later.</p>
-</div>
-</div>
-<p><code>globus ls "$COLLECTION"</code> is an example of a synchronous Globus command that waits for the completion of the task before exiting. Other synchronous command examples are:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> mkdir <span class="st">"</span><span class="va">$COLLECTION</span><span class="st">:existing_path/new_dir_name"</span>   <span class="co"># create a new directory</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rename <span class="st">"</span><span class="va">$COLLECTION</span><span class="st">"</span> <span class="st">"old_dir_name"</span> <span class="st">"new_dir_name"</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rename <span class="st">"</span><span class="va">$COLLECTION</span><span class="st">"</span> <span class="st">"old_file_name"</span> <span class="st">"new_file_name"</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rename <span class="st">"</span><span class="va">$COLLECTION</span><span class="st">"</span> <span class="st">"old_path/old_file_name"</span> <span class="st">"new_path/new_file_name"</span> <span class="co"># can move files across directories</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rm <span class="st">"</span><span class="va">$COLLECTION</span><span class="st">:existing_path --recursive</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p><code>globus delete</code> is a non-blocking version of <code>globus rm</code>, with all the same flags.</p>
+<p><code>globus delete</code> is a non-blocking version of <code>globus rm</code>, with mostly the same flags.</p>
 </div>
 </div>
 </section>
 <section id="single-file-transfer" class="level2">
 <h2 class="anchored" data-anchor-id="single-file-transfer">Single file transfer</h2>
-<section id="all-inside-the-tutorial-endpoint" class="level3">
-<h3 class="anchored" data-anchor-id="all-inside-the-tutorial-endpoint">All inside the tutorial endpoint</h3>
-<p><strong>Note</strong>: with <code>globus transfer</code> for a single file, it is very important to specify the full file path in the destination that includes the file name, not just the target directory. Without the file name, the transfer will eventually fail, after trying for 1 hour.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>    <span class="co"># empty</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>:/home/share/godata   <span class="co"># file1.txt file2.txt file3.txt</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> mkdir <span class="va">$T1</span>:test</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$T1</span>:/home/share/godata/file1.txt <span class="va">$T1</span>:test/file1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="testing-within-the-tutorial-endpoint" class="level3">
+<h3 class="anchored" data-anchor-id="testing-within-the-tutorial-endpoint">Testing within the tutorial endpoint</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> mkdir <span class="va">$T1</span>:test</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$T1</span>:/home/share/godata   <span class="co"># file1.txt file2.txt file3.txt</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$T1</span>:/home/share/godata/file1.txt <span class="va">$T1</span>:test/file1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>The most common error with globus-cli
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With <code>globus transfer</code> for a single file, it is very important to specify the full file path in the destination that includes the file name, not just the target directory. Without the file name, the transfer will eventually fail, after trying for 1 hour.</p>
+</div>
+</div>
 <p>This command is non-blocking, i.e.&nbsp;it will exit back to the command prompt, while transfer will take place in the background. Note that you will receive an email when transfer is complete. If you want to block until transfer completion in the terminal, run:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task wait <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">-l</span> <span class="va">$T1</span>:test</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rm <span class="at">-r</span> <span class="va">$T1</span>:test</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task wait <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task wait <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">-l</span> <span class="va">$T1</span>:test</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> rm <span class="at">-r</span> <span class="va">$T1</span>:test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>globus ls</code> works on directories, not files, e.g.&nbsp;try running <code>globus ls $T1:test/file1.txt</code>. On the other hand, <code>globus transfer</code> works with both directories and files.</p>
+</div>
+</div>
 </section>
 <section id="transfer-a-tutorial-collection-file-to-fir" class="level3">
 <h3 class="anchored" data-anchor-id="transfer-a-tutorial-collection-file-to-fir">Transfer a tutorial collection file to Fir</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alliance</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alliance <span class="kw">|</span> <span class="fu">grep</span> fir   <span class="co"># use the ID of alliancecan#fir-globus in the next line</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$FIR</span>   <span class="co"># might or might not have access</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session consent <span class="st">'urn:globus:auth:scope:transfer.api.globus.org:all[*https://auth.globus.org/scopes/8dec4129-9ab4-451d-a45f-5b4b8471f7a3/data_access]'</span>   <span class="co"># select razoumov@computecanada.ca</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$FIR</span>   <span class="co"># should see my Fir home directory</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$FIR</span>:scratch</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$T1</span>:/home/share/godata/file1.txt <span class="va">$FIR</span>:scratch/f1.txt</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task wait <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task list <span class="at">--filter-status</span> ACTIVE   <span class="co"># show all my active tasks</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alliance</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alliance <span class="kw">|</span> <span class="fu">grep</span> fir   <span class="co"># use the ID of alliancecan#fir-globus in the next line</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$FIR</span>   <span class="co"># might or might not have access; using a mapped collection</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session consent <span class="st">'urn:globus:auth:scope:transfer.api.globus.org:all[*https://auth.globus.org/scopes/8dec4129-9ab4-451d-a45f-5b4b8471f7a3/data_access]'</span>   <span class="co"># select razoumov@computecanada.ca</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$FIR</span>           <span class="co"># should see my Fir home directory</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$FIR</span>:scratch   <span class="co"># using another mapped collection</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$T1</span>:/home/share/godata/file1.txt <span class="va">$FIR</span>:scratch</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID_from_the_previous_line<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task event-list <span class="at">--filter-errors</span> <span class="op">&lt;</span>taskID<span class="op">&gt;</span>       <span class="co"># shows the actual error</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task cancel <span class="op">&lt;</span>taskID<span class="op">&gt;</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$T1</span>:/home/share/godata/file1.txt <span class="va">$FIR</span>:scratch/f1.txt</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task list <span class="at">--filter-status</span> ACTIVE   <span class="co"># show all my active tasks</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task wait <span class="op">&lt;</span>taskID<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- globus endpoint show $FIR -->
 <!-- globus endpoint show $T1 -->
 </section>
 <section id="transfer-a-large-8.1gb-file-from-fir-to-nibi" class="level3">
 <h3 class="anchored" data-anchor-id="transfer-a-large-8.1gb-file-from-fir-to-nibi">Transfer a large (8.1GB) file from Fir to Nibi</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alliance <span class="kw">|</span> <span class="fu">grep</span> nibi</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">NIBI</span><span class="op">=</span>07baf15f-d7fd-4b6a-bf8a-5b5ef2e229d3</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc <span class="va">$NIBI</span>:scratch/2d_lonlat_20.nc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alliance <span class="kw">|</span> <span class="fu">grep</span> nibi</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">NIBI</span><span class="op">=</span>07baf15f-d7fd-4b6a-bf8a-5b5ef2e229d3</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc <span class="va">$NIBI</span>:scratch/2d_lonlat_20.nc</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">-l</span> <span class="va">$NIBI</span>:scratch <span class="kw">|</span> <span class="fu">grep</span> 2d_lonlat_20.nc</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This command will fail if one or more endpoints require authentication. Fortunately, in this case you will be prompted to run the following command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session consent <span class="op">&lt;</span>authentication_scope<span class="op">&gt;</span>   <span class="co"># in browser; select razoumov@computecanada.ca</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> session consent <span class="op">&lt;</span>authentication_scope<span class="op">&gt;</span>   <span class="co"># in browser; select razoumov@computecanada.ca</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then you can rerun the transfer command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc <span class="va">$NIBI</span>:scratch/2d_lonlat_20.nc</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show ba064a80-9e6d-11f0-9016-0affca67c55f <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc <span class="va">$NIBI</span>:scratch/2d_lonlat_20.nc</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="multiple-files" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-files">Multiple files</h2>
-<p>Globus CLI does not support Unix shell wildmasks. However, you can achieve the same by copying a directory with a <code>--include</code> flag, e.g.&nbsp;this will copy only <code>*.sh</code> files:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="at">--recursive</span> <span class="at">--include</span> <span class="st">'*.sh'</span> <span class="at">--exclude</span> <span class="st">'*'</span> <span class="va">$FIR</span>:syncHPC/testEGL/ <span class="va">$LAPTOP</span>:tmp/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Globus CLI does not support Unix shell wildmasks in the source path. However, there are several workarounds:</p>
+<ol type="1">
+<li><p>Pack your multiple files into an archive.</p></li>
+<li><p>, copy a directory with a <code>--include</code> flag, e.g.&nbsp;this will copy only <code>*.sh</code> files:</p></li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="at">--recursive</span> <span class="at">--include</span> <span class="st">'*.sh'</span> <span class="at">--exclude</span> <span class="st">'*'</span> <span class="va">$FIR</span>:syncHPC/testEGL/ <span class="va">$NIBI</span>:scratch</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -580,52 +652,56 @@ Note
 </ol>
 </div>
 </div>
-<p>Alternatively, you can use <code>--batch</code> to specify multiple files with their source and destination paths:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a># store this as include.txt: a list of source paths followed by destination paths</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>alexWithUpdatedDriver.sh alexWithUpdatedDriver.sh</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>bartWithCorrection.sh bartWithCorrection.sh</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>test.sh test.sh   # Slurm scripting for testing</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:syncHPC/testEGL/ <span class="va">$LAPTOP</span>:tmp/ <span class="at">--batch</span> include.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="3" type="1">
+<li>Alternatively, you can use <code>--batch</code> to list <strong>multiple specific files</strong> with their source and destination paths:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a># store this as include.txt: a list of source paths followed by destination paths</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>alexWithUpdatedDriver.sh alexWithUpdatedDriver.sh</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>bartWithCorrection.sh bartWithCorrection.sh</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>test.sh test.sh   # Slurm scripting for testing</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:syncHPC/testEGL/ <span class="va">$NIBI</span>:scratch <span class="at">--batch</span> include.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With this approach, you can mix multiple paths in a single file, e.g.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>alexWithUpdatedDriver.sh a/alexWithUpdatedDriver.sh</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>bartWithCorrection.sh b/bartWithCorrection.sh</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>test.sh test.sh   # Slurm scripting for testing</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>alexWithUpdatedDriver.sh a/alexWithUpdatedDriver.sh</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>bartWithCorrection.sh b/bartWithCorrection.sh</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>test.sh test.sh   # Slurm scripting for testing</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>would create the subdirectories <code>a/</code> and <code>b/</code> inside <code>~/tmp/</code> as part of the transfer.</p>
 <p>You can also delete files in batch:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> delete <span class="st">"COLLECTION:path/"</span> <span class="at">--batch</span> delete.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> delete <span class="st">"COLLECTION:path/"</span> <span class="at">--batch</span> delete.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="4" type="1">
+<li>Finally, you can sync two directories – this is described in a separate section below.</li>
+</ol>
 </section>
 <section id="globus-connect-personal" class="level2">
 <h2 class="anchored" data-anchor-id="globus-connect-personal">Globus Connect Personal</h2>
-<p>Globus Connect Personal (GCP) may be installed in order to turn a local machine into a Globus endpoint. This way you can transfer files with Globus from/to your computer.</p>
+<p>Globus Connect Personal (GCP) turns a local machine into a Globus endpoint. This way you can transfer files with Globus from/to your computer.</p>
 <ol type="1">
-<li>download Globus Connect Personal from https://app.globus.org/collections/gcp</li>
-<li>install and run “Globus Connect Personal” application</li>
-<li>click Log in, follow in the browser, create a name (I used “alexrsfu”), provide details, save, exit setup</li>
-<li>in the menu bar click Globus Connect Personal | Preferences…<br>
+<li>Download Globus Connect Personal from <a href="https://app.globus.org/collections/gcp" target="_blank">https://app.globus.org/collections/gcp</a>.</li>
+<li>Install and run “Globus Connect Personal” application.</li>
+<li>Click Log in, follow in the browser, create a unique name for your endpoint (I used <em>“alexrsfu”</em>), provide details, save, exit setup.</li>
+<li>In the menu bar click Globus Connect Personal | Preferences…<br>
 Access tab, specify directory access details<br>
-Info tab | write down your Endpoint ID <!-- = 441e818f-5783-11f0-81e1-0affcfc1d1e5 --></li>
-<li>continue running Globus Connect Personal in the background</li>
+Info tab | write down your Endpoint ID <!-- f81086c2-a870-11f0-bd08-027493648695 --></li>
+<li>Continue running Globus Connect Personal in the background.</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alexrsfu</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$LAPTOP</span>:tmp       <span class="co"># my local files</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> ~/tmp                    <span class="co"># should be the same</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">-l</span> <span class="va">$FIR</span>:data/deepImpact</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:data/deepImpact/yB31_oneblock_46521.vti <span class="va">$LAPTOP</span>:tmp/   <span class="co"># won't succeed (destination != filename)</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span>   <span class="co"># shows that it's ACTIVE but there are some Faults</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task event-list <span class="at">--filter-errors</span> <span class="op">&lt;</span>taskID<span class="op">&gt;</span>       <span class="co"># shows the actual error</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task cancel <span class="op">&lt;</span>taskID<span class="op">&gt;</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:data/deepImpact/yB31_oneblock_46521.vti <span class="va">$LAPTOP</span>:tmp/46521.vti   <span class="co"># this one works great!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>You can create endpoints for any number of personal computers. However, transfer between two personal endpoints is not enabled by default. If you need this capability, please contact open a <a href="mailto:globus@tech.alliancecan.ca">Globs ticket</a> to set up a <strong>Globus Plus account</strong>.</p>
 <section id="transfer-a-large-file-from-fir-to-my-laptop" class="level3">
 <h3 class="anchored" data-anchor-id="transfer-a-large-file-from-fir-to-my-laptop">Transfer a large file from Fir to my laptop</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc <span class="va">$LAPTOP</span>:tmp/2d_lonlat_20.nc</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show cb3dba5e-578a-11f0-939f-0e285752bd6d <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search alexrsfu   <span class="co"># might take a while to refresh</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>f81086c2-a870-11f0-bd08-027493648695</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="va">$LAPTOP</span>:tmp       <span class="co"># my local files</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> ~/tmp                    <span class="co"># should be the same</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">-l</span> <span class="va">$FIR</span>:data/deepImpact</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls <span class="at">-l</span> <span class="va">$FIR</span>:data/deepImpact <span class="kw">|</span> <span class="fu">grep</span> yB31_oneblock_46521.vti   <span class="co"># pick one of the files (590MB in size)</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:data/deepImpact/yB31_oneblock_46521.vti <span class="va">$LAPTOP</span>:tmp/   <span class="co"># won't succeed (destination != filename)</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show <span class="op">&lt;</span>taskID<span class="op">&gt;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span>   <span class="co"># shows that it's ACTIVE but there are some Faults</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task event-list <span class="at">--filter-errors</span> <span class="op">&lt;</span>taskID<span class="op">&gt;</span>       <span class="co"># shows the actual error</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task cancel <span class="op">&lt;</span>taskID<span class="op">&gt;</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:data/deepImpact/yB31_oneblock_46521.vti <span class="va">$LAPTOP</span>:tmp/46521.vti   <span class="co"># this one works great!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You can create endpoints for any number of personal computers. However, transfer between two personal endpoints is not enabled by default. If you need this capability, please contact open a <a href="mailto:globus@tech.alliancecan.ca">Globs ticket</a> to set up a <strong>Globus Plus account</strong>.</p>
 <!-- ## Troubleshooting -->
 <!-- ```sh -->
 <!-- globus task cancel f09b98dd-5778-11f0-8b04-02fa2a4031ab -->
@@ -690,7 +766,7 @@ Info tab | write down your Endpoint ID <!-- = 441e818f-5783-11f0-81e1-0affcfc1d1
 <span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    <span class="ex">rename</span> <span class="st">"</span><span class="va">$SRC</span><span class="st">"</span> <span class="st">"</span><span class="va">$DEST</span><span class="st">"</span> nibi 07baf15f-d7fd-4b6a-bf8a-5b5ef2e229d3</span>
 <span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    <span class="ex">rename</span> <span class="st">"</span><span class="va">$SRC</span><span class="st">"</span> <span class="st">"</span><span class="va">$DEST</span><span class="st">"</span> trillium ad462f99-8436-42b4-adc6-3644e36c1b67</span>
 <span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    <span class="ex">rename</span> <span class="st">"</span><span class="va">$SRC</span><span class="st">"</span> <span class="st">"</span><span class="va">$DEST</span><span class="st">"</span> rorqual 93b2625f-a4ba-47ac-90d4-0bbb5ae19451</span>
-<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="ex">rename</span> <span class="st">"</span><span class="va">$SRC</span><span class="st">"</span> <span class="st">"</span><span class="va">$DEST</span><span class="st">"</span> laptop 441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>    <span class="ex">rename</span> <span class="st">"</span><span class="va">$SRC</span><span class="st">"</span> <span class="st">"</span><span class="va">$DEST</span><span class="st">"</span> laptop f81086c2-a870-11f0-bd08-027493648695</span>
 <span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">extension()</span> <span class="kw">{</span></span>
 <span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    <span class="va">filename</span><span class="op">=</span><span class="va">$(</span><span class="fu">basename</span> <span class="st">"</span><span class="va">$1</span><span class="st">"</span><span class="va">)</span></span>
 <span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">[[</span> <span class="st">"</span><span class="va">$filename</span><span class="st">"</span> <span class="ot">==</span> <span class="pp">*</span>.<span class="pp">*</span> <span class="kw">]];</span> <span class="cf">then</span></span>
@@ -732,26 +808,31 @@ Info tab | write down your Endpoint ID <!-- = 441e818f-5783-11f0-81e1-0affcfc1d1
 <span id="cb24-58"><a href="#cb24-58" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> gcancel()</span> <span class="kw">{</span></span>
 <span id="cb24-59"><a href="#cb24-59" aria-hidden="true" tabindex="-1"></a>    <span class="ex">globus</span> task cancel <span class="va">$1</span></span>
 <span id="cb24-60"><a href="#cb24-60" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>With these functions defined, the last two transfers can be written as:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="va">DATA</span><span class="op">=</span>projects/def-razoumov-ac/razoumov/ieeevis2017-clouds   <span class="co"># same data directory for both transfers</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> fir:<span class="va">$DATA</span>/2d_lonlat_20.nc nibi:scratch/2d_lonlat_20.nc</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> fir:<span class="va">$DATA</span>/2d_lonlat_20.nc laptop:tmp/2d_lonlat_20.nc</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="ex">gshow</span>                          <span class="co"># show all active tasks</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="ex">gshow</span> taskID1 taskID2          <span class="co"># show details of these tasks</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="ex">gwait</span> taskID1                  <span class="co"># block until taskID1 completes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With these functions defined, the two earlier transfers can be written as:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> fir:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc nibi:scratch/2d_lonlat_20.nc</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> fir:data/deepImpact/yB31_oneblock_46521.vti laptop:tmp/46521.vti</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">gshow</span>                          <span class="co"># show all active tasks</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="ex">gshow</span> taskID1 taskID2          <span class="co"># show details of these tasks</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="ex">gwait</span> taskID1                  <span class="co"># block until taskID1 completes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="syncing-directories" class="level2">
 <h2 class="anchored" data-anchor-id="syncing-directories">Syncing directories</h2>
 <p>Globus sync makes the destination match the source:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="at">--sync-level</span> <span class="op">&lt;</span>level<span class="op">&gt;</span> sourceEndpointID:/path/to/source/ destEndpointID:/path/to/dest/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><level> is one of: - exists → only send if destination file does not exist - size → send if size differs - mtime → send if modification time differs - checksum → compute checksums and send if they differ (slowest)</level></p>
+<p>where <code>&lt;level&gt;</code> is one of:</p>
+<ul>
+<li>exists &nbsp;→&nbsp; only send if destination file does not exist</li>
+<li>size &nbsp;→&nbsp; send if size differs</li>
+<li>mtime &nbsp;→&nbsp; send if modification time differs</li>
+<li>checksum &nbsp;→&nbsp; compute checksums and send if they differ (slowest)</li>
+</ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+<span class="screen-reader-only">Note</span>Optional flag
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -773,8 +854,8 @@ Note
 </div>
 <p>Here is a complete example:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">FIR</span><span class="op">=</span>8dec4129-9ab4-451d-a45f-5b4b8471f7a3</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> ~/tmp   <span class="co"># no need to create ~/tmp/testEGL</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>f81086c2-a870-11f0-bd08-027493648695</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/tmp   <span class="co"># no need to create ~/tmp/testEGL</span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="at">--sync-level</span> size <span class="at">--recursive</span> <span class="va">$FIR</span>:syncHPC/testEGL/ <span class="va">$LAPTOP</span>:tmp/testEGL/</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To automate this, I would probably create a separate <code>gsync()</code> function.</p>
 </section>
@@ -797,8 +878,8 @@ Note
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$FIR</span>:projects/def-razoumov-ac/razoumov/ieeevis2017-clouds/2d_lonlat_20.nc <span class="va">$NIBI</span>:scratch/2d_lonlat_20.nc</span>
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> task show 95ca1d32-9ee8-11f0-afcf-0e1cc5cf4f03 <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'Status|Faults'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Interestingly, if you are running Globus Connect Personal on your machine which is behind the firewall, you can still initialize transfer to/from your computer on the cluster, which will never work with <code>scp</code>/<code>sftp</code>/<code>rsync</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$NIBI</span>:scratch/2d_lonlat_20.nc <span class="va">$LAPTOP</span>:tmp/2d_lonlat_20.nc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>f81086c2-a870-11f0-bd08-027493648695</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$NIBI</span>:data/mandelbulb800.nc <span class="va">$LAPTOP</span>:tmp/800.nc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="globus-sharing" class="level2">
 <h2 class="anchored" data-anchor-id="globus-sharing">Globus sharing</h2>
@@ -809,7 +890,7 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Your collaborator’s Globus userID
+<span class="screen-reader-only">Note</span>Getting your collaborator’s Globus userID
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -843,7 +924,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a paid subscription. Without it, you cannot share files hosted on your own computer. See the details <a href="https://docs.globus.org/api/transfer/gcp_management/#create_guest_collection">here</a>. Alternatively, you can host a guest collection on a Globus Connect Server mapped collection (subscription required), which is how we have it set up on our clusters.</p>
+<p>Creating guest collections on a Globus Connect Personal mapped collection is supported, but it requires a paid subscription. Without it, you cannot share files hosted on your own computer. See the details <a href="https://docs.globus.org/api/transfer/gcp_management/#create_guest_collection" target="_blank">here</a>. However, you can host a guest collection on a Globus Connect Server mapped collection on an Alliance cluster where we already have a subscription.</p>
 </div>
 </div>
 <p>You can share your files stored on an Alliance cluster with any Globus user in the world, even if that user does not have an account on that cluster.</p>
@@ -871,16 +952,16 @@ Note
 </div>
 </div>
 <p>On Fir, let’s create <code>~/share</code> and place a file (e.g.&nbsp;<code>noise.silo</code>) there. In Globus, Fir is already registered as a Globus Connect Server v5 Mapped Collection, so you can create a new guest collection inside it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project003   <span class="co"># create a new guest collection</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project004   <span class="co"># create a new guest collection</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>At this point Globus might ask you to run <code>globus login --gcs ...</code> to verify who you are, and then you can rerun the command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project003   <span class="co"># create a new guest collection</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Display Name:                     project003</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> collection create guest <span class="va">$FIR</span> /home/razoumov/share project004   <span class="co"># create a new guest collection</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Display Name:                     project004</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Owner:                            razoumov@computecanada.ca</span></span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ID:                               2342c760-b98b-40cc-b3f7-9550dce48c83</span></span>
 <span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Collection Type:                  guest</span></span>
 <span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Public:                           True</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>“Public” means that anyone with a Globus account can search for this collection with <code>globus endpoint search project003</code>, but they cannot see the files inside it. For file access, give your collaborator permission (<code>r</code> or <code>rw</code>) to access your collection, e.g.&nbsp;at its root level (that will point to <code>~/share</code>):</p>
+<p>“Public” means that anyone with a Globus account can search for this collection with <code>globus endpoint search project004</code>, but they cannot see the files inside it. For file access, give your collaborator permission (<code>r</code> or <code>rw</code>) to access your collection, e.g.&nbsp;at its root level (that will point to <code>~/share</code>):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="va">COLLECTION</span><span class="op">=</span>2342c760-b98b-40cc-b3f7-9550dce48c83</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission create <span class="at">--identity</span> <span class="va">$COLLABORATOR</span> <span class="at">--permissions</span> rw <span class="va">$COLLECTION</span>:/</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Message: Access rule created successfully.</span></span>
@@ -910,17 +991,17 @@ Note
 </div>
 </div>
 <p>At this point your collaborator should be able to see the files inside your collection:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search project003   <span class="co"># if they have just the name =&gt; returns collectionID</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint search project004   <span class="co"># if they have just the name =&gt; returns collectionID</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> ls 0a13e15f-4848-4b63-aa87-31202640eff4   <span class="co"># should see noise.silo</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and transfer files (download with <code>r</code> and download/upload with <code>rw</code> permissions) with <code>globus transfer ...</code> or via the web interface.</p>
 <p>Since this is your own collection, you should be able to use it as well, e.g.&nbsp;– after starting Globus Connect Personal – you can transfer files between this collection and your computer:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>441e818f-5783-11f0-81e1-0affcfc1d1e5</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">LAPTOP</span><span class="op">=</span>f81086c2-a870-11f0-bd08-027493648695</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$COLLECTION</span>:noise.silo <span class="va">$LAPTOP</span>:tmp/n.silo   <span class="co"># download a file</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span> <span class="op">&gt;</span> ~/tmp/test.txt</span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> transfer <span class="va">$LAPTOP</span>:tmp/test.txt <span class="va">$COLLECTION</span>:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>or, after adding “project003” to the <code>gcp()</code> shell function:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> project003:noise.silo laptop:tmp/n.silo    <span class="co"># download a file</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> laptop:tmp/test.txt project003:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>or, after adding “project004” to the <code>gcp()</code> shell function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> project004:noise.silo laptop:tmp/n.silo    <span class="co"># download a file</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gcp</span> laptop:tmp/test.txt project004:/test.txt   <span class="co"># upload a file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>After your project is done, you might want to remove permissions:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission list <span class="va">$COLLECTION</span>   <span class="co"># show all permissions for this collection with ruleIDs</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> endpoint permission delete <span class="va">$COLLECTION</span> 228e0e90-a07f-11f0-b159-0affca67c55f   <span class="co"># collectionID ruleID</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -932,7 +1013,7 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Caution
+<span class="screen-reader-only">Caution</span>Delete order
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -951,24 +1032,22 @@ Caution
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/globus/globus-flows-trigger-examples.git</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="ex">globus</span> flows create <span class="st">"My Transfer and Share Flow Example"</span> transfer_share/definition.json <span class="at">--input-schema</span> transfer_share/schema.json</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>thir own example contains deprecated flow commands … someone needs to update the script</li>
+<li>their own example contains deprecated flow commands … someone needs to update the tutorial script</li>
 <li>too advanced for this webinar</li>
 </ul>
 </section>
 <section id="links" class="level2">
 <h2 class="anchored" data-anchor-id="links">Links</h2>
-<!-- https://docs.globus.org/faq -->
-<!-- https://docs.globus.org/cli/examples -->
 <ul>
-<li><a href="https://docs.globus.org/cli">CLI front page</a></li>
-<li><a href="https://docs.globus.org/cli/quickstart">CLI QuickStart Guide</a></li>
-<li><a href="https://docs.globus.org/cli/reference">CLI reference</a></li>
-<li><a href="https://docs.globus.org/cli/examples">CLI examples</a></li>
-<li><a href="mailto:globus@tech.alliancecan.ca">Open a ticket</a> with any Globus issue on an Alliance system</li>
-<li><a href="https://docs.globus.org/guides/overviews/high-assurance">High Assurance Collections for Protected Data</a> enable a subset of stricter security and compliance features
+<li><a href="https://docs.globus.org/cli" target="_blank">CLI front page</a></li>
+<li><a href="https://docs.globus.org/cli/quickstart" target="_blank">CLI QuickStart Guide</a> &nbsp;🡐&nbsp; good starting point</li>
+<li><a href="https://docs.globus.org/cli/examples" target="_blank">CLI examples</a> &nbsp;🡐&nbsp; nice examples</li>
+<li><a href="https://docs.globus.org/faq">FAQ in all categories</a> &nbsp;🡐&nbsp; a must-read</li>
+<li><a href="https://docs.globus.org/cli/reference" target="_blank">CLI reference</a> &nbsp;🡐&nbsp; index of all commands</li>
+<li><a href="mailto:globus@tech.alliancecan.ca" target="_blank">Open a ticket</a> with any Globus issue on an Alliance system</li>
+<li><a href="https://docs.globus.org/guides/overviews/high-assurance" target="_blank">High Assurance Collections for Protected Data</a> enable a subset of stricter security and compliance features
 <ul>
-<li>requires MFA, provider restriction</li>
-<li>stricter endpoint access control</li>
+<li>can enable MFA and other provider restriction for stricter endpoint access control</li>
 <li>detailed logging and auditing</li>
 <li>good for medical research institutions</li>
 <li>separate commercial subscription tier at an extra cost</li>
@@ -988,6 +1067,18 @@ Caution
 <!-- 1. login to Globus web interface -->
 <!-- 2. Settings | Manage Your Consents -->
 <!-- In the new architecture these two functions are cleanly separated with collections used for data access, and Globus Connect Server endpoints used for management. -->
+<!---
+```sh
+fir
+cd scratch
+/bin/rm -rf f1.txt file1.txt noise.silo test.py
+nibi
+cd scratch/*
+laptop
+cd tmp
+/bin/rm -rf 46521.vti testEGL 800.nc
+```
+-->
 
 
 </section>
