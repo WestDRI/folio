@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Distributed datasets with DataLad – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-datalad" id="toc-what-is-datalad" class="nav-link active" data-scroll-target="#what-is-datalad">What is DataLad?</a>
+  <ul class="collapse">
+  <li><a href="#git" id="toc-git" class="nav-link" data-scroll-target="#git">Git</a></li>
+  <li><a href="#git-annex" id="toc-git-annex" class="nav-link" data-scroll-target="#git-annex">git-annex</a></li>
+  <li><a href="#datalad" id="toc-datalad" class="nav-link" data-scroll-target="#datalad">DataLad</a></li>
+  </ul></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#initial-configuration" id="toc-initial-configuration" class="nav-link" data-scroll-target="#initial-configuration">Initial configuration</a></li>
+  <li><a href="#basics" id="toc-basics" class="nav-link" data-scroll-target="#basics">Basics</a>
+  <ul class="collapse">
+  <li><a href="#create-a-new-dataset" id="toc-create-a-new-dataset" class="nav-link" data-scroll-target="#create-a-new-dataset">Create a new dataset</a></li>
+  <li><a href="#add-some-data" id="toc-add-some-data" class="nav-link" data-scroll-target="#add-some-data">Add some data</a></li>
+  <li><a href="#subdatasets" id="toc-subdatasets" class="nav-link" data-scroll-target="#subdatasets">Subdatasets</a></li>
+  <li><a href="#running-scripts" id="toc-running-scripts" class="nav-link" data-scroll-target="#running-scripts">Running scripts</a></li>
+  </ul></li>
+  <li><a href="#five-workflows" id="toc-five-workflows" class="nav-link" data-scroll-target="#five-workflows">Five workflows</a>
+  <ul class="collapse">
+  <li><a href="#two-users-on-a-shared-cluster-filesystem-working-with-the-same-dataset" id="toc-two-users-on-a-shared-cluster-filesystem-working-with-the-same-dataset" class="nav-link" data-scroll-target="#two-users-on-a-shared-cluster-filesystem-working-with-the-same-dataset">(1) two users on a shared cluster filesystem working with the same dataset</a>
+  <ul class="collapse">
+  <li><a href="#start-with-git" id="toc-start-with-git" class="nav-link" data-scroll-target="#start-with-git">Start with Git</a></li>
+  <li><a href="#add-datalad-datasets" id="toc-add-datalad-datasets" class="nav-link" data-scroll-target="#add-datalad-datasets">Add DataLad datasets</a></li>
+  </ul></li>
+  <li><a href="#one-user-one-dataset-spread-over-multiple-drives-with-data-redundancy" id="toc-one-user-one-dataset-spread-over-multiple-drives-with-data-redundancy" class="nav-link" data-scroll-target="#one-user-one-dataset-spread-over-multiple-drives-with-data-redundancy">(2) one user, one dataset spread over multiple drives, with data redundancy</a>
+  <ul class="collapse">
+  <li><a href="#operations-from-the-central-dataset" id="toc-operations-from-the-central-dataset" class="nav-link" data-scroll-target="#operations-from-the-central-dataset">Operations from the central dataset:</a></li>
+  <li><a href="#letting-remotes-know-about-central-changes" id="toc-letting-remotes-know-about-central-changes" class="nav-link" data-scroll-target="#letting-remotes-know-about-central-changes">Letting remotes know about central changes</a></li>
+  <li><a href="#data-redundancy" id="toc-data-redundancy" class="nav-link" data-scroll-target="#data-redundancy">Data redundancy</a></li>
+  </ul></li>
+  <li><a href="#publish-a-dataset-on-github-with-annexed-files-in-a-special-private-remote" id="toc-publish-a-dataset-on-github-with-annexed-files-in-a-special-private-remote" class="nav-link" data-scroll-target="#publish-a-dataset-on-github-with-annexed-files-in-a-special-private-remote">(3) publish a dataset on GitHub with annexed files in a special private remote</a></li>
+  <li><a href="#publish-a-dataset-on-github-with-publicly-accessible-annexed-files-on-nextcloud" id="toc-publish-a-dataset-on-github-with-publicly-accessible-annexed-files-on-nextcloud" class="nav-link" data-scroll-target="#publish-a-dataset-on-github-with-publicly-accessible-annexed-files-on-nextcloud">(4) publish a dataset on GitHub with publicly-accessible annexed files on Nextcloud</a></li>
+  <li><a href="#if-we-have-time-manage-multiple-git-repos-under-one-dataset" id="toc-if-we-have-time-manage-multiple-git-repos-under-one-dataset" class="nav-link" data-scroll-target="#if-we-have-time-manage-multiple-git-repos-under-one-dataset">(5) if we have time: manage multiple Git repos under one dataset</a></li>
+  </ul></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Distributed datasets with DataLad</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>You can find this page at &nbsp; <span style="font-size:1.8em;">https://folio.vastcloud.org/datalad</span></p>
+<section id="what-is-datalad" class="level1">
+<h1>What is DataLad?</h1>
+<p>DataLad is a version control system for your data. It is built on top of <strong>Git</strong> and <strong>git-annex</strong>, and is available both as a command-line tool and as a Python API.</p>
+<section id="git" class="level2">
+<h2 class="anchored" data-anchor-id="git">Git</h2>
+<p>Git a version control system designed to keep track of software projects and their history, to merge edits from multiple authors, to work with branches (distinct project copies) and merge them into the main projects. Since Git was designed for version control of text files, it can also be applied to writing projects, such as manuscripts, theses, website repositories, etc.</p>
+<blockquote class="blockquote">
+<p>I assume that most attendees are familiar with Git, but we can certainly do a quick command-line Git demo.</p>
+</blockquote>
+<p>Git can also keep track of binary (non-text) files and/or of large data files, but putting binary and/or large files under version control and especially modifying them will inflate the size of the repositories.</p>
+</section>
+<section id="git-annex" class="level2">
+<h2 class="anchored" data-anchor-id="git-annex">git-annex</h2>
+<!-- git annex - holding your data separately from your history (data does not need to be there when inspecting the -->
+<!-- database structure and history) -->
+<p>Git-annex was built on top of Git and was designed to share and synchronize large file in a distributed fashion. The file content is managed separately from the dataset’s structure / metadata – the latter is kept under Git version control, while files are stored in separate directories. If you look inside a git-annex repository, you will see that files are replaced with symbolic links, and in fact you don’t have to have the actual data stored locally, e.g.&nbsp;if you want to reduce the disk space usage.</p>
+</section>
+<section id="datalad" class="level2">
+<h2 class="anchored" data-anchor-id="datalad">DataLad</h2>
+<p>DalaLad builds on top of Git and git-annex, retaining all their features, but adds few other functions:</p>
+<ol type="1">
+<li>Datasets can be nested, and most DalaLad commands have a <code>--recursive</code> option that will traverse subdatasets and do “the right thing”.</li>
+<li>DalaLad can run commands on data, and if a dataset is not present locally, DalaLad will automatically get the required input files from a remote repository.</li>
+<li>DataLad can keep track of data provenance, e.g.&nbsp;<code>datalad download-url</code> will download files, add them to the repository, and keep a record of data origin.</li>
+<li>Few other features.</li>
+</ol>
+<p>As you will see in this workshop, most DataLad workflows involve running all three – <code>git</code>, <code>git annex</code>, and <code>datalad</code> – commands, so we’ll be using the functionality of all three layers.</p>
+</section>
+</section>
+<section id="installation" class="level1">
+<h1>Installation</h1>
+<p>On a Mac with <a href="https://brew.sh" target="_blank">Homebrew</a> installed:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> upgrade</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install git-annex</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install datalad</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With <code>pip</code> (Python’s package manager) use one of these two:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install datalad          <span class="co"># if you don't run into permission problems</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--user</span> datalad   <span class="co"># to force installation into user space</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>With <code>conda</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> install <span class="at">-c</span> conda-forge datalad</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> update <span class="at">-c</span> conda-forge datalad</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>DataLad also needs <strong>Git</strong> and <strong>git-annex</strong>, if these are not installed. For mote information, visit the <a href="http://handbook.datalad.org/en/latest/intro/installation.html" target="_blank">official installation guide</a>.</p>
+<p>On a cluster you can install DataLad into your $HOME directory:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">virtualenv</span> <span class="at">--no-download</span> ~/datalad-env</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/datalad-env/bin/activate</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> <span class="at">--upgrade</span> pip</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install datalad</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=<span class="va">$HOME</span>/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alternatively, you can install DalaLad into your group’s <code>/project</code> directory:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/projects/def-sponsor00/shared</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">virtualenv</span> <span class="at">--no-download</span> datalad-env</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> datalad-env/bin/activate</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> <span class="at">--upgrade</span> pip</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install datalad</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> og+rX datalad-env</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then everyone in the group can activate DalaLad with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=/project/def-sponsor00/shared/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="initial-configuration" class="level1">
+<h1>Initial configuration</h1>
+<p>All these settings go into <code>~/.gitconfig</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> <span class="at">--add</span> user.name <span class="st">"First Last"</span>      <span class="co"># your name</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> <span class="at">--add</span> user.email name@domain.ca   <span class="co"># your email address</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="basics" class="level1">
+<h1>Basics</h1>
+<section id="create-a-new-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-new-dataset">Create a new dataset</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Some files in your dataset will be stored as plain files, some files will be put in the annex, i.e.&nbsp;they will be replaced with their symbolic links and might not be even stored locally. Annexed files cannot be modified directly (more on this later). The command <code>datalad run-procedure --discover</code> shows you a list of available configurations. On my computer they are:<br>
+- <code>text2git</code>: do not put anything that is a text file in the annex, i.e.&nbsp;process them with regular Git<br>
+- <code>yoda</code>: configure a dataset according to the <a href="https://handbook.datalad.org/en/latest/basics/101-127-yoda.html" target="_blank">yoda principles</a><br>
+- <code>noannex</code>: put everything under regular Git control</p>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create <span class="at">--description</span> <span class="st">"our first dataset"</span> <span class="at">-c</span> text2git test   <span class="co"># use `text2git` configuration</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> test</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="add-some-data" class="level2">
+<h2 class="anchored" data-anchor-id="add-some-data">Add some data</h2>
+<p>Let’s use some file examples from the official <a href="http://handbook.datalad.org" target="_blank">DalaLad handbook</a>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> books</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> https://sourceforge.net/projects/linuxcommand/files/TLCL/19.01/TLCL-19.01.pdf <span class="at">-O</span> books/theLinuxCommandLine.pdf</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> https://homepages.uc.edu/~becktl/byte_of_python.pdf <span class="at">-O</span> books/aByteOfPython.pdf</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> books</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added a couple of books on Linux and Python"</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> books</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">-n</span> 1        <span class="co"># check last commit</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">-n</span> 1 <span class="at">-p</span>     <span class="co"># check last commit in details</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.one <span class="st">"log --graph --date-order --date=short --pretty=format:'%C(cyan)%h %C(yellow)%ar %C(auto)%s%+b %C(green)%ae'"</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> one             <span class="co"># custom alias</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span>   <span class="co"># a short alternative</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s add another couple of books using a built-in downloading command:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> download-url https://github.com/progit/progit2/releases/download/2.1.154/progit.pdf <span class="dt">\</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--dataset</span> . <span class="at">-m</span> <span class="st">"added a reference book about git"</span> <span class="at">-O</span> books/proGit.pdf</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> download-url http://www.tldp.org/LDP/Bash-Beginners-Guide/Bash-Beginners-Guide.pdf <span class="dt">\</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">--dataset</span> . <span class="at">-m</span> <span class="st">"added bash guide for beginners"</span> <span class="at">-O</span> books/bashGuideForBeginners.pdf</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> books</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="ex">tree</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status   <span class="co"># nothing to be saved</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log          <span class="co"># `datalad download-url` took care of that</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis books/proGit.pdf   <span class="co"># show the available copies (including the URL source)</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis books              <span class="co"># show the same for all books</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Create and commit a short text file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOT</span> <span class="op">&gt;</span> notes.txt</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="st">We have downloaded 4 books.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">EOT</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added notes.txt"</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">-n</span> 1      <span class="co"># see the last commit</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">-n</span> 1 <span class="at">-p</span>   <span class="co"># and its file changes</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Notice that the text file was not annexed: there is no symbolic link. This means that we can modify it easily:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> Text files are not in the annex.<span class="op">&gt;&gt;</span> notes.txt</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"edited notes.txt"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="subdatasets" class="level2">
+<h2 class="anchored" data-anchor-id="subdatasets">Subdatasets</h2>
+<p>Let’s clone a remote dataset and store it locally as a subdataset:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone <span class="at">--dataset</span> . https://github.com/datalad-datasets/machinelearning-books   <span class="co"># get its structure</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">tree</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> machinelearning-books             <span class="co"># not much data there (large files were not downloaded)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> machinelearning-books</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span>   <span class="co"># if all files were present: 9 annex'd files (74.4 MB recorded total size)</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span> all   <span class="co"># check how much data we have locally: 0.0 B/74.4 MB present/total size</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span> all A.Shashua-Introduction_to_Machine_Learning.pdf   <span class="co"># 683.7 KB</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Ok, this file is not too large, so we can download it easily:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get A.Shashua-Introduction_to_Machine_Learning.pdf</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span> all   <span class="co"># now we have 683.7 KB/74.4 MB present/total size</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> A.Shashua-Introduction_to_Machine_Learning.pdf   <span class="co"># it should open</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> drop A.Shashua-Introduction_to_Machine_Learning.pdf   <span class="co"># delete the local copy</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log    <span class="co"># this particular dataset's history (none of our commands show here: we did not modify it)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ..</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- Let's try cloning from another GitHub repository: -->
+<!-- ```sh -->
+<!-- datalad clone --dataset . https://github.com/razoumov/sharedSnippets sharedSnippets -->
+<!-- cd sharedSnippets -->
+<!-- datalad status --annex all   # does not show anything, since it has no annexed files -->
+<!-- ls -->
+<!-- ``` -->
+<!-- This one downloaded all the files, i.e. none of them are annexed. Why? -->
+<!-- Well, this is how this new dataset is structured, and it is organized this way because it was created with the -->
+<!-- `text2git` configuration too, keeping all text files outside the annex. -->
+</section>
+<section id="running-scripts" class="level2">
+<h2 class="anchored" data-anchor-id="running-scripts">Running scripts</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../machinelearning-books</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--not</span> <span class="at">--in</span><span class="op">=</span>here     <span class="co"># show remote files</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> code</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOT</span> <span class="op">&gt;</span> code/titles.sh</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="st">for file in </span><span class="dt">\$</span><span class="st">(git annex find --not --in=here); do</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">    echo </span><span class="dt">\$</span><span class="st">file | sed 's/^.*-//' | sed 's/.pdf//' | sed 's/_/ /g'</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">done</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="op">EOT</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> code/titles.sh</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added a short script to write a list of book titles"</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> run <span class="at">-m</span> <span class="st">"create a list of books"</span> <span class="st">"bash code/titles.sh &gt; list.txt"</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> list.txt</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log   <span class="co"># the command run record went into the log</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now we will modify and rerun this script:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> unlock code/titles.sh   <span class="co"># move the script out of the annex to allow edits</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOT</span> <span class="op">&gt;</span> code/titles.sh</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="st">for file in </span><span class="dt">\$</span><span class="st">(git annex find --not --in=here); do</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="st">    title=</span><span class="dt">\$</span><span class="st">(echo </span><span class="dt">\$</span><span class="st">file | sed 's/^.*-//' | sed 's/.pdf//' | sed 's/_/ /g')</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="st">    echo </span><span class="dt">\"\$</span><span class="st">title</span><span class="dt">\"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="st">done</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="op">EOT</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"correction: enclose titles into quotes"</span> code/titles.sh</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">-n</span> 5   <span class="co"># note the hash of the last commit</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> rerun ba90706</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="fu">more</span> list.txt</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> diff <span class="at">--from</span> ba90706 <span class="at">--to</span> f88e2ce   <span class="co"># show the filenames only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Finally, let’s extract the title page from one of the books, <code>A.Shashua-Introduction_to_Machine_Learning.pdf</code>. First, let’s open the book itself:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> A.Shashua-Introduction_to_Machine_Learning.pdf   <span class="co"># this book is not here!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The book is not here … That’s not a problem for DalaLad, as it can process a file that is stored remotely (as long as it is part of the dataset) &nbsp;🡲&nbsp; it will automatically get the required input file.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> run <span class="at">-m</span> <span class="st">"extract the title page"</span> <span class="dt">\</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--input</span> <span class="st">"A.Shashua-Introduction_to_Machine_Learning.pdf"</span> <span class="dt">\</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--output</span> <span class="st">"title.pdf"</span> <span class="dt">\</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"convert -density 300 {inputs}[0] -quality 90 {outputs}"</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here     <span class="co"># show local files: it downloaded the book, extracted the first page</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> title.pdf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="five-workflows" class="level1">
+<h1>Five workflows</h1>
+<ol type="1">
+<li>two users on a shared cluster filesystem working with the same dataset,</li>
+<li>one user, one dataset spread over multiple drives, with data redundancy,</li>
+<li>publish a dataset on GitHub with annexed files in a special private remote,</li>
+<li>publish a dataset on GitHub with publicly-accessible annexed files on Nextcloud, and</li>
+<li><em>if we have time:</em> manage multiple Git repos under one dataset</li>
+</ol>
+<section id="two-users-on-a-shared-cluster-filesystem-working-with-the-same-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="two-users-on-a-shared-cluster-filesystem-working-with-the-same-dataset">(1) two users on a shared cluster filesystem working with the same dataset</h2>
+<p>For simplicity, let’s assume both users share the same GID (group ID), i.e.&nbsp;they are from the same research group. Extending this workflow to multiple users with different GISs can be done via <a href="https://docs.alliancecan.ca/wiki/Sharing_data#Access_control_lists_(ACLs)" target="_blank">Access control lists (ACLs)</a>.</p>
+<section id="start-with-git" class="level3">
+<h3 class="anchored" data-anchor-id="start-with-git">Start with Git</h3>
+<p>First, let’s consider a shared Git-only (no git-annex, no DalaLad) repository in <code>/project</code>, and how the two users can both push to it.</p>
+<!-- # newgrp def-sponsor00   # switch my default group to the group with which I want to share -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user001</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"First User"</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"user001@westdri.ca"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/def-sponsor00</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init <span class="at">--bare</span> <span class="at">--shared</span> collab</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="kw">|</span> <span class="fu">grep</span> collab   <span class="co"># note the group permissions and the SGID (recursive)</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone /project/def-sponsor00/collab</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> collab</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test1 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test2 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test3 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add test<span class="pp">*</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"added test{1..3}"</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="ex">user002</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"Second User"</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"user002@westdri.ca"</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone /project/def-sponsor00/collab</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> collab</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"making some changes"</span> <span class="op">&gt;</span> readme.txt</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add readme.txt</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"added readme.txt"</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- There are other things that would go into this webinar: doing the same with ACLs (user outside your research -->
+<!-- group), and extending this to DataLad. -->
+</section>
+<section id="add-datalad-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="add-datalad-datasets">Add DataLad datasets</h3>
+<!-- # newgrp def-sponsor00   # switch my default group to the group with which I want to share -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user001</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=/project/def-sponsor00/shared/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> u+wX ~/collab</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-rf</span> /project/def-sponsor00/collab ~/collab</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/def-sponsor00</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init <span class="at">--bare</span> <span class="at">--shared</span> collab</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="kw">|</span> <span class="fu">grep</span> collab   <span class="co"># note the group permissions and the SGID (recursive)</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create <span class="at">--description</span> <span class="st">"my collab"</span> <span class="at">-c</span> text2git collab   <span class="co"># create a dataset using `text2git` template</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> collab</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test1 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test2 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test3 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added test1,2,3"</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add origin /project/def-sponsor00/collab</span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co"># git push --set-upstream origin main      # if we were using Git only</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> origin <span class="at">--data</span> anything   <span class="co"># transfer all annexed content</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test1                    <span class="co"># 1 copy</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> origin <span class="at">--data</span> anything   <span class="co"># I find that I need to run it twice to actually transfer annexed data</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test1                    <span class="co"># 2 copies (here and origin)</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> /project/def-sponsor00/collab</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>After making sure there is a remote copy, you can drop a local copy:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> drop test1</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test1                    <span class="co"># 1 copy</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To get this file at any time in the future, you would run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get test1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s actually drop all files for which there is a remote copy, to save on local disk space:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> <span class="va">$(</span><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>origin<span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">datalad</span> drop <span class="va">$file</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test<span class="pp">*</span>      <span class="co"># only remote copies left</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span> all   <span class="co"># check local data usage</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- ```sh -->
+<!-- datalad update            # update from origin -->
+<!-- git annex whereis test1   # 2 copies (origin and second copy) -->
+<!-- cd ~/collab2 -->
+<!-- echo "some description of my dataset" > readme.txt -->
+<!-- datalad save -m "added readme.txt" -->
+<!-- datalad status -->
+<!-- git log -->
+<!-- datalad push --to origin --data anything   # push readme.txt to origin -->
+<!-- cd ~/collab -->
+<!-- datalad update --how merge       # download readme.txt -->
+<!-- ``` -->
+<p>To allow other users to write to the DalaLad repo, setting <code>git init --shared ...</code> on <code>/project/def-sponsor00/collab</code> is not sufficient, as it does not set proper permissions for <code>/project/def-sponsor00/collab/annex</code>. We have to do it manually:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/def-sponsor00/collab</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> g+ws annex   <span class="co"># so that user002 could push with datalad</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user002</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=/project/def-sponsor00/shared/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> <span class="at">--add</span> safe.directory /project/60105/collab           <span class="co"># allow git to work with files from other users</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> <span class="at">--add</span> safe.directory /project/def-sponsor00/collab   <span class="co"># do the same for the linked version</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-rf</span> collab</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone <span class="at">--description</span> <span class="st">"user002's copy"</span> /project/def-sponsor00/collab collab</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> collab</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here   <span class="co"># show local files (none at the moment)</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get test1     <span class="co"># download the file</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test4 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added test4"</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote <span class="at">-v</span>    <span class="co"># our remote is origin</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> origin <span class="at">--data</span> anything</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>origin     <span class="co"># test4 now in both places</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"I started working with this dataset as well"</span> <span class="op">&gt;</span> notes.txt</span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add notes.txt</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"added notes.txt"</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now user001 can see the two new files:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user001</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=/project/def-sponsor00/shared/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/collab</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> update <span class="at">--how</span> merge   <span class="co"># download most recent data from origin</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> notes.txt                <span class="co"># it is here</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here     <span class="co"># none of the annexed content (e.g. test4) is here</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get test4            <span class="co"># but we can get it easily</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span> all         <span class="co"># check how much data we have locally: present/total space</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--lackingcopies</span> 0   <span class="co"># show files that are stored only in one place</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test<span class="pp">*</span>            <span class="co"># show location for all files</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You also see information about what is stored in “user002’s copy”. However, you should take it with a grain of salt. For example, if user002 drops some files locally and does not run <code>datalad push</code>, origin (and hence user001) will have no knowledge of that fact.</p>
+<!-- ```sh -->
+<!-- dd if=/dev/urandom of=test5 bs=1024 count=$(( RANDOM + 1024 )) -->
+<!-- datalad save -m "added test5" -->
+<!-- datalad push --to origin --data anything -->
+<!-- user002 -->
+<!-- cd ~/collab -->
+<!-- datalad update --how merge   # download user002's data -->
+<!-- dd if=/dev/urandom of=test6 bs=1024 count=$(( RANDOM + 1024 )) -->
+<!-- datalad save -m "added test6" -->
+<!-- datalad push --to origin --data anything -->
+<!-- user001 -->
+<!-- cd ~/collab -->
+<!-- datalad drop test*               # remove all local data -->
+<!-- git annex whereis test*          # show data location; none of the data is here -->
+<!-- datalad status --annex all       # check local data usage -->
+<!-- git annex find --not --in=here   # show files that are not here -->
+<!-- git annex find --lackingcopies 0   # show files that are stored only in one place -->
+<!-- datalad get test{2,3,5}          # download those files -->
+<!-- git annex find --in=here         # show files that are here -->
+<!-- ``` -->
+</section>
+</section>
+<section id="one-user-one-dataset-spread-over-multiple-drives-with-data-redundancy" class="level2">
+<h2 class="anchored" data-anchor-id="one-user-one-dataset-spread-over-multiple-drives-with-data-redundancy">(2) one user, one dataset spread over multiple drives, with data redundancy</h2>
+<p>Initially I created this scenario with two external USB drives. In the interest of time, I simplified it to a single external drive, but it can easily be extended to any number of drives.</p>
+<p>First, let’s create an always-present dataset on the computer that will also keep track of all data stored in its clone on a removable USB drive:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create <span class="at">--description</span> <span class="st">"Central location"</span> <span class="at">-c</span> text2git distributed</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> distributed</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config receive.denyCurrentBranch updateInstead   <span class="co"># allow clones to update this dataset</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> books</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> https://sourceforge.net/projects/linuxcommand/files/TLCL/19.01/TLCL-19.01.pdf <span class="at">-O</span> books/theLinuxCommandLine.pdf</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> https://homepages.uc.edu/~becktl/byte_of_python.pdf <span class="at">-O</span> books/aByteOfPython.pdf</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added a couple of books"</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> books</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .   <span class="co"># 4.9M stored here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- Create the first clone on a portable USB drive: -->
+<!-- ```sh -->
+<!-- cd /Volumes/tiny -->
+<!-- datalad clone --description "tiny" ~/tmp/distributed distributed -->
+<!-- cd distributed -->
+<!-- git remote rename origin central -->
+<!-- datalad push --to central --data nothing   # push metadata to central -->
+<!-- ``` -->
+<p>Create a clone on a portable USB drive:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Volumes/t7</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone <span class="at">--description</span> <span class="st">"t7"</span> ~/tmp/distributed distributed</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> distributed</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .   <span class="co"># no actual data was copied, just the links</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote rename origin central</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> books</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> https://github.com/progit/progit2/releases/download/2.1.154/progit.pdf <span class="at">-O</span> proGit.pdf</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> <span class="at">-q</span> http://www.tldp.org/LDP/Bash-Beginners-Guide/Bash-Beginners-Guide.pdf <span class="at">-O</span> bashGuideForBeginners.pdf</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added two more books"</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log                          <span class="co"># we have history from both drives (all 4 books)</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here         <span class="co"># but only 2 books are stored here</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--not</span> <span class="at">--in</span><span class="op">=</span>here   <span class="co"># and 2 books are stored not here</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> book <span class="kw">in</span> <span class="va">$(</span><span class="fu">git</span> annex find <span class="at">--not</span> <span class="at">--in</span><span class="op">=</span>here<span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">git</span> annex whereis <span class="va">$book</span>      <span class="co"># show their location: they are in central</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> central <span class="at">--data</span> nothing   <span class="co"># push metadata to central</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="operations-from-the-central-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="operations-from-the-central-dataset">Operations from the central dataset:</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/distributed</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here           <span class="co"># show local files: 2 books</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--not</span> <span class="at">--in</span><span class="op">=</span>here     <span class="co"># show remote files: 2 books</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> status <span class="at">--annex</span> all         <span class="co"># check local data usage: 4.6 MB/17.6 MB present/total size</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--lackingcopies</span> 0   <span class="co"># show files that are stored only in one place</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis books/<span class="pp">*</span>          <span class="co"># show location</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s mount t7 and get one of its books:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get books/bashGuideForBeginners.pdf   <span class="co"># try getting this book from a remote =&gt; error</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span> get<span class="er">(</span><span class="ex">error</span><span class="kw">)</span><span class="bu">:</span> books/bashGuideForBeginners.pdf <span class="er">(</span><span class="fu">file</span><span class="kw">)</span> <span class="ex">[not</span> available]</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote    <span class="co"># nothing: central does not know where the remotes are stored</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> siblings add <span class="at">-d</span> . <span class="at">--name</span> t7 <span class="at">--url</span> /Volumes/t7/distributed</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote    <span class="co"># now it knows where to find the remotes</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get books/bashGuideForBeginners.pdf   <span class="co"># successful!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now unmount t7.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis books/bashGuideForBeginners.pdf   <span class="co"># 2 copies (here and t7)</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> books/bashGuideForBeginners.pdf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s remove this the local copy of this book:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> drop books/bashGuideForBeginners.pdf   <span class="co"># error: tried to t7 for remaining physical copies</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> drop <span class="at">--reckless</span> availability books/bashGuideForBeginners.pdf   <span class="co"># do not check remotes (potentially dangerous)</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis books/bashGuideForBeginners.pdf   <span class="co"># only 1 copy left on t7</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="letting-remotes-know-about-central-changes" class="level3">
+<h3 class="anchored" data-anchor-id="letting-remotes-know-about-central-changes">Letting remotes know about central changes</h3>
+<p>Let’s add a DalaLad book to central:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/distributed</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> download-url http://handbook.datalad.org/_/downloads/en/stable/pdf/ <span class="dt">\</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--dataset</span> . <span class="at">-m</span> <span class="st">"added the DataLad Handbook"</span> <span class="at">-O</span> books/datalad.pdf</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The remote knows nothing about this new book. Let’s push this update out! Make sure to mount t7 and then run the following:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Volumes/t7/distributed</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config receive.denyCurrentBranch updateInstead   <span class="co"># allow clones to update this dataset</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/distributed</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> t7 <span class="at">--data</span> nothing                  <span class="co"># push metadata, but not the data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alternatively, we could update from the USB drive:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Volumes/t7/distributed</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> update <span class="at">-s</span> central <span class="at">--how</span><span class="op">=</span>merge</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now let’s check things from t7’s perspective:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Volumes/t7/distributed</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> books/                             <span class="co"># datalad.pdf is there</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis books/datalad.pdf   <span class="co"># it is in central only (plus on the web)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="data-redundancy" class="level3">
+<h3 class="anchored" data-anchor-id="data-redundancy">Data redundancy</h3>
+<p>Now imagine that we want to backup all files that are stored in a single location, and always have a second copy on the other drive.</p>
+<!-- git remote    # knows only about central -->
+<!-- datalad siblings add -d . --name t7 --url /Volumes/t7/distributed -->
+<!-- git remote    # now knows about both central and t7 -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /Volumes/t7/distributed</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> <span class="va">$(</span><span class="fu">git</span> annex find <span class="at">--lackingcopies</span> 0<span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">datalad</span> get <span class="va">$file</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> central <span class="at">--data</span> nothing   <span class="co"># update the central</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--lackingcopies</span> 0           <span class="co"># still two files have only 1 copy</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--in</span><span class="op">=</span>here                   <span class="co"># but they are both here already ==&gt; makes sense</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s go to central and do the same:</p>
+<!-- git remote    # knows only about central -->
+<!-- datalad siblings add -d . --name tiny --url /Volumes/tiny/distributed -->
+<!-- git remote    # now knows about both central and tiny -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/distributed</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> file <span class="kw">in</span> <span class="va">$(</span><span class="fu">git</span> annex find <span class="at">--lackingcopies</span> 0<span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">datalad</span> get <span class="va">$file</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex find <span class="at">--lackingcopies</span> 0   <span class="co"># none: now all files have at least two copies</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis                  <span class="co"># here where everything is</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The file <code>books/datalad.pdf</code> is in two locations, although one of them is the web. You can correct that manually: go to t7 and run <code>get</code> there.</p>
+<p>Try dropping a local file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> drop books/theLinuxCommandLine.pdf   <span class="co"># successful, since t7 is also mounted</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get books/theLinuxCommandLine.pdf    <span class="co"># get it back</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Set the minimum number of copies and try dropping again:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex numcopies 2</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> drop books/theLinuxCommandLine.pdf   <span class="co"># can't: need minimum 2 copies!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="publish-a-dataset-on-github-with-annexed-files-in-a-special-private-remote" class="level2">
+<h2 class="anchored" data-anchor-id="publish-a-dataset-on-github-with-annexed-files-in-a-special-private-remote">(3) publish a dataset on GitHub with annexed files in a special private remote</h2>
+<p>At some stage, you might want to publish a dataset on GitHub that contains some annexed data. The problem is that annexed data could be large, and you can quickly run into problems with GitHub’s storage/bandwidth limitations. Moreover, free accounts on GitHub do not support working with annexed data.</p>
+<p>With DalaLad, however, you can host large/annexed files elsewhere and still have the dataset published on GitHub. This is done with so-called <em>special remotes</em>. The published dataset on GitHub stores the information about where to obtain the annexed file contents when you run <code>datalad get</code>.</p>
+<p>Special remotes can point to Amazon S3, Dropbox, Google Drive, WebDAV, sftp servers, etc.</p>
+<p>Let’s create a small dataset with an annexed file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> u+wX publish <span class="kw">&amp;&amp;</span> <span class="ex">/bin/rm</span> <span class="at">-r</span> publish</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create <span class="at">--description</span> <span class="st">"published dataset"</span> <span class="at">-c</span> text2git publish</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> publish</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test1 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added test1"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Next, we can set up a special remote on the Alliance’s Nextcloud service. DataLad talks to special remotes via <code>rclone</code> protocol, so we need to install it (along with <code>git-annex-remote-rclone</code> utility) and then configure an <code>rclone</code> remote of type WebDAV:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install rclone</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install git-annex-remote-rclone</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="ex">rclone</span> config</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">new</span> remote</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Name:</span> nextcloud</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Type</span> of storage: 46 / WebDAV</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  <span class="ex">URL:</span> https://nextcloud.computecanada.ca/remote.php/webdav/</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Vendor:</span> 1 / Nextcloud</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="ex">User</span> name: razoumov</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>  <span class="ex">Password:</span> type and confirm your password</span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">no</span> bearer_token</span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">no</span> advanced config</span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">keep</span> this remote</span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  <span class="ex">quit</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Inside our dataset we set a <code>nextcloud</code> remote on which we’ll write into the directory <code>annexedData</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex initremote nextcloud type=external externaltype=rclone encryption=none target=nextcloud prefix=annexedData</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote <span class="at">-v</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> siblings</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> nextcloud <span class="at">--data</span> anything</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If you want to share your <code>annexedData</code> folder with another CCDB user, log in to https://nextcloud.computecanada.ca with your CC credentials, click “share” on <code>annexedData</code>, then optionally type in the name/username of the user to share with.</p>
+<p>Next, we publish on dataset on GitHub. The following command creates an empty repository called <code>testPublish</code> on GitHub and sets a publication dependency: all new annexed content will automatically go to Nextcloud when we push to GitHub.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create-sibling-github <span class="at">-d</span> . testPublish <span class="at">--publish-depends</span> nextcloud</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> siblings   <span class="co"># +/- indicates the presence/absence of a remote data annex at this remote</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> github</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test2 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added test2"</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> github   <span class="co"># automatically pushes test2 to nextcloud!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Imagine we are another user trying to download the dataset. In this demo I will use the same credentials, but in principle this could be another researcher (at least for <strong>reading only</strong>):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">user001</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=/project/def-sponsor00/shared/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone https://github.com/razoumov/testPublish.git publish     <span class="co"># note that access to nextcloud is not enabled yet</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> publish</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-s</span> .                       <span class="co"># the annexed file is not here</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis <span class="at">--in</span><span class="op">=</span>here   <span class="co"># no annexed file stored locally</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test<span class="pp">*</span>       <span class="co"># two copies: "published dataset" and nextcloud</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> update <span class="at">--how</span> merge    <span class="co"># if you need to update the local copy (analogue of `git pull`)</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a><span class="ex">rclone</span> config   <span class="co"># set up exactly the same configuration as before</span></span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> siblings <span class="at">-d</span> . enable <span class="at">--name</span> nextcloud   <span class="co"># enable access to this special remote</span></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> siblings                                <span class="co"># should now see nextcloud</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get test1</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis <span class="at">--in</span><span class="op">=</span>here                     <span class="co"># now we have a local copy</span></span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test3 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> save <span class="at">-m</span> <span class="st">"added test3"</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> origin              <span class="co"># push non-annexed files to GitHub</span></span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> nextcloud           <span class="co"># push annexed files</span></span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> origin              <span class="co"># update GitHub of this</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Back in the original “published dataset” on my laptop:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> update <span class="at">--how</span> merge</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span>                        <span class="co"># now can see test3</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get test3</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test3   <span class="co"># it is here</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="publish-a-dataset-on-github-with-publicly-accessible-annexed-files-on-nextcloud" class="level2">
+<h2 class="anchored" data-anchor-id="publish-a-dataset-on-github-with-publicly-accessible-annexed-files-on-nextcloud">(4) publish a dataset on GitHub with publicly-accessible annexed files on Nextcloud</h2>
+<p>Starting from scratch, let’s push some files to</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> u+wX publish <span class="kw">&amp;&amp;</span> <span class="ex">/bin/rm</span> <span class="at">-r</span> publish</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">dd</span> if=/dev/urandom of=test1 bs=1024 count=<span class="va">$((</span> <span class="va">RANDOM</span> <span class="op">+</span> <span class="dv">1024</span> <span class="va">))</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a><span class="ex">rclone</span> copy test1 nextcloud:    <span class="co"># works since we've already set up the `nextcloud` remote in rclone</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Log in to https://nextcloud.computecanada.ca with your CC credentials, on <code>test1</code> click “share” followed by “share link” and “copy link”. Add <code>/download</code> to the copied link to form something like <code>https://nextcloud.computecanada.ca/index.php/s/YeyNrjJfpQQ7WTq/download</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create <span class="at">--description</span> <span class="st">"published dataset"</span> <span class="at">-c</span> text2git publish</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> publish</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOF</span> <span class="op">&gt;</span> list.csv</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="st">file,link</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="st">test1,https://nextcloud.computecanada.ca/index.php/s/YeyNrjJfpQQ7WTq/download</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> addurls <span class="at">--fast</span> list.csv <span class="st">'{link}'</span> <span class="st">'{file}'</span>   <span class="co"># --fast means do not download, just add URL</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test1   <span class="co"># one copy (web)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Later, when needed, we can download this file with <code>datalad get test1</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create-sibling-github <span class="at">-d</span> . testPublish2   <span class="co"># create am empty repo on GitHub</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> siblings   <span class="co"># +/- indicates the presence/absence of a remote data annex at this remote</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> push <span class="at">--to</span> github</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="ex">user001</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load git-annex   <span class="co"># need this each time you use DalaLad</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="bu">alias</span> datalad=/project/def-sponsor00/shared/datalad-env/bin/datalad   <span class="co"># best to add this line to your ~/.bashrc file</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> u+wX publish <span class="kw">&amp;&amp;</span> <span class="ex">/bin/rm</span> <span class="at">-r</span> publish</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone https://github.com/razoumov/testPublish2.git publish    <span class="co"># "remote origin not usable by git-annex"</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> publish</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test1   <span class="co"># one copy (web)</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> get test1</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> annex whereis test1   <span class="co"># now we have a local copy</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="if-we-have-time-manage-multiple-git-repos-under-one-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="if-we-have-time-manage-multiple-git-repos-under-one-dataset">(5) if we have time: manage multiple Git repos under one dataset</h2>
+<p>Create a new dataset and inside clone a couple of <em>subdatasets</em>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> create <span class="at">-c</span> text2git envelope</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> envelope</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># let's clone few regular Git (not DataLad!) repos</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone <span class="at">--dataset</span> . https://github.com/razoumov/radiativeTransfer.git projects/radiativeTransfer</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> clone <span class="at">--dataset</span> . https://github.com/razoumov/sharedSnippets projects/sharedSnippets</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log   <span class="co"># can see those two new subdatasets</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Go into one of these subdatasets, modify a file, and commit it to GitHub:</p>
+<!-- #   datalad create -f   # convert this Git repo to a dataset -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> projects/sharedSnippets</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> add <span class="ex">an</span> empty line to mpiContainer.md</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> status</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add mpiContainer.md</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"added another line to mpiContainer.md"</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This directory is still a pure GitHub repository, i.e.&nbsp;there no DalaLad files.</p>
+<p>Let’s clone out entire dataset to another location:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb53"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> install <span class="at">--description</span> <span class="st">"copy of envelope"</span> <span class="at">-r</span> <span class="at">-s</span> envelope copy   <span class="co"># `clone` has no recursive option</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> copy</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> projects/sharedSnippets</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log   <span class="co"># cloned as of the moment of that dataset's creation; no recent update there yet</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Recursively update all child Git repositories:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb54"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote <span class="at">-v</span>     <span class="co"># remote is origin = GitHub</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ../..          <span class="co"># to ~/tmp/copy</span></span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote <span class="at">-v</span>     <span class="co"># remote is origin = ../envelope</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a><span class="co"># pull recent changes from "proper origin" for each subdataset</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a><span class="ex">datalad</span> update <span class="at">-s</span> origin <span class="at">--how</span><span class="op">=</span>merge <span class="at">--recursive</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> projects/sharedSnippets</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- git reset --hard HEAD~1 -->
+<!-- git push --force -->
+<!-- datalad create-sibling -->
+<!-- datalad publish -->
+<!-- subdatasets have their own history -->
+<!-- cannot write directly into an annexed file -->
+<!-- to make change: `git annex unlock` to move the file out of the annex -->
+<!--                 update the file -->
+<!--                 `datalad save` pushes it back into the annex -->
+<!-- git checkout -b test_run -->
+<!-- datalad run -m "description" -d dataset -i input -o output "command ..." -->
+<!-- it can actually grab things (input) at runtime from the remote repo -->
+<!-- datalad save -->
+<!-- git merge --strategy=ours main -->
+<!-- git checkout main -->
+<!-- git merge test_run -->
+</section>
+</section>
+<section id="links" class="level1">
+<h1>Links</h1>
+<ul>
+<li><a href="http://handbook.datalad.org" target="_blank">DalaLad handbook</a></li>
+<li><a href="https://handbook.datalad.org/en/latest/basics/101-180-FAQ.html" target="_blank">Frequently Asked Questions</a></li>
+<li><a href="https://jadecci.github.io/notes/Datalad.html" target="_blank">DalaLad cheatsheet</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
