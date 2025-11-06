@@ -386,7 +386,7 @@ window.Quarto = {
   <li><a href="#apptainers-image-cache" id="toc-apptainers-image-cache" class="nav-link" data-scroll-target="#apptainers-image-cache">Apptainer’s image cache</a></li>
   <li><a href="#inspecting-image-metadata" id="toc-inspecting-image-metadata" class="nav-link" data-scroll-target="#inspecting-image-metadata">Inspecting image metadata</a></li>
   </ul></li>
-  <li><a href="#modifying-the-containers" id="toc-modifying-the-containers" class="nav-link" data-scroll-target="#modifying-the-containers">Modifying the containers</a>
+  <li><a href="#modifying-containers" id="toc-modifying-containers" class="nav-link" data-scroll-target="#modifying-containers">Modifying containers</a>
   <ul class="collapse">
   <li><a href="#build-command" id="toc-build-command" class="nav-link" data-scroll-target="#build-command">Build command</a></li>
   <li><a href="#demo-building-a-development-container-in-a-sandbox-as-root" id="toc-demo-building-a-development-container-in-a-sandbox-as-root" class="nav-link" data-scroll-target="#demo-building-a-development-container-in-a-sandbox-as-root">Demo: building a development container in a sandbox as root</a></li>
@@ -508,6 +508,19 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 </div>
 </div>
 </div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Runscripts from Docker → Apptainer image conversion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Docker images don’t have an explicit runscript in the Apptainer sense, so when you convert a Docker image into an Apptainer image, Apptainer translates some Docker image settings into an equivalent runscript that will be displayed with <code>apptainer inspect -r image.sif</code>, but this is not the traditional runscript. As far as <code>apptainer run</code> is concerned, there is no runscript.</p>
+</div>
+</div>
 <section id="apptainers-image-cache" class="level3">
 <h3 class="anchored" data-anchor-id="apptainers-image-cache">Apptainer’s image cache</h3>
 <p>In the last two examples we did not store SIF images in the current directory. Where were they stored?</p>
@@ -517,7 +530,7 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> cache clean <span class="at">--help</span>   <span class="co"># more granular control</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>By default, Apptainer cache is stored in <code>$HOME/.apptainer/cache</code>. We can control the cache location with APPTAINER_CACHE environment variable.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -526,7 +539,7 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Are there any <code>APPTAINER*</code> variables in our setup? What do you think they do?</p>
 </div>
@@ -539,7 +552,7 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> inspect <span class="at">-r</span> /path/to/SIF/file   <span class="co"># short for --runscript</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> inspect <span class="at">-d</span> /path/to/SIF/file   <span class="co"># short for --deffile</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -548,7 +561,7 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Can you find other inspection flags besides <code>-r</code> and <code>-d</code>?</p>
 </div>
@@ -556,8 +569,8 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 </div>
 </section>
 </section>
-<section id="modifying-the-containers" class="level2">
-<h2 class="anchored" data-anchor-id="modifying-the-containers">Modifying the containers</h2>
+<section id="modifying-containers" class="level2">
+<h2 class="anchored" data-anchor-id="modifying-containers">Modifying containers</h2>
 <section id="build-command" class="level3">
 <h3 class="anchored" data-anchor-id="build-command">Build command</h3>
 <p>The <code>apptainer build &lt;imagePath&gt; &lt;buildSpec&gt;</code> command is a versatile tool that lets you:</p>
@@ -575,7 +588,7 @@ Blue lines show workflows without modifying a container, whereas grey-line workf
 <ul>
 <li><a href="https://apptainer.org/docs/user/latest/build_a_container.html" target="_blank">Build a Container</a> page in the Apptainer documentation</li>
 </ul>
-<p>In <u>most cases</u>, you would download an existing Docker/Apptainer container image and build/run a container from it, without having to modify the image. Or maybe, the image is already provided by your lab, a research collaborator, or the Alliance. For example, in the Alliance there have been some discussions to provide a set of Apptainer images with GPU development tools for different GPU architectures, such as NVIDIA’s CUDA and AMD’s ROCm, as it is often difficult to compile these from source. If you would like these or other custom pre-configured images, please reach out to the Alliance to request them.</p>
+<p>In <u>most cases</u>, you would download an existing Docker/Apptainer container image and build/run a container from it, without having to modify the image. Or maybe, the image is already provided by your lab, a research collaborator, or the Alliance. For example, in the Alliance Federation there have been some discussions to provide a set of Apptainer images with GPU development tools for different GPU architectures, such as NVIDIA’s CUDA and AMD’s ROCm, as it is often difficult to compile these from source. If you would like these or other custom pre-configured images, please reach out to the Alliance to request them.</p>
 <!-- and we are planning to make these images available to all users in the near future. -->
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -770,7 +783,7 @@ Note
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-sh</span> ubuntu.dir                                      <span class="co"># 82M, before installing packages</span></span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--fakeroot</span> <span class="at">--writable</span> ubuntu.dir</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -779,7 +792,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>At this point you might see the following output:</p>
 <pre class="output"><code>INFO:    User not listed in /etc/subuid, trying root-mapped namespace
@@ -970,7 +983,7 @@ Note
 <section id="exercise-switch-to-another-linux-distribution" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-switch-to-another-linux-distribution">Exercise: switch to another Linux distribution</h3>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -979,7 +992,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let’s try creating an image with another Linux distribution:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull debian.sif docker://debian:latest</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1005,7 +1018,7 @@ Note
 <h3 class="anchored" data-anchor-id="exercise-latest-python-image">Exercise: latest Python image</h3>
 <p>We did something similar with a Python container earlier, so you can refer to the notes in this section.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1014,7 +1027,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Pull the latest Python image from Docker Hub into an Apptainer image. It should take few minutes to build it.<br>
 1. How large is the resulting image?<br>
@@ -1044,7 +1057,7 @@ Note
 <section id="exercise-cpu-based-pytorch-image" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-cpu-based-pytorch-image">Exercise: CPU-based PyTorch image</h3>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1053,7 +1066,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Pull a recent <b>CPU-based</b> PyTorch image from Docker Hub into an Apptainer image.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
@@ -1114,7 +1127,7 @@ Note
 <li>unpack VisIt into a <code>/scratch</code> directory outside the container &nbsp;&nbsp;<span style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; smaller container image, more files on the host</li>
 </ol>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1123,7 +1136,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Install the <a href="https://visit-dav.github.io/visit-website/releases-as-tables/#latest" target="_blank">latest (3.4.2) VisIt package</a> inside an Ubuntu container.</p>
 <ol type="1">
