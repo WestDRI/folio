@@ -557,7 +557,8 @@ You can find more information on remote endpoints in the
 
 
 
-## Running more useful Docker images via Apptainer as regular user
+<!-- ## Running more useful Docker images via Apptainer as regular user -->
+## Practical Apptainer workflows
 
 ### Demo: running client-server ParaView from a container
 
@@ -565,7 +566,7 @@ You can pull a Docker image from [Docker Hub](https://hub.docker.com) and conver
 image. For this you typically do not need `sudo` access. Please build containers only on compute nodes, as
 this process is CPU-intensive.
 
-The following commands require online access and will work only on Cedar (and the training cluster!)  where
+The following commands require online access and will work only on Fir (and the training cluster!)  where
 compute nodes can access Internet. Let's search [Docker Hub](https://hub.docker.com) for
 *"topologytoolkit"*. Click on the result and then on Tags -- you should see the suggested Docker command
 *"docker pull topologytoolkit/ttk-dev:5.11.0"*. From Apptainer, the address will be
@@ -579,8 +580,8 @@ apptainer pull topologytoolkit.sif docker://topologytoolkit/ttk-dev:5.11.0
 ```
 
 ::: {.callout-note}
-On other production clusters -- such as Béluga, Narval or Graham -- compute nodes do not have Internet access,
-so you will have to use the two-step approach there:
+On other production clusters -- Nibi, Rorqual, Trillium, Narval -- compute nodes do not have Internet access,
+so you will have to use a two-step approach there:
 ```sh
 cd ~/scratch
 wget https://raw.githubusercontent.com/moby/moby/master/contrib/download-frozen-image-v2.sh
@@ -614,9 +615,7 @@ ssh username@apptainer.vastcloud.org -L 11111:node1:11111
 Next, start ParaView 5.11.x on your computer and connect to `localhost:11111`, and then load the dataset and
 visualize it.
 
-
-
-
+### Exercise: switch to another Linux distribution
 
 ::: {.callout-caution collapse="true"}
 ##### Exercise: switch to another Linux distribution
@@ -646,13 +645,9 @@ commands), convert it back to SIF.
 <!-- Apptainer> nano -->
 <!-- ``` -->
 
+### Exercise: latest Python image
 
-
-
-
-
-
-
+We did something similar with a Python container earlier, so you can refer to the notes in this section.
 
 ::: {.callout-caution collapse="true"}
 ##### Exercise: latest Python image
@@ -682,12 +677,7 @@ apptainer pull python.sif docker://???
 <!-- apptainer exec python.sif cat /etc/os-release   # Debian GNU/Linux -->
 <!-- ``` -->
 
-
-
-
-
-
-
+### Exercise: CPU-based PyTorch image
 
 ::: {.callout-caution collapse="true"}
 ##### Exercise: CPU-based PyTorch image
@@ -735,4 +725,72 @@ For more info on working with PyTorch tensors watch
 ::: {.callout-note}
 On our clusters we have PyTorch installed natively, both for CPUs and GPUs, so no need to rely on a container
 for this.
+:::
+
+### Advanced exercise: run a VisIt visualization script
+
+[VisIt](https://visit-dav.github.io/visit-website/index.html){target="_blank"} is an open-source scalable
+visualization package that is notoriously difficult to compile. Fortunately, it is available as a precompiled
+package for Ubuntu, so you can run it inside an Ubuntu container.
+
+There are 2 options:
+
+1. unpack VisIt inside the container &nbsp;&nbsp;<span
+   style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; larger container image, fewer files on the host
+2. unpack VisIt into a `/scratch` directory outside the container &nbsp;&nbsp;<span
+   style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; smaller container image, more files on the host
+
+::: {.callout-caution collapse="true"}
+##### Visualize a 3D dataset inside a container
+Install the [latest (3.4.2) VisIt
+package](https://visit-dav.github.io/visit-website/releases-as-tables/#latest){target="_blank"} inside an
+Ubuntu container.
+
+1. build an Ubuntu sandbox
+2. download and unpack VisIt into the sandbox
+3. VisIt's CLI isn't purely headless -- it starts a viewer that needs X11 and other libraries -- so install
+   these libraries with:
+```
+Apptainer> apt-get install -y libfontconfig libx11-6 libxkbcommon0 libxcursor1 libxext6 liblapack3
+```
+4. convert the sandbox into a SIF image
+5. start the shell inside the container:
+```sh
+apptainer shell visit.sif
+```
+6. start VisIt's CLI:
+```sh
+Apptainer> ./visit3_4_2.linux-x86_64/bin/visit -cli -nowin
+```
+7. copy the dataset `sineEnvelope.nc` from `/project/def-sponsor00/shared/paraview.zip`
+8. run the following visualization script:
+```py
+OpenDatabase("sineEnvelope.nc")
+AddPlot("Pseudocolor", "density")
+
+v = GetView3D()                 # get current view attributes
+from math import *
+phi = 0.3     # 0 <= phi <= 2*pi
+theta = 0.3   # -pi/2 <= theta <= pi/2
+v.viewNormal = (cos(theta)*cos(phi),cos(theta)*sin(phi),sin(theta))
+SetView3D(v)
+
+a = GetAnnotationAttributes()   # get current  annotation attributes
+a.axes3D.xAxis.title.font.scale = 0.2  # smaller = smaller text
+a.axes3D.xAxis.label.font.scale = 0.2
+a.axes3D.yAxis.title.font.scale = 0.2
+a.axes3D.yAxis.label.font.scale = 0.2
+a.axes3D.zAxis.title.font.scale = 0.2
+a.axes3D.zAxis.label.font.scale = 0.2
+SetAnnotationAttributes(a)
+
+DrawPlots()
+
+s = SaveWindowAttributes()
+s.fileName = 'test'
+s.outputToCurrentDirectory = 1
+SetSaveWindowAttributes(s)
+SaveWindow()
+```
+9. check the resulting image `test.png`
 :::
