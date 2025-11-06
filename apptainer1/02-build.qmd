@@ -93,6 +93,14 @@ running on the host, and which Ubuntu version is inside the container? Find the 
 2. with `apptainer exec`
 :::
 
+::: {.callout-note}
+##### Runscripts from Docker → Apptainer image conversion
+Docker images don't have an explicit runscript in the Apptainer sense, so when you convert a Docker image into
+an Apptainer image, Apptainer translates some Docker image settings into an equivalent runscript that will be
+displayed with `apptainer inspect -r image.sif`, but this is not the traditional runscript. As far as
+`apptainer run` is concerned, there is no runscript.
+:::
+
 
 
 
@@ -145,7 +153,7 @@ Can you find other inspection flags besides `-r` and `-d`?
 
 
 
-## Modifying the containers
+## Modifying containers
 
 ### Build command
 
@@ -172,10 +180,10 @@ apptainer build --help
 
 In <u>most cases</u>, you would download an existing Docker/Apptainer container image and build/run a
 container from it, without having to modify the image. Or maybe, the image is already provided by your lab, a
-research collaborator, or the Alliance. For example, in the Alliance there have been some discussions to
-provide a set of Apptainer images with GPU development tools for different GPU architectures, such as NVIDIA's
-CUDA and AMD's ROCm, as it is often difficult to compile these from source. If you would like these or other
-custom pre-configured images, please reach out to the Alliance to request them.
+research collaborator, or the Alliance. For example, in the Alliance Federation there have been some
+discussions to provide a set of Apptainer images with GPU development tools for different GPU architectures,
+such as NVIDIA's CUDA and AMD's ROCm, as it is often difficult to compile these from source. If you would like
+these or other custom pre-configured images, please reach out to the Alliance to request them.
 
 <!-- and we are planning to make these images available to all users in the near future. -->
 
