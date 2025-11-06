@@ -10,7 +10,7 @@ module loaded:
 ```sh
 cd ~/tmp
 module load apptainer
-salloc --cpus-per-task=1 --time=3:00:0 --mem-per-cpu=3600   # only from the login node
+salloc --cpus-per-task=1 --time=2:00:0 --mem-per-cpu=3600   # only from the login node
 ```
 
 If you have not done so already, let's pull the latest Ubuntu container from Docker:
@@ -22,8 +22,8 @@ apptainer pull ubuntu.sif docker://ubuntu
 We already saw some of these commands:
 
 - `apptainer shell ubuntu.sif` launches the container and opens an interactive shell inside it
-- `apptainer exec ubuntu.sif <command>` launches the container and runs a command inside it
-- `apptainer run ubuntu.sif` launches the container and executes the default runscript
+- `apptainer exec ubuntu.sif <command>` launches the container, runs a single command inside it and then exits
+- `apptainer run ubuntu.sif` launches the container, executes the default runscript and then exits
 
 Apptainer matches users between the container and the host. For example, if you run a container that needs
 to be root, you also need to be root outside the container.

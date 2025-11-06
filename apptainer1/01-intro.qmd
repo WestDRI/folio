@@ -23,34 +23,39 @@ title: "What is Apptainer (formerly Singularity)"
 <!-- idea how big the images will be that they are building really. Small images will typically build. Increasingly -->
 <!-- larger images increasingly encounter issues. Sigh. (edited) -->
 
-Until recently Apptainer was called Singularity. In November 2021 the guidance of parts of Singularity was
-transferred to the [Linux Foundation](https://www.linuxfoundation.org), and that fully open-source component
-has been renamed *Apptainer*, while the commercial fork is still called *Singularity*.
+Until November 2021, Apptainer was known as Singularity. In 2021, stewardship of parts of the Singularity
+project was transferred to the [Linux Foundation](https://www.linuxfoundation.org){target="_blank"}, and the
+fully open-source version was renamed *Apptainer*, while the commercial fork continues to be called
+*Singularity*.
 
 - Apptainer is an open-source project developed within the research community since 2015, started at the
   Lawrence Berkeley National Lab.
 - Its goal is to create a **portable system to run Linux applications on HPC clusters *independently of the
-  specific host Linux version and distro***, i.e. distribute software and **its compute environment**.
+  specific host Linux version and distro***
+  - in other words, distribute software and **its compute environment**
 - Apptainer creates a custom, secure virtual Linux environment (a *container*) that is different from the host
   Linux system.
   - e.g., on a CentOS/Rocky Linux machine you can create a virtual Ubuntu system where you can install any
     precompiled packaged software from the Ubuntu repositories
   - in a sense, gives you control of your software environment without being `root` on the host system (with a
     catch: creating containers from scratch usually requires `root`)
-  - you can install any system packages and all dependencies for your software as packages inside the container
-- Apptainer quickly became a way to package and deploy scientific software and its dependencies to different
-  HPC systems.
+  <!-- - you can install any system packages and all dependencies for your software as packages inside the container -->
 - Apptainer is different from Docker, as it does not require `root` access on the host system to *run* it
   - specifically designed for running containers on multi-user HPC clusters
 - On a Linux host Apptainer is very lightweight compared to a full **virtual machine** (VM).
-- On MacOS or Windows hosts Apptainer can be deployed inside a VM (still requires a Linux host layer
-  &nbsp;➜&nbsp; a VM).
-- From the technical standpoint, Apptainer uses:
-  - *kernel namespaces* to virtualize and isolate OS resources (CPU, memory access, disk I/O, network access,
-    user/group namespaces), so that processes inside the container see only a specific, virtualized set of
-    resources
-  - Linux control groups (*cgroups*) to control and limit the use of these resources
-  - *overlay images* to enable writable filesystems in otherwise read-only containers
+- On MacOS or Windows hosts Apptainer can be deployed inside a VM, as you still need a Linux host layer
+- Apptainer quickly became a way to package and deploy scientific software and its dependencies to different
+  HPC systems.
+
+## Technical details
+
+From the technical standpoint, Apptainer uses:
+
+- *kernel namespaces* to virtualize and isolate OS resources -- CPU, memory access, disk I/O, network access,
+  user/group namespaces -- so that processes inside the container see only a specific, virtualized set of
+  resources
+- Linux control groups (*cgroups*) to control and limit the use of these resources
+- *overlay images* to enable writable filesystems in otherwise read-only containers
 
 ## Why use a container
 
@@ -58,13 +63,13 @@ Idea: package and distribute the software environment along with the application
 software environment**.
 
 Why:
-1. avoid compiling complex software chains from scratch for the host's Linux OS
-1. run software in the environment where it might not be available as a package, or run older software
-1. use a familiar software environment everywhere where you can run Apptainer, e.g. across different HPC centres
-   - create a consistent testing environment independently of the underlying system
-   - transfer pipelines from a test environment to a production environment
+
+1. avoid compiling complex software chains from scratch for the host's Linux OS and run it instead in the
+   environment where it is available as a package,
+1. run older software that is now hard to compile (missing dependencies),
+1. use a familiar software environment across different HPC centres, independently of the underlying system
 1. popular, but somewhat dubious reason: data reproducibility (use the same software environment as the
-   authors &nbsp;➜&nbsp; same result)
+   authors &nbsp;⮕&nbsp; same result)
 
 ## Why/when not to use a container
 
@@ -73,18 +78,23 @@ Do not use Apptainer if your software is
 on the Alliance clusters. Learning and understanding Apptainer is *more difficult* than learning how to use
 our software modules or pre-compiled Python packages.
 
-Create your own Apptainer images only if you have a compelling reason to require a custom image. In my
-experience, 95% of those who think they need one actually don't.
+In most cases, an off-the-shelf Apptainer image will meet your needs. Only build your own Apptainer images if
+you have a strong reason to require a custom one. In my experience, most users who believe they need a custom
+image actually don't -- but when you truly do, it is an excellent solution!
 
 ## Installing/running Apptainer on your own computer
 
 Apptainer was really developed for use on HPC cluster, but there are ways to run it on your own computer:
 
-1. On Linux install and use Apptainer software. When running a longer version of this course after a Cloud
-   course, we install Apptainer as a package inside our VM.
-1. On any host OS: in a VM running Linux.
-1. On Windows or MacOS: inside Vagrant.
-1. On Windows or MacOS: inside Docker (download a Docker image with Apptainer installed).
+| Host OS | Run Apptainer |
+|:---------|:---------------------------------|
+| Linux | Install and use an Apptainer package[^1] |
+| Any host OS | In a VM running Linux   |
+| Windows or MacOS | Inside Vagrant |
+| Windows or MacOS | Inside Docker (download a Docker image with Apptainer installed) |
+
+[^1]: When running a longer version of this course after a Cloud course, we install Apptainer as a package
+    inside our VM.
 
 ## Glossary
 
@@ -137,12 +147,13 @@ There are few other container engines focusing on specific features.
 We will now distribute usernames and passwords for our training cluster.
 :::
 
-Let's log in to the training cluster `cass.vastcloud.org` and try loading Apptainer:
+Let's log in to the training cluster `apptainer.vastcloud.org` and try loading Apptainer:
 
 ```sh
-module load apptainer/1.2.4   # the default version at the time of writing
+module load apptainer/1.3.5   # the default version at the time of writing
 apptainer --version
-apptainer                     # see the list of available commands
+which apptainer
+apptainer                     # show the list of available commands
 ```
 
 ::: {.callout-note}
