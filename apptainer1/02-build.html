@@ -396,11 +396,11 @@ window.Quarto = {
   </ul></li>
   <li><a href="#practical-apptainer-workflows" id="toc-practical-apptainer-workflows" class="nav-link" data-scroll-target="#practical-apptainer-workflows">Practical Apptainer workflows</a>
   <ul class="collapse">
-  <li><a href="#demo-running-client-server-paraview-from-a-container" id="toc-demo-running-client-server-paraview-from-a-container" class="nav-link" data-scroll-target="#demo-running-client-server-paraview-from-a-container">Demo: running client-server ParaView from a container</a></li>
+  <li><a href="#run-client-server-paraview-from-a-container" id="toc-run-client-server-paraview-from-a-container" class="nav-link" data-scroll-target="#run-client-server-paraview-from-a-container">Run client-server ParaView from a container</a></li>
   <li><a href="#exercise-switch-to-another-linux-distribution" id="toc-exercise-switch-to-another-linux-distribution" class="nav-link" data-scroll-target="#exercise-switch-to-another-linux-distribution">Exercise: switch to another Linux distribution</a></li>
   <li><a href="#exercise-latest-python-image" id="toc-exercise-latest-python-image" class="nav-link" data-scroll-target="#exercise-latest-python-image">Exercise: latest Python image</a></li>
   <li><a href="#exercise-cpu-based-pytorch-image" id="toc-exercise-cpu-based-pytorch-image" class="nav-link" data-scroll-target="#exercise-cpu-based-pytorch-image">Exercise: CPU-based PyTorch image</a></li>
-  <li><a href="#advanced-exercise-run-a-visit-visualization-script" id="toc-advanced-exercise-run-a-visit-visualization-script" class="nav-link" data-scroll-target="#advanced-exercise-run-a-visit-visualization-script">Advanced exercise: run a VisIt visualization script</a></li>
+  <li><a href="#run-a-visit-visualization-script" id="toc-run-a-visit-visualization-script" class="nav-link" data-scroll-target="#run-a-visit-visualization-script">Run a VisIt visualization script</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -941,14 +941,46 @@ Note
 </section>
 <section id="practical-apptainer-workflows" class="level2">
 <h2 class="anchored" data-anchor-id="practical-apptainer-workflows">Practical Apptainer workflows</h2>
-<section id="demo-running-client-server-paraview-from-a-container" class="level3">
-<h3 class="anchored" data-anchor-id="demo-running-client-server-paraview-from-a-container">Demo: running client-server ParaView from a container</h3>
-<p>You can pull a Docker image from <a href="https://hub.docker.com">Docker Hub</a> and convert it to an Apptainer image. For this you typically do not need <code>sudo</code> access. Please build containers only on compute nodes, as this process is CPU-intensive.</p>
-<p>The following commands require online access and will work only on Fir (and the training cluster!) where compute nodes can access Internet. Let’s search <a href="https://hub.docker.com">Docker Hub</a> for <em>“topologytoolkit”</em>. Click on the result and then on Tags – you should see the suggested Docker command <em>“docker pull topologytoolkit/ttk-dev:5.11.0”</em>. From Apptainer, the address will be <em>“docker://topologytoolkit/ttk-dev:5.11.0”</em>.</p>
+<section id="run-client-server-paraview-from-a-container" class="level3">
+<h3 class="anchored" data-anchor-id="run-client-server-paraview-from-a-container">Run client-server ParaView from a container</h3>
+<p>ParaView is a very popular open-source scalable 3D scientific visualization tool. To visualize large datasets on an HPC cluster, you can run ParaView in a client-server mode, with your local ParaView GUI acting as a client, and a remote ParaView server on the cluster. Let’s try to run ParaView server from inside an Apptainer image.</p>
+<!-- You can pull a Docker image from [Docker Hub](https://hub.docker.com) and convert it to an Apptainer -->
+<!-- image. For this you typically do not need `sudo` access. Please build containers only on compute nodes, as -->
+<!-- this process is CPU-intensive. -->
+<p>Let’s search <a href="https://hub.docker.com">Docker Hub</a> for <em>“paraview”</em> or <em>“topologytoolkit”</em>. Pick a family of images and a tag (version) and copy the command for it, e.g.&nbsp;the command could be <code>docker pull topologytoolkit/ttk-dev:5.11.0</code>. Note that the URL syntax in the <code>apptainer pull ...</code> command is different, so you will need to edit it accordingly.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Some things to watch out for
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Image size – building a 5 GB image might take hours to build.</li>
+<li>Image age – avoid using outdated images, e.g.&nbsp;a 5-year-old ParaView build.</li>
+<li>Whether or not it supports GPU.</li>
+<li>Read the description: we are are looking for <code>pvserver</code> and not much else.</li>
+</ol>
+</div>
+</div>
+<p>Here are few ParaView images I tried:</p>
+<ul>
+<li>the official <code>docker://kitware/paraview:ci-fedora42-20250915</code> took 1h20m to create a 4.6G SIF image, but there does not seem to be any <code>paraview</code> or <code>pvserver</code> in it</li>
+<li>someone else’s recent <code>docker://finback9/paraview-base:0.1</code> has ParaView 6.0 and took 60m to create a 818M SIF image, but it is parallel and requires a compatible MPI installation to run</li>
+<li>TTK’s <code>docker://topologytoolkit/ttk-dev:5.11.0</code> took 25m to create a 779M SIF image, but its latest is 5.11 – <strong>let’s go with this one</strong></li>
+</ul>
+<!-- for -->
+<!-- *"topologytoolkit"*. Click on the result *"topologytoolkit/ttk-dev"* and then on Tags -- you should see the -->
+<!-- suggested Docker command *"docker pull topologytoolkit/ttk-dev:5.11.0"*. From Apptainer, the address will be -->
+<!-- *"docker://topologytoolkit/ttk-dev:5.11.0"*. -->
+<p>The following commands require online access and will work only on Fir (and the training cluster!) where compute nodes can access Internet.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull topologytoolkit.sif docker://topologytoolkit/ttk-dev:5.11.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull topologytoolkit.sif docker://topologytoolkit/ttk-dev:5.11.0   <span class="co"># took 25m to create a 779M SIF image, latest is 5.11</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -972,9 +1004,9 @@ Note
 <span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-rf</span> build topologytoolkit.tar</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
-<p>Let’s use this image! While still inside the job (on a compute node):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/paraview.zip data/sineEnvelope.nc   <span class="co"># unpack some sample data</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">-B</span> /home topologytoolkit.sif pvserver</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s use this image! While still inside the job (on a compute node), copy the dataset <code>sineEnvelope.nc</code> from <code>/project/def-sponsor00/shared/paraview.zip</code> into a <code>~/data</code> folder and then start the ParaView server:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/paraview.zip <span class="at">-d</span> ~ data/sineEnvelope.nc   <span class="co"># extract sample data into ~/data</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">-B</span> /home paraviewBase.sif pvserver</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If successful, it should say something like <em>“Accepting connection(s): node1.int.apptainer.vastcloud.org:11111”</em> – write down the node and the port names as you will need them in the next step.</p>
 <p>On your laptop, set up SSH port forwarding to this compute node and port:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> username@apptainer.vastcloud.org <span class="at">-L</span> 11111:node1:11111</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -983,7 +1015,7 @@ Note
 <section id="exercise-switch-to-another-linux-distribution" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-switch-to-another-linux-distribution">Exercise: switch to another Linux distribution</h3>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -992,7 +1024,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let’s try creating an image with another Linux distribution:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull debian.sif docker://debian:latest</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1018,7 +1050,7 @@ Note
 <h3 class="anchored" data-anchor-id="exercise-latest-python-image">Exercise: latest Python image</h3>
 <p>We did something similar with a Python container earlier, so you can refer to the notes in this section.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1027,7 +1059,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Pull the latest Python image from Docker Hub into an Apptainer image. It should take few minutes to build it.<br>
 1. How large is the resulting image?<br>
@@ -1057,7 +1089,7 @@ Note
 <section id="exercise-cpu-based-pytorch-image" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-cpu-based-pytorch-image">Exercise: CPU-based PyTorch image</h3>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1066,7 +1098,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Pull a recent <b>CPU-based</b> PyTorch image from Docker Hub into an Apptainer image.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
@@ -1118,78 +1150,84 @@ Note
 </div>
 </div>
 </section>
-<section id="advanced-exercise-run-a-visit-visualization-script" class="level3">
-<h3 class="anchored" data-anchor-id="advanced-exercise-run-a-visit-visualization-script">Advanced exercise: run a VisIt visualization script</h3>
+<section id="run-a-visit-visualization-script" class="level3">
+<h3 class="anchored" data-anchor-id="run-a-visit-visualization-script">Run a VisIt visualization script</h3>
 <p><a href="https://visit-dav.github.io/visit-website/index.html" target="_blank">VisIt</a> is an open-source scalable visualization package that is notoriously difficult to compile. Fortunately, it is available as a precompiled package for Ubuntu, so you can run it inside an Ubuntu container.</p>
-<p>There are 2 options:</p>
+<p>In this demo we will use VisIt to visualize a 3D dataset.</p>
+<p>We have two options:</p>
 <ol type="1">
 <li>unpack VisIt inside the container &nbsp;&nbsp;<span style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; larger container image, fewer files on the host</li>
 <li>unpack VisIt into a <code>/scratch</code> directory outside the container &nbsp;&nbsp;<span style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; smaller container image, more files on the host</li>
 </ol>
-<div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Visualize a 3D dataset inside a container
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-23" class="callout-23-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
-<p>Install the <a href="https://visit-dav.github.io/visit-website/releases-as-tables/#latest" target="_blank">latest (3.4.2) VisIt package</a> inside an Ubuntu container.</p>
+<p>Let’s go with option (1) which will make the container self-sufficient. Here are our steps:</p>
 <ol type="1">
-<li>build an Ubuntu sandbox</li>
-<li>download and unpack VisIt into the sandbox</li>
-<li>VisIt’s CLI isn’t purely headless – it starts a viewer that needs X11 and other libraries – so install these libraries with:</li>
+<li>Build an Ubuntu sandbox and enter it with <code>--fakeroot --writable</code> flags:</li>
 </ol>
-<pre><code>Apptainer&gt; apt-get install -y libfontconfig libx11-6 libxkbcommon0 libxcursor1 libxext6 liblapack3</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> build <span class="at">--sandbox</span> ubuntu.dir docker://ubuntu</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> ubuntu.dir/<span class="dt">{project</span><span class="op">,</span><span class="dt">scratch}</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--fakeroot</span> <span class="at">--writable</span> ubuntu.dir</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li>VisIt’s CLI isn’t purely headless – it starts VisIt’s viewer, which needs X11 and other libraries. Let’s install these into the sandbox:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> apt-get <span class="at">-y</span> update</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> apt-get install <span class="at">-y</span> libfontconfig libx11-6 libxkbcommon0 libxcursor1 libxext6 liblapack3</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> apt-get install <span class="at">-y</span> wget</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="3" type="1">
+<li>Download and unpack the latest VisIt package for Ubuntu into the sandbox:</li>
+</ol>
+<!-- Install the [latest (3.4.2) VisIt -->
+<!-- package](https://visit-dav.github.io/visit-website/releases-as-tables/#latest){target="_blank"} inside an -->
+<!-- Ubuntu container. -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> /visit   <span class="co"># create a top-level directory inside the sandbox</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /visit</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://github.com/visit-dav/visit/releases/download/v3.4.2/visit3_4_2.linux-x86_64-ubuntu24.tar.gz</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> xvfz visit3_4_2.linux-x86_64-ubuntu24.tar.gz</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> visit3_4_2.linux-x86_64-ubuntu24.tar.gz</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="4" type="1">
-<li>convert the sandbox into a SIF image</li>
-<li>start the shell inside the container:</li>
+<li>Convert the sandbox into a SIF image:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell visit.sif</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> build visit.sif ubuntu.dir    <span class="co"># creates a 590M SIF image</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-rf</span> ubuntu.dir</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="5" type="1">
+<li>Copy the dataset <code>sineEnvelope.nc</code> from <code>/project/def-sponsor00/shared/paraview.zip</code> into a <code>~/data</code> folder:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/paraview.zip <span class="at">-d</span> ~ data/sineEnvelope.nc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="6" type="1">
-<li>start VisIt’s CLI:</li>
+<li>Start VisIt’s Python shell inside the container:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> ./visit3_4_2.linux-x86_64/bin/visit <span class="at">-cli</span> <span class="at">-nowin</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec visit.sif /visit/visit3_4_2.linux-x86_64/bin/visit <span class="at">-cli</span> <span class="at">-nowin</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="7" type="1">
-<li>copy the dataset <code>sineEnvelope.nc</code> from <code>/project/def-sponsor00/shared/paraview.zip</code></li>
-<li>run the following visualization script:</li>
+<li>Paste the following visualization script:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>OpenDatabase(<span class="st">"sineEnvelope.nc"</span>)</span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>AddPlot(<span class="st">"Pseudocolor"</span>, <span class="st">"density"</span>)</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> GetView3D()                 <span class="co"># get current view attributes</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> <span class="op">*</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">0.3</span>     <span class="co"># 0 &lt;= phi &lt;= 2*pi</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> <span class="fl">0.3</span>   <span class="co"># -pi/2 &lt;= theta &lt;= pi/2</span></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>v.viewNormal <span class="op">=</span> (cos(theta)<span class="op">*</span>cos(phi),cos(theta)<span class="op">*</span>sin(phi),sin(theta))</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>SetView3D(v)</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> GetAnnotationAttributes()   <span class="co"># get current  annotation attributes</span></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>a.axes3D.xAxis.title.font.scale <span class="op">=</span> <span class="fl">0.2</span>  <span class="co"># smaller = smaller text</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>a.axes3D.xAxis.label.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>a.axes3D.yAxis.title.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>a.axes3D.yAxis.label.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>a.axes3D.zAxis.title.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>a.axes3D.zAxis.label.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>SetAnnotationAttributes(a)</span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>DrawPlots()</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> SaveWindowAttributes()</span>
-<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>s.fileName <span class="op">=</span> <span class="st">'test'</span></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>s.outputToCurrentDirectory <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>SetSaveWindowAttributes(s)</span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>SaveWindow()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>OpenDatabase(<span class="st">"~/data/sineEnvelope.nc"</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>AddPlot(<span class="st">"Pseudocolor"</span>, <span class="st">"density"</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> GetView3D()                 <span class="co"># get current view attributes</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> <span class="fl">0.3</span>     <span class="co"># 0 &lt;= phi &lt;= 2*pi</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> <span class="fl">0.3</span>   <span class="co"># -pi/2 &lt;= theta &lt;= pi/2</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>v.viewNormal <span class="op">=</span> (cos(theta)<span class="op">*</span>cos(phi),cos(theta)<span class="op">*</span>sin(phi),sin(theta))</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>SetView3D(v)</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> GetAnnotationAttributes()   <span class="co"># get current  annotation attributes</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>a.axes3D.xAxis.title.font.scale <span class="op">=</span> <span class="fl">0.2</span>  <span class="co"># smaller = smaller text</span></span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>a.axes3D.xAxis.label.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>a.axes3D.yAxis.title.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>a.axes3D.yAxis.label.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>a.axes3D.zAxis.title.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>a.axes3D.zAxis.label.font.scale <span class="op">=</span> <span class="fl">0.2</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>SetAnnotationAttributes(a)</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>DrawPlots()</span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> SaveWindowAttributes()</span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>s.fileName <span class="op">=</span> <span class="st">'test'</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>s.outputToCurrentDirectory <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>SetSaveWindowAttributes(s)</span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>SaveWindow()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="9" type="1">
-<li>check the resulting image <code>test.png</code></li>
+<li>check the resulting image <code>test*.png</code></li>
 </ol>
-</div>
-</div>
-</div>
 
 
 </section>
