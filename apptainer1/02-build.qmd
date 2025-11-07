@@ -568,23 +568,52 @@ You can find more information on remote endpoints in the
 <!-- ## Running more useful Docker images via Apptainer as regular user -->
 ## Practical Apptainer workflows
 
-### Demo: running client-server ParaView from a container
+### Run client-server ParaView from a container
 
-You can pull a Docker image from [Docker Hub](https://hub.docker.com) and convert it to an Apptainer
-image. For this you typically do not need `sudo` access. Please build containers only on compute nodes, as
-this process is CPU-intensive.
+ParaView is a very popular open-source scalable 3D scientific visualization tool. To visualize large datasets
+on an HPC cluster, you can run ParaView in a client-server mode, with your local ParaView GUI acting as a
+client, and a remote ParaView server on the cluster. Let's try to run ParaView server from inside an Apptainer
+image.
+
+<!-- You can pull a Docker image from [Docker Hub](https://hub.docker.com) and convert it to an Apptainer -->
+<!-- image. For this you typically do not need `sudo` access. Please build containers only on compute nodes, as -->
+<!-- this process is CPU-intensive. -->
+
+Let's search [Docker Hub](https://hub.docker.com) for *"paraview"* or *"topologytoolkit"*. Pick a family of
+images and a tag (version) and copy the command for it, e.g. the command could be `docker pull
+topologytoolkit/ttk-dev:5.11.0`. Note that the URL syntax in the `apptainer pull ...`  command is different,
+so you will need to edit it accordingly.
+
+::: {.callout-note}
+##### Some things to watch out for
+1. Image size -- building a 5 GB image might take hours to build.
+1. Image age -- avoid using outdated images, e.g. a 5-year-old ParaView build.
+1. Whether or not it supports GPU.
+1. Read the description: we are are looking for `pvserver` and not much else.
+:::
+
+Here are few ParaView images I tried:
+
+- the official `docker://kitware/paraview:ci-fedora42-20250915` took 1h20m to create a 4.6G SIF image, but
+  there does not seem to be any `paraview` or `pvserver` in it
+- someone else's recent `docker://finback9/paraview-base:0.1` has ParaView 6.0 and took 60m to create a 818M
+  SIF image, but it is parallel and requires a compatible MPI installation to run
+- TTK's `docker://topologytoolkit/ttk-dev:5.11.0` took 25m to create a 779M SIF image, but its latest is 5.11
+  -- **let's go with this one**
+
+<!-- for -->
+<!-- *"topologytoolkit"*. Click on the result *"topologytoolkit/ttk-dev"* and then on Tags -- you should see the -->
+<!-- suggested Docker command *"docker pull topologytoolkit/ttk-dev:5.11.0"*. From Apptainer, the address will be -->
+<!-- *"docker://topologytoolkit/ttk-dev:5.11.0"*. -->
 
 The following commands require online access and will work only on Fir (and the training cluster!)  where
-compute nodes can access Internet. Let's search [Docker Hub](https://hub.docker.com) for
-*"topologytoolkit"*. Click on the result and then on Tags -- you should see the suggested Docker command
-*"docker pull topologytoolkit/ttk-dev:5.11.0"*. From Apptainer, the address will be
-*"docker://topologytoolkit/ttk-dev:5.11.0"*.
+compute nodes can access Internet.
 
 ```sh
 cd ~/tmp
 module load apptainer
-salloc --cpus-per-task=1 --time=0:30:0 --mem-per-cpu=3600
-apptainer pull topologytoolkit.sif docker://topologytoolkit/ttk-dev:5.11.0
+salloc --time=2:0:0 --mem-per-cpu=3600
+apptainer pull topologytoolkit.sif docker://topologytoolkit/ttk-dev:5.11.0   # took 25m to create a 779M SIF image, latest is 5.11
 ```
 
 ::: {.callout-note}
@@ -604,11 +633,12 @@ apptainer build topologytoolkit.sif docker-archive://ttk.tar   # build the Appta
 ```
 :::
 
-Let's use this image! While still inside the job (on a compute node):
+Let's use this image! While still inside the job (on a compute node), copy the dataset `sineEnvelope.nc` from
+`/project/def-sponsor00/shared/paraview.zip` into a `~/data` folder and then start the ParaView server:
 
 ```sh
-unzip /project/def-sponsor00/shared/paraview.zip data/sineEnvelope.nc   # unpack some sample data
-apptainer exec -B /home topologytoolkit.sif pvserver
+unzip /project/def-sponsor00/shared/paraview.zip -d ~ data/sineEnvelope.nc   # extract sample data into ~/data
+apptainer exec -B /home paraviewBase.sif pvserver
 ```
 
 If successful, it should say something like *"Accepting connection(s): node1.int.apptainer.vastcloud.org:11111"* --
@@ -735,45 +765,78 @@ On our clusters we have PyTorch installed natively, both for CPUs and GPUs, so n
 for this.
 :::
 
-### Advanced exercise: run a VisIt visualization script
+### Run a VisIt visualization script
 
 [VisIt](https://visit-dav.github.io/visit-website/index.html){target="_blank"} is an open-source scalable
 visualization package that is notoriously difficult to compile. Fortunately, it is available as a precompiled
 package for Ubuntu, so you can run it inside an Ubuntu container.
 
-There are 2 options:
+In this demo we will use VisIt to visualize a 3D dataset.
+
+We have two options:
 
 1. unpack VisIt inside the container &nbsp;&nbsp;<span
    style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; larger container image, fewer files on the host
 2. unpack VisIt into a `/scratch` directory outside the container &nbsp;&nbsp;<span
    style="font-size:1.2em;">⇒</span>&nbsp;&nbsp; smaller container image, more files on the host
+   
+Let's go with option (1) which will make the container self-sufficient. Here are our steps:
 
-::: {.callout-caution collapse="true"}
-##### Visualize a 3D dataset inside a container
-Install the [latest (3.4.2) VisIt
-package](https://visit-dav.github.io/visit-website/releases-as-tables/#latest){target="_blank"} inside an
-Ubuntu container.
+1. Build an Ubuntu sandbox and enter it with `--fakeroot --writable` flags:
 
-1. build an Ubuntu sandbox
-2. download and unpack VisIt into the sandbox
-3. VisIt's CLI isn't purely headless -- it starts a viewer that needs X11 and other libraries -- so install
-   these libraries with:
+```sh
+apptainer build --sandbox ubuntu.dir docker://ubuntu
+mkdir ubuntu.dir/{project,scratch}
+apptainer shell --fakeroot --writable ubuntu.dir
 ```
+
+2. VisIt's CLI isn't purely headless -- it starts VisIt's viewer, which needs X11 and other libraries. Let's
+   install these into the sandbox:
+
+```sh
+Apptainer> apt-get -y update
 Apptainer> apt-get install -y libfontconfig libx11-6 libxkbcommon0 libxcursor1 libxext6 liblapack3
+Apptainer> apt-get install -y wget
 ```
-4. convert the sandbox into a SIF image
-5. start the shell inside the container:
+
+3. Download and unpack the latest VisIt package for Ubuntu into the sandbox:
+
+<!-- Install the [latest (3.4.2) VisIt -->
+<!-- package](https://visit-dav.github.io/visit-website/releases-as-tables/#latest){target="_blank"} inside an -->
+<!-- Ubuntu container. -->
+
 ```sh
-apptainer shell visit.sif
+mkdir /visit   # create a top-level directory inside the sandbox
+cd /visit
+wget https://github.com/visit-dav/visit/releases/download/v3.4.2/visit3_4_2.linux-x86_64-ubuntu24.tar.gz
+tar xvfz visit3_4_2.linux-x86_64-ubuntu24.tar.gz
+/bin/rm visit3_4_2.linux-x86_64-ubuntu24.tar.gz
 ```
-6. start VisIt's CLI:
+
+4. Convert the sandbox into a SIF image:
+
 ```sh
-Apptainer> ./visit3_4_2.linux-x86_64/bin/visit -cli -nowin
+apptainer build visit.sif ubuntu.dir    # creates a 590M SIF image
+/bin/rm -rf ubuntu.dir
 ```
-7. copy the dataset `sineEnvelope.nc` from `/project/def-sponsor00/shared/paraview.zip`
-8. run the following visualization script:
+
+5. Copy the dataset `sineEnvelope.nc` from `/project/def-sponsor00/shared/paraview.zip` into a `~/data`
+   folder:
+
+```sh
+unzip /project/def-sponsor00/shared/paraview.zip -d ~ data/sineEnvelope.nc
+```
+
+6. Start VisIt's Python shell inside the container:
+
+```sh
+apptainer exec visit.sif /visit/visit3_4_2.linux-x86_64/bin/visit -cli -nowin
+```
+
+7. Paste the following visualization script:
+
 ```py
-OpenDatabase("sineEnvelope.nc")
+OpenDatabase("~/data/sineEnvelope.nc")
 AddPlot("Pseudocolor", "density")
 
 v = GetView3D()                 # get current view attributes
@@ -800,5 +863,4 @@ s.outputToCurrentDirectory = 1
 SetSaveWindowAttributes(s)
 SaveWindow()
 ```
-9. check the resulting image `test.png`
-:::
+9. check the resulting image `test*.png`
