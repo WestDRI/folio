@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,9 +72,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -295,9 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../"></a> 
         <div class="sidebar-tools-main">
@@ -356,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#bind-mounting-gpu-drivers" id="toc-bind-mounting-gpu-drivers" class="nav-link" data-scroll-target="#bind-mounting-gpu-drivers">Bind-mounting GPU drivers</a></li>
   <li><a href="#pre-built-nvidia-containers" id="toc-pre-built-nvidia-containers" class="nav-link" data-scroll-target="#pre-built-nvidia-containers">Pre-built NVIDIA containers</a></li>
-  <li><a href="#demo-chapel-gpu-container" id="toc-demo-chapel-gpu-container" class="nav-link" data-scroll-target="#demo-chapel-gpu-container">Demo: Chapel GPU container</a></li>
+  <li><a href="#chapel-gpu-container-demo" id="toc-chapel-gpu-container-demo" class="nav-link" data-scroll-target="#chapel-gpu-container-demo">Chapel GPU container demo</a></li>
   </ul></li>
   <li><a href="#running-mpi-programs-from-within-a-container" id="toc-running-mpi-programs-from-within-a-container" class="nav-link" data-scroll-target="#running-mpi-programs-from-within-a-container">Running MPI programs from within a container</a>
   <ul class="collapse">
@@ -430,7 +428,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="pre-built-nvidia-containers" class="level3">
 <h3 class="anchored" data-anchor-id="pre-built-nvidia-containers">Pre-built NVIDIA containers</h3>
-<p><a href="https://catalog.ngc.nvidia.com">NVIDIA NGC</a> (NVIDIA’s hub for GPU-optimized software) provides prebuilt containers for a large number of HPC applications. Try searching for TensorFlow, GAMESS (quantum chemistry), GROMACS and NAMD (molecular dynamics), VMD, ParaView, NVIDIA IndeX (visualization). Their GPU-accelerated containers are quite large, so it might take a while to build them, e.g.</p>
+<p><a href="https://catalog.ngc.nvidia.com" target="_blank">NVIDIA NGC</a> (NVIDIA’s hub for GPU-optimized software) provides prebuilt containers for a large number of HPC applications. Try searching for TensorFlow, GAMESS (quantum chemistry), GROMACS and NAMD (molecular dynamics), VMD, ParaView, NVIDIA IndeX (visualization). Their GPU-accelerated containers are quite large, so it might take a while to build them, e.g.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> pull tensorflow-22.06-tf1-py3.sif docker://nvcr.io/nvidia/tensorflow:22.06-tf1-py3</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> tensorflow-22.06-tf1-py3.sif   <span class="co"># 5.9G (very large!)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- Grigory's slides 23, 24 -->
@@ -445,14 +443,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- NVIDIA IndeX – High performance volumetric visualization software. -->
 <!-- NVIDIA HPC SDK – A comprehensive suite of compilers, math and communications libraries, and developer tools including Nsight Systems and Nsight Compute profilers, to maximize performance and portability of HPC applications. -->
 </section>
-<section id="demo-chapel-gpu-container" class="level3">
-<h3 class="anchored" data-anchor-id="demo-chapel-gpu-container">Demo: Chapel GPU container</h3>
+<section id="chapel-gpu-container-demo" class="level3">
+<h3 class="anchored" data-anchor-id="chapel-gpu-container-demo">Chapel GPU container demo</h3>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>almalinux.sif
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>I seem to have deleted this container, so I would need to build a new one for this demo. You can find the instructions for building it <a href="../cloud2hpc" target="_blank">here</a>, on a real or virtual machine with a GPU (and NVIDIA drivers and a CUDA development kit) and Apptainer installed.</p>
+</div>
+</div>
 <p>Recently, I built a container for using GPUs from Chapel programming language. There are some issues compiling Chapel with LLVM and GPU support on InfiniBand clusters, so I bypassed them by creating a container that can be used on any of our clusters, whether built on InfiniBand, or Ethernet, or OmniPath interconnect.</p>
 <ul>
-<li>the container can be used only on one node (no multi-node parallelism), but it does support multiple GPUs</li>
-<li>installed Chapel into an overlay image (we’ll study overlays below)</li>
+<li>the container <code>almalinux.sif</code> can be used only on one node (no multi-node parallelism), but it does support multiple GPUs</li>
+<li>installed Chapel into an overlay image <code>chapel.img</code> (we’ll study overlays below)</li>
 </ul>
-<p>Here is how I would use it on Cedar:</p>
+<p>Here is how I would use it on Fir:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/scratch</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--nodes</span><span class="op">=</span>1 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:1 <span class="dt">\</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug <span class="at">--reservation</span><span class="op">=</span>asasfu_756</span>
@@ -461,7 +472,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">SRC</span><span class="op">=</span>/project/6003910/razoumov/apptainerImages/chapelGPU20240826</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--nv</span> <span class="at">-B</span> <span class="va">$SLURM_TMPDIR</span> <span class="at">--overlay</span> <span class="va">$SRC</span>/extra.img:ro <span class="va">$SRC</span>/almalinux.sif</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell <span class="at">--nv</span> <span class="at">-B</span> <span class="va">$SLURM_TMPDIR</span> <span class="at">--overlay</span> <span class="va">$SRC</span>/chapel.img:ro <span class="va">$SRC</span>/almalinux.sif</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span>   <span class="co"># verify that we can see the GPU inside the container</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /extra/c4/chapel-2.1.0/util/setchplenv.bash</span>
@@ -523,22 +534,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>and then used it to build <code>mpi.sif</code> which I copied over to the training cluster into <code>/project/def-sponsor00/shared</code>.</p>
 <!-- ```sh -->
-<!-- cedar -->
+<!-- fir -->
 <!-- cd /project/6003910/razoumov/apptainerImages/apptainerCourse202410 -->
 <!-- scp mpi.sif user01@apptainer.vastcloud.org:/project/def-sponsor00/shared -->
 <!-- ``` -->
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load openmpi apptainer</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/introHPC.zip codes/distributedPi.c</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> codes</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/.openmpi</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"btl_vader_single_copy_mechanism=none"</span> <span class="op">&gt;&gt;</span> ~/.openmpi/mca-params.conf</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PMIX_MCA_psec</span><span class="op">=</span>native   <span class="co"># allow mpirun to use host's PMI</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CONTAINER</span><span class="op">=</span>/project/def-sponsor00/shared/mpi.sif</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="va">$CONTAINER</span> mpicc <span class="at">-O2</span> distributedPi.c <span class="at">-o</span> distributedPi</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>0:5:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>1200</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> ./distributedPi   <span class="co"># error: compiled for Ubuntu, cannot run on Rocky Linux</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> apptainer exec <span class="va">$CONTAINER</span> ./distributedPi</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> <span class="at">-j</span> /project/def-sponsor00/shared/introHPC.zip codes/distributedPi.c</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># need to set a couple of things</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/.openmpi</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"btl_vader_single_copy_mechanism=none"</span> <span class="op">&gt;&gt;</span> ~/.openmpi/mca-params.conf   <span class="co"># shared-memory comm setting</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PMIX_MCA_psec</span><span class="op">=</span>native   <span class="co"># allow mpirun inside the container to use host's PMI</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CONTAINER</span><span class="op">=</span>/project/def-sponsor00/shared/mpi.sif</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="va">$CONTAINER</span> mpicc <span class="at">-O2</span> distributedPi.c <span class="at">-o</span> distributedPi</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--ntasks</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>0:5:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># try running on the the host</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> ./distributedPi   <span class="co"># error: compiled for Ubuntu, cannot run on Rocky Linux</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># try running inside the contaner</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> <span class="va">$SLURM_NTASKS</span> apptainer exec <span class="va">$CONTAINER</span> ./distributedPi</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> apptainer exec <span class="va">$CONTAINER</span> ./distributedPi   <span class="co"># same as previous line</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- > ### <font style="color:blue">Exercise 3</font> -->
 <!-- > Compare the following two commands. What do they do differently? -->
 <!-- > ```sh -->
@@ -698,8 +717,8 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> overlay create <span class="at">--size</span> 512 <span class="at">--sparse</span> sparse.img</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> sparse.img                   <span class="co"># its apparent size is 512MB</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> <span class="at">--apparent-size</span> sparse.img   <span class="co"># same</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> sparse.img                   <span class="co"># its actual size is much smaller (17MB)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let’s mount it and fill with some data, now creating fewer files:</p>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">du</span> <span class="at">-h</span> sparse.img                   <span class="co"># its actual size is much smaller (316K)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s mount it and fill with some data, e.g.&nbsp;a few files:</p>
 <pre><code>apptainer shell --overlay sparse.img ubuntu.sif
 
 Apptainer&gt; mkdir -p /data &amp;&amp; cd /data
@@ -727,10 +746,10 @@ Note
 </section>
 <section id="example-installing-conda-into-an-overlay" class="level3">
 <h3 class="anchored" data-anchor-id="example-installing-conda-into-an-overlay">Example: installing Conda into an overlay</h3>
-<p>Installing native Anaconda on HPC clusters is a <a href="https://docs.alliancecan.ca/wiki/Anaconda/en">bad idea</a> for a number of reasons. Instead of Conda, we recommend using <code>virtualenv</code> together with our pre-compiled Python wheels to install Python packages into your own virtual environments.</p>
+<p>Installing native Anaconda on HPC clusters is a <a href="https://docs.alliancecan.ca/wiki/Anaconda/en" target="_blank">bad idea</a> for a number of reasons. Instead of Conda, we recommend using <code>virtualenv</code> together with our pre-compiled Python wheels to install Python packages into your own virtual environments.</p>
 <p>One of the reasons we do not recommend Conda is that it creates a large number of files in your directories. You can alleviate this problem by hiding Conda files inside an overlay image:</p>
 <ul>
-<li>takes a couple of minutes, results in 22k+ files that are hidden from the host</li>
+<li>takes a couple of minutes, results in 32k+ files that are hidden from the host</li>
 <li>no need for root, as you don’t modify the container image</li>
 <li>still might not be the most efficient use of resources (non-optimized binaries)</li>
 </ul>
@@ -748,9 +767,9 @@ Note
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">agree</span> to the license</span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">use</span> /conda/miniconda3 for the installation path</span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">no</span> to initialize Miniconda3</span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> find /conda/miniconda3/ <span class="at">-type</span> f <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span>   <span class="co"># 22,637 files</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .   <span class="co"># uses ~695M once finished, but more was used during installation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>These 22k+ files appear as a single file to the Lustre metadata server (which is great!).</p>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> find /conda/miniconda3/ <span class="at">-type</span> f <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span>   <span class="co"># 32,621 files</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> df <span class="at">-kh</span> .   <span class="co"># uses ~840M once finished, but more was used during installation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>These 32k+ files appear as a single file to the Lustre metadata server (which is great!).</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> shell ubuntu.sif</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Apptainer</span><span class="op">&gt;</span> ls /conda                            <span class="co"># no such file or directory</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -827,7 +846,7 @@ Note
 </section>
 <section id="sample-job-submission-script" class="level3">
 <h3 class="anchored" data-anchor-id="sample-job-submission-script">Sample job submission script</h3>
-<p>Of all clusters in the Alliance only Cedar has Internet access from compute nodes – this might limit your options of where to build a container. You can move your SIF file to other clusters after having built it.</p>
+<p>Of all clusters in the Alliance only Fir has Internet access from compute nodes – this might limit your options of where to build a container. You can move your SIF file to other clusters after having built it.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=...</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=...</span></span>
@@ -836,7 +855,7 @@ Note
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> tmp cache</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_TMPDIR</span><span class="op">=</span><span class="va">${PWD}</span>/tmp</span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">APPTAINER_CACHEDIR</span><span class="op">=</span><span class="va">${PWD}</span>/cache   <span class="co"># replaces default `$HOME/.apptainer/cache`</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>build <span class="ex">the</span> container in this directory<span class="op">&gt;</span>  <span class="co"># run on Cedar if docker:// access is needed</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>build <span class="ex">the</span> container in this directory<span class="op">&gt;</span>  <span class="co"># run on Fir if docker:// access is needed</span></span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>run <span class="ex">your</span> workflow inside the container<span class="op">&gt;</span></span>
 <span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>copy <span class="ex">out</span> your results<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>

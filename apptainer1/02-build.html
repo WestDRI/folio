@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,9 +72,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-707d8167ce6003fca903bfe2be84ab7f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -324,9 +324,7 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
   <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
-      <a href="../index.html" class="sidebar-logo-link">
-      </a>
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../"></a> 
         <div class="sidebar-tools-main">
@@ -941,6 +939,11 @@ Note
 </section>
 <section id="practical-apptainer-workflows" class="level2">
 <h2 class="anchored" data-anchor-id="practical-apptainer-workflows">Practical Apptainer workflows</h2>
+<p>ParaView and VisIt are two scientific applications that are <strong>quite difficult</strong> to compile from source. We have both installed on the production clusters – but let’s imagine that we don’t, and you need to install your own. The two scenarios below show how you can do that.</p>
+<ol type="1">
+<li>With ParaView, we download an off-the-shelf Docker image with a pre-compiled ParaView server.</li>
+<li>With VisIt, we start with a bare-bones Ubuntu image and then download a pre-compiled VisIt for Ubuntu, unpack it into the sandbox, and install other required libraries.</li>
+</ol>
 <section id="run-client-server-paraview-from-a-container" class="level3">
 <h3 class="anchored" data-anchor-id="run-client-server-paraview-from-a-container">Run client-server ParaView from a container</h3>
 <p>ParaView is a very popular open-source scalable 3D scientific visualization tool. To visualize large datasets on an HPC cluster, you can run ParaView in a client-server mode, with your local ParaView GUI acting as a client, and a remote ParaView server on the cluster. Let’s try to run ParaView server from inside an Apptainer image.</p>
@@ -1007,7 +1010,9 @@ Note
 <p>Let’s use this image! While still inside the job (on a compute node), copy the dataset <code>sineEnvelope.nc</code> from <code>/project/def-sponsor00/shared/paraview.zip</code> into a <code>~/data</code> folder and then start the ParaView server:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/paraview.zip <span class="at">-d</span> ~ data/sineEnvelope.nc   <span class="co"># extract sample data into ~/data</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">-B</span> /home paraviewBase.sif pvserver</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If successful, it should say something like <em>“Accepting connection(s): node1.int.apptainer.vastcloud.org:11111”</em> – write down the node and the port names as you will need them in the next step.</p>
+<p>If successful, it should say something like:<br>
+<em>“Accepting connection(s): node1.int.apptainer.vastcloud.org:11111”</em><br>
+– write down the node name and the port number as you will need them in the next step.</p>
 <p>On your laptop, set up SSH port forwarding to this compute node and port:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> username@apptainer.vastcloud.org <span class="at">-L</span> 11111:node1:11111</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next, start ParaView 5.11.x on your computer and connect to <code>localhost:11111</code>, and then load the dataset and visualize it.</p>
