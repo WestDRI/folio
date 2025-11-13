@@ -147,11 +147,9 @@ Apptainer> ls /home/user01                # shows my $HOME content on the host
 On the other hand, you can pass variables to your container by prefixing their names:
 
 ```sh
-$ APPTAINERENV_HI="hello" APPTAINERENV_NAME="alex" apptainer shell ubuntu.sif
-Apptainer> echo $HI
-hello
-Apptainer> echo $NAME
-alex
+APPTAINERENV_HI="hello" APPTAINERENV_NAME="alex" apptainer shell ubuntu.sif
+Apptainer> echo $HI     # should print hello
+Apptainer> echo $NAME   # should print alex
 ```
 
 Finally, we already mentioned `APPTAINER_BIND`: you don't have to pass the same bind (`-B`) flags every time
@@ -164,7 +162,7 @@ apptainer shell ubuntu.sif
 
 You can have more granular control (e.g. specifying read only) with the `--mount` flag -- for details see the
 official
-[Bind Paths and Mounts documentation](https://sylabs.io/guides/latest/user-guide/bind_paths_and_mounts.html).
+[Bind Paths and Mounts documentation](https://sylabs.io/guides/latest/user-guide/bind_paths_and_mounts.html){target="_blank"}.
 
 ::: {.callout-important}
 ## Key points

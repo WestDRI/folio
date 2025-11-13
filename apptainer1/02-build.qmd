@@ -566,7 +566,16 @@ You can find more information on remote endpoints in the
 
 
 <!-- ## Running more useful Docker images via Apptainer as regular user -->
+
 ## Practical Apptainer workflows
+
+ParaView and VisIt are two scientific applications that are **quite difficult** to compile from source. We
+have both installed on the production clusters -- but let's imagine that we don't, and you need to install
+your own. The two scenarios below show how you can do that.
+
+1. With ParaView, we download an off-the-shelf Docker image with a pre-compiled ParaView server.
+2. With VisIt, we start with a bare-bones Ubuntu image and then download a pre-compiled VisIt for Ubuntu,
+   unpack it into the sandbox, and install other required libraries.
 
 ### Run client-server ParaView from a container
 
@@ -641,8 +650,9 @@ unzip /project/def-sponsor00/shared/paraview.zip -d ~ data/sineEnvelope.nc   # e
 apptainer exec -B /home paraviewBase.sif pvserver
 ```
 
-If successful, it should say something like *"Accepting connection(s): node1.int.apptainer.vastcloud.org:11111"* --
-write down the node and the port names as you will need them in the next step.
+If successful, it should say something like:  
+*"Accepting connection(s): node1.int.apptainer.vastcloud.org:11111"*  
+-- write down the node name and the port number as you will need them in the next step.
 
 On your laptop, set up SSH port forwarding to this compute node and port:
 

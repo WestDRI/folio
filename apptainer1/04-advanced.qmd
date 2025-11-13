@@ -23,10 +23,10 @@ Use `--nv` to expose the NVIDIA hardware devices to the container.
 
 ### Pre-built NVIDIA containers
 
-[NVIDIA NGC](https://catalog.ngc.nvidia.com) (NVIDIA's hub for GPU-optimized software) provides prebuilt
-containers for a large number of HPC applications. Try searching for TensorFlow, GAMESS (quantum chemistry),
-GROMACS and NAMD (molecular dynamics), VMD, ParaView, NVIDIA IndeX (visualization). Their GPU-accelerated
-containers are quite large, so it might take a while to build them, e.g.
+[NVIDIA NGC](https://catalog.ngc.nvidia.com){target="_blank"} (NVIDIA's hub for GPU-optimized software)
+provides prebuilt containers for a large number of HPC applications. Try searching for TensorFlow, GAMESS
+(quantum chemistry), GROMACS and NAMD (molecular dynamics), VMD, ParaView, NVIDIA IndeX (visualization). Their
+GPU-accelerated containers are quite large, so it might take a while to build them, e.g.
 
 ```sh
 apptainer pull tensorflow-22.06-tf1-py3.sif docker://nvcr.io/nvidia/tensorflow:22.06-tf1-py3
@@ -54,16 +54,24 @@ ls -l tensorflow-22.06-tf1-py3.sif   # 5.9G (very large!)
 
 
 
-### Demo: Chapel GPU container
+### Chapel GPU container demo
+
+::: {.callout-caution}
+##### almalinux.sif
+I seem to have deleted this container, so I would need to build a new one for this demo. You can
+find the instructions for building it [here](../cloud2hpc){target="_blank"}, on a real or virtual machine with
+a GPU (and NVIDIA drivers and a CUDA development kit) and Apptainer installed.
+:::
 
 Recently, I built a container for using GPUs from Chapel programming language. There are some issues compiling
 Chapel with LLVM and GPU support on InfiniBand clusters, so I bypassed them by creating a container that can
 be used on any of our clusters, whether built on InfiniBand, or Ethernet, or OmniPath interconnect.
 
-- the container can be used only on one node (no multi-node parallelism), but it does support multiple GPUs
-- installed Chapel into an overlay image (we'll study overlays below)
+- the container `almalinux.sif` can be used only on one node (no multi-node parallelism), but it does support
+  multiple GPUs
+- installed Chapel into an overlay image `chapel.img` (we'll study overlays below)
 
-Here is how I would use it on Cedar:
+Here is how I would use it on Fir:
 
 ```sh
 cd ~/scratch
@@ -74,7 +82,7 @@ git clone ~/chapelBare $SLURM_TMPDIR/
 
 module load apptainer
 export SRC=/project/6003910/razoumov/apptainerImages/chapelGPU20240826
-apptainer shell --nv -B $SLURM_TMPDIR --overlay $SRC/extra.img:ro $SRC/almalinux.sif
+apptainer shell --nv -B $SLURM_TMPDIR --overlay $SRC/chapel.img:ro $SRC/almalinux.sif
 
 nvidia-smi   # verify that we can see the GPU inside the container
 source /extra/c4/chapel-2.1.0/util/setchplenv.bash
@@ -174,7 +182,7 @@ definition file that:
 and then used it to build `mpi.sif` which I copied over to the training cluster into `/project/def-sponsor00/shared`.
 
 <!-- ```sh -->
-<!-- cedar -->
+<!-- fir -->
 <!-- cd /project/6003910/razoumov/apptainerImages/apptainerCourse202410 -->
 <!-- scp mpi.sif user01@apptainer.vastcloud.org:/project/def-sponsor00/shared -->
 <!-- ``` -->
@@ -182,16 +190,24 @@ and then used it to build `mpi.sif` which I copied over to the training cluster 
 ```sh
 cd ~/tmp
 module load openmpi apptainer
-unzip /project/def-sponsor00/shared/introHPC.zip codes/distributedPi.c
-cd codes
+unzip -j /project/def-sponsor00/shared/introHPC.zip codes/distributedPi.c
+
+# need to set a couple of things
 mkdir -p ~/.openmpi
-echo "btl_vader_single_copy_mechanism=none" >> ~/.openmpi/mca-params.conf
-export PMIX_MCA_psec=native   # allow mpirun to use host's PMI
+echo "btl_vader_single_copy_mechanism=none" >> ~/.openmpi/mca-params.conf   # shared-memory comm setting
+export PMIX_MCA_psec=native   # allow mpirun inside the container to use host's PMI
+
 export CONTAINER=/project/def-sponsor00/shared/mpi.sif
 apptainer exec $CONTAINER mpicc -O2 distributedPi.c -o distributedPi
-salloc --ntasks=4 --time=0:5:0 --mem-per-cpu=1200
+
+salloc --ntasks=4 --time=0:5:0 --mem-per-cpu=3600
+
+# try running on the the host
 mpirun -np $SLURM_NTASKS ./distributedPi   # error: compiled for Ubuntu, cannot run on Rocky Linux
+
+# try running inside the contaner
 mpirun -np $SLURM_NTASKS apptainer exec $CONTAINER ./distributedPi
+srun apptainer exec $CONTAINER ./distributedPi   # same as previous line
 ```
 
 
@@ -397,10 +413,10 @@ to a sparse image, it can grow (*but not shrink!*) in size. Let's create a spars
 apptainer overlay create --size 512 --sparse sparse.img
 ls -l sparse.img                   # its apparent size is 512MB
 du -h --apparent-size sparse.img   # same
-du -h sparse.img                   # its actual size is much smaller (17MB)
+du -h sparse.img                   # its actual size is much smaller (316K)
 ```
 
-Let's mount it and fill with some data, now creating fewer files:
+Let's mount it and fill with some data, e.g. a few files:
 
 ```
 apptainer shell --overlay sparse.img ubuntu.sif
@@ -423,14 +439,15 @@ Be careful with sparse images: not all tools (e.g. backup/restore, scp, sftp, gu
 
 ### Example: installing Conda into an overlay
 
-Installing native Anaconda on HPC clusters is a [bad idea](https://docs.alliancecan.ca/wiki/Anaconda/en) for a
-number of reasons. Instead of Conda, we recommend using `virtualenv` together with our pre-compiled Python
-wheels to install Python packages into your own virtual environments.
+Installing native Anaconda on HPC clusters is a [bad
+idea](https://docs.alliancecan.ca/wiki/Anaconda/en){target="_blank"} for a number of reasons. Instead of
+Conda, we recommend using `virtualenv` together with our pre-compiled Python wheels to install Python packages
+into your own virtual environments.
 
 One of the reasons we do not recommend Conda is that it creates a large number of files in your
 directories. You can alleviate this problem by hiding Conda files inside an overlay image:
 
-- takes a couple of minutes, results in 22k+ files that are hidden from the host
+- takes a couple of minutes, results in 32k+ files that are hidden from the host
 - no need for root, as you don't modify the container image
 - still might not be the most efficient use of resources (non-optimized binaries)
 
@@ -450,11 +467,11 @@ Apptainer> bash /home/${USER}/tmp/miniconda.sh
   agree to the license
   use /conda/miniconda3 for the installation path
   no to initialize Miniconda3
-Apptainer> find /conda/miniconda3/ -type f | wc -l   # 22,637 files
-Apptainer> df -kh .   # uses ~695M once finished, but more was used during installation
+Apptainer> find /conda/miniconda3/ -type f | wc -l   # 32,621 files
+Apptainer> df -kh .   # uses ~840M once finished, but more was used during installation
 ```
 
-These 22k+ files appear as a single file to the Lustre metadata server (which is great!).
+These 32k+ files appear as a single file to the Lustre metadata server (which is great!).
 
 ```sh
 apptainer shell ubuntu.sif
@@ -560,7 +577,7 @@ apptainer shell/exec/run ... <image.sif>
 
 ### Sample job submission script
 
-Of all clusters in the Alliance only Cedar has Internet access from compute nodes -- this might limit your
+Of all clusters in the Alliance only Fir has Internet access from compute nodes -- this might limit your
 options of where to build a container. You can move your SIF file to other clusters after having built it.
 
 ```sh
@@ -572,7 +589,7 @@ cd $SLURM_TMPDIR
 mkdir -p tmp cache
 export APPTAINER_TMPDIR=${PWD}/tmp
 export APPTAINER_CACHEDIR=${PWD}/cache   # replaces default `$HOME/.apptainer/cache`
-<build the container in this directory>  # run on Cedar if docker:// access is needed
+<build the container in this directory>  # run on Fir if docker:// access is needed
 <run your workflow inside the container>
 <copy out your results>
 ```
