@@ -4,7 +4,7 @@ aliases:
   - /pythonhpc
 ---
 
-**June 13<sup>th</sup>, 9:30am–12:30pm and 1:30pm-4:30pm Pacific Time**
+**Start on November 20<sup>th</sup>, continue on November 27<sup>th</sup>, 10:00am–12:00pm Pacific Time**
 
 **Abstract**: Python has become the dominant language in scientific computing thanks to its high-level syntax,
 extensive ecosystem, and ease of use. However, its performance often lags behind traditional compiled
@@ -23,7 +23,7 @@ well as optimize I/O-bound tasks. We'll also explore combining Ray with Numba an
 coupled parallel problems.
 
 Please note: this course does not cover GPU computing (which merits its own course), nor will we dive into
-mpi4py, the standard MPI library for Python.
+`mpi4py`, the standard MPI library for Python.
 
 ::: {.callout-note}
 In these notes all timings are for a 2021 Macbook Pro equipped with the M1 Pro chip and 16 GB of memory. On
@@ -41,19 +41,18 @@ vs. another when run on the same machine under the same conditions.
 Today we'll be running Python on the training cluster. If instead you want to run everything locally on your
 computer, you can install Python and the libraries, but the installation instructions will vary depending on
 how you typically install Python, and whether/how you use Python virtual environments. Here is what I did on
-my computer (with `pyenv` installed earlier):
+my computer (with `uv` installed earlier):
 
 ```sh
-pyenv install 3.12.9
-pyenv virtualenv 3.12.9 hpc-env   # goes into ~/.pyenv/versions/<version>/envs/hpc-env
-pyenv activate hpc-env
-pip install --upgrade pip
-pip install numpy
-pip install --upgrade "ray[default]"
-pip install --upgrade "ray[data]"
-pip install tqdm netcdf4 scipy numexpr psutil multiprocess numba scalene Pillow
+uv venv ~/env-hpc --python 3.12   # create a new virtual environment
+source ~/env-hpc/bin/activate
+uv pip install numpy
+uv pip install --upgrade "ray[default]"
+uv pip install --upgrade "ray[data]"
+uv pip install tqdm netcdf4 scipy numexpr psutil multiprocess numba scalene Pillow
+uv pip list                       # show installed packages
 ...
-pyenv deactivate
+deactivate
 ```
 
 <!-- # pip uninstall pandas -->
@@ -61,10 +60,14 @@ pyenv deactivate
 
 On a production HPC cluster:
 
+::: {.callout-note}
+Don't do this on the training cluster: I already installed all these packages centrally for all users.
+:::
+
 ```sh
 module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2
-virtualenv --no-download hpc-env
-source hpc-env/bin/activate
+virtualenv --no-download env-hpc
+source env-hpc/bin/activate
 pip install --no-index --upgrade pip
 pip install --no-index numba multiprocess numexpr
 avail_wheels "ray"
@@ -74,8 +77,8 @@ pip install modin
 deactivate
 ```
 
-In this course we will be doing all work on our training cluster on which we have already installed Python and
-all the necessary libraries.
+<!-- In this course we will be doing all work on our training cluster on which we have already installed Python and -->
+<!-- all the necessary libraries. -->
 
 
 
@@ -87,27 +90,27 @@ all the necessary libraries.
 Python pros                                 | Python cons
 --------------------------------------------|------------------------
 elegant scripting language                  | slow (interpreted, dynamically typed)
-easy (fast) to develop and read code        | uses indentation for code blocks
+easy/fast to develop and read code          | uses indentation for code blocks
 powerful, compact constructs for many tasks |
 huge number of external libraries           |
 very popular across all fields              |
 
-<td><ul>
-<li>item1</li>
-<li>item2</li>
-</ul>
-</td>
-
-Python is interpreted:
+::: {.callout-note}
+##### Python is interpreted:
 - translation to machine code happens line-by-line
 - no cross-line optimization
+:::
 
-Python is dynamically typed:
-- types are part of the data (since data collections can be very diverse) &nbsp;⇒&nbsp; significant overhead
+::: {.callout-note}
+##### Python is dynamically typed:
+- since Python's data collections can be very diverse, types are part of the data &nbsp;⇒&nbsp; significant overhead
 - automatic memory management: on-the-fly reference counting, garbage collection, range checking &nbsp;⇒&nbsp; slow
+:::
 
 All these high-level features make Python slow. In this course we will concentrate on getting the most
-performance out of it.
+performance out of it using various technologies.
+
+![](/fig/technologies.png)
 
 
 
@@ -117,55 +120,54 @@ performance out of it.
 
 ## Python setup in our course
 
-Today we'll be running Python inside a shell on our training cluster `thu.vastcloud.org`. Let's log in now!
+Today we'll be running Python inside a shell on our training cluster `python.vastcloud.org`. Let's log in now!
 
 We have pre-installed all the required libraries for you in a virtual Python environment in
-`/project/def-sponsor00/shared/hpc-env` that everyone on the system can read.
+`/project/def-sponsor00/shared/env-hpc` that everyone on the system can read.
 
 Once on the system, our workflow is going to be:
 
 ```sh
 mkdir -p ~/tmp && cd ~/tmp
 module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2
-source /project/def-sponsor00/shared/hpc-env/bin/activate
+source /project/def-sponsor00/shared/env-hpc/bin/activate
 
-salloc --time=2:00:0 --mem-per-cpu=12000   # memory needed for several serial examples
+# our default mode
+salloc --time=2:00:0 --mem-per-cpu=3600
 ...
 exit
 
-salloc --cpus-per-task=4 --time=2:00:0 --mem-per-cpu=3600   # our default mode
-# sometimes we'll use 4 cores and few GBs memory per core
-# sometimes we'll use one core and almost all available memory
+# more memory needed for several serial examples
+salloc --time=2:00:0 --mem-per-cpu=12000
 ...
 exit
 
-salloc --ntasks=4 --nodes=1 --time=2:00:0 --mem-per-cpu=3600   # very similar
+# sometimes we'll use 4 cores
+salloc --cpus-per-task=4 --time=2:00:0 --mem-per-cpu=3600
 ...
 exit
 
-salloc --ntasks=4 --time=2:00:0 --mem-per-cpu=3600   # might run on multiple nodes
+# very similar
+salloc --ntasks=4 --nodes=1 --time=2:00:0 --mem-per-cpu=3600
+...
+exit
+
+# might run across multiple nodes
+salloc --ntasks=4 --time=2:00:0 --mem-per-cpu=3600
 ...
 exit
 
 deactivate
 ```
 
-Please do not run Python on the login node, as it'll make the login node slow for everyone.
+Please do not run Python on the login node, as it'll make the login node slow for everyone and might
+potentially crash it.
 
-Finally, to monitor CPU usage inside a Slurm job, from the login node connect to the running job and launch
-`htop` or a similar utility:
-
-```sh
-srun --jobid=<jobID> --pty bash
-alias htop='htop -u $USER -s PERCENT_CPU'
-htop                     # monitor all your processes
-htop --filter "python"   # filter processes by name
-```
-
-or you can use a one-liner from the login node:
+Finally, to monitor CPU usage inside a Slurm job, run the following from the login node (this will connect to
+the running job and launch `htop` inside it):
 
 ```sh
-srun --jobid=<jobID> --pty htop -u $USER -s PERCENT_CPU
+srun --jobid=<jobID> --pty htop -u $USER -s PERCENT_CPU --filter "python"
 ```
 
 Inside `htop` you can repeatedly press "Shift+H" to show individual threads or group them inside their parent
@@ -184,7 +186,7 @@ When I teach parallel computing in other languages (Julia, Chapel), the approach
 problem and parallelize it using multiple processors, and concentrate on various issues and bottlenecks
 (variable locks, load balancing, false sharing, messaging overheads, etc.) that lead to less than 100%
 **parallel efficiency**. For the numerical problem I usually select something that is very simple to code, yet
-forces the computer to do brute-force calculation that cannot be easily optimized.
+forces the machine to do brute-force calculation that cannot be easily optimized.
 
 One such problem is a *slow series*. It is a well-known fact that the harmonic series
 $\sum\limits_{k=1}^\infty{1\over k}$ diverges. It turns out that if we omit the terms whose denominators in
@@ -399,12 +401,13 @@ Cartesian equivalents.
 <!-- to a couple seconds! -->
 
 ::: {.callout-note}
+##### If short on memory
 To run all code fragments in this example at full $500\times 800\times 300$ resolution, you will need to
-increase your memory ask to 7200M, or otherwise your Python session will be killed mid-way. Alternatively,
-you can reduce the problem size by 8X (yielding much less impressive runtime difference) and continue
+increase your memory ask to ~12000M, or otherwise your Python session will be killed mid-way. Alternatively,
+you can reduce the problem size by 4X (yielding much less impressive runtime difference) and continue
 running with 3600M memory:
 ```py
-nlat, nlon, nr = nlat//2, nlon//2, nr//2   # if short on memory
+nlat, nlon = nlat//2, nlon//2   # 30e6 grid points
 ```
 :::
 
@@ -416,6 +419,7 @@ from scipy.special import lpmv
 import time
 
 nlat, nlon, nr = 500, 800, 300   # 120e6 grid points
+nlat, nlon = nlat//2, nlon//2    # 30e6 grid points
 
 latitude = np.linspace(-90, 90, nlat)
 longitude = np.linspace(0, 360, nlon)
@@ -577,9 +581,12 @@ Let's check broadcasting, taking the expression for computing `vx[i,0:nr,0:nlon]
 Now all variables have the same dimensions, and all operations will be element-wise. The calculation time goes
 down to 1.487s.
 
+::: {.callout-note}
+##### More vectorization != always faster
 You can also vectorize in all three dimensions (latitudes, radii and longitudes), resulting in no explicit
 Python loops in your calculation at all, but this requires a little bit of extra work, and the computation time
 will actually slightly go up -- **any idea why**?
+:::
 
 In the end, with NumPy's element-wise vectorized operations, we improved our time from 1280s to 1.5s! The
 entire calculation was done as a batch in a compiled C code, instead of cycling through individual elements
@@ -590,8 +597,8 @@ and then calling a compiled C code on each. There are a lot fewer Python code li
 Let's use NumPy for our slow series calculation. We will:
 
 1. write a function that acts on each integer $k$ in the series,
-2. convert this function to a *vectorized function* that takes in an array of integer numbers and returns an
-   array of terms,
+2. convert this function to a *vectorized function* that takes in **an array of integer numbers** and returns
+   **an array of summation terms**,
 3. sum these terms to get the result.
 
 Let's save the following code as `slow2.py`:
@@ -616,9 +623,42 @@ print(total)
 ```
 
 ::: {.callout-note}
-This particular code uses a lot of memory, so you might want to request `--mem-per-cpu=14400` (and
-single core).
+This particular code uses a lot of memory, but you have 2 options:
+
+1. restart the job with `--mem-per-cpu=14400` request (and single core) -- probably not a good idea in a
+   shared environment
+1. reduce `n` by 10X and then scale the time estimate by 10X -- easy and will give a rough estimate, but the
+   summation time does not scale exactly linearly with the number of terms (larger numbers have a higher
+   probability of having 9's in them)
+1. break one large numpy array into pieces, as shown in the code below
 :::
+
+```py
+from time import time
+import numpy as np
+n = 100_000_000
+def combined(k):
+    if "9" not in str(k):
+        return 1.0/k
+    else:
+        return 0.0
+
+size = n//10   # 10 pieces: 1-10e6, 10,000,001-20e6, ..., 90,000,001-100e6
+intervals = [(i*size+1,(i+1)*size) for i in range(10)]
+if n > intervals[-1][1]:
+    intervals[-1] = (intervals[-1][0], n)
+
+v3 = np.vectorize(combined)
+start = time()
+total = 0
+for span in intervals:
+    i = np.arange(span[0],span[1]+1)
+    total += np.sum(v3(i))
+
+end = time()
+print("Time in seconds:", round(end-start,3))
+print(total)
+```
 
 The vectorized function is supposed to speed up calculating the terms, but our time becomes significantly
 worse (14.72s) than the original calculation (6.625s). **The reason**: we are no longer replacing multiple
@@ -633,8 +673,7 @@ compiler can do -- we will study it later.
 
 As it turns out, to speed up this problem with NumPy, you really need to perform the check for digit "9" via
 low-level custom NumPy code with a combination of vectorizable integer and floating operations, and this is
-very difficult -- but not impossible -- to do.
-
+very difficult -- but not impossible -- to implement.
 
 
 
@@ -768,73 +807,92 @@ counter, leading to either memory leaks (too much memory allocated) or to releas
 there is still a reference to that object on another thread.
 
 One way to solve this problem is to have locks on all shared data structures, where only one thread at a time
-can modify data. This can also lead to problems, and Python's solution prior to version 3.13 is to use a lock on the interpreter
-itself (Global Interpreter Lock = GIL), so that only **one thread can run at a time**. Recall that in Python
-each line of code is being interpreted on the fly, so placing a lock on the interpreter means pausing code
-execution while some other thread is running.
+can modify data. This can also lead to problems, and Python's solution prior to version 3.13 is to use a lock
+on the interpreter itself (Global Interpreter Lock = GIL), so that only **one thread can run at a
+time**. Recall that in Python each line of code is being interpreted on the fly, so placing a lock on the
+interpreter means pausing code execution while some other thread is running.
 
 Starting with v3.13, you can install Python with the GIL removed. This mode called *free threading* is still
 considered experimental and is usually not enabled by default. There is a good [Real Python
 article](https://realpython.com/python313-free-threading-jit) (might require subscription) describing various
-build options to enable free threading; here is what worked on my Macbook:
+build options to enable free threading including enabling experimental JIT. Here is a simple setup on my
+Macbook:
 
 ```sh
-brew install pyenv
-git clone https://github.com/pyenv/pyenv-update.git $(pyenv root)/plugins/pyenv-update
-
-pyenv update
-pyenv install --list | grep 3.13   # list all available versions, with "t" standing for free-threaded variant
-PYTHON_CONFIGURE_OPTS='--enable-experimental-jit' pyenv install 3.13.0t # build free-threaded Python with JIT
-                                                                        # support in ~/.pyenv/versions/3.13.0t
-pyenv versions        # show installed versions
-pyenv shell 3.13.2t   # switch to the new build in this shell only
-python
+uv venv ~/env-free --python 3.14t   # create a new virtual environment
+source ~/env-free/bin/activate
+...
+deactivate
 ```
 
-
-
-
-<!-- The GIL will be removed from Python in its next big release (3.13), but until then you can only run one Python -->
-<!-- thread at a time. -->
-
-
-
-
 Python has several threading libraries. For example, `threading` library provides a function `Thread()` to
-launch new threads. Here is a [full example of the slow series calculation](/files/sum.py){target="_blank"}
-that instead uses `ThreadPoolExecutor()` function
-from `concurrent` library. If you run it with v3.12 or earlier, you will get about the same runtime
-independently of the number of threads, as -- due to the GIL -- these threads will be taking turns
-running. With a free-threaded Python 3.13 build, you will see better runtimes with additional threads,
-provided you have the CPU cores to run all threads in parallel:
+launch new threads. Here is a full example of the slow series calculation (store it as `sum.py`) that instead
+uses `ThreadPoolExecutor()` function from `concurrent` library:
+
+```py
+from time import time
+import argparse
+import concurrent.futures
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--n', default=100_000_000, type=int, help='number of terms')
+parser.add_argument('--nthreads', default=1, type=int, help='number of tasks')
+args = parser.parse_args()
+n, nthreads = args.n, args.nthreads
+
+def slow(interval):
+    total = 0
+    for i in range(interval[0], interval[1]+1):
+        if not "9" in str(i):
+            total += 1.0 / i
+    return total
+
+size = n//nthreads   # size of each batch
+intervals = [(i*size+1,(i+1)*size) for i in range(nthreads)]
+if n > intervals[-1][1]: intervals[-1] = (intervals[-1][0], n)   # add the remainder, if any
+
+print("running with", args.nthreads, "threads over", intervals)
+start = time()
+with concurrent.futures.ThreadPoolExecutor() as pool:
+    results = pool.map(slow, intervals)
+
+end = time()
+print("Time in seconds:", round(end-start,3))
+print("sum =", sum(r for r in results))
+```
+
+If you run it with v3.12 or earlier, you will get about the same runtime independently of the number of
+threads, as -- due to the GIL -- these threads will be taking turns running. With a free-threaded Python 3.14
+build, you will see better runtimes with additional threads, provided you have the CPU cores to run all
+threads in parallel:
 
 ```sh
 python sum.py
 ```
 ```output
 running with 1 threads over [(1, 100000000)]
-Time in seconds: 13.747
+Time in seconds: 7.331
 sum = 13.277605949858103
 ```
 ```sh
-python sum.py --ntasks=4
+python sum.py --nthreads=4
 ```
 ```output
 running with 4 threads over [(1, 25000000), (25000001, 50000000), (50000001, 75000000), (75000001, 100000000)]
-Time in seconds: 5.831
+Time in seconds: 2.977
 sum = 13.277605949854326
 ```
 ```sh
-python sum.py --ntasks=8
+python sum.py --nthreads=8
 ```
 ```output
 running with 8 threads over [(1, 12500000), (12500001, 25000000), (25000001, 37500000), (37500001, 50000000), (50000001, 62500000), (62500001, 75000000), (75000001, 87500000), (87500001, 100000000)]
-Time in seconds: 4.324
+Time in seconds: 1.985
 sum = 13.277605949855293
 ```
 
 Note that the free-threaded build has some additional overhead when executing Python code compared to the
-default GIL-enabled build. In 3.13, this overhead is ~40%.
+default GIL-enabled build. In 3.13, this overhead is ~40%, in 3.14 seems to be somewhat smaller.
 
 
 
@@ -927,14 +985,20 @@ ne.evaluate("~contains(x, b'h')")   # not contains => returns array([False, Fals
 
 We can use NumExpr to parallelize checking for substrings (store this as `slow3.py`):
 
+::: {.callout-caution}
+##### High memory usage
+This code will use more than 3600M memory. Use `--cpus-per-task=4 --mem-per-cpu=3600` giving you the total
+memory of 14,400MB shared between the 4 cores, especially that we'll need several cores now for multithreading.
+:::
+
 ```py
 from time import time
 import numpy as np, numexpr as ne
-n = 100                        # later set to 100_000_000
-prev = ne.set_num_threads(1)   # specify the number of threads
+n = 100_000_000
+ne.set_num_threads(1)     # set the number of threads
 start = time()
-i = np.arange(1,n+1)           # array of integers
-j = i.astype(np.bytes_)        # convert to byte strings
+i = np.arange(1,n+1)      # array of integers
+j = i.astype(np.bytes_)   # convert to byte strings
 mask = ne.evaluate("~contains(j, '9')")   # parallel part; returns an array of True/False
 nonZeroTerms = i[mask]
 inverse = np.vectorize(lambda x: 1.0/x)
@@ -952,7 +1016,7 @@ Here are the average (over three runs) times:
 | wallclock runtime (sec) | 18.427 | 17.375 | 17.029 |
 
 Clearly, we are bottlenecked by the serial part of the code. Let's use another NumExpr call to evaluate
-`1.0/x` -- store this as updated `slow3.py`:
+`1.0/x` -- store this as updated `slow4.py`:
 
 ```py
 < inverse = np.vectorize(lambda x: 1.0/x)
@@ -968,7 +1032,7 @@ Here are the improved times:
 | ncores | 1 | 2 | 4 | 8 |
 | wallclock runtime (sec) | 12.094 | 11.304 | 10.965 | 10.83 |
 
-Obviously, we still have some bottleneck(s): look at the scaling, and recall the original serial runtime
+Obviously, we still have some bottlenecks: look at the scaling, and recall the original serial runtime
 6.625s on which we are trying to improve. How do we find these? Let's use a profiler!
 
 <!-- NumExpr for threaded parallelization of certain numpy expressions; show examples; still slow for slow series -->
@@ -1000,18 +1064,20 @@ very easy to use:
 <!-- https://pypi.org/project/scalene/0.9.15 -->
 
 ```sh
-scalene slow3.py         # on your own computer, will open result in a browser
-scalene --cli slow3.py   # on a remote system
+scalene slow4.py         # on your own computer, will open result in a browser
+scalene --cli slow4.py   # on a remote system
 ```
 
-> Note: to run `scalene --cli slow3.py` on the training cluster, you might need more memory, so I found it
-> useful to request `--mem-per-cpu=7200`.
+::: {.callout-caution}
+Note: to run `scalene --cli slow4.py` on the training cluster, you might need more memory, so I found it
+useful to request `--mem-per-cpu=7200`, or stay inside the multi-core parallel job (4 cores, 3600MB each).
+:::
 
 If running on your computer, this will open the result in a browser:
 
 ![](/fig/scalene.png)
 
-As you can see, our actual computing is quite fast! ~65% of the time is taken by the line initializing an array
+As you can see, our actual computing is quite fast! ~67% of the time is taken by the line initializing an array
 of byte strings `j = i.astype(np.bytes_)`, and the second biggest offender is initializing an array of
 integers.
 
@@ -1030,24 +1096,22 @@ I will leave it as a take-home exercise, and please let me know if you find a so
 
 
 
-
-
 ## Multiprocessing
 
 <!-- Super-fast Python: Multi-processing https://santhalakshminarayana.github.io/blog/super-fast-python-multi-processing -->
 
-With multiprocessing you can launch multiple processes and allocate each process to a separate CPU core to run
-in parallel. Each process will have its own interpreter with its own GIL and memory space, and -- unlike with
-multithreading -- they can all run at the same time in parallel.
+With multiprocessing you can launch multiple processes and run each process on a separate CPU core. Each
+process will have its own interpreter with its own GIL and memory space, and -- unlike with multithreading --
+they can all run at the same time in parallel.
 
 Python has the `multiprocessing` module as part of its Standard Library. Unfortunately, it has some
 limitations: (1) it only accepts certain Python functions, and (2) it cannot handle a lot of different types
 of Python objects. This is due to the way Python serializes (packs) data and sends it to the other processes.
 
 Fortunately, there is a fork of the `multiprocessing` module called `multiprocess`
-(https://pypi.org/project/multiprocess) that solves most of these problems by using a different serialization
-mechanism. The way you use it is identical to `multiprocessing`, so it should be straightforward to convert
-your code between the two.
+(<https://pypi.org/project/multiprocess>{target="_blank"}) that solves most of these problems by using a
+different serialization mechanism. The way you use it is identical to `multiprocessing`, so it should be
+straightforward to convert your code between the two.
 
 Consider Python's serial `map()` function:
 
