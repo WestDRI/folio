@@ -812,6 +812,8 @@ on the interpreter itself (Global Interpreter Lock = GIL), so that only **one th
 time**. Recall that in Python each line of code is being interpreted on the fly, so placing a lock on the
 interpreter means pausing code execution while some other thread is running.
 
+### Installing free-threaded Python
+
 Starting with v3.13, you can install Python with the GIL removed. This mode called *free threading* is still
 considered experimental and is usually not enabled by default. There is a good [Real Python
 article](https://realpython.com/python313-free-threading-jit) (might require subscription) describing various
@@ -824,6 +826,25 @@ source ~/env-free/bin/activate
 ...
 deactivate
 ```
+
+Similarly, on the training cluster I used `uv` to install free-threaded Python 3.14t into world-readable
+`/project/def-sponsor00/shared` (keep in mind that `uv` is [currently not supported on our
+clusters](https://docs.alliancecan.ca/wiki/Uv){target="_blank"} so use with caution):
+
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh   # install uv
+# make sure ~/.local/bin is in your path (the location of `uv` binary)
+
+uv venv /project/def-sponsor00/shared/env-free --python 3.14t   # create a new virtual environment
+source /project/def-sponsor00/shared/env-free/bin/activate
+...
+deactivate
+
+countfiles /project/def-sponsor00/shared/env-free   # 15 files
+countfiles ~/.local/share/uv/python                 # 5,508 files
+```
+
+### Running free-threaded Python
 
 Python has several threading libraries. For example, `threading` library provides a function `Thread()` to
 launch new threads. Here is a full example of the slow series calculation (store it as `sum.py`) that instead
@@ -867,28 +888,29 @@ build, you will see better runtimes with additional threads, provided you have t
 threads in parallel:
 
 ```sh
+cd ~/tmp
+source /project/def-sponsor00/shared/env-free/bin/activate
+salloc --cpus-per-task=4 --time=0:60:0 --mem-per-cpu=3600
 python sum.py
+python sum.py --nthreads=2
+python sum.py --nthreads=4
+python sum.py --nthreads=8   # do we get further 2X speedup?
 ```
 ```output
 running with 1 threads over [(1, 100000000)]
 Time in seconds: 7.331
 sum = 13.277605949858103
 ```
-```sh
-python sum.py --nthreads=4
+```output
+running with 2 threads over [(1, 50000000), (50000001, 100000000)]
+Time in seconds: 3.801
+sum = 13.277605949855722
 ```
 ```output
-running with 4 threads over [(1, 25000000), (25000001, 50000000), (50000001, 75000000), (75000001, 100000000)]
+running with 4 threads over [(1, 25000000), (25000001, 50000000),
+                              (50000001, 75000000), (75000001, 100000000)]
 Time in seconds: 2.977
 sum = 13.277605949854326
-```
-```sh
-python sum.py --nthreads=8
-```
-```output
-running with 8 threads over [(1, 12500000), (12500001, 25000000), (25000001, 37500000), (37500001, 50000000), (50000001, 62500000), (62500001, 75000000), (75000001, 87500000), (87500001, 100000000)]
-Time in seconds: 1.985
-sum = 13.277605949855293
 ```
 
 Note that the free-threaded build has some additional overhead when executing Python code compared to the
@@ -908,8 +930,7 @@ default GIL-enabled build. In 3.13, this overhead is ~40%, in 3.14 seems to be s
 
 
 
-
-### NumExpr
+### Alternative: NumExpr (for regular Python)
 
 Alternatively, you can do multithreading in Python via 3rd-party libraries that were written in other
 languages in which there is no GIL. One such famous library is NumExpr which is essentially a compiler for
@@ -1301,7 +1322,7 @@ Here is what I get for timing on ***my laptop*** and on ***the training cluster*
 |---|---|---|---|---|
 | ncores | 1 | 2 | 4 | 8 |
 | laptop wallclock runtime (sec) | 8.294 | 4.324 | 2.200 | 1.408 |
-| --ntasks=4 cluster runtime (sec) | 17.557 | 8.780 | 4.499 | 4.508 |
+| `--ntasks=4` cluster runtime (sec) | 17.557 | 8.780 | 4.499 | 4.508 |
 
 Our parallel scaling looks great, but in terms of absolute numbers we are still lagging behind the same
 problem implemented with a serial code in compiled languages ...
