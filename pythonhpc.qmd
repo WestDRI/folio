@@ -818,7 +818,7 @@ Starting with v3.13, you can install Python with the GIL removed. This mode call
 considered experimental and is usually not enabled by default. There is a good [Real Python
 article](https://realpython.com/python313-free-threading-jit) (might require subscription) describing various
 build options to enable free threading including enabling experimental JIT. Here is a simple setup on my
-Macbook:
+laptop:
 
 ```sh
 uv venv ~/env-free --python 3.14t   # create a new virtual environment
@@ -827,9 +827,14 @@ source ~/env-free/bin/activate
 deactivate
 ```
 
-Similarly, on the training cluster I used `uv` to install free-threaded Python 3.14t into world-readable
-`/project/def-sponsor00/shared` (keep in mind that `uv` is [currently not supported on our
-clusters](https://docs.alliancecan.ca/wiki/Uv){target="_blank"} so use with caution):
+At the time of this writing, there is no free-threaded Python module on the clusters. Therefore, on the
+training cluster I used `uv` to install free-threaded Python 3.14t into a world-readable subdirectory in
+`/project/def-sponsor00/shared`:
+
+::: {.callout-caution}
+`uv` is [currently not supported on our clusters](https://docs.alliancecan.ca/wiki/Uv){target="_blank"} so use
+it with caution.
+:::
 
 ```sh
 curl -LsSf https://astral.sh/uv/install.sh | sh   # install uv
@@ -838,6 +843,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh   # install uv
 uv venv /project/def-sponsor00/shared/env-free --python 3.14t   # create a new virtual environment
 source /project/def-sponsor00/shared/env-free/bin/activate
 ...
+which python             # /project/def-sponsor00/shared/env-free/bin/python
+ls -l $(which python) n  # symbolic link to ~user01/.local/share/uv/python/...
 deactivate
 
 countfiles /project/def-sponsor00/shared/env-free   # 15 files
@@ -846,14 +853,36 @@ countfiles ~/.local/share/uv/python                 # 5,508 files
 
 ### Running free-threaded Python
 
-Python has several threading libraries. For example, `threading` library provides a function `Thread()` to
-launch new threads. Here is a full example of the slow series calculation (store it as `sum.py`) that instead
-uses `ThreadPoolExecutor()` function from `concurrent` library:
+Python has several multithreading modules/libraries in its Standard Library. For example, `threading` library
+provides a function `Thread()` to launch new threads. Here, instead, I will use `concurrent` library for
+launching threads and `threading` library for printing thread IDs:
+
+```py
+import concurrent.futures as ft
+import threading as t
+
+t.current_thread().name   # 'MainThread'
+
+def worker(x):
+    print(t.current_thread().name)
+
+with ft.ThreadPoolExecutor() as pool:
+    results = pool.map(worker, range(30))   # in the output 'ThreadPoolExecutor-0_1":
+                                            # 0 is the pool number
+                                            # 1 is the thread number
+```
+
+In this simple code above we'll see output mostly from threads 0, 1, maybe 2, as they are not very busy.
+
+Here is a full example of the slow series calculation (store it as `sum.py`) with native multithreading:
+
+<!-- that instead uses `futures.ThreadPoolExecutor()` function from `concurrent` library: -->
 
 ```py
 from time import time
 import argparse
-import concurrent.futures
+import concurrent.futures as ft
+import threading as t
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--n', default=100_000_000, type=int, help='number of terms')
@@ -862,6 +891,7 @@ args = parser.parse_args()
 n, nthreads = args.n, args.nthreads
 
 def slow(interval):
+    print(t.current_thread().name)
     total = 0
     for i in range(interval[0], interval[1]+1):
         if not "9" in str(i):
@@ -874,7 +904,7 @@ if n > intervals[-1][1]: intervals[-1] = (intervals[-1][0], n)   # add the remai
 
 print("running with", args.nthreads, "threads over", intervals)
 start = time()
-with concurrent.futures.ThreadPoolExecutor() as pool:
+with ft.ThreadPoolExecutor() as pool:
     results = pool.map(slow, intervals)
 
 end = time()
@@ -882,7 +912,7 @@ print("Time in seconds:", round(end-start,3))
 print("sum =", sum(r for r in results))
 ```
 
-If you run it with v3.12 or earlier, you will get about the same runtime independently of the number of
+If you run this code with v3.12 or earlier, you will get about the same runtime independently of the number of
 threads, as -- due to the GIL -- these threads will be taking turns running. With a free-threaded Python 3.14
 build, you will see better runtimes with additional threads, provided you have the CPU cores to run all
 threads in parallel:
@@ -916,21 +946,7 @@ sum = 13.277605949854326
 Note that the free-threaded build has some additional overhead when executing Python code compared to the
 default GIL-enabled build. In 3.13, this overhead is ~40%, in 3.14 seems to be somewhat smaller.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-### Alternative: NumExpr (for regular Python)
+### NumExpr with regular Python
 
 Alternatively, you can do multithreading in Python via 3rd-party libraries that were written in other
 languages in which there is no GIL. One such famous library is NumExpr which is essentially a compiler for
