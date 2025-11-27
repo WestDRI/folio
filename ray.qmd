@@ -62,18 +62,32 @@ By default Ray will use all available CPU cores, e.g. on my laptop `ray.init()` 
 processes (workers), and you can monitor these in a separate shell with `htop --filter "ray::IDLE"` command
 (you may want to hide threads -- typically thrown in green -- with Shift+H).
 
-> ### Discussion
-> How many "ray::IDLE" processes do you see, and why? Recall that you can use `srun --jobid=<jobID> --pty
-> bash` to open an interactive shell process inside your currently running job, and run `htop --filter
-> "ray::IDLE"` there.
+::: {.callout-note}
+## Discussion
+How many "ray::IDLE" processes do you see, and why? Recall that you can use `srun --jobid=<jobID> --pty
+bash` to open an interactive shell process inside your currently running job, and run `htop --filter
+"ray::IDLE"` there. Inside `htop` press “Shift+H” to show/hide individual threads or group them
+inside their parent processes.
+:::
 
 ::: {.callout-caution collapse="true"}
-## Question 11
-How would you pass the actual number of processor cores to the Ray cluster? Consider three options:  
+## Question 10a: pass the number of CPU cores to a new Ray cluster
+How would you pass the actual number of CPU cores to the Ray cluster? Consider three options:  
 1. Using a Slurm environment variable. How would you pass it to `ray.init()`?  
+```py
+import os
+os.environ['SLURM_CPUS_PER_TASK']
+```
 2. Launching a single-node Ray cluster as described in our
-   [Ray documentation](https://docs.alliancecan.ca/wiki/Ray).  
-3. Not passing anything at all, in which case Ray will try -- unsuccessfully -- to grab all cores.
+   [Ray documentation](https://docs.alliancecan.ca/wiki/Ray){target="_blank"}.  
+3. Not passing anything at all, in which case Ray will start as many workers as there are physical CPU cores
+   on the node, i.e. it will guess your runtime environment most likely incorrectly.
+:::
+
+::: {.callout-caution collapse="true"}
+## Question 10b: get the number of CPU cores in your Ray cluster
+Once the Ray cluster is running, which Python construct would you use to get the number of CPU cores in the
+current Ray cluster? **Hint**: look into the information returned by `ray.nodes()`.
 :::
 
 
@@ -377,7 +391,7 @@ ray.get(r)
 In my tests with more CPU-intensive functions, both versions produce equivalent runtimes.
 
 ::: {.callout-caution collapse="true"}
-## Question Combining Numba and Ray remotes for the slow series (big one!)
+## BIG ONE: combining Numba and Ray remotes for the slow series
 Write a slow series solver with Numba-compiled functions executed as Ray tasks.
 1. Numba-compiled `combined(k)` that returns either 1/x or 0.  
 2. Numba-compiled `slow(interval)` for partial sums.  
@@ -1717,7 +1731,7 @@ $2000\times 2000$ (averaged over three runs):
 
 
 
-## Quickly on parallel Python in ML frameworks (Marie)
+## Quickly on parallel Python in ML frameworks
 
 <!-- Marie will say a word about parallel Python in ML frameworks. The exact methods are different for each -->
 <!-- framework, so we are not teaching them, just providing a quick overview of what different frameworks provide -->
