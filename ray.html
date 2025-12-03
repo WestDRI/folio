@@ -448,7 +448,8 @@ window.Quarto = {
 </div>
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Once the Ray cluster is running, which Python construct would you use to get the number of CPU cores in the current Ray cluster? <strong>Hint</strong>: look into the information returned by <code>ray.nodes()</code>.</p>
+<p>Once the Ray cluster is running, which Python construct would you use to get the number of CPU cores in the current Ray cluster? When you run this contsruct, it should print an integer number of cores.<br>
+<strong>Hint</strong>: look into the information returned by <code>ray.nodes()</code>.</p>
 </div>
 </div>
 </div>
@@ -498,15 +499,19 @@ window.Quarto = {
 </section>
 <section id="distributed-progress-bars" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-progress-bars">Distributed progress bars</h3>
+<p>We used <code>tqdm.tqdm()</code> progress bars earlier in the NumPy section. Ray has its own <code>tqdm()</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ray.experimental.tqdm_ray <span class="im">import</span> tqdm</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> busy(name):</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"2"</span> <span class="kw">in</span> name: sleep(<span class="dv">2</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"2"</span> <span class="kw">in</span> name: sleep(<span class="dv">5</span>)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">100</span>), desc<span class="op">=</span>name):</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        sleep(<span class="fl">0.1</span>)</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>[busy.remote(<span class="st">"task 1"</span>), busy.remote(<span class="st">"task 2"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>busy.remote(<span class="st">"task 1"</span>)   <span class="co"># runs write away</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>busy.remote(<span class="st">"task 2"</span>)   <span class="co"># sleeps for 5s and then runs</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>[busy.remote(<span class="st">"task 1"</span>), busy.remote(<span class="st">"task 2"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A side effect of <code>tqdm()</code> is that these tasks start running immediately.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
@@ -545,7 +550,7 @@ Note
 <!-- Ray provides a command-line utility to monitor current and past tasks in bash, while a Ray instance is -->
 <!-- running. On your own computer you would do: -->
 <!-- ```sh -->
-<!-- pyenv activate hpc-env -->
+<!-- pyenv activate env-hpc -->
 <!-- ray summary tasks -->
 <!-- ``` -->
 </section>
@@ -623,7 +628,7 @@ Note
 </div>
 <div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Increase <code>n</code> to 1_000_000_000 and run <code>htop --filter "ray::IDLE</code> in a separate shell to monitor CPU usage of individual processes.</p>
+<p>Increase <code>n</code> to 1_000_000_000 and run <code>htop --filter "ray</code> in a separate shell to monitor CPU usage of individual processes.</p>
 </div>
 </div>
 </div>
@@ -663,20 +668,21 @@ Note
 <span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> runCompiled.remote()</span>
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In my tests with more CPU-intensive functions, both versions produce equivalent runtimes.</p>
+<p>In my tests with more CPU-intensive functions, both versions produce very similar runtimes.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>BIG ONE: combining Numba and Ray remotes for the slow series
+<span class="screen-reader-only">Caution</span>Question 13 (BIG ONE): combining Numba and Ray remotes for the slow series
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>Write a slow series solver with Numba-compiled functions executed as Ray tasks. 1. Numba-compiled <code>combined(k)</code> that returns either 1/x or 0.<br>
+<p>Write a slow series solver with Numba-compiled functions executed as Ray tasks.<br>
+1. Numba-compiled <code>combined(k)</code> that returns either 1/x or 0.<br>
 2. Numba-compiled <code>slow(interval)</code> for partial sums.<br>
 3. Ray-enabled remote function <code>runCompiled(interval)</code> to launch partial sums on workers.<br>
 4. Very important step: you must do small <code>runCompiled()</code> runs on workers to copy code over to them – no need to time these runs. Without this “pre-compilation” step you will not get fast execution on workers on the bigger problem.<br>
@@ -754,13 +760,28 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray, random</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> longSleep():</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    duration <span class="op">=</span> random.randint(<span class="dv">1</span>,<span class="dv">100</span>) <span class="co"># random integer from [1,100]</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    sleep(duration)   <span class="co"># sleep for this number of seconds</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"I slept for </span><span class="sc">{</span>duration<span class="sc">}</span><span class="ss"> seconds"</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>refs <span class="op">=</span> [longSleep.remote() <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">21</span>)]   <span class="co"># start 20 tasks</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> longSleep():</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    duration <span class="op">=</span> random.randint(<span class="dv">1</span>,<span class="dv">100</span>) <span class="co"># random integer from [1,100]</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    sleep(duration)   <span class="co"># sleep for this number of seconds</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"I slept for </span><span class="sc">{</span>duration<span class="sc">}</span><span class="ss"> seconds"</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>refs <span class="op">=</span> [longSleep.remote() <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">21</span>)]   <span class="co"># start 20 tasks</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Running time
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We have 4 Ray workers (hopefully, running on 4 CPU cores) and 20 tasks, each taking between 1s and 100s, so it’ll likely take 5 tasks per worker and ~250s on average to run.</p>
+</div>
+</div>
 <p>If we now call <code>ray.get(refs)</code>, that would block until all of these remote tasks finish. If we want to, let’s say, one of them to finish and then continue on the main task, we can do:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ready_refs, remaining_refs <span class="op">=</span> ray.wait(refs, num_returns<span class="op">=</span><span class="dv">1</span>, timeout<span class="op">=</span><span class="va">None</span>) <span class="co"># wait for one of them to finish</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ready_refs, remaining_refs)   <span class="co"># print the IDs of the finished task, and the other 19 IDs</span></span>
@@ -796,7 +817,7 @@ Note
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">yield</span> (i<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">10</span></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>r1, r2, r3 <span class="op">=</span> threeNumbers.remote()</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>ray.get(r1)   <span class="co"># get the first number only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>ray.get(r2)   <span class="co"># get second first number only</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="linking-remote-tasks" class="level3">
 <h3 class="anchored" data-anchor-id="linking-remote-tasks">Linking remote tasks</h3>
@@ -838,11 +859,10 @@ Note
 </section>
 <section id="persistent-storage-on-ray-workers" class="level3">
 <h3 class="anchored" data-anchor-id="persistent-storage-on-ray-workers">Persistent storage on Ray workers</h3>
-<!-- abc -->
 <!-- from https://wgpages.netlify.app/clusterworkflows/#persistent-storage-on-ray-workers -->
-<p>You might have noticed that Ray functions (remote tasks) are stateless, i.e.&nbsp;they can run on any processor that happens to be more idle at the time, and they <em>do not store any data on that processor</em> in between the function calls.</p>
+<p>By now, you might have noticed that Ray functions (remote tasks) are <strong>stateless</strong>, i.e.&nbsp;they can run on any processor that happens to be more idle at the time, and they <em>do not store any data on that processor</em> in between the function calls.</p>
 <p>If you are trying to parallelize a tightly-coupled problem, you might want to store arrays on the workers permanently, and then repeatedly call quick functions to do some computations on these arrays, without copying the arrays back and forth at each step.</p>
-<p>To do this in Ray, we can use <strong>Ray actors</strong> (https://docs.ray.io/en/latest/ray-core/actors.html). A Ray actor is essentially a stateful (bound to a processor) worker that is created via a Python class instance with its own persistent variables and methods, and it stays permanently on that worker until we destroy this instance.</p>
+<p>To do this in Ray, we can use <a href="https://docs.ray.io/en/latest/ray-core/actors.html" target="_blank">Ray actors</a>. A Ray actor is essentially a stateful (bound to a CPU core) worker that is created via a Python class instance with its own persistent variables and methods, and it stays permanently on that worker until we destroy this instance.</p>
 <!-- 1. persistent storage -->
 <!-- 2. launch calculations on all processors simultaneously -->
 <!-- In Ray, you can store an array on a worker between two function calls using actor-based state -->
@@ -866,9 +886,10 @@ Note
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>arr <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>ray.get(storage_actor.store_array.remote(arr))   <span class="co"># store an array</span></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> ray.get(storage_actor.get_array.remote())    <span class="co"># retrieve the stored array</span></span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r)  <span class="co"># Output: [1 2 3 4 5]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>   <span class="co"># Question: why use `ray.get()` here?</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> ray.get(storage_actor.get_array.remote())    <span class="co"># retrieve the stored array</span></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r)  <span class="co"># Output: [1 2 3 4 5]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- ```py -->
 <!-- print(f"Actor {worker1_actor_id} on Node {worker1_node_id} stored array: {retrieved_arr1}") -->
 <!-- print(f"Actor {worker2_actor_id} on Node {worker2_node_id} stored array: {retrieved_arr2}") -->
@@ -884,7 +905,7 @@ Note
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [workers[i].get_array.remote() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>)]</span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ray.get(r))   <span class="co"># both arrays in one go</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If we want to make sure that these arrays stay on the same workers, we can retrieve and print their IDs and the node IDs by adding these two functions to the actor class:</p>
+<p>If we want to verify that these arrays stay on the same workers, we can retrieve and print their IDs and the node IDs by adding these two functions to the actor class:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>...</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_actor_id(<span class="va">self</span>):</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.actor_id</span>
@@ -974,7 +995,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Is it possible to use JIT-compiled functions inside a Ray actor? The answer is “probably yes”: in Numba there is an <a href="https://numba.pydata.org/numba-doc/dev/user/jitclass.html">experimental feature</a> to compile Python classes with <code>@jitclass</code>. Whether you can use it to compile Ray classes is an open question – I’d be very interested to hear your findings on this.</p>
+<p>Is it possible to use JIT-compiled functions inside a Ray actor? The answer is <em>“probably yes”</em>: in Numba there is an <a href="https://numba.pydata.org/numba-doc/dev/user/jitclass.html">experimental feature</a> to compile Python classes with <code>@jitclass</code>. Whether you can use it to compile Ray classes is an open question – I’d be very interested to hear your findings on this.</p>
 </div>
 </div>
 </section>
@@ -983,19 +1004,23 @@ Note
 <h2 class="anchored" data-anchor-id="ray-data">Ray Data</h2>
 <p>Ray Data is a parallel data processing library for ML workflows. As you will see in this section, Ray Data can be easily used for non-ML workflows. To process large datasets, Ray Data uses <strong>streaming/lazy execution</strong>, i.e.&nbsp;processing does not happen until you try to access (<em>“consume”</em> in Ray’s language) the result.</p>
 <!-- https://www.anyscale.com/blog/streaming-distributed-execution-across-cpus-and-gpus -->
-<p>The core object in Ray Data is a <strong>dataset</strong> which is a distributed data collection. Ray datasets can store general multidimensional array data that are too large to fit into a single machine’s memory. In Ray, these large arrays will be: 1. distributed in memory across a number of Ray tasks and 2. saved to disk once they are no longer in use.</p>
-<p>Ray’s dataset operates over a sequence of Ray object references to blocks. Each block contains a disjoint subset of rows, and Ray Data loads and transforms these blocks in parallel. Each row in Ray’s datasets is a dictionary.</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<p>The core object in Ray Data is a <strong>dataset</strong> which is a distributed data collection. Ray datasets can store general multidimensional array data that are too large to fit into a single machine’s memory. In Ray Data, these large arrays will be:</p>
+<ol type="1">
+<li>distributed in memory across a number of Ray tasks and</li>
+<li>saved to disk once they are no longer in use.</li>
+</ol>
+<p>Ray’s dataset operates over a sequence of Ray object references to blocks. Each block contains a disjoint subset of rows, and Ray Data loads and transforms these blocks in parallel.</p>
+<div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+<span class="screen-reader-only">Important</span>Key point
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Recall: a Python dictionary is a collection of key-value pairs.</p>
+<p>Each row in Ray’s datasets is a dictionary (a collection of key-value pairs).</p>
 </div>
 </div>
 <section id="creating-datasets" class="level3">
@@ -1013,20 +1038,7 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>ds.materialize().num_blocks()   <span class="co"># will show the number of blocks; might be expensive</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Rows can be generated from arbitrary items:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>ray.data.from_items([<span class="dv">10</span>,<span class="dv">20</span>,<span class="dv">30</span>]).take()   <span class="co"># [{'item': 10}, {'item': 20}, {'item': 30}]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Rows can have multiple key-value pairs:</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Recall: each row is a dictionary, and dictionaries can have multiple entries.</p>
-</div>
-</div>
+<p>Each row is a dictionary, and dictionaries can have multiple key-value pairs:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>listOfDict <span class="op">=</span> [{<span class="st">"col1"</span>: i, <span class="st">"col2"</span>: i <span class="op">**</span> <span class="dv">2</span>} <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>)] <span class="co"># each dict contains 2 pairs</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.from_items(listOfDict)</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1041,7 +1053,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This example works on my computer (<code>pyenv activate hpc-env</code>), but not on the training cluster where <code>arrow/19.0.1</code> was compiled without S3 support.</p>
+<p>This example works on my computer (<code>pyenv activate env-hpc</code>), but not on the training cluster where <code>arrow/19.0.1</code> was compiled without S3 support.</p>
 </div>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dd <span class="op">=</span> ray.data.read_csv(<span class="st">"s3://anonymous@air-example-data/iris.csv"</span>)   <span class="co"># load a predefined dataset</span></span>
@@ -1063,16 +1075,10 @@ Note
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> ray.data.<span class="bu">range</span>(<span class="dv">1000</span>)   <span class="co"># create a dataset</span></span>
 <span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>ds.show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We will apply a function to each row in this dataset. This function <em>must</em> return a dictionary that will form each row in the new dataset:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: row).show(<span class="dv">3</span>)                  <span class="co"># takes a row, returns the same row</span></span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: {<span class="st">"key"</span>: row[<span class="st">"id"</span>]}).show(<span class="dv">3</span>)   <span class="co"># takes a row, returns a similar row;</span></span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                       <span class="co"># `row["id"]` is needed to refer to the value in each</span></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                       <span class="co"># original row; `key` is a new, arbitrary key name</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: {<span class="st">"long"</span>: <span class="bu">str</span>(row[<span class="st">"id"</span>])<span class="op">*</span><span class="dv">3</span>})  <span class="co"># takes a row, returns a dict with 'id' values</span></span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>                                                    <span class="co"># converted to strings and repeated 3X</span></span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>a   <span class="co"># it is a new dataset</span></span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>a.show(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> ds.<span class="bu">map</span>(<span class="kw">lambda</span> row: {<span class="st">"long"</span>: <span class="bu">str</span>(row[<span class="st">"id"</span>])<span class="op">*</span><span class="dv">3</span>})  <span class="co"># takes a row, returns a dict with 'id' values</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>                                                    <span class="co"># converted to strings and repeated 3X</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>a          <span class="co"># it is a new dataset</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>a.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With <code>.map()</code> you can also use familiar non-lambda (i.e.&nbsp;non-anonymous) functions:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> squares(row):</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">'squares'</span>: row[<span class="st">'id'</span>]<span class="op">**</span><span class="dv">2</span>}</span>
@@ -1101,6 +1107,19 @@ Note
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.take()             <span class="co"># create a list, fast (only first 20 elements)</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.take(<span class="dv">10_000_000</span>)   <span class="co"># takes a couple of minutes, runs in parallel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This is not very efficient … certainly, computing 10,000,000 squares should not take a couple of minutes in parallel! The problem is that we have too many rows, and – similar to Python lists – <strong>Ray datasets perform poorly with too many rows</strong>. Think about subdividing your large computation into a number of chunks where each chunk comes with its own computational and communication overhead – you want to keep their number small.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Key point
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Keep the number of rows in a Ray dataset to a minimum.</p>
+</div>
+</div>
 <p>Let’s rewrite this problem:</p>
 <!-- ```py -->
 <!-- n = 10_000_000 -->
@@ -1208,7 +1227,7 @@ Note
 <span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On 2 cores I get the average time of 3.765 seconds.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1217,7 +1236,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Parallelize this for 4 CPU cores. <strong>Hint</strong>: programmatically form a list of dictionaries, each containing two key-value pairs (<code>a</code> and <code>b</code>) with the sub-intervals.</p>
 </div>
@@ -1281,8 +1300,12 @@ Note
 <section id="processing-ray-datasets-with-numba-compiled-functions" class="level3">
 <h3 class="anchored" data-anchor-id="processing-ray-datasets-with-numba-compiled-functions">Processing Ray datasets with Numba-compiled functions</h3>
 <p>So far we processed Ray datasets with non-Numba functions, either lambda (anonymous) or plain Python functions, and we obtained very good parallel scaling with multiple Ray processes. However, these functions are slower than their Numba-compiled versions.</p>
-<p>Is it possible to <em>process Ray datasets with Numba-compiled functions</em>, similar to how earlier we executed Numba-compiled functions on remote workers? The answer is a <strong>firm yes</strong>, but I will leave it to you to write an implementation for the slow series problem. Even though I have the solution on my laptop, I am not providing it here, as I feel this would be an excellent take-home exercise.</p>
-<p>A couple of considerations: 1. Numba does not work with Python dictionaries, instead providing its own dictionary type which is not compatible with Ray datasets. You can easily sidestep this problem, but you will have to find the solution yourself. 2. Very important: you must do small runs on workers to copy your functions over to them – no need to time these runs. Without this “pre-compilation” step you will not get fast execution on workers on the bigger problem the first time you run it.</p>
+<p>Can Ray Datasets be <em>processed with Numba-compiled functions</em>, similar to how we previously ran Numba-compiled functions on remote Ray workers? <strong>Absolutely yes</strong>. I will leave it to you to implement this for the slow series problem. I do have a working solution, but I am not sharing it here because it makes for an excellent take-home exercise.</p>
+<p>A couple of considerations:</p>
+<ol type="1">
+<li>Numba does not work with Python dictionaries out of the box, instead providing its own dictionary type which is not compatible with Ray datasets. You can easily sidestep this problem, but you will have to find the solution yourself.</li>
+<li>Very important: you must do small runs on workers to copy your functions over to them – no need to time these runs. Without this “pre-compilation” step you will not get fast execution on workers on the bigger problem the first time you run it.</li>
+</ol>
 <!-- The solution is in `~/training/pythonHPC/slowSeriesNumbaRayData.py`. -->
 <p>With this Numba-compiled processing, on my laptop I am getting:</p>
 <table class="caption-top table">
@@ -1329,16 +1352,16 @@ Note
 <h2 class="anchored" data-anchor-id="running-ray-workflows-on-a-single-node">Running Ray workflows on a single node</h2>
 <!-- Launching a single-node ray cluster -->
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Question 15
+<span class="screen-reader-only">Caution</span>Question 15: run as a batch job
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let’s try running the slow series without Numba-compiled functions on the training cluster as a batch job.<br>
 1. Save the entire Python code for the slow series problem into <code>rayPartialMap.py</code><br>
@@ -1367,7 +1390,7 @@ Note
 <!-- # #SBATCH --account=... -->
 <!-- cd ~/scratch/ray -->
 <!-- module load python/3.12.4 arrow/19.0.1 -->
-<!-- source hpc-env/bin/activate -->
+<!-- source env-hpc/bin/activate -->
 <!-- python rayPartialMap.py $SLURM_CPUS_PER_TASK -->
 <!-- ``` -->
 <!-- ```sh -->
@@ -1426,7 +1449,7 @@ Note
 </tr>
 </tbody>
 </table>
-<p>In our <a href="https://docs.alliancecan.ca/wiki/Ray">Ray documentation</a> there are instructions for launching a single-node Ray cluster. Strictly speaking, this is not necessary, as on a single machine (node) a call to <code>ray.init()</code> will start a new Ray cluster and will automatically connect to it.</p>
+<p>In our <a href="https://docs.alliancecan.ca/wiki/Ray" target="_blank">Ray documentation</a> there are instructions for launching a single-node Ray cluster. Strictly speaking, this is not necessary, as on a single machine (node) a call to <code>ray.init()</code> will start a new Ray cluster and will automatically connect to it.</p>
 <!-- ```sh -->
 <!-- export HEAD_NODE=$(hostname) -->
 <!-- export RAY_PORT=34567 -->
@@ -1443,31 +1466,31 @@ Note
 <section id="running-ray-workflows-on-multiple-nodes" class="level2">
 <h2 class="anchored" data-anchor-id="running-ray-workflows-on-multiple-nodes">Running Ray workflows on multiple nodes</h2>
 <!-- Launching a multi-node ray cluster -->
-<p>To run Ray workflows on multiple cluster nodes, you <em>must</em> create a virtual Ray cluster first. You can find details of Ray’s virtual clusters in the official Ray documentation https://docs.ray.io/en/latest/cluster/getting-started.html.</p>
-<p>Here we’ll take a look at the example which I copied and adapted from our documentation at https://docs.alliancecan.ca/wiki/Ray#Multiple_Nodes. I made several changes in this workflow:</p>
+<p>To run Ray workflows on multiple cluster nodes, you <em>must</em> create a virtual Ray cluster first. You can find details of Ray’s virtual clusters in the <a href="https://docs.ray.io/en/latest/cluster/getting-started.html" target="_blank">official Ray documentation</a>.</p>
+<p>Here we take a look at the example which I copied and adapted from our wiki documentation at <a href="https://docs.alliancecan.ca/wiki/Ray" target="_blank">https://docs.alliancecan.ca/wiki/Ray</a>. We make several changes in this workflow:</p>
 <ol type="1">
-<li>made it interactive,</li>
-<li>not creating virtual environments in <code>$SLURM_TMPDIR</code> inside the job, but using the already existing one in <code>/project/def-sponsor00/shared/hpc-env</code>,</li>
-<li>removed GPUs.</li>
+<li>make it interactive,</li>
+<li>do not create virtual environments in <code>$SLURM_TMPDIR</code> inside the job, but load the existing one from <code>/project/def-sponsor00/shared/env-hpc</code>,</li>
+<li>remove GPUs.</li>
 </ol>
 <p>Let’s quit our current Slurm job (if any), back on the login node start the following interactive job, and then run the following commands:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/hpc-env/bin/activate</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-hpc/bin/activate</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--nodes</span> 2 <span class="at">--ntasks-per-node</span><span class="op">=</span>1 <span class="at">--cpus-per-task</span><span class="op">=</span>2 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--time</span><span class="op">=</span>0:60:0</span>
 <span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HEAD_NODE</span><span class="op">=</span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span>   <span class="co"># head node's address -- different from the login node!</span></span>
 <span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAY_PORT</span><span class="op">=</span>34567          <span class="co"># a port to start Ray on the head node </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Next, we will start a Ray cluster on the head node as a background process:</p>
+<p>Next, we will <strong>start a Ray cluster on the head node</strong> as a background process:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ray</span> start <span class="at">--head</span> <span class="at">--node-ip-address</span><span class="op">=</span><span class="va">$HEAD_NODE</span> <span class="at">--port</span><span class="op">=</span><span class="va">$RAY_PORT</span> <span class="at">--num-cpus</span><span class="op">=</span><span class="va">$SLURM_CPUS_PER_TASK</span> <span class="at">--block</span> <span class="kw">&amp;</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sleep</span> 10   <span class="co"># wait for the prompt; it'll ask to enable usage stats collection</span></span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
 <span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eventually should say "Ray runtime started."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Then on each node inside our Slurm job, except the head node, we launch the worker nodes of the Ray cluster:</p>
+<p>Then <strong>on each compute node inside our Slurm job, except the head node, we launch the worker nodes</strong> of the Ray cluster:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOF</span> <span class="op">&gt;</span> launchRay.sh</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="st">#!/bin/bash</span></span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="st">module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span></span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="st">source /project/def-sponsor00/shared/hpc-env/bin/activate</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="st">source /project/def-sponsor00/shared/env-hpc/bin/activate</span></span>
 <span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a><span class="st">if [[ "</span><span class="dt">\$</span><span class="st">SLURM_PROCID" -eq "0" ]]; then   # if MPI rank is 0</span></span>
 <span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="st">        echo "Ray head node already started..."</span></span>
 <span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a><span class="st">        sleep 10</span></span>
@@ -1515,7 +1538,7 @@ Note
 <span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> b.<span class="bu">map</span>(initArray)</span>
 <span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>c.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>We’ll see the two arrays being initialized in memory, on two processes, with a couple of GBs of memory consumed per process. Ray writes (“spills”) objects to storage once they are no longer in use, as it tries to minimize the total number of “materialized” (in-memory) blocks. On Linux and MacOS, the temporary spill folder is <code>/tmp/ray</code>, but you can customize its location as described <a href="https://docs.ray.io/en/latest/ray-core/objects/object-spilling.html">here</a>.</p>
+<p>We’ll see the two arrays being initialized in memory, on two processes, with a couple of GBs of memory consumed per process. Ray writes (“spills”) objects to storage once they are no longer in use, as it tries to minimize the total number of “materialized” (in-memory) blocks. On Linux and MacOS, the temporary spill folder is <code>/tmp/ray</code>, but you can customize its location as described <a href="https://docs.ray.io/en/latest/ray-core/objects/object-spilling.html" target="_blank">here</a>.</p>
 <p>With the automatic object spilling to disk disabled (our second flag to <code>ray.init()</code> above), these arrays will stay in memory.</p>
 <p>With that flag removed, and hence with the usual automatic object spilling to disk, these array blocks will be automatically written to disk, and the memory usage goes back to zero after a fraction of a second. If next you try to access these arrays, e.g.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb56"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> c.take()</span>
@@ -1569,7 +1592,7 @@ Note
 2154\)</span> image <code>tuscany.avif</code>. Let’s crop 100 random <span class="math inline">\(300\times 300\)</span> images out of it:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb60"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="va">tmpdir</span><span class="op">=</span><span class="va">${RANDOM}${RANDOM}</span></span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/<span class="va">$tmpdir</span> <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> ~/<span class="va">$tmpdir</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> activate hpc-env</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pyenv</span> activate env-hpc</span>
 <span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://wgpages.netlify.app/img/tuscany.jpg</span>
 <span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> tuscany.jpg</span>
@@ -1737,7 +1760,6 @@ Note
 <h3 class="anchored" data-anchor-id="pytorch">PyTorch</h3>
 <ul>
 <li><a href="https://pytorch.org/tutorials/beginner/dist_overview.html" target="_blank">PyTorch Distributed (torch.distributed) Overview</a></li>
-<li><a href="https://pytorch.org/tutorials/distributed/home.html" target="_blank">Distributed and Parallel Training Tutorials</a></li>
 <li><a href="https://pytorch.org/tutorials/intermediate/ddp_tutorial.html" target="_blank">Getting Started with DistributedDataParallel (DDP) module</a></li>
 <li><a href="https://pytorch.org/tutorials/beginner/blitz/data_parallel_tutorial.html" target="_blank">Using multiple GPUs with DataParallel</a></li>
 </ul>
