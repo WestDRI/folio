@@ -87,7 +87,8 @@ os.environ['SLURM_CPUS_PER_TASK']
 ::: {.callout-caution collapse="true"}
 ## Question 10b: get the number of CPU cores in your Ray cluster
 Once the Ray cluster is running, which Python construct would you use to get the number of CPU cores in the
-current Ray cluster? **Hint**: look into the information returned by `ray.nodes()`.
+current Ray cluster? When you run this contsruct, it should print an integer number of cores.  
+**Hint**: look into the information returned by `ray.nodes()`.
 :::
 
 
@@ -175,14 +176,19 @@ Notice that Ray task IDs are not integers but 48-character hexadecimal numbers.
 
 ### Distributed progress bars
 
+We used `tqdm.tqdm()` progress bars earlier in the NumPy section. Ray has its own `tqdm()`:
+
 ```py
 from ray.experimental.tqdm_ray import tqdm
 
 @ray.remote
 def busy(name):
-    if "2" in name: sleep(2)
+    if "2" in name: sleep(5)
     for x in tqdm(range(100), desc=name):
         sleep(0.1)
+
+busy.remote("task 1")   # runs write away
+busy.remote("task 2")   # sleeps for 5s and then runs
 
 [busy.remote("task 1"), busy.remote("task 2")]
 ```
@@ -217,7 +223,7 @@ to see artifacts from previous bars sometimes popping up in your session.
 <!-- running. On your own computer you would do: -->
 
 <!-- ```sh -->
-<!-- pyenv activate hpc-env -->
+<!-- pyenv activate env-hpc -->
 <!-- ray summary tasks -->
 <!-- ``` -->
 
@@ -321,7 +327,7 @@ low-efficiency (slower) cores.
 
 ::: {.callout-caution collapse="true"}
 ## Question 12
-Increase `n` to 1_000_000_000 and run `htop --filter "ray::IDLE` in a separate shell to monitor CPU usage of
+Increase `n` to 1_000_000_000 and run `htop --filter "ray` in a separate shell to monitor CPU usage of
 individual processes.
 :::
 
@@ -388,11 +394,11 @@ r = runCompiled.remote()
 ray.get(r)
 ```
 
-In my tests with more CPU-intensive functions, both versions produce equivalent runtimes.
+In my tests with more CPU-intensive functions, both versions produce very similar runtimes.
 
 ::: {.callout-caution collapse="true"}
-## BIG ONE: combining Numba and Ray remotes for the slow series
-Write a slow series solver with Numba-compiled functions executed as Ray tasks.
+## Question 13 (BIG ONE): combining Numba and Ray remotes for the slow series
+Write a slow series solver with Numba-compiled functions executed as Ray tasks.  
 1. Numba-compiled `combined(k)` that returns either 1/x or 0.  
 2. Numba-compiled `slow(interval)` for partial sums.  
 3. Ray-enabled remote function `runCompiled(interval)` to launch partial sums on workers.  
@@ -483,6 +489,8 @@ Consider the following code:
 from time import sleep
 import ray, random
 
+ray.init(num_cpus=4, configure_logging=False)
+
 @ray.remote
 def longSleep():
     duration = random.randint(1,100) # random integer from [1,100]
@@ -491,6 +499,12 @@ def longSleep():
 
 refs = [longSleep.remote() for x in range(1,21)]   # start 20 tasks
 ```
+
+::: {.callout-note}
+##### Running time
+We have 4 Ray workers (hopefully, running on 4 CPU cores) and 20 tasks, each taking between 1s and 100s, so
+it'll likely take 5 tasks per worker and ~250s on average to run.
+:::
 
 If we now call `ray.get(refs)`, that would block until all of these remote tasks finish. If we want to, let's
 say, one of them to finish and then continue on the main task, we can do:
@@ -551,7 +565,7 @@ def threeNumbers():
         yield (i+1)*10
 
 r1, r2, r3 = threeNumbers.remote()
-ray.get(r1)   # get the first number only
+ray.get(r2)   # get second first number only
 ```
 
 
@@ -631,19 +645,18 @@ first task has finished.
 
 ### Persistent storage on Ray workers
 
-<!-- abc -->
 <!-- from https://wgpages.netlify.app/clusterworkflows/#persistent-storage-on-ray-workers -->
 
-You might have noticed that Ray functions (remote tasks) are stateless, i.e. they can run on any processor
-that happens to be more idle at the time, and they *do not store any data on that processor* in between the
-function calls.
+By now, you might have noticed that Ray functions (remote tasks) are **stateless**, i.e. they can run on any
+processor that happens to be more idle at the time, and they *do not store any data on that processor* in
+between the function calls.
 
 If you are trying to parallelize a tightly-coupled problem, you might want to store arrays on the workers
 permanently, and then repeatedly call quick functions to do some computations on these arrays, without copying
 the arrays back and forth at each step.
 
-To do this in Ray, we can use **Ray actors** (https://docs.ray.io/en/latest/ray-core/actors.html). A Ray actor
-is essentially a stateful (bound to a processor) worker that is created via a Python class instance with its
+To do this in Ray, we can use [Ray actors](https://docs.ray.io/en/latest/ray-core/actors.html){target="_blank"}. A Ray actor
+is essentially a stateful (bound to a CPU core) worker that is created via a Python class instance with its
 own persistent variables and methods, and it stays permanently on that worker until we destroy this instance.
 
 <!-- 1. persistent storage -->
@@ -672,6 +685,7 @@ storage_actor = ArrayStorage.remote()   # create an instance of the actor
 
 arr = np.array([1, 2, 3, 4, 5])
 ray.get(storage_actor.store_array.remote(arr))   # store an array
+   # Question: why use `ray.get()` here?
 
 r = ray.get(storage_actor.get_array.remote())    # retrieve the stored array
 print(r)  # Output: [1 2 3 4 5]
@@ -697,7 +711,7 @@ r = [workers[i].get_array.remote() for i in range(2)]
 print(ray.get(r))   # both arrays in one go
 ```
 
-If we want to make sure that these arrays stay on the same workers, we can retrieve and print their IDs and
+If we want to verify that these arrays stay on the same workers, we can retrieve and print their IDs and
 the node IDs by adding these two functions to the actor class:
 
 ```py
@@ -795,7 +809,7 @@ ray.kill(worker)
 ```
 
 ::: {.callout-note}
-Is it possible to use JIT-compiled functions inside a Ray actor? The answer is "probably yes": in Numba there
+Is it possible to use JIT-compiled functions inside a Ray actor? The answer is *"probably yes"*: in Numba there
 is an [experimental feature](https://numba.pydata.org/numba-doc/dev/user/jitclass.html) to compile Python
 classes with `@jitclass`. Whether you can use it to compile Ray classes is an open question -- I'd be very
 interested to hear your findings on this.
@@ -821,18 +835,20 @@ i.e. processing does not happen until you try to access (*"consume"* in Ray's la
 <!-- https://www.anyscale.com/blog/streaming-distributed-execution-across-cpus-and-gpus -->
 
 The core object in Ray Data is a **dataset** which is a distributed data collection. Ray datasets can store
-general multidimensional array data that are too large to fit into a single machine's memory. In Ray, these
-large arrays will be:
+general multidimensional array data that are too large to fit into a single machine's memory. In Ray Data,
+these large arrays will be:
+
 1. distributed in memory across a number of Ray tasks and
 2. saved to disk once they are no longer in use.
 
 Ray's dataset operates over a sequence of Ray object references to blocks. Each block contains a disjoint
-subset of rows, and Ray Data loads and transforms these blocks in parallel. Each row in Ray's datasets is a
-dictionary.
+subset of rows, and Ray Data loads and transforms these blocks in parallel.
 
-::: {.callout-note}
-Recall: a Python dictionary is a collection of key-value pairs.
+::: {.callout-important}
+## Key point
+Each row in Ray's datasets is a dictionary (a collection of key-value pairs).
 :::
+
 
 
 
@@ -867,11 +883,7 @@ Rows can be generated from arbitrary items:
 ray.data.from_items([10,20,30]).take()   # [{'item': 10}, {'item': 20}, {'item': 30}]
 ```
 
-Rows can have multiple key-value pairs:
-
-::: {.callout-note}
-Recall: each row is a dictionary, and dictionaries can have multiple entries.
-:::
+Each row is a dictionary, and dictionaries can have multiple key-value pairs:
 
 ```py
 listOfDict = [{"col1": i, "col2": i ** 2} for i in range(1000)] # each dict contains 2 pairs
@@ -882,7 +894,7 @@ ds.show(5)
 A dataset can also be loaded from a file:
 
 ::: {.callout-note}
-This example works on my computer (`pyenv activate hpc-env`), but not on the training cluster where
+This example works on my computer (`pyenv activate env-hpc`), but not on the training cluster where
 `arrow/19.0.1` was compiled without S3 support.
 :::
 
@@ -922,16 +934,10 @@ We will apply a function to each row in this dataset. This function *must* retur
 each row in the new dataset:
 
 ```py
-ds.map(lambda row: row).show(3)                  # takes a row, returns the same row
-
-ds.map(lambda row: {"key": row["id"]}).show(3)   # takes a row, returns a similar row;
-                       # `row["id"]` is needed to refer to the value in each
-					   # original row; `key` is a new, arbitrary key name
-
 a = ds.map(lambda row: {"long": str(row["id"])*3})  # takes a row, returns a dict with 'id' values
                                                     # converted to strings and repeated 3X
-a   # it is a new dataset
-a.show(5)
+a          # it is a new dataset
+a.show()
 ```
 
 With `.map()` you can also use familiar non-lambda (i.e. non-anonymous) functions:
@@ -985,6 +991,11 @@ This is not very efficient ... certainly, computing 10,000,000 squares should no
 parallel! The problem is that we have too many rows, and -- similar to Python lists -- **Ray datasets perform
 poorly with too many rows**. Think about subdividing your large computation into a number of chunks where each
 chunk comes with its own computational and communication overhead -- you want to keep their number small.
+
+::: {.callout-important}
+## Key point
+Keep the number of rows in a Ray dataset to a minimum.
+:::
 
 Let's rewrite this problem:
 
@@ -1203,15 +1214,16 @@ So far we processed Ray datasets with non-Numba functions, either lambda (anonym
 functions, and we obtained very good parallel scaling with multiple Ray processes. However, these functions
 are slower than their Numba-compiled versions.
 
-Is it possible to *process Ray datasets with Numba-compiled functions*, similar to how earlier we executed
-Numba-compiled functions on remote workers? The answer is a **firm yes**, but I will leave it to you to write
-an implementation for the slow series problem. Even though I have the solution on my laptop, I am not
-providing it here, as I feel this would be an excellent take-home exercise.
+Can Ray Datasets be *processed with Numba-compiled functions*, similar to how we previously ran Numba-compiled
+functions on remote Ray workers? **Absolutely yes**. I will leave it to you to implement this for the slow
+series problem. I do have a working solution, but I am not sharing it here because it makes for an excellent
+take-home exercise.
 
 A couple of considerations:
-1. Numba does not work with Python dictionaries, instead providing its own dictionary type which is not
-   compatible with Ray datasets. You can easily sidestep this problem, but you will have to find the solution
-   yourself.
+
+1. Numba does not work with Python dictionaries out of the box, instead providing its own dictionary type
+   which is not compatible with Ray datasets. You can easily sidestep this problem, but you will have to find
+   the solution yourself.
 2. Very important: you must do small runs on workers to copy your functions over to them -- no need to time
    these runs. Without this "pre-compilation" step you will not get fast execution on workers on the bigger
    problem the first time you run it.
@@ -1250,7 +1262,7 @@ With the same code on the training cluster I get better scaling:
 <!-- Launching a single-node ray cluster -->
 
 ::: {.callout-caution collapse="true"}
-## Question 15
+## Question 15: run as a batch job
 Let's try running the slow series without Numba-compiled functions on the training cluster as a batch job.  
 1. Save the entire Python code for the slow series problem into `rayPartialMap.py`  
 2. Modify the code to take <ncores> as a command-line argument:
@@ -1278,7 +1290,7 @@ python rayPartialMap.py $SLURM_CPUS_PER_TASK
 <!-- # #SBATCH --account=... -->
 <!-- cd ~/scratch/ray -->
 <!-- module load python/3.12.4 arrow/19.0.1 -->
-<!-- source hpc-env/bin/activate -->
+<!-- source env-hpc/bin/activate -->
 <!-- python rayPartialMap.py $SLURM_CPUS_PER_TASK -->
 <!-- ``` -->
 <!-- ```sh -->
@@ -1301,9 +1313,9 @@ Testing on Cedar (averaged over 2 runs):
 | ncores | 1 | 2 | 4 | 8 | 16 | 32 |
 | wallclock runtime (sec) | 18.263 | 9.595 | 5.228 | 3.048 | 2.069 | 1.836 |
 
-In our [Ray documentation](https://docs.alliancecan.ca/wiki/Ray) there are instructions for launching a
-single-node Ray cluster. Strictly speaking, this is not necessary, as on a single machine (node) a call to
-`ray.init()` will start a new Ray cluster and will automatically connect to it.
+In our [Ray documentation](https://docs.alliancecan.ca/wiki/Ray){target="_blank"} there are instructions for
+launching a single-node Ray cluster. Strictly speaking, this is not necessary, as on a single machine (node) a
+call to `ray.init()` will start a new Ray cluster and will automatically connect to it.
 
 
 
@@ -1331,23 +1343,23 @@ single-node Ray cluster. Strictly speaking, this is not necessary, as on a singl
 <!-- Launching a multi-node ray cluster -->
 
 To run Ray workflows on multiple cluster nodes, you *must* create a virtual Ray cluster first. You can find
-details of Ray's virtual clusters in the official Ray documentation
-https://docs.ray.io/en/latest/cluster/getting-started.html.
+details of Ray's virtual clusters in the [official Ray
+documentation](https://docs.ray.io/en/latest/cluster/getting-started.html){target="_blank"}.
 
-Here we'll take a look at the example which I copied and adapted from our documentation at
-https://docs.alliancecan.ca/wiki/Ray#Multiple_Nodes. I made several changes in this workflow:
+Here we take a look at the example which I copied and adapted from our wiki documentation at
+<https://docs.alliancecan.ca/wiki/Ray>{target="_blank"}. We make several changes in this workflow:
 
-1. made it interactive,
-2. not creating virtual environments in `$SLURM_TMPDIR` inside the job, but using the already existing one in
-   `/project/def-sponsor00/shared/hpc-env`,
-3. removed GPUs.
+1. make it interactive,
+2. do not create virtual environments in `$SLURM_TMPDIR` inside the job, but load the existing one from
+   `/project/def-sponsor00/shared/env-hpc`,
+3. remove GPUs.
 
 Let's quit our current Slurm job (if any), back on the login node start the following interactive job, and
 then run the following commands:
 
 ```sh
 module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2
-source /project/def-sponsor00/shared/hpc-env/bin/activate
+source /project/def-sponsor00/shared/env-hpc/bin/activate
 
 salloc --nodes 2 --ntasks-per-node=1 --cpus-per-task=2 --mem-per-cpu=3600 --time=0:60:0
 
@@ -1355,7 +1367,7 @@ export HEAD_NODE=$(hostname)   # head node's address -- different from the login
 export RAY_PORT=34567          # a port to start Ray on the head node 
 ```
 
-Next, we will start a Ray cluster on the head node as a background process:
+Next, we will **start a Ray cluster on the head node** as a background process:
 
 ```sh
 ray start --head --node-ip-address=$HEAD_NODE --port=$RAY_PORT --num-cpus=$SLURM_CPUS_PER_TASK --block &
@@ -1364,13 +1376,14 @@ sleep 10   # wait for the prompt; it'll ask to enable usage stats collection
 # Eventually should say "Ray runtime started."
 ```
 
-Then on each node inside our Slurm job, except the head node, we launch the worker nodes of the Ray cluster:
+Then **on each compute node inside our Slurm job, except the head node, we launch the worker nodes** of the
+Ray cluster:
 
 ```sh
 cat << EOF > launchRay.sh
 #!/bin/bash
 module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2
-source /project/def-sponsor00/shared/hpc-env/bin/activate
+source /project/def-sponsor00/shared/env-hpc/bin/activate
 if [[ "\$SLURM_PROCID" -eq "0" ]]; then   # if MPI rank is 0
         echo "Ray head node already started..."
         sleep 10
@@ -1449,7 +1462,7 @@ We'll see the two arrays being initialized in memory, on two processes, with a c
 consumed per process. Ray writes ("spills") objects to storage once they are no longer in use, as it tries to
 minimize the total number of "materialized" (in-memory) blocks. On Linux and MacOS, the temporary spill folder
 is `/tmp/ray`, but you can customize its location as described
-[here](https://docs.ray.io/en/latest/ray-core/objects/object-spilling.html).
+[here](https://docs.ray.io/en/latest/ray-core/objects/object-spilling.html){target="_blank"}.
 
 With the automatic object spilling to disk disabled (our second flag to `ray.init()` above), these arrays will
 stay in memory.
@@ -1542,7 +1555,7 @@ Here is a simple example of processing a directory with images with Ray Data. Su
 ```sh
 tmpdir=${RANDOM}${RANDOM}
 mkdir -p ~/$tmpdir && cd ~/$tmpdir
-pyenv activate hpc-env
+pyenv activate env-hpc
 
 wget https://wgpages.netlify.app/img/tuscany.jpg
 ls -l tuscany.jpg
@@ -1748,7 +1761,6 @@ need to use general parallel libraries that we discussed in this course.
 ### PyTorch
 
 - [PyTorch Distributed (torch.distributed) Overview](https://pytorch.org/tutorials/beginner/dist_overview.html){target="_blank"}
-- [Distributed and Parallel Training Tutorials](https://pytorch.org/tutorials/distributed/home.html){target="_blank"}
 - [Getting Started with DistributedDataParallel (DDP) module](https://pytorch.org/tutorials/intermediate/ddp_tutorial.html){target="_blank"}
 - [Using multiple GPUs with DataParallel](https://pytorch.org/tutorials/beginner/blitz/data_parallel_tutorial.html){target="_blank"}
 
