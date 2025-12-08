@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Command-line OpenStack – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b758ccaa5987ceb1b75504551e579abf.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-e7f4145358ce1d0cd37d8d374dbb44f9.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#intro" id="toc-intro" class="nav-link active" data-scroll-target="#intro">Intro</a></li>
+  <li><a href="#install-openstack-cli-tools" id="toc-install-openstack-cli-tools" class="nav-link" data-scroll-target="#install-openstack-cli-tools">Install OpenStack CLI tools</a></li>
+  <li><a href="#launch-an-instance-in-5-easy-steps" id="toc-launch-an-instance-in-5-easy-steps" class="nav-link" data-scroll-target="#launch-an-instance-in-5-easy-steps">Launch an instance in 5 easy steps</a>
+  <ul class="collapse">
+  <li><a href="#step-1---authenticate" id="toc-step-1---authenticate" class="nav-link" data-scroll-target="#step-1---authenticate">Step 1 - authenticate</a></li>
+  <li><a href="#step-2---decide-on-vm-flavour-and-image" id="toc-step-2---decide-on-vm-flavour-and-image" class="nav-link" data-scroll-target="#step-2---decide-on-vm-flavour-and-image">Step 2 - decide on VM flavour and image</a></li>
+  <li><a href="#step-3---create-an-ssh-key-pair-upload-the-public-key" id="toc-step-3---create-an-ssh-key-pair-upload-the-public-key" class="nav-link" data-scroll-target="#step-3---create-an-ssh-key-pair-upload-the-public-key">Step 3 - create an SSH key pair, upload the public key</a></li>
+  <li><a href="#step-4---launch-the-vm-instance" id="toc-step-4---launch-the-vm-instance" class="nav-link" data-scroll-target="#step-4---launch-the-vm-instance">Step 4 - launch the VM instance</a></li>
+  <li><a href="#step-5---associate-a-floating-ip" id="toc-step-5---associate-a-floating-ip" class="nav-link" data-scroll-target="#step-5---associate-a-floating-ip">Step 5 - associate a floating IP</a></li>
+  </ul></li>
+  <li><a href="#connect-to-the-machine" id="toc-connect-to-the-machine" class="nav-link" data-scroll-target="#connect-to-the-machine">Connect to the machine</a></li>
+  <li><a href="#install-software" id="toc-install-software" class="nav-link" data-scroll-target="#install-software">Install software</a></li>
+  <li><a href="#install-my-configs-optional" id="toc-install-my-configs-optional" class="nav-link" data-scroll-target="#install-my-configs-optional">Install my configs (optional)</a></li>
+  <li><a href="#create-and-attach-a-volume-optional" id="toc-create-and-attach-a-volume-optional" class="nav-link" data-scroll-target="#create-and-attach-a-volume-optional">Create and attach a volume (optional)</a></li>
+  <li><a href="#allow-inbound-traffic-on-a-given-port" id="toc-allow-inbound-traffic-on-a-given-port" class="nav-link" data-scroll-target="#allow-inbound-traffic-on-a-given-port">Allow inbound traffic on a given port</a></li>
+  <li><a href="#set-up-git" id="toc-set-up-git" class="nav-link" data-scroll-target="#set-up-git">Set up Git</a></li>
+  <li><a href="#remote-graphical-applications" id="toc-remote-graphical-applications" class="nav-link" data-scroll-target="#remote-graphical-applications">Remote graphical applications</a></li>
+  <li><a href="#remote-visualization-demo-with-trame" id="toc-remote-visualization-demo-with-trame" class="nav-link" data-scroll-target="#remote-visualization-demo-with-trame">Remote visualization demo with trame</a></li>
+  <li><a href="#create-imagevolume-snapshots" id="toc-create-imagevolume-snapshots" class="nav-link" data-scroll-target="#create-imagevolume-snapshots">Create image/volume snapshots</a>
+  <ul class="collapse">
+  <li><a href="#snapshot-a-vm" id="toc-snapshot-a-vm" class="nav-link" data-scroll-target="#snapshot-a-vm">Snapshot a VM</a></li>
+  <li><a href="#stopresume-the-vm" id="toc-stopresume-the-vm" class="nav-link" data-scroll-target="#stopresume-the-vm">Stop/resume the VM</a></li>
+  <li><a href="#snapshot-an-attached-volume" id="toc-snapshot-an-attached-volume" class="nav-link" data-scroll-target="#snapshot-an-attached-volume">Snapshot an attached volume</a></li>
+  <li><a href="#delete-instance-images-and-volume-snapshots" id="toc-delete-instance-images-and-volume-snapshots" class="nav-link" data-scroll-target="#delete-instance-images-and-volume-snapshots">Delete instance images and volume snapshots</a></li>
+  </ul></li>
+  <li><a href="#destroy-the-vm-and-its-associated-resources" id="toc-destroy-the-vm-and-its-associated-resources" class="nav-link" data-scroll-target="#destroy-the-vm-and-its-associated-resources">Destroy the VM and its associated resources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Command-line OpenStack</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Tuesday, December 9<sup>th</sup>, 2025</strong></p>
+<p><strong>Abstract</strong>: OpenStack provides a powerful cloud platform for managing compute, storage, and networking resources. While its web dashboard offers a user-friendly interface and can be convenient at times, it often involves too many clicks to complete routine tasks such as creating and configuring a virtual machine. The command-line interface (CLI) offers a faster, more streamlined way to create and manage resources. In this webinar, we will discuss <code>python-openstackclient</code>, walk through its setup and authentication, and demonstrate how to efficiently perform common OpenStack operations from the terminal. Whether you are managing a few instances or automating workflows, this session will help you leverage the CLI for speed, simplicity, and productivity.</p>
+<section id="intro" class="level2">
+<h2 class="anchored" data-anchor-id="intro">Intro</h2>
+<p>The Alliance Federation provides free cloud resources to researchers on several national system – Arbutus, Cedar Cloud, Nibi Cloud, and Béluga Cloud – the up-to-date list of which you will always find at <a href="https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems" target="_blank">https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems</a>. To get started, you will need a project in one of these clouds – follow the instructions in the same page – these are free but need to be requested, and they will use your existing allocation.</p>
+<ul>
+<li>Arbutus v2.0 is being slowly rolled out, currently with a small subset of users for testing</li>
+<li>Cedar Cloud will eventually be replaced by Fir Cloud (next 6 months)</li>
+</ul>
+<p>Before you begin creating your instances, you might want to check out our <a href="https://docs.alliancecan.ca/wiki/Cloud_Technical_Glossary" target="_blank">Cloud Technical Glossary</a> for terms like <em>“virtual machine”</em>, <em>“instance”</em>, <em>“image”</em>, <em>“flavour”</em>, <em>“volume”</em>, etc.</p>
+</section>
+<section id="install-openstack-cli-tools" class="level2">
+<h2 class="anchored" data-anchor-id="install-openstack-cli-tools">Install OpenStack CLI tools</h2>
+<p>On your own computer:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-openstack <span class="at">--python</span> 3.12   <span class="co"># create a new virtual environment</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-openstack/bin/activate</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install python-openstackclient</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Where to run OpenStack CLI commands
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>All <code>openstack</code> commands we use today will be run directly on our own local computer.</p>
+</div>
+</div>
+</section>
+<section id="launch-an-instance-in-5-easy-steps" class="level2">
+<h2 class="anchored" data-anchor-id="launch-an-instance-in-5-easy-steps">Launch an instance in 5 easy steps</h2>
+<section id="step-1---authenticate" class="level3">
+<h3 class="anchored" data-anchor-id="step-1---authenticate">Step 1 - authenticate</h3>
+<p>Our goal is to replace OpenStack web UI operations (lots of mouse clicks) with bash commands. We still need to log in to the web UI to authenticate our CLI client:</p>
+<ol type="1">
+<li>Log into <a href="https://cedar.cloud.alliancecan.ca" target="_blank">Cedar Cloud</a> or <a href="https://arbutus.cloud.alliancecan.ca" target="_blank">old Arbutus</a></li>
+<li>In the left-side drop-down menu, select your project <!-- CCInternal-SFU-training --> <!-- CCInternal-WG-Supp or CCInternal-magic-castle-training project --></li>
+<li>In the right-side drop-down menu, click “Download OpenStack RC File”
+<ul>
+<li>bash script with all env variables to access your OpenStack project through the command-line tools</li>
+<li>RC = Run Commands</li>
+</ul></li>
+<li>Source your OpenStack RC File</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/training/openstack</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-openstack/bin/activate</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> ~/Downloads/CCInternal-<span class="pp">*</span>-openrc.sh .</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> CCInternal-<span class="pp">*</span>-openrc.sh   <span class="co"># at prompt enter your CCDB password</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="step-2---decide-on-vm-flavour-and-image" class="level3">
+<h3 class="anchored" data-anchor-id="step-2---decide-on-vm-flavour-and-image">Step 2 - decide on VM flavour and image</h3>
+<p>In OpenStack, VM <em>flavours</em> define the hardware configurations for virtual machines, specifying vCPUs, RAM, and disk size. There are two types of flavours in our cloud:</p>
+<ol type="1">
+<li><em>Compute</em> (<em>‘c’</em>) flavours
+<ul>
+<li>intended to run for a limited time, usually with a very high sustained CPU/memory usage</li>
+<li>e.g.&nbsp;for code development (need to compile often), building a container</li>
+</ul></li>
+<li><em>Persistent</em> (<em>‘p’</em>) flavours
+<ul>
+<li>intended to run indefinitely, with low or bursty CPU/memory requirements</li>
+<li>e.g.&nbsp;a web/data server</li>
+</ul></li>
+</ol>
+<p>Let’s check the resources available on this system:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> flavor list    <span class="co"># check VM flavours 🡒 use c2-15gb-31</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list     <span class="co"># check OS images 🡒 use Ubuntu-24.04.2-Noble-x64-2025-03</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> flavor show c2-15gb-31 <span class="at">--column</span> disk <span class="at">--column</span> ram   <span class="co"># get more info on this flavour</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Finally, in our cloud setup, each project should have its own dedicated network. This is not something you normally select, but you need to know the value to spin the instance, so let’s find it out:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> network list   <span class="co"># list visible (to us) networks 🡒 use CCInternal-SFU-training-network</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="width: 80%; margin: auto;">
+<table class="caption-top table">
+<caption>Values in this demo</caption>
+<colgroup>
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 23%">
+<col style="width: 23%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Cloud</th>
+<th style="text-align: left;">Flavour</th>
+<th style="text-align: left;">Image</th>
+<th style="text-align: left;">Network</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cedar</td>
+<td style="text-align: left;">c2-15gb-31</td>
+<td style="text-align: left;">Ubuntu-24.04.2-Noble-x64-2025-03</td>
+<td style="text-align: left;">CCInternal-SFU-training-network</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Arbutus</td>
+<td style="text-align: left;">p1-1.5gb</td>
+<td style="text-align: left;">Ubuntu-24.04-Noble-x64-2024-06</td>
+<td style="text-align: left;">CCInternal-WG-Supp-network</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="step-3---create-an-ssh-key-pair-upload-the-public-key" class="level3">
+<h3 class="anchored" data-anchor-id="step-3---create-an-ssh-key-pair-upload-the-public-key">Step 3 - create an SSH key pair, upload the public key</h3>
+<p>Next, we should create an ssh key pair and upload the public key (do it only once!):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/.ssh</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> ed25519 <span class="at">-f</span> cedarKey       <span class="co"># enter a non-empty passphrase (strongly recommended)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-add</span> <span class="at">--apple-use-keychain</span> cedarKey   <span class="co"># store the passphrase in the keychain (MacOS)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair list                  <span class="co"># list currently uploaded keys</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair delete <span class="op">&lt;</span>key<span class="op">&gt;</span>          <span class="co"># if needed</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair create <span class="at">--public-key</span> cedarKey.pub cedarKey   <span class="co"># upload the key</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair list                  <span class="co"># see the newly uploaded key</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><a href="https://docs.alliancecan.ca/wiki/Using_SSH_keys_in_Linux" target="_blank">Using SSH keys in Linux</a></li>
+<li><a href="https://docs.alliancecan.ca/wiki/Generating_SSH_keys_in_Windows" target="_blank">Generating SSH keys in Windows</a></li>
+</ul>
+</section>
+<section id="step-4---launch-the-vm-instance" class="level3">
+<h3 class="anchored" data-anchor-id="step-4---launch-the-vm-instance">Step 4 - launch the VM instance</h3>
+<p>Now it is time to launch our virtual machine:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server create <span class="at">--flavor</span> c2-15gb-31 <span class="at">--image</span> Ubuntu-24.04.2-Noble-x64-2025-03 <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">--nic</span> net-id=CCInternal-SFU-training-network <span class="at">--key-name</span> cedarKey <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">--security-group</span> default alexDemoBox   <span class="co"># launch the VM</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                            <span class="co"># should see our VM in the list</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="step-5---associate-a-floating-ip" class="level3">
+<h3 class="anchored" data-anchor-id="step-5---associate-a-floating-ip">Step 5 - associate a floating IP</h3>
+<p>Next, we need to get a floating IP on an external-facing network and attach it to our VM:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip create Public-Network          <span class="co"># see "floating_ip_address"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add floating ip alexDemoBox <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># attach it to my instance</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now our machine is ready for use!</p>
+<p>Optionally, you can display a few items:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox                      <span class="co"># long table of all attributes</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> image       <span class="co"># check the VM's operating system</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> addresses   <span class="co"># check the VM's floating IP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="connect-to-the-machine" class="level2">
+<h2 class="anchored" data-anchor-id="connect-to-the-machine">Connect to the machine</h2>
+<p>To connect to the VM, we could run the command:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu@<span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span> -i ~/.ssh/cedarKey</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Personally, I prefer to store the configuration in my <code>~/.ssh/config</code> file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;&gt;</span> ~/.ssh/config <span class="op">&lt;&lt;'EOF'</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">Host ubuntu</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">    HostName &lt;floating_ip_address&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">    User ubuntu</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="st">    IdentityFile ~/.ssh/cedarKey</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>and then simply connect with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="install-software" class="level2">
+<h2 class="anchored" data-anchor-id="install-software">Install software</h2>
+<p>It is very easy to install packages from Ubuntu’s standard repositories:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update       <span class="co"># update the list of packages</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> wget bat btop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You can also install Snap packages – these are self-contained apps with all dependencies included that run in a separate sandbox for each app (more isolation/security), e.g.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install emacs <span class="at">--classic</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/snap/bin/emacs</span> <span class="at">-nw</span>   <span class="co"># check the version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If you want to use this machine to build Apptainer containers as root, you’ll need to install Apptainer:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> add-apt-repository <span class="at">-y</span> ppa:apptainer/ppa</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> apptainer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="install-my-configs-optional" class="level2">
+<h2 class="anchored" data-anchor-id="install-my-configs-optional">Install my configs (optional)</h2>
+<p>I will install my own <code>.bashrc</code> and <code>.emacs</code> files:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-A</span> ubuntu          <span class="co"># enable agent forwarding</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">tmux</span>                   <span class="co"># start tmux</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:razoumov/synchpc.git syncHPC   <span class="co"># clone from a private repo</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> ~/syncHPC/bashrc ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="bu">source</span> ~/.bashrc</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.emacs <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> ~/syncHPC/emacs ~/.emacs</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">emacs</span> <span class="at">-nw</span>              <span class="co"># wait for emacs to install its packages from my config</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="create-and-attach-a-volume-optional" class="level2">
+<h2 class="anchored" data-anchor-id="create-and-attach-a-volume-optional">Create and attach a volume (optional)</h2>
+<p>At this point our VM mounts several disk partitions including:</p>
+<ul>
+<li>likely 19GB root/system partition that hosts <code>/home/ubuntu</code></li>
+<li>31GB ephemeral disk from ‘c2-15gb-31’</li>
+</ul>
+<p>If you need more space, you can create and attach additional volumes.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume create <span class="at">--size</span> 100 demoVolume        <span class="co"># create a 100G volume</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume show demoVolume <span class="at">--column</span> status     <span class="co"># wait for it to become available</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume   <span class="co"># attach the volume to the VM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In the last command’s output, note the volume’s device, e.g.&nbsp;<code>/dev/vdc</code>, and use it below:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lsblk</span>                       <span class="co"># list block devices; find /dev/vdc</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkfs.ext4 /dev/vdc     <span class="co"># format the volume</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mount /dev/vdc /data   <span class="co"># to make it persistent across reboots, add an entry to /etc/fstab</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span>                          <span class="co"># should show my mounted volume</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data/tmp</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown ubuntu:ubuntu <span class="at">-R</span> /data/tmp</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /data/tmp ~/tmp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="allow-inbound-traffic-on-a-given-port" class="level2">
+<h2 class="anchored" data-anchor-id="allow-inbound-traffic-on-a-given-port">Allow inbound traffic on a given port</h2>
+<p>The default security group allows only incoming ssh traffic on port 22:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group list           <span class="co"># show all current networking security groups</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group show default   <span class="co"># show details of the default group: likely just incoming ssh on port 22</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s say, we want to run a server that waits for incoming traffic on port 8080 . Here are the three steps to do this:</p>
+<ol type="1">
+<li>It is best to create a new security group (let’s call it <code>rule01</code>):</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group create rule01 <span class="at">--description</span> <span class="st">"Allow incoming trame traffic"</span> <span class="co"># </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li>In this new group, create a security rule to allow incoming TCP traffic on port 8080:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group rule create <span class="at">--protocol</span> tcp <span class="at">--dst-port</span> 8080 <span class="at">--ingress</span> rule01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="3" type="1">
+<li>Attach this new security group to our instance:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add security group alexDemoBox rule01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="set-up-git" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-git">Set up Git</h2>
+<p>If you are planning to use this machine for development, you will want to set up Git:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"..."</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"..."</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.editor <span class="st">"emacs -nw"</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.autocrlf input   <span class="co"># line endings on macOS or Linux</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.ignorecase true</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> diff.colorMoved zebra                        <span class="co"># change from red+green colour coding to purple/turquoise</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.last <span class="st">'diff HEAD~1 HEAD'</span>                <span class="co"># file contents of the last commit</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.all <span class="st">'log -p'</span>                           <span class="co"># file contents of all commits</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.list <span class="st">'ls-tree --full-tree -r HEAD'</span>     <span class="co"># list files inside the repository</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.one <span class="st">"log --graph --date-order --date=short --pretty=format:'%C(cyan)%h %C(yellow)%ar %C(auto)%s%+b %C(green)%ae'"</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.files <span class="st">'show --name-only'</span>               <span class="co"># show only file names in a commit</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.search <span class="st">'grep --break --heading -n -i'</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.st <span class="st">'status'</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.br <span class="st">'branch'</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--get</span> alias.files</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="remote-graphical-applications" class="level2">
+<h2 class="anchored" data-anchor-id="remote-graphical-applications">Remote graphical applications</h2>
+<p>To work with graphical applications on the VM, we need a way to forward the VM’s display output to our local machine. Here are some popular options:</p>
+<ol type="1">
+<li>SSH with X11 Forwarding – slow!</li>
+<li>use a Remote Desktop application (RDP or VNC)</li>
+<li>browser-based access, e.g.&nbsp;using noVNC or Apache Guacamole</li>
+<li>use a hybrid tool like <a href="https://github.com/Xpra-org/xpra" target="_blank">https://github.com/Xpra-org/xpra</a>: rather than exporting an entire desktop session, Xpra can forward individual applications, and they appear on your local desktop as if they were local windows; faster than X11 Forwarding; must be installed on both client and server</li>
+</ol>
+<!-- 1.  -->
+<!--     - persistent remote display / application forwarding system -->
+<!--     - a hybrid between traditional X11 forwarding and remote desktop -->
+<!--     - self-described "screen for X11" -->
+<!--     - rather than exporting an entire desktop session (like typical remote-desktop solutions), Xpra can -->
+<!--       forward individual applications, and they appear on your local desktop as if they were local windows -->
+<!--     - supports disconnection and reconnection without losing the application state -->
+<!--     - apparently, it's very fast! -->
+<!--     - on clusters installed in `/cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/bin/xpra` -->
+<!--     - must be installed on the client and the host -->
+<p>Here, we can try standard X11 forwarding – just keep in mind that it’ll be slow, and we might have to install <code>xterm</code> for the demo.</p>
+</section>
+<section id="remote-visualization-demo-with-trame" class="level2">
+<h2 class="anchored" data-anchor-id="remote-visualization-demo-with-trame">Remote visualization demo with trame</h2>
+<p>On my laptop:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/talks/2025/11-trame</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz demoFiles.tgz trame-tutorial/<span class="dt">{04_application/coneMeshContour.py</span><span class="op">,</span><span class="dt">data/disk_out_ref.vtu}</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> demoFiles.tgz ubuntu:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In the VM:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libxrender1          <span class="co"># X11 Rendering Extension</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libosmesa6           <span class="co"># no GPU 🡒 OSMesa rendering</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span>   <span class="co"># into ~/.local/bin</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-trame <span class="at">--python</span> 3.12        <span class="co"># create a new virtual environment</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install numpy</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame                     <span class="co"># trame core</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vuetify trame-vtk   <span class="co"># widgets</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-components          <span class="co"># needed for trame-tutorial/04_application</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install vtk                       <span class="co"># the VTK library</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="ex">unarchive</span> demoFiles.tgz</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> trame-tutorial/04_application/coneMeshContour.py <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 8080 <span class="at">--server</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now I should point my local browser to <code>&lt;floating_ip_address&gt;:8080</code>.</p>
+</section>
+<section id="create-imagevolume-snapshots" class="level2">
+<h2 class="anchored" data-anchor-id="create-imagevolume-snapshots">Create image/volume snapshots</h2>
+<section id="snapshot-a-vm" class="level3">
+<h3 class="anchored" data-anchor-id="snapshot-a-vm">Snapshot a VM</h3>
+<p>While our VM is running, you can store it as an image:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server image create <span class="at">--name</span> alexDemoImage alexDemoBox</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The new image should appear in the list, likely as <em>“queued”</em> first – wait for it to become <em>“active”</em>. Now you can use this image to launch new VM instances!</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image show alexDemoImage <span class="at">--human-readable</span>   <span class="co"># show its details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>For critical workloads, it is better to stop the VM first or ensure the filesystem is flushed.</li>
+<li>Snapshots save only the root/system disk, not ephemeral or volume attachments – but you can snapshot those separately.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="stopresume-the-vm" class="level3">
+<h3 class="anchored" data-anchor-id="stopresume-the-vm">Stop/resume the VM</h3>
+<p>For critical workloads, it is better to stop the VM first:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server stop alexDemoBox</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># make sure it is "stopped"</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> create <span class="ex">an</span> image snapshot as described above</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server start alexDemoBox</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># should be active</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="snapshot-an-attached-volume" class="level3">
+<h3 class="anchored" data-anchor-id="snapshot-an-attached-volume">Snapshot an attached volume</h3>
+<p>You will need to detach the volume to create its snapshot:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># will likely show Status="in-use"</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> stop <span class="ex">the</span> application using the volume</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># wait until Status="available"</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot create <span class="at">--volume</span> demoVolume dataSnapshot</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume      <span class="co"># reattach the volume to the VM</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="delete-instance-images-and-volume-snapshots" class="level3">
+<h3 class="anchored" data-anchor-id="delete-instance-images-and-volume-snapshots">Delete instance images and volume snapshots</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- ## Play with Wayland -->
+<!-- abc -->
+<!-- install a Wayland compositor and XWayland on the remote VM -->
+<!-- use a remote desktop protocol like RDP or VNC, potentially with waypipe for forwarding Wayland applications -->
+<!-- connect to the VM using a client application that supports the chosen protocol -->
+<!-- use SSH tunneling for secure connections -->
+<!-- Waypipe: run Wayland applications on a remote machine and display them on your local machine -->
+<!-- ## To do -->
+<!-- abc -->
+<!-- show compute and block storage limits -->
+<!-- ## Useful commands -->
+<!-- ```sh -->
+<!-- openstack role assignment list --user <username> --user-domain CCDB --names   # check which cloud projects a user has access to, needs an admin role to run -->
+<!-- ``` -->
+</section>
+</section>
+<section id="destroy-the-vm-and-its-associated-resources" class="level2">
+<h2 class="anchored" data-anchor-id="destroy-the-vm-and-its-associated-resources">Destroy the VM and its associated resources</h2>
+<p>On the laptop:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume delete demoVolume                      <span class="co"># delete the volume</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list                                   <span class="co"># verify</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip delete <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># dissociate the floating IP</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server delete alexDemoBox                  <span class="co"># delete the instance</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> wait <span class="ex">a</span> minute before running the next command</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                                <span class="co"># verify</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group delete rule01               <span class="co"># delete security group</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage            <span class="co"># mentioned earlier</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot   <span class="co"># mentioned earlier</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
