@@ -1,0 +1,474 @@
+---
+title: "Command-line OpenStack"
+aliases:
+  - /openstack
+---
+
+**Tuesday, December 9<sup>th</sup>, 2025**
+
+**Abstract**: OpenStack provides a powerful cloud platform for managing compute, storage, and networking
+resources. While its web dashboard offers a user-friendly interface and can be convenient at times, it often
+involves too many clicks to complete routine tasks such as creating and configuring a virtual machine. The
+command-line interface (CLI) offers a faster, more streamlined way to create and manage resources. In this
+webinar, we will discuss `python-openstackclient`, walk through its setup and authentication, and demonstrate
+how to efficiently perform common OpenStack operations from the terminal. Whether you are managing a few
+instances or automating workflows, this session will help you leverage the CLI for speed, simplicity, and
+productivity.
+
+## Intro
+
+The Alliance Federation provides free cloud resources to researchers on several national system -- Arbutus,
+Cedar Cloud, Nibi Cloud, and Béluga Cloud -- the up-to-date list of which you will always find at
+<https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems>{target="_blank"}. To get started, you will need a
+project in one of these clouds -- follow the instructions in the same page -- these are free but need to be
+requested, and they will use your existing allocation.
+
+- Arbutus v2.0 is being slowly rolled out, currently with a small subset of users for testing
+- Cedar Cloud will eventually be replaced by Fir Cloud (next 6 months)
+
+Before you begin creating your instances, you might want to check out our [Cloud Technical
+Glossary](https://docs.alliancecan.ca/wiki/Cloud_Technical_Glossary){target="_blank"} for terms like *"virtual
+machine"*, *"instance"*, *"image"*, *"flavour"*, *"volume"*, etc.
+
+## Install OpenStack CLI tools
+
+On your own computer:
+
+```sh
+uv venv ~/env-openstack --python 3.12   # create a new virtual environment
+source ~/env-openstack/bin/activate
+uv pip install python-openstackclient
+...
+deactivate
+```
+
+::: {.callout-important}
+##### Where to run OpenStack CLI commands
+All `openstack` commands we use today will be run directly on our own local computer.
+:::
+
+## Launch an instance in 5 easy steps
+
+### Step 1 - authenticate
+
+Our goal is to replace OpenStack web UI operations (lots of mouse clicks) with bash commands. We still need to
+log in to the web UI to authenticate our CLI client:
+
+1. Log into [Cedar Cloud](https://cedar.cloud.alliancecan.ca){target="_blank"} or [old
+	Arbutus](https://arbutus.cloud.alliancecan.ca){target="_blank"}
+2. In the left-side drop-down menu, select your project
+<!-- CCInternal-SFU-training -->   <!-- CCInternal-WG-Supp or CCInternal-magic-castle-training project -->
+3. In the right-side drop-down menu, click "Download OpenStack RC File"
+    - bash script with all env variables to access your OpenStack project through the command-line tools
+	- RC = Run Commands
+4. Source your OpenStack RC File
+
+```sh
+cd ~/training/openstack
+source ~/env-openstack/bin/activate
+mv ~/Downloads/CCInternal-*-openrc.sh .
+source CCInternal-*-openrc.sh   # at prompt enter your CCDB password
+```
+
+### Step 2 - decide on VM flavour and image
+
+In OpenStack, VM *flavours* define the hardware configurations for virtual machines, specifying vCPUs, RAM,
+and disk size. There are two types of flavours in our cloud:
+
+1. *Compute* (*'c'*) flavours
+    - intended to run for a limited time, usually with a very high sustained CPU/memory usage
+	- e.g. for code development (need to compile often), building a container
+1. *Persistent* (*'p'*) flavours
+    - intended to run indefinitely, with low or bursty CPU/memory requirements
+	- e.g. a web/data server
+
+Let's check the resources available on this system:
+
+```sh
+openstack flavor list    # check VM flavours 🡒 use c2-15gb-31
+openstack image list     # check OS images 🡒 use Ubuntu-24.04.2-Noble-x64-2025-03
+openstack flavor show c2-15gb-31 --column disk --column ram   # get more info on this flavour
+```
+
+Finally, in our cloud setup, each project should have its own dedicated network. This is not something you
+normally select, but you need to know the value to spin the instance, so let's find it out:
+
+```sh
+openstack network list   # list visible (to us) networks 🡒 use CCInternal-SFU-training-network
+```
+
+::: {style="width: 80%; margin: auto;"}
+Table: Values in this demo
+
+| Cloud  | Flavour  | Image | Network |
+|:-------|:-------|:------|:------|
+| Cedar  | c2-15gb-31 | Ubuntu-24.04.2-Noble-x64-2025-03 | CCInternal-SFU-training-network |
+| Arbutus | p1-1.5gb  | Ubuntu-24.04-Noble-x64-2024-06 | CCInternal-WG-Supp-network |
+:::
+
+
+### Step 3 - create an SSH key pair, upload the public key
+
+Next, we should create an ssh key pair and upload the public key (do it only once!):
+
+```sh
+cd ~/.ssh
+
+ssh-keygen -t ed25519 -f cedarKey       # enter a non-empty passphrase (strongly recommended)
+ssh-add --apple-use-keychain cedarKey   # store the passphrase in the keychain (MacOS)
+
+openstack keypair list                  # list currently uploaded keys
+openstack keypair delete <key>          # if needed
+openstack keypair create --public-key cedarKey.pub cedarKey   # upload the key
+openstack keypair list                  # see the newly uploaded key
+```
+
+- [Using SSH keys in Linux](https://docs.alliancecan.ca/wiki/Using_SSH_keys_in_Linux){target="_blank"}
+- [Generating SSH keys in Windows](https://docs.alliancecan.ca/wiki/Generating_SSH_keys_in_Windows){target="_blank"}
+
+### Step 4 - launch the VM instance
+
+Now it is time to launch our virtual machine:
+
+```sh
+openstack server create --flavor c2-15gb-31 --image Ubuntu-24.04.2-Noble-x64-2025-03 \
+          --nic net-id=CCInternal-SFU-training-network --key-name cedarKey \
+		  --security-group default alexDemoBox   # launch the VM
+
+openstack server list                            # should see our VM in the list
+```
+
+### Step 5 - associate a floating IP
+
+Next, we need to get a floating IP on an external-facing network and attach it to our VM:
+
+```sh
+openstack floating ip create Public-Network          # see "floating_ip_address"
+openstack server add floating ip alexDemoBox <floating_ip_address>   # attach it to my instance
+```
+
+Now our machine is ready for use!
+
+Optionally, you can display a few items:
+
+```sh
+openstack server show alexDemoBox                      # long table of all attributes
+openstack server show alexDemoBox --column image       # check the VM's operating system
+openstack server show alexDemoBox --column addresses   # check the VM's floating IP
+```
+
+## Connect to the machine
+
+To connect to the VM, we could run the command:
+
+```sh
+ssh ubuntu@<floating_ip_address> -i ~/.ssh/cedarKey
+```
+
+Personally, I prefer to store the configuration in my `~/.ssh/config` file:
+
+```sh
+cat >> ~/.ssh/config <<'EOF'
+Host ubuntu
+    HostName <floating_ip_address>
+    User ubuntu
+    IdentityFile ~/.ssh/cedarKey
+EOF
+```
+
+and then simply connect with:
+
+```sh
+ssh ubuntu
+```
+
+## Install software
+
+It is very easy to install packages from Ubuntu's standard repositories:
+
+```sh
+sudo apt update       # update the list of packages
+sudo apt install -y wget bat btop
+```
+
+You can also install Snap packages -- these are self-contained apps with all dependencies included that run in
+a separate sandbox for each app (more isolation/security), e.g.
+
+```sh
+sudo snap install emacs --classic
+/snap/bin/emacs -nw   # check the version
+```
+
+If you want to use this machine to build Apptainer containers as root, you'll need to install Apptainer:
+
+```sh
+sudo add-apt-repository -y ppa:apptainer/ppa
+sudo apt install -y apptainer
+```
+
+## Install my configs (optional)
+
+I will install my own `.bashrc` and `.emacs` files:
+
+```sh
+ssh -A ubuntu          # enable agent forwarding
+tmux                   # start tmux
+git clone git@github.com:razoumov/synchpc.git syncHPC   # clone from a private repo
+/bin/rm -f ~/.bashrc && ln -s ~/syncHPC/bashrc ~/.bashrc && source ~/.bashrc
+/bin/rm -f ~/.emacs && ln -s ~/syncHPC/emacs ~/.emacs
+emacs -nw              # wait for emacs to install its packages from my config
+```
+
+## Create and attach a volume (optional)
+
+At this point our VM mounts several disk partitions including:
+
+- likely 19GB root/system partition that hosts `/home/ubuntu`
+- 31GB ephemeral disk from 'c2-15gb-31'
+
+If you need more space, you can create and attach additional volumes.
+
+```sh
+openstack volume create --size 100 demoVolume        # create a 100G volume
+openstack volume show demoVolume --column status     # wait for it to become available
+openstack server add volume alexDemoBox demoVolume   # attach the volume to the VM
+```
+
+In the last command's output, note the volume's device, e.g. `/dev/vdc`, and use it below:
+
+```sh
+ssh ubuntu
+lsblk                       # list block devices; find /dev/vdc
+sudo mkfs.ext4 /dev/vdc     # format the volume
+sudo mkdir /data
+sudo mount /dev/vdc /data   # to make it persistent across reboots, add an entry to /etc/fstab
+df                          # should show my mounted volume
+sudo mkdir /data/tmp
+sudo chown ubuntu:ubuntu -R /data/tmp
+ln -s /data/tmp ~/tmp
+```
+
+## Allow inbound traffic on a given port
+
+The default security group allows only incoming ssh traffic on port 22:
+
+```sh
+openstack security group list           # show all current networking security groups
+openstack security group show default   # show details of the default group: likely just incoming ssh on port 22
+```
+
+Let's say, we want to run a server that waits for incoming traffic on port 8080 . Here are the three steps to
+do this:
+
+1. It is best to create a new security group (let's call it `rule01`):
+
+```sh
+openstack security group create rule01 --description "Allow incoming trame traffic" # 
+```
+
+2. In this new group, create a security rule to allow incoming TCP traffic on port 8080:
+
+```sh
+openstack security group rule create --protocol tcp --dst-port 8080 --ingress rule01
+```
+
+3. Attach this new security group to our instance:
+
+```sh
+openstack server add security group alexDemoBox rule01
+```
+
+## Set up Git
+
+If you are planning to use this machine for development, you will want to set up Git:
+
+```sh
+git config --global user.name "..."
+git config --global user.email "..."
+git config --global core.editor "emacs -nw"
+git config --global core.autocrlf input   # line endings on macOS or Linux
+git config --global core.ignorecase true
+git config --global diff.colorMoved zebra                        # change from red+green colour coding to purple/turquoise
+git config --global alias.last 'diff HEAD~1 HEAD'                # file contents of the last commit
+git config --global alias.all 'log -p'                           # file contents of all commits
+git config --global alias.list 'ls-tree --full-tree -r HEAD'     # list files inside the repository
+git config --global alias.one "log --graph --date-order --date=short --pretty=format:'%C(cyan)%h %C(yellow)%ar %C(auto)%s%+b %C(green)%ae'"
+git config --global alias.files 'show --name-only'               # show only file names in a commit
+git config --global alias.search 'grep --break --heading -n -i'
+git config --global alias.st 'status'
+git config --global alias.br 'branch'
+git config --get alias.files
+git config --global init.defaultBranch main
+```
+
+## Remote graphical applications
+
+To work with graphical applications on the VM, we need a way to forward the VM's display output to our local
+machine. Here are some popular options:
+
+1. SSH with X11 Forwarding -- slow!
+1. use a Remote Desktop application (RDP or VNC)
+1. browser-based access, e.g. using noVNC or Apache Guacamole
+1. use a hybrid tool like <https://github.com/Xpra-org/xpra>{target="_blank"}: rather than exporting an entire
+   desktop session, Xpra can forward individual applications, and they appear on your local desktop as if they
+   were local windows; faster than X11 Forwarding; must be installed on both client and server
+
+<!-- 1.  -->
+<!--     - persistent remote display / application forwarding system -->
+<!--     - a hybrid between traditional X11 forwarding and remote desktop -->
+<!--     - self-described "screen for X11" -->
+<!--     - rather than exporting an entire desktop session (like typical remote-desktop solutions), Xpra can -->
+<!--       forward individual applications, and they appear on your local desktop as if they were local windows -->
+<!--     - supports disconnection and reconnection without losing the application state -->
+<!--     - apparently, it's very fast! -->
+<!--     - on clusters installed in `/cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/bin/xpra` -->
+<!--     - must be installed on the client and the host -->
+
+Here, we can try standard X11 forwarding -- just keep in mind that it'll be slow, and we might have to install
+`xterm` for the demo.
+
+## Remote visualization demo with trame
+
+On my laptop:
+
+```sh
+cd ~/talks/2025/11-trame
+tar cvfz demoFiles.tgz trame-tutorial/{04_application/coneMeshContour.py,data/disk_out_ref.vtu}
+scp demoFiles.tgz ubuntu:
+```
+
+In the VM:
+
+```sh
+sudo apt install -y libxrender1          # X11 Rendering Extension
+sudo apt install -y libosmesa6           # no GPU 🡒 OSMesa rendering
+
+curl -LsSf https://astral.sh/uv/install.sh | sh   # into ~/.local/bin
+uv venv ~/env-trame --python 3.12        # create a new virtual environment
+source ~/env-trame/bin/activate
+uv pip install numpy
+uv pip install trame                     # trame core
+uv pip install trame-vuetify trame-vtk   # widgets
+uv pip install trame-components          # needed for trame-tutorial/04_application
+uv pip install vtk                       # the VTK library
+
+unarchive demoFiles.tgz
+python trame-tutorial/04_application/coneMeshContour.py --host 0.0.0.0 --port 8080 --server
+```
+
+Now I should point my local browser to `<floating_ip_address>:8080`.
+
+
+
+
+
+
+
+
+## Create image/volume snapshots
+
+### Snapshot a VM
+
+While our VM is running, you can store it as an image:
+
+```sh
+openstack server image create --name alexDemoImage alexDemoBox
+openstack image list
+
+```
+
+The new image should appear in the list, likely as *"queued"* first -- wait for it to become *"active"*. Now
+you can use this image to launch new VM instances!
+
+```sh
+openstack image show alexDemoImage --human-readable   # show its details
+```
+
+::: {.callout-note}
+- For critical workloads, it is better to stop the VM first or ensure the filesystem is flushed.
+- Snapshots save only the root/system disk, not ephemeral or volume attachments -- but you can snapshot those separately.
+:::
+
+### Stop/resume the VM
+
+For critical workloads, it is better to stop the VM first:
+
+```sh
+openstack server stop alexDemoBox
+openstack server show alexDemoBox --column OS-EXT-STS:vm_state   # make sure it is "stopped"
+>>> create an image snapshot as described above
+openstack server start alexDemoBox
+openstack server show alexDemoBox --column OS-EXT-STS:vm_state   # should be active
+```
+
+### Snapshot an attached volume
+
+You will need to detach the volume to create its snapshot:
+
+```sh
+openstack volume list          # will likely show Status="in-use"
+>>> stop the application using the volume
+openstack server remove volume alexDemoBox demoVolume   # detach the volume from the VM
+openstack volume list          # wait until Status="available"
+openstack volume snapshot create --volume demoVolume dataSnapshot
+openstack server add volume alexDemoBox demoVolume      # reattach the volume to the VM
+openstack volume snapshot list
+```
+
+### Delete instance images and volume snapshots
+
+```sh
+openstack image delete alexDemoImage
+openstack volume snapshot delete dataSnapshot
+```
+
+
+
+
+
+
+<!-- ## Play with Wayland -->
+
+<!-- abc -->
+<!-- install a Wayland compositor and XWayland on the remote VM -->
+<!-- use a remote desktop protocol like RDP or VNC, potentially with waypipe for forwarding Wayland applications -->
+<!-- connect to the VM using a client application that supports the chosen protocol -->
+<!-- use SSH tunneling for secure connections -->
+<!-- Waypipe: run Wayland applications on a remote machine and display them on your local machine -->
+
+
+<!-- ## To do -->
+
+<!-- abc -->
+<!-- show compute and block storage limits -->
+
+<!-- ## Useful commands -->
+
+<!-- ```sh -->
+<!-- openstack role assignment list --user <username> --user-domain CCDB --names   # check which cloud projects a user has access to, needs an admin role to run -->
+<!-- ``` -->
+
+
+
+
+
+## Destroy the VM and its associated resources
+
+On the laptop:
+
+```sh
+openstack server remove volume alexDemoBox demoVolume   # detach the volume from the VM
+openstack volume delete demoVolume                      # delete the volume
+openstack volume list                                   # verify
+
+openstack floating ip delete <floating_ip_address>   # dissociate the floating IP
+
+openstack server delete alexDemoBox                  # delete the instance
+>>> wait a minute before running the next command
+openstack server list                                # verify
+
+openstack security group delete rule01               # delete security group
+
+openstack image delete alexDemoImage            # mentioned earlier
+openstack volume snapshot delete dataSnapshot   # mentioned earlier
+```
