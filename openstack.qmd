@@ -21,7 +21,12 @@ The Alliance Federation provides free cloud resources to researchers on several 
 Cedar Cloud, Nibi Cloud, and Béluga Cloud -- the up-to-date list of which you will always find at
 <https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems>{target="_blank"}. To get started, you will need a
 project in one of these clouds -- follow the instructions in the same page -- these are free but need to be
-requested, and they will use your existing allocation.
+requested, and they will use your existing allocation (within your RAS or RAC quotas).
+
+::: {.callout-note}
+- RAS = Regular Access Service (default allocation)
+- RAC = annual Research Allocation Competition
+:::
 
 - Arbutus v2.0 is being slowly rolled out, currently with a small subset of users for testing
 - Cedar Cloud will eventually be replaced by Fir Cloud (next 6 months)
@@ -29,6 +34,8 @@ requested, and they will use your existing allocation.
 Before you begin creating your instances, you might want to check out our [Cloud Technical
 Glossary](https://docs.alliancecan.ca/wiki/Cloud_Technical_Glossary){target="_blank"} for terms like *"virtual
 machine"*, *"instance"*, *"image"*, *"flavour"*, *"volume"*, etc.
+
+- [Our previous cloud webinars](https://training.westdri.ca/tools/virtual){target="_blank"}
 
 ## Install OpenStack CLI tools
 
@@ -77,10 +84,10 @@ and disk size. There are two types of flavours in our cloud:
 
 1. *Compute* (*'c'*) flavours
     - intended to run for a limited time, usually with a very high sustained CPU/memory usage
-	- e.g. for code development (need to compile often), building a container
+	- e.g. for code development (need to compile often), or building a container image
 1. *Persistent* (*'p'*) flavours
     - intended to run indefinitely, with low or bursty CPU/memory requirements
-	- e.g. a web/data server
+	- e.g. for hosting a web server, a data portal, or a web application
 
 Let's check the resources available on this system:
 
@@ -190,6 +197,17 @@ It is very easy to install packages from Ubuntu's standard repositories:
 sudo apt update       # update the list of packages
 sudo apt install -y wget bat btop
 ```
+
+::: {.callout-note}
+##### Security update
+At this point you probably should upgrade everything on your machine, including installing the latest security
+patches:
+```sh
+sudo apt upgrade   # upgrade installed software to their latest versions
+sudo reboot
+```
+but I won't do it now, as it might take quite a few minutes.
+:::
 
 You can also install Snap packages -- these are self-contained apps with all dependencies included that run in
 a separate sandbox for each app (more isolation/security), e.g.
@@ -367,6 +385,15 @@ Now I should point my local browser to `<floating_ip_address>:8080`.
 
 ## Create image/volume snapshots
 
+You can create a snapshot (backup image) of your virtual machine, so that you can launch exactly the same
+virtual machine later on, or even migrate it to another cloud. The snapshot will include:
+
+- the operating system
+- all additional installed software and configuration files
+- all data from the root/system disk
+
+but not data from the ephemeral disk or volume attachments.
+
 ### Snapshot a VM
 
 While our VM is running, you can store it as an image:
@@ -385,8 +412,10 @@ openstack image show alexDemoImage --human-readable   # show its details
 ```
 
 ::: {.callout-note}
-- For critical workloads, it is better to stop the VM first or ensure the filesystem is flushed.
-- Snapshots save only the root/system disk, not ephemeral or volume attachments -- but you can snapshot those separately.
+- For critical workloads, it is better to stop the VM first (see below).
+- Snapshots save only the root/system disk, not the ephemeral disk or volume attachments.
+    - the ephemeral disk is temporary: no way to snapshot it in our setup
+    - volume attachments can be saved separately (see below)
 :::
 
 ### Stop/resume the VM
