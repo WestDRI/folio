@@ -4,17 +4,17 @@ aliases:
   - /plotly
 ---
 
-<br>
-![](/fig/plotlyQR.png "https://wgpages.netlify.app/plotly"){width=40%}
-<br><br>
+<!-- <br> -->
+<!-- ![](/fig/plotlyQR.png "https://wgpages.netlify.app/plotly"){width=40%} -->
+<!-- <br><br> -->
 
 <!-- URLs = ["", ""] -->
 <!-- `~/training/paraviewWorkshop/hidden/solutions.md` on presenter's laptop -->
 
-* Developed by a Montreal-based company https://plotly.com
+* Developed by a Montreal-based company <https://plotly.com>{target="_blank"}
 * Open-source scientific plotting Python library for Python, R, MATLAB, Perl, Julia
 * Front end uses JavaScript/HTML/CSS and D3.js visualization library, with Plotly JavaScript library on top
-* Supports over 40 unique chart types
+* Supports over 50 unique chart types
 
 <!-- * files are hosted on Amazon S3 -->
 
@@ -23,18 +23,93 @@ aliases:
 <!-- 1. stored as offline html5 files -->
 <!-- 1. displayed inside a Jupyter notebook -->
 
+<!--
+==========================================================================================
+Phase 1: The Foundations (30 Minutes)
+    The "Why" of Interactive Viz: Why static charts aren't always enough (tooltips, zooming, filtering).
+    Plotly Express (PX) vs. Graph Objects (GO): Understanding the high-level API for speed vs. the low-level API for total control.
+    The Basic Recipe:
+        Loading data (Pandas integration).
+        The standard syntax: fig = px.chart_type(data, x, y, color...).
+        fig.show() and the interactive toolbar.
+Phase 2: Essential Chart Types & Customization (40 Minutes)
+    Comparison & Distribution:
+        Dynamic Bar Charts (sorting and stacking).
+        Histograms and Box Plots for statistical snapshots.
+    Correlation & Trends:
+        Scatter plots with size and color dimensions.
+        Adding trendlines and marginal rugs.
+    Refining the Aesthetics:
+        Updating traces and layouts (fig.update_layout).
+        Customizing hover labels (the most powerful feature for user engagement).
+Phase 3: Advanced Visuals & Faceting (30 Minutes)
+    Facet Plots (Subplots): Breaking down complex data into a grid of charts based on a category.
+    Time Series: Handling dates, range sliders, and selectors.
+    Animated Data: Using the animation_frame parameter to show how data changes over time (the "Hans Rosling" effect).
+Phase 4: Exporting & Next Steps (20 Minutes)
+    Saving your work: Exporting as standalone HTML files or static images.
+    The Ecosystem: A 5-minute intro to Dash (turning your plots into full web apps).
+    Q&A / Mini-Challenge: Give students a fresh dataset and ask them to find one trend and highlight it using a custom hover label.
+Suggested Tools for the Workshop
+    Environment: Google Colab or Jupyter Notebooks (zero setup required for students).
+    Dataset: Use a "tidy" dataset like the built-in gapminder, tips, or stocks datasets provided by plotly.express.data.
+Tips for a Successful Session
+    The "Copy-Paste" Rule: Provide a GitHub gist or a starter notebook. In a 2-hour window, you don't want students stuck on a syntax error; you want them experimenting with parameters.
+    Focus on Hover: Spend extra time showing how to clean up hover text. It's the difference between a "techy" chart and a professional one.
+
+import plotly.express as px
+fig = px.chart_type(
+    data_frame = df,           # Your Pandas DataFrame
+    x = "column_a",            # Column for x-axis
+    y = "column_b",            # Column for y-axis
+    color = "column_c",        # Color-coding by category
+    title = "My Chart Title"   # Always label your work!
+)
+fig.show()
+
+2. Common Chart Types
+Goal,Function,Key Arguments
+Trends,px.line(),"line_group, markers=True"
+Correlation,px.scatter(),"size, hover_name, trendline=""ols"""
+Parts of Whole,px.bar(),"barmode=""group"" or ""stack"""
+Distributions,px.histogram(),"nbins, marginal=""rug"" or ""box"""
+Hierarchies,px.treemap(),"path=['level1', 'level2'], values"
+
+3. Customizing the "Look & Feel"
+fig.update_layout(
+    title_font_size=24,
+    template="plotly_dark", # Try 'ggplot2', 'seaborn', 'none'
+    showlegend=False
+)
+fig.update_traces(marker_color="red", selector=dict(type="bar"))
+
+4. The "Magic" Parameters
+Add these inside your px function call for instant interactivity:
+    Faceting (Subplots): facet_col="category_column" (creates a grid of charts).
+    Animation: animation_frame="year_column" (adds a play button).
+    Hover Data: hover_data=["extra_col1", "extra_col2"] (adds more info to tooltips).
+    Log Scales: log_x=True or log_y=True.
+	
+fig.write_html("my_report.html")
+fig.write_image("my_report.png")   # requires 'kaleido' library
+
+==========================================================================================
+-->
+
 ## Links
 
-1. [Online gallery](https://plotly.com/python) with code examples by category
-1. [Plotly Express tutorial](https://plotly.com/python/plotly-express), also plotly.express
-1. [Plotly Community Forum](https://community.plotly.com)
-1. [Keyword index](https://plot.ly/python/reference)
-1. [Getting started guide](https://plot.ly/python/getting-started)
-1. [Plotly vs matplotlib](https://www.fabi.ai/blog/plotly-vs-matplotlib-a-quick-comparison-with-visual-guides)
+1. [Online gallery](https://plotly.com/python){target="_blank"} with code examples by category
+1. [Plotly Express tutorial](https://plotly.com/python/plotly-express){target="_blank"}, also plotly.express
+1. [Plotly Community Forum](https://community.plotly.com){target="_blank"}
+1. [Keyword index](https://plot.ly/python/reference){target="_blank"}
+1. [Getting started guide](https://plot.ly/python/getting-started){target="_blank"}
+1. [Plotly vs
+   matplotlib](https://www.fabi.ai/blog/plotly-vs-matplotlib-a-quick-comparison-with-visual-guides){target="_blank"}
    (with video)
-1. [Displaying Figures](https://plot.ly/python/offline) (including offscreen into a file)
-1. [Saving static images (PNG, PDF, etc) ](https://plot.ly/python/static-image-export)
-1. [Plotly and IPython / Jupyter notebook](https://plot.ly/ipython-notebooks) with additional plotting examples
+1. [Displaying Figures](https://plot.ly/python/offline){target="_blank"} (including offscreen into a file)
+1. [Saving static images (PNG, PDF, etc) ](https://plot.ly/python/static-image-export){target="_blank"}
+1. [Plotly and IPython / Jupyter notebook](https://plot.ly/ipython-notebooks){target="_blank"} with additional
+   plotting examples
 
 <!-- 1. [Code examples](https://plot.ly/create) -->
 <!-- 1. [Community feed with gallery](https://plot.ly/feed) -->
@@ -42,10 +117,16 @@ aliases:
 <!-- 1. [Connecting to databases](https://plot.ly/python/#databases) -->
 <!-- 1. [Creating dashboards](https://plot.ly/python/dashboard) with Dash Enterprise -->
 
-## Installation
+## Today's setup
 
-- You will need Python 3, along with *some* Python package manager
-- Use your favourite installer:
+Point your browser to <https://jupyter.cass.vastcloud.org>{target="_blank"}, ask for resources, and start a
+Jupyter notebook.
+
+## Installation on your own computer
+
+If you are brave enough to try today's examples on your own computer, you will need Python 3 and a Python
+package manager. Then, use your favourite installer to install Plotly, ideally inside a dedicated virtual
+environment:
 
 ```sh
 $ pip install plotly
@@ -53,22 +134,33 @@ $ uv pip install plotly
 $ conda install -c conda-forge plotly
 ```
 
-- Other recommended libraries to install for today's session: `jupyter`, `numpy`, `pandas`, `networkx`,
-  `scikit-image`, `kaleido`
+Other recommended libraries to install for today's session:
+
+- `jupyter`
+- `nbformat` to plot inside Jupyter notebooks
+- `kaleido` to save plots to PNG
+- `numpy`
+- `pandas`
+- `networkx`,
+- `scikit-image`
+  
+
+  
+
 
 ## Displaying Plotly figures
 
-<!-- ```sh -->
-<!-- uv pip install kaleido   # to save PNG -->
-<!-- ``` -->
+### Renderers
 
 With Plotly, you can:
-1. work inside a Python shell,
-2. save your script into a *.py file and then run it, or
-3. run code inside a Jupyter Notebook (start a notebook with `jupyter notebook` or even better `jupyter lab`).
 
-Plotly supports a number of renderers, and it will attempt to choose an appropriate renderer automatically (in
-my experience, not very successfully). You can examine the selected default renderer with:
+1. work inside a Python shell,
+2. save your script into a `*.py` file and then run it, or
+3. run your script inside a Jupyter notebook (start a notebook with `jupyter notebook` or even better
+   `jupyter lab`).
+
+Plotly supports a number of renderers, and it will attempt to choose an appropriate renderer automatically --
+in my experience, often not very successfully. You can examine the selected default renderer with:
 
 ```py
 import plotly.io as pio
@@ -82,8 +174,8 @@ pio.renderers.default = 'browser'    # open each plot in a new browser tab
 pio.renderers.default = 'notebook'   # plot inside a Jupyter notebook
 ```
 
-If you want to have this setting persistent across sessions (and not set it manually or in the code), you can
-create a file `~/.plotly_startup.py` with the following:
+If you want to have this setting persistent across interactive sessions (and not set it manually or in the
+code), you can create a file `~/.plotly_startup.py` with the following:
 
 ```py
 try:
@@ -91,10 +183,18 @@ try:
     pio.renderers.default = "browser"
 except ImportError:
     pass
-
 ```
 
-and set `export PYTHONSTARTUP=~/.plotly_startup.py` in your `~/.bashrc` file.
+and set `export PYTHONSTARTUP=~/.plotly_startup.py` in your `~/.bashrc` file. Note that `$PYTHONSTARTUP` can
+be used to customize only your interactive Python sessions (in the terminal or Jupyter), i.e. it does not
+execute when you run a script. If you are running a script, you would insert
+
+```py
+import plotly.io as pio
+pio.renderers.default = "browser"
+```
+
+directly into the script.
 
 <!-- 'iframe'               Shows plot inline (only in Jupyter) -->
 <!-- 'notebook_connected'   Full interactivity in Jupyter -->
@@ -103,34 +203,82 @@ and set `export PYTHONSTARTUP=~/.plotly_startup.py` in your `~/.bashrc` file.
 <!-- png_renderer.width = 500 -->
 <!-- png_renderer.height = 500 -->
 
-Let's create a simple line plot:
+### Working in a Jupyter notebook
+
+Let me demonstrate this using a renderer with a simple plot. Inside a Jupyter notebook, set the renderer and
+then create a basic line plot:
 
 ```py
+import plotly.io as pio
+pio.renderers.default = 'notebook'
+
 import plotly.graph_objs as go
 from numpy import linspace, sin
 x = linspace(0.01,1,100)
 y = sin(1/x)
 line = go.Scatter(x=x, y=y, mode='lines+markers', name='sin(1/x)')
-fig = go.Figure([line])
-fig.show()   # should open in your browser
 
-fig.write_image("/Users/razoumov/tmp/lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, webp, pdf
-fig.write_html("/Users/razoumov/tmp/lines.html")            # interactive
-fig.write_json("/Users/razoumov/tmp/2007.json")             # for further editing
+# Option 1
+go.Figure([line])   # pass data = a list of trace instances
+                    # plot should automatically dispay inside the notebook
+
+# Option 2
+fig = go.Figure([line])   # no plot displayed at this point
+fig.show()                # plot should dispay inside the notebook
 ```
 
-In general, use `fig.show()` when working outside of a Jupyter Notebook, or when you want to save your plot to
-a file. If you want to display plots inline inside a Jupyter notebook, set `pio.renderers.default =
-'notebook'` and use the command
+If you want to save your figure, you can mouse over the plot and select "Download plot as a
+PNG". Alternatively, you can do this from the code:
 
 ```py
-go.Figure([line])
+fig.write_html("lines.html")            # interactive HTML file
+fig.write_image("lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, webp, pdf
+                                        # requires 'kaleido' library and Chromium engine library
+                                        # will take a while in Jupyter
 ```
 
-that should display plots right inside the notebook, without a need for `fig.show()`.
+The last command is meant for the Python shell, not for Jupyter. If run in Jupyter, it'll use an external
+library `kaleido` which in turn will the Chromium engine system library, and the whole process will **take
+minutes** -- something to keep in mind.
 
-You can find more details at https://plotly.com/python/renderers .
+### Working in a Python shell
 
+Now, let me switch briefly to running Plotly on my computer:
+
+```py
+import plotly.io as pio
+pio.renderers.default   # 'browser'
+
+import plotly.graph_objs as go
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+y = sin(1/x)
+line = go.Scatter(x=x, y=y, mode='lines+markers', name='sin(1/x)')
+fig = go.Figure([line])   # no plot displayed at this point
+
+fig.show()                # plot should dispay inside a new browser tab
+
+fig.write_html("lines.html")            # interactive HTML file
+fig.write_image("lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, webp, pdf
+```
+
+### Running from a script
+
+abc
+
+
+
+
+::: {.callout-important}
+## Key point
+In general, use `fig.show()` to enforce displaying the plot (shell or Jupyter), but it shouldn't be needed
+inside a Jupyter notebook if you use the command `go.Figure([line])` without saving the figure to a variable
+-- then your plot will be displayed automatically.
+:::
+
+You can find more details at <https://plotly.com/python/renderers>{target="_blank"}.
+
+abc
 
 
 
@@ -142,6 +290,24 @@ You can find more details at https://plotly.com/python/renderers .
 
 
 ## Plotly Express (data exploration) library
+
+<!-- video tutorial https://plotly.com/python/plotly-express -->
+
+
+
+
+abc Why use go over px?
+1. Multiple Traces: If you want to overlay a scatter plot, a bar chart, and a trend line that all use
+   different data sources, go makes this much cleaner.
+1. Fine-tuned Markers: You have deeper access to marker properties like line (the border of the circle),
+   opacity, and custom hoverinfo.
+1. Performance: For extremely large datasets, go.Scattergl (the WebGL version of scatter) provides
+   significantly better performance than standard scatter plots.
+
+
+
+
+
 
 Normally, in this workshop I would teach `plotly.graph_objs` (Graph Objects) which is the standard module in
 Plotly.py -- you saw its example in the previous section.
@@ -256,6 +422,13 @@ px.scatter_ternary(df, a="Joly", b="Coderre", c="Bergeron", color="winner",
 
 
 ## Plotting via Graph Objects
+
+
+
+?go.Figure
+
+
+
 
 While Plotly Express is excellent for quick data exploration, it has some limitations: it supports fewer plot
 types and does not allow combining different plot types directly in a single figure. Plotly Graph Objects, on
@@ -792,22 +965,547 @@ Try switching `plot_edges=False` to `plot_edges=True` -- you'll see individual p
 
 
 
-## Dash library for making interactive web applications
+## Dash library for interactive web applications
 
-[Plotly Dash](https://github.com/plotly/dash) library is a framework for making interactive data applications.
+Plotly Dash library ([GitHub source](https://github.com/plotly/dash){target="_blank"}) is a framework for
+making interactive data applications.
 
-1. Dash Python User Guide https://dash.plotly.com
-1. https://dash.gallery/Portal has ~100 app examples
+- Dash Python User Guide <https://dash.plotly.com>{target="_blank"}
+- <https://dash.gallery/Portal>{target="_blank"} has ~100 app examples
+
+Some of its features:
+
+- can create a dropdown to select data to plot,
+- can enter a value into a box to select or interpolate data to plot,
+- selection in one plot shows in the other plot,
+- can mix and match these plots into a single web app,
+- can create different tabs inside the app, with the render automatically switching between them,
+- even can create an entire website with user guides, plots, code examples, etc.
+
+<!-- &nbsp; -->
+
+To install the core Dash library, use your favourite installer, ideally inside a dedicated virtual
+environment:
+
+```sh
+$ pip install dash
+$ uv pip install dash
+$ conda install -c conda-forge dash
+```
+
+::: {.callout-caution}
+While you can run Dash inside JupyterHub on the training cluster but, in my experience, `mode="inline"` often
+does not work as intended. Dash starts a background web server that runs on a given port and -- with
+`mode="inline"` -- should display the site live inside the Jupyter notebook. In practice, very often the
+notebook is not able to connect to the server, and I have not yet found a reliable way to run Dash in a remote
+Jupyter notebook on the training cluster. Moreover, Dash library does not provide a way to kill the server --
+instead you do this by killing the underlying Python process.  
+**For this reason, I will demo it locally on my computer.**
+:::
+
+Here is how I installed it on my computer, along with some dependencies:
+
+```sh
+uv pip install dash                        # main Dash library
+uv pip install dash-ag-grid                # to display tabular data components
+uv pip install dash-bootstrap-components   # community-maintained styling library
+uv pip install dash-mantine-components     # community-maintained styling library
+```
+
+### Our baseline plot without Dash
+
+On my computer I already have a setup that opens every Plotly plot in a new browser tab, using the setup
+mentioned at the start of this workshop. As a reminder, if you need to redirect your plot, use one of these
+options:
+
+```py
+import plotly.io as pio
+pio.renderers.default = 'notebook'
+pio.renderers.default = 'browser'
+```
+
+Let's create a simple scatter plot with Plotly Express:
+
+```py
+import plotly.express as px
+import numpy as np
+
+npoints = 100
+fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+                 range_x=[0,1], range_y=[0,1])
+fig.update_traces(marker=dict(size=30, opacity=0.8))
+fig.show()
+```
+
+Alternatively, we could create the same plot with Graph Objects:
+
+```py
+import plotly.graph_objs as go
+import numpy as np
+
+npoints = 100
+trace = go.Scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+                   mode='markers', marker=dict(size=[30]*npoints))
+fig = go.Figure(data=[trace])
+fig.update_layout(xaxis=dict(range=[0,1]), yaxis=dict(range=[0, 1]))
+fig.show()
+```
+
+### Our baseline plot in Dash
+
+To serve our Graph Objects plot inside Dash, we need to create a script `scatter1.py`:
+
+```py
+# save this as scatter1.py
+import plotly.graph_objs as go
+import numpy as np
+from dash import Dash, html, dcc
+
+npoints = 100
+trace = go.Scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+                   mode='markers', marker=dict(size=[30]*npoints))
+fig = go.Figure(data=[trace])
+fig.update_layout(xaxis=dict(range=[0,1]), yaxis=dict(range=[0, 1]), width=800, height=800)
+
+app = Dash()                # launch an instance of a Dash app
+app.layout = [
+    html.Div(children='Dash scatter plot with Graph Objects'),   # content container
+    dcc.Graph(figure=fig)   # our plot container from Dash Core Components
+]
+app.run(debug=True)   # run the instance
+```
+
+::: {.callout-note}
+You must run a Dash script by passing it to a Python interpreter:  
+```sh
+python scatter1.py
+```
+Because of how Dash is designed, running this script from a Python shell won't work (nothing will happen if
+you try). One particularly nice feature of Dash is *hot reloading*: whenever you change the script file, Dash
+automatically re-executes it and refreshes the app. This would not be possible in a shell.
+:::
+
+In this code above `html.Div` is a wrapper for HTML5 standard block-level container (content division
+element). It takes a list of content elements (or a single element) and CSS utility classes for styling.
+
+Alternatively, you can use Plotly Express functions with Dash:
+
+```py
+# save this as scatter2.py
+import plotly.express as px
+import numpy as np
+from dash import Dash, html, dcc, callback, Output, Input
+
+npoints = 100
+fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+                 range_x=[0,1], range_y=[0,1], width=800, height=800)
+fig.update_traces(marker=dict(size=30, opacity=0.8))
+
+app = Dash()
+app.layout = [
+    html.Div(children='Dash scatter plot with Plotly Express'),
+    dcc.Graph(figure=fig)
+]
+app.run(debug=True)
+```
+
+### Make it interactive
+
+Let's add two new elements to our script:
+
+1. a slider, to select the number of points, and
+1. a callback function that takes `value` input from the slider component `slider1` and returns `figure`
+   output to the graph component `g1`
+
+```py
+# save this as scatter3.py
+import plotly.express as px
+import numpy as np
+from dash import Dash, html, dcc, callback, Output, Input
+
+app = Dash()
+app.layout = [
+    html.Div(children='Scatter plot with controls'),   # HTML component
+    dcc.Slider(id='slider1', min=5, max=200, step=5,   # slider conponent
+               value=100,  # default starting value
+               marks={i: str(i) for i in range(0,201,50)},
+               tooltip={"placement": "bottom", "always_visible": True}
+               ),
+    dcc.Graph(figure={}, id='g1')                      # graph component
+]
+@callback(
+    Output(component_id='g1', component_property='figure'),
+    Input(component_id='slider1', component_property='value')
+)
+def update_graph(selected):
+    print('running the callback function for', selected)
+    fig = px.scatter(x=np.random.rand(selected), y=np.random.rand(selected),
+                     range_x=[0,1], range_y=[0,1], width=800, height=800)
+    fig.update_traces(marker=dict(size=30, opacity=0.8))
+    return fig
+app.run(debug=True)
+```
+
+In this script, we moved the figure-drawing code into the callback function, since it depends on the input
+number of points and must be re-executed each time we move slider.
+
+Inside the callback function, the argument name `selected` is used only inside the function.
+
+### Add some style
+
+At the moment, our application is very minimal in appearance. While we could style it using HTML and CSS, that
+approach assumes some familiarity with CSS. Dash provides higher-level components that make styling much
+easier. A very popular option in industry, Dash Enterprise (requires a commercial license starting at 35k per
+year) provides Dash Design Kit, but it's not an option for us.
+
+Fortunately, the Dash community has developed two open-source libraries -- Dash Bootstrap Components and Dash
+Mantine Components -- that make styling Dash apps much easier. They are easy to install:
+
+```sh
+$ uv pip install dash-bootstrap-components
+$ uv pip install dash_mantine_components
+```
+
+Today, I'll use Dash Bootstrap Components, though the two libraries offer similar functionality.
+
+```py
+# save this as scatter4.py
+import plotly.express as px
+import numpy as np
+from dash import Dash, html, dcc, callback, Output, Input
+import dash_bootstrap_components as dbc
+
+external_stylesheets = [dbc.themes.CERULEAN]
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+app.layout = dbc.Container([
+    dbc.Row([html.Div('Horizontal layout', className="text-primary text-center fs-3")]), # colour+centring+size
+    dbc.Row([
+        dbc.Col([
+            dcc.Slider(id='slider1', min=5, max=200, step=5,
+                       value=100,
+                       vertical=True,
+                       marks={i: str(i) for i in range(0,201,50)},
+                       tooltip={"placement": "left", "always_visible": True}
+                       ),
+        ], width="auto", align="center", className="ms-4"),   # ms-4 is a left margin of size 4
+        dbc.Col([
+            dcc.Graph(figure={}, id='g1')
+        ], width="auto"),
+    ], justify="center")   # centre both columns in the row
+], fluid=True)   # use full screen width, min margin padding
+@callback(
+    Output(component_id='g1', component_property='figure'),
+    Input(component_id='slider1', component_property='value')
+)
+def update_graph(selected):
+    print('running the callback function for', selected)
+    fig = px.scatter(x=np.random.rand(selected), y=np.random.rand(selected),
+                     range_x=[0,1], range_y=[0,1], width=800, height=800)
+    fig.update_traces(marker=dict(size=30, opacity=0.8))
+    return fig
+app.run(debug=True)
+```
+
+### Multiple inputs
+
+abc
 
 
 
-- can create a dropdown to select data to plot
-- can enter a value into a box to select or interpolate data to plot
-- selection in one plot shows in the other plot
-- mix and match these into a single web app
-- can create different tabs inside the app, with the render switching between them
-- can make entire website with user guides, plots, code examples, etc.
 
-<!-- video tutorial https://plotly.com/python/plotly-express -->
 
-&nbsp;
+
+
+
+
+<!-- ```py -->
+<!-- from dash import Dash, html, dcc, callback, Output, Input -->
+<!-- import dash_ag_grid as dag -->
+<!-- import pandas as pd -->
+<!-- import plotly.express as px -->
+<!-- import plotly.graph_objs as go -->
+<!-- import plotly.io as pio -->
+<!-- import dash_bootstrap_components as dbc -->
+<!-- import dash_mantine_components as dmc -->
+<!-- import numpy as np -->
+<!-- ``` -->
+
+
+
+```py
+external_stylesheets = [dbc.themes.CERULEAN]
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+app.layout = dbc.Container([
+    dbc.Row([html.Div('Multiple inputs', className="text-primary text-center fs-3")]),
+    dbc.Row([
+        dbc.Col([
+            html.Div([
+                html.Label("Number:", className="fw-bold mb-2"),
+                dcc.Slider(id='slider1', min=1, max=500, step=5,
+                           value=100, vertical=False,
+                           marks={i: str(i) for i in range(0,501,100)},
+                           tooltip={"placement": "bottom", "always_visible": True}
+                           ),
+            ], className="mb-4"),
+            html.Div([
+                html.Label("Scaling:", className="fw-bold mb-2"),
+                dcc.RadioItems(['Fixed', 'Scaled'], 'Fixed', id='scaling'),
+            ], className="mb-4"),
+            html.Div([
+                html.Label("Fixed size:", className="fw-bold mb-2"),
+                dcc.Slider(id='slider2', min=1, max=50, step=1,
+                           value=5, vertical=False,
+                           marks={i: str(i) for i in range(0,81,20)},
+                           tooltip={"placement": "bottom", "always_visible": True}
+                           ),
+            ], className="mb-4"),
+            html.Div([
+                html.Label("Opacity:", className="fw-bold mb-2"),
+                dcc.Slider(id='slider3', min=0, max=1, step=0.1,
+                           value=0.8, vertical=False,
+                           marks={i/10: str(i/10) for i in range(0,10,1)},
+                           tooltip={"placement": "bottom", "always_visible": True}
+                           ),
+            ], className="mb-4"),
+        ], width=3, align="center", className="ms-4"),
+        dbc.Col([
+            dcc.Graph(figure={}, id='g1')
+        ], width="auto"),
+    ], justify="center")   # centre all columns in the row
+], fluid=True)
+@callback(
+    Output(component_id='g1', component_property='figure'),
+    Input(component_id='slider1', component_property='value'),
+    Input(component_id='scaling', component_property='value'),
+    Input(component_id='slider2', component_property='value'),
+    Input(component_id='slider3', component_property='value')
+)
+def update_graph(npoints, scaling, pointSize, opacity):
+    print('running the callback function for', npoints, scaling, pointSize, opacity)
+    match scaling:
+        case "Fixed":
+            np.random.seed(5)   # to generate the same sequence every time
+            fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+                             range_x=[0,1], range_y=[0,1], width=800, height=800)
+            fig.update_traces(marker=dict(size=pointSize, opacity=opacity))
+        case "Scaled":
+            np.random.seed(5)   # to generate the same sequence every time
+            fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+                             range_x=[0,1], range_y=[0,1], width=800, height=800,
+                             size=np.random.rand(npoints), size_max=30)
+            fig.update_traces(marker=dict(opacity=opacity))
+    return fig
+app.run(debug=True)
+
+
+
+# external_stylesheets = [dbc.themes.CERULEAN]
+# app = Dash(__name__, external_stylesheets=external_stylesheets)
+# app.layout = dbc.Container([
+#     dbc.Row([html.Div('Multiple independent outputs', className="text-primary text-center fs-3")]),
+#     dbc.Row([
+#         dbc.Col([
+#             dcc.Slider(id='slider1', min=1, max=200, step=5,
+#                        value=100,
+#                        vertical=True,
+#                        marks={i: str(i) for i in range(0,201,50)},
+#                        tooltip={"placement": "bottom", "always_visible": True}
+#                        ),
+#         ], width="auto", align="center", className="ms-4"),   # ms-4 is a left margin of size 4
+#         dbc.Col([
+#             dcc.Graph(figure={}, id='g1')
+#         ], width="auto"),
+#         dbc.Col([
+#             dcc.Graph(figure={}, id='g2'),
+#             dcc.Graph(figure={}, id='g3')
+#         ], width="auto"),
+#     ], justify="center"),   # centre both columns in the row
+# ], fluid=True)
+# @callback(
+#     Output(component_id='g1', component_property='figure'),
+#     Output(component_id='g2', component_property='figure'),
+#     Output(component_id='g3', component_property='figure'),
+#     Input(component_id='slider1', component_property='value')
+# )
+# def update_graph(selected):
+#     print('running the callback function for', selected)
+#     xpos = np.random.rand(selected)
+#     ypos = np.random.rand(selected)
+#     fig1 = px.scatter(x=xpos, y=ypos, range_x=[0,1], range_y=[0,1], width=600, height=600)
+#     fig1.update_traces(marker=dict(size=30, opacity=0.8))
+#     fig2 = px.histogram(x=xpos, nbins=10, width=400, height=260)
+#     fig2.update_traces(xbins=dict(start=0, end=1, size=0.1))       # fixed number of bins
+#     fig2.update_xaxes(title_text='x-distribution', range=[0, 1])   # fixed x-limits
+#     fig3 = px.histogram(x=ypos, nbins=10, width=400, height=260)
+#     fig3.update_traces(xbins=dict(start=0, end=1, size=0.1))       # fixed number of bins
+#     fig3.update_xaxes(title_text='y-distribution', range=[0, 1])   # fixed x-limits
+#     return fig1, fig2, fig3
+# app.run(debug=True)
+
+
+
+# external_stylesheets = [dbc.themes.CERULEAN]
+# app = Dash(__name__, external_stylesheets=external_stylesheets)
+# npoints = 100
+# xpos = np.random.rand(npoints)
+# ypos = np.random.rand(npoints)
+# fig1 = px.scatter(x=xpos, y=ypos, range_x=[0,1], range_y=[0,1], width=600, height=600)
+# fig1.update_traces(marker=dict(size=30, opacity=0.8))
+# fig1.update_layout(dragmode='lasso')
+# app.layout = dbc.Container([
+#     dbc.Row([html.Div('Lasso selection with connected outputs', className="text-primary text-center fs-3")]),
+#     dbc.Row([
+#         dbc.Col([
+#             dcc.Graph(figure=fig1, id='g1')
+#         ], width="auto"),
+#         dbc.Col([
+#             dcc.Graph(figure={}, id='g2'),
+#             dcc.Graph(figure={}, id='g3'),
+#         ], width="auto"),
+#     ], justify="center"),   # centre both columns in the row
+# ], fluid=True)
+# @callback(
+#     Output(component_id='g2', component_property='figure'),
+#     Output(component_id='g3', component_property='figure'),
+#     Input('g1', 'selectedData')
+# )
+# def update_graph(selectedPoints):
+#     print('running the callback function for', selectedPoints)
+#     if selectedPoints is None:
+#         xsel, ysel = [], []
+#         xtitle = "Select points to see details"
+#         ytitle = xtitle
+#     else:
+#         xsel = [p['x'] for p in selectedPoints['points']]   # x of selected points
+#         ysel = [p['y'] for p in selectedPoints['points']]   # y of selected points
+#         xtitle, ytitle = "x-distribution", "y-distribution"
+#     fig2 = px.histogram(x=xsel, nbins=10, width=400, height=280)
+#     fig2.update_traces(xbins=dict(start=0, end=1, size=0.1))   # fixed number of bins
+#     fig2.update_xaxes(title_text=xtitle, range=[0, 1])         # fixed x-limits
+#     fig3 = px.histogram(x=ysel, nbins=10, width=400, height=280)
+#     fig3.update_traces(xbins=dict(start=0, end=1, size=0.1))   # fixed number of bins
+#     fig3.update_xaxes(title_text=ytitle, range=[0, 1])         # fixed x-limits
+#     return fig2, fig3
+# app.run(debug=True)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+Next:
+
+1. try running Dash in Jupyter on the training cluster
+1. Dash Core Components (dcc) library offers dcc.Dropdown, dcc.Checklist (multiple selections), dcc.Input
+   (text/number input field), dcc.DatePickerRange (calendar for selecting start / end dates),
+   dcc.DatePickerSingle (calendar for selecting one date), dcc.RangeSlider (slider with two handles: min and
+   max), dcc.Textarea (multi-line text input box), dcc.Upload (drag-and-drop area for uploading files),
+   dcc.Tabs (switch between different dashboard pages)
+1. one control for multiple plots (multiple outputs) https://dash.plotly.com/basic-callbacks
+1. Dash App With Chained Callbacks
+1. Passing Components Into Callbacks Instead of IDs
+1. Dash App With State
+1. publishing/hosting (requires a server; can't just save to a standalone html5 file)
+  - spin up your own site, e.g. in a VM on our cloud (free)
+  - Plotly Cloud (1 free running app) https://dash.plotly.com/deployment
+  - how to include into a website?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### Notes
+
+Plotly Cloud:
+```sh
+$ uv pip install "dash[cloud]"   # optional
+```
+- free: 1 running app, "standard" runtime with sleep
+- Pro subscription: 2 running apps, continuous runtime
+
+
+
+
+
+1. can run the app from a script file
+1. can run the app in a Jupyter Notebook
+1. does not support running from a Python shell
+- when running Dash app from a script, edits to the script rerun the app immediately
+
+
+
+
+--- this works (when running Dash on cass):
+app.run(mode="external", host="0.0.0.0", port=8051)
+ssh cass -L 8050:node1:8051
+http://localhost:8050
+
+
+
+
+
+
+
+
+- without Dash Enterprise, you can use HTML and CSS for styling
+- with Dash Enterprise, you can style with the Dash Design Kit (commercial package) `import dash_design_kit as
+  ddk`; very easy: just provide a list of components to include
+  - a typical starting price for a Dash Enterprise license is approximately $35k per year
+- alternatively, you can use a community-maintained library like Dash Bootstrap Components or Dash Mantine Components
+```sh
+$ uv pip install dash-bootstrap-components
+$ uv pip install dash_mantine_components
+```
+
+
+
+dcc = Dash Core Components
+
+
+
+`html.Label(["Fixed", html.Br(), "size:"], className="fw-bold mb-2")` will give a linebreak
+
+
+
+
+
+```py
+from dash import Dash, html, dcc, callback, Output, Input
+import plotly.express as px
+import pandas as pd
+
+df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder_unfiltered.csv')
+
+app = Dash()
+
+app.layout = [
+    html.H1(children='Title of Dash App', style={'textAlign':'center'}),
+    dcc.Dropdown(df.country.unique(), 'Canada', id='dropdown-selection'),
+    dcc.Graph(id='graph-content')
+]
+
+@callback(Output('graph-content', 'figure'), Input('dropdown-selection', 'value'))
+def update_graph(value):
+    dff = df[df.country==value]
+    return px.line(dff, x='year', y='pop')
+
+app.run(debug=True)
+```
