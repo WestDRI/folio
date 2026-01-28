@@ -258,9 +258,9 @@ fig.write_image("lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, w
 
 ::: {.callout-important}
 ## Key point
-In general, use `fig.show()` to enforce displaying the plot (shell or Jupyter), but it shouldn't be needed
-inside a Jupyter notebook if you use the command `go.Figure([line])` without saving the figure to a variable
--- then your plot will be displayed automatically.
+In general, use `fig.show()` to enforce displaying the plot (shell or Jupyter). This command is not necessary
+inside a Jupyter notebook if you create a figure with `go.Figure(...)` without saving it to a variable
+-- then your plot should be displayed automatically.
 :::
 
 ### Running a local script
@@ -290,15 +290,17 @@ This should open a new local browser tab with the plot.
 
 ### Running a remote script
 
-To run a similar script from the command line on the training cluster, I need to change the last line
-`fig.show()` to `fig.write_image("lines.png")` to write directly into a file, since there is no browser to
-open a tab in on the remote system.
+On a remote system, there is no browser in which we could open a new tab. To run this script from the command
+line on the training cluster, we need to change the last line `fig.show()` to `fig.write_image("lines.png")`
+to write directly into a file.
 
 You can find more details at <https://plotly.com/python/renderers>{target="_blank"}.
 
 ## Two plotting interfaces
 
-1. original Plotly Graph Objects library `plotly.graph_objs`
+At the moment, Plotly offers two plotting interfaces:
+
+1. original Graph Objects library `plotly.graph_objs`
     - most capable plotting interface -- you saw its example in the previous section
 	- can combine multiple traces (building blocks) from different sources in a single plot
     - more flexible, deeper access to various plot properties, great for detailed customization
@@ -306,7 +308,7 @@ You can find more details at <https://plotly.com/python/renderers>{target="_blan
    for rapid data exploration
     - high-level interface
 	- built on top of Graph Objects
-	- provides 30+ functions for creating different types of figures in a single function call
+	- provides 30+ functions for creating different types of figures in a **single function call**
 
 Both interfaces can work with data from NumPy arrays, Xarrays, Pandas dataframes, basic Python iterables,
 etc. And you can mix the two interfaces in a single script, e.g. create a simple figure with Plotly Express
