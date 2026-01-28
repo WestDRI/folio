@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Plotting via Graph Objects – Various courses</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-b6871152dc33c25e97e10f79624f84be.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-960d9d362f81d399278ec3e29b622b37.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles-ls.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../plotly1/plotly-03-go.html">Graph Objects</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../"></a> 
+        <div class="sidebar-tools-main">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Front page</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly1/plotly-01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly1/plotly-02-px.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plotly Express</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly1/plotly-03-go.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Graph Objects</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly1/plotly-04-dash.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Interactive apps with Dash</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#scatter-plots" id="toc-scatter-plots" class="nav-link active" data-scroll-target="#scatter-plots">Scatter plots</a></li>
+  <li><a href="#bar-plots" id="toc-bar-plots" class="nav-link" data-scroll-target="#bar-plots">Bar plots</a></li>
+  <li><a href="#heatmaps" id="toc-heatmaps" class="nav-link" data-scroll-target="#heatmaps">Heatmaps</a></li>
+  <li><a href="#contour-maps" id="toc-contour-maps" class="nav-link" data-scroll-target="#contour-maps">Contour maps</a></li>
+  <li><a href="#download-data" id="toc-download-data" class="nav-link" data-scroll-target="#download-data">Download data</a></li>
+  <li><a href="#geographical-scatterplot" id="toc-geographical-scatterplot" class="nav-link" data-scroll-target="#geographical-scatterplot">Geographical scatterplot</a></li>
+  <li><a href="#d-topographic-elevation" id="toc-d-topographic-elevation" class="nav-link" data-scroll-target="#d-topographic-elevation">3D Topographic elevation</a></li>
+  <li><a href="#elevated-2d-functions" id="toc-elevated-2d-functions" class="nav-link" data-scroll-target="#elevated-2d-functions">Elevated 2D functions</a></li>
+  <li><a href="#lighting-control" id="toc-lighting-control" class="nav-link" data-scroll-target="#lighting-control">Lighting control</a></li>
+  <li><a href="#d-parametric-plots" id="toc-d-parametric-plots" class="nav-link" data-scroll-target="#d-parametric-plots">3D parametric plots</a></li>
+  <li><a href="#d-scatter-plots" id="toc-d-scatter-plots" class="nav-link" data-scroll-target="#d-scatter-plots">3D scatter plots</a></li>
+  <li><a href="#d-graphs" id="toc-d-graphs" class="nav-link" data-scroll-target="#d-graphs">3D graphs</a></li>
+  <li><a href="#d-functions" id="toc-d-functions" class="nav-link" data-scroll-target="#d-functions">3D functions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Plotting via Graph Objects</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>While Plotly Express is excellent for quick data exploration, it has some limitations:</p>
+<ul>
+<li>fewer plot types</li>
+<li>does not allow combining different plot types directly in a single figure</li>
+<li>limited customization</li>
+</ul>
+<p>Plotly Graph Objects, on the other hand, is a lower-level library that offers greater functionality and customization with layouts. In this section, we’ll explore Graph Objects, starting with 2D plots.</p>
+<p>Graph Objects supports many plot types:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">dir</span>(go)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>?go.Figure   <span class="co"># see input data types</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bar, barpolar, box, candlestick, carpet, choropleth, choroplethmap,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>choroplethmapbox, cone, contour, contourcarpet, densitymap, densitymapbox,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>funnel, funnelarea, heatmap, histogram, histogram2d, histogram2dcontour,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>icicle, image, indicator, isosurface, mesh3d, ohlc, parcats, parcoords,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>pie, sankey, scatter, scatter3d, scattercarpet, scattergeo, scattergl,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>scattermap, scattermapbox, scatterpolar, scatterpolargl, scattersmith,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>scatterternary, splom, streamtube, sunburst, surface, table, treemap, violin,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>volume, waterfall</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="scatter-plots" class="level3">
+<h3 class="anchored" data-anchor-id="scatter-plots">Scatter plots</h3>
+<p>At the very beginning of this workshop we saw an example of a Scatter plot with Graph Objects:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>line <span class="op">=</span> go.Scatter(x<span class="op">=</span>x, y<span class="op">=</span>y, mode<span class="op">=</span><span class="st">'lines+markers'</span>, name<span class="op">=</span><span class="st">'sin(1/x)'</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>go.Figure([line])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s print the dataset <code>line</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(line)    <span class="co"># plotly.graph_objs._scatter.Scatter</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(line)   <span class="co"># it's a dictionary!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>It is a plotly object which is actually a Python dictionary, with all elements clearly identified (plot type, x NumPy array, y NumPy array, line type, legend line name). So, <code>go.Scatter</code> simply creates a dictionary with the corresponding <code>type</code> element. <strong>This variable <code>line</code> completely describes our plot!</strong>* Then we create a list of such objects and pass it to the plotting routine.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Hovering over each data point will reveal their coordinates. Use the toolbar at the top. When zooming in/out, double-clicking on the plot will reset it.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 1: two traces
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pass a list of two traces to the plotting routine with <code>data = [line1,line2]</code>. Let the second trace <code>line2</code> contain another mathematical function. The idea is to have multiple objects in the plot.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 2: add dots
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Add a bunch of dots to the plot with <code>dots = go.Scatter(x=[.2,.4,.6,.8], y=[2,1.5,2,1.2])</code>. What is default scatter mode?</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 3: style the dots
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Change line colour and width by adding the dictionary <code>line=dict(color=('rgb(10,205,24)'),width=4)</code> to <code>dots</code>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 4: random filled circles
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Create a scatter plot of 300 random filled blue circles inside a unit square. Their random opacity must anti-correlate with their size (bigger circles should be more transparent) – see the plot below.</p>
+<!-- abc -->
+</div>
+</div>
+</div>
+</section>
+<section id="bar-plots" class="level3">
+<h3 class="anchored" data-anchor-id="bar-plots">Bar plots</h3>
+<p>Let’s try a Bar plot, constructing <code>data</code> directly in one line from the dictionary:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>bar <span class="op">=</span> go.Bar(x<span class="op">=</span>[<span class="st">'Vancouver'</span>, <span class="st">'Calgary'</span>, <span class="st">'Toronto'</span>, <span class="st">'Montreal'</span>, <span class="st">'Halifax'</span>],</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>               y<span class="op">=</span>[<span class="dv">2463431</span>, <span class="dv">1392609</span>, <span class="dv">5928040</span>, <span class="dv">4098927</span>, <span class="dv">403131</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar])</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s plot inner city population vs.&nbsp;greater metro area for each city:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> [<span class="st">'Vancouver'</span>, <span class="st">'Calgary'</span>, <span class="st">'Toronto'</span>, <span class="st">'Montreal'</span>, <span class="st">'Halifax'</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>proper <span class="op">=</span> [<span class="dv">662_248</span>, <span class="dv">1_306_784</span>, <span class="dv">2_794_356</span>, <span class="dv">1_762_949</span>, <span class="dv">439_819</span>]</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>metro <span class="op">=</span> [<span class="dv">3_108_926</span>, <span class="dv">1_688_000</span>, <span class="dv">6_491_000</span>, <span class="dv">4_615_154</span>, <span class="dv">530_167</span>]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>bar1 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>proper, name<span class="op">=</span><span class="st">'inner city'</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>bar2 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>metro, name<span class="op">=</span><span class="st">'greater area'</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar1,bar2])</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s now do a stacked plot, with <em>outer city</em> population on top of <em>inner city</em> population:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>outside <span class="op">=</span> [m<span class="op">-</span>p <span class="cf">for</span> p,m <span class="kw">in</span> <span class="bu">zip</span>(proper,metro)]   <span class="co"># need to subtract</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>bar1 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>proper, name<span class="op">=</span><span class="st">'inner city'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>bar2 <span class="op">=</span> go.Bar(x<span class="op">=</span>cities, y<span class="op">=</span>outside, name<span class="op">=</span><span class="st">'outer city'</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[bar1,bar2], layout<span class="op">=</span>go.Layout(barmode<span class="op">=</span><span class="st">'stack'</span>))   <span class="co"># new element!</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>What else can we modify in the layout?</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(go.Layout)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>There are many attributes!</p>
+</section>
+<section id="heatmaps" class="level3">
+<h3 class="anchored" data-anchor-id="heatmaps">Heatmaps</h3>
+<ul>
+<li>go.Area() for plotting <strong>wind rose charts</strong></li>
+<li>go.Box() for <strong>basic box plots</strong></li>
+</ul>
+<p>Let’s plot a heatmap of monthly temperatures at the South Pole:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>months <span class="op">=</span> [<span class="st">'Jan'</span>, <span class="st">'Feb'</span>, <span class="st">'Mar'</span>, <span class="st">'Apr'</span>, <span class="st">'May'</span>, <span class="st">'Jun'</span>, <span class="st">'Jul'</span>, <span class="st">'Aug'</span>, <span class="st">'Sep'</span>, <span class="st">'Oct'</span>, <span class="st">'Nov'</span>, <span class="st">'Dec'</span>, <span class="st">'Year'</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>recordHigh <span class="op">=</span> [<span class="op">-</span><span class="fl">14.4</span>,<span class="op">-</span><span class="fl">20.6</span>,<span class="op">-</span><span class="fl">26.7</span>,<span class="op">-</span><span class="fl">27.8</span>,<span class="op">-</span><span class="fl">25.1</span>,<span class="op">-</span><span class="fl">28.8</span>,<span class="op">-</span><span class="fl">33.9</span>,<span class="op">-</span><span class="fl">32.8</span>,<span class="op">-</span><span class="fl">29.3</span>,<span class="op">-</span><span class="fl">25.1</span>,<span class="op">-</span><span class="fl">18.9</span>,<span class="op">-</span><span class="fl">12.3</span>,<span class="op">-</span><span class="fl">12.3</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>averageHigh <span class="op">=</span> [<span class="op">-</span><span class="fl">26.0</span>,<span class="op">-</span><span class="fl">37.9</span>,<span class="op">-</span><span class="fl">49.6</span>,<span class="op">-</span><span class="fl">53.0</span>,<span class="op">-</span><span class="fl">53.6</span>,<span class="op">-</span><span class="fl">54.5</span>,<span class="op">-</span><span class="fl">55.2</span>,<span class="op">-</span><span class="fl">54.9</span>,<span class="op">-</span><span class="fl">54.4</span>,<span class="op">-</span><span class="fl">48.4</span>,<span class="op">-</span><span class="fl">36.2</span>,<span class="op">-</span><span class="fl">26.3</span>,<span class="op">-</span><span class="fl">45.8</span>]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>dailyMean <span class="op">=</span> [<span class="op">-</span><span class="fl">28.4</span>,<span class="op">-</span><span class="fl">40.9</span>,<span class="op">-</span><span class="fl">53.7</span>,<span class="op">-</span><span class="fl">57.8</span>,<span class="op">-</span><span class="fl">58.0</span>,<span class="op">-</span><span class="fl">58.9</span>,<span class="op">-</span><span class="fl">59.8</span>,<span class="op">-</span><span class="fl">59.7</span>,<span class="op">-</span><span class="fl">59.1</span>,<span class="op">-</span><span class="fl">51.6</span>,<span class="op">-</span><span class="fl">38.2</span>,<span class="op">-</span><span class="fl">28.0</span>,<span class="op">-</span><span class="fl">49.5</span>]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>averageLow <span class="op">=</span> [<span class="op">-</span><span class="fl">29.6</span>,<span class="op">-</span><span class="fl">43.1</span>,<span class="op">-</span><span class="fl">56.8</span>,<span class="op">-</span><span class="fl">60.9</span>,<span class="op">-</span><span class="fl">61.5</span>,<span class="op">-</span><span class="fl">62.8</span>,<span class="op">-</span><span class="fl">63.4</span>,<span class="op">-</span><span class="fl">63.2</span>,<span class="op">-</span><span class="fl">61.7</span>,<span class="op">-</span><span class="fl">54.3</span>,<span class="op">-</span><span class="fl">40.1</span>,<span class="op">-</span><span class="fl">29.1</span>,<span class="op">-</span><span class="fl">52.2</span>]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>recordLow <span class="op">=</span> [<span class="op">-</span><span class="fl">41.1</span>,<span class="op">-</span><span class="fl">58.9</span>,<span class="op">-</span><span class="fl">71.1</span>,<span class="op">-</span><span class="fl">75.0</span>,<span class="op">-</span><span class="fl">78.3</span>,<span class="op">-</span><span class="fl">82.8</span>,<span class="op">-</span><span class="fl">80.6</span>,<span class="op">-</span><span class="fl">79.3</span>,<span class="op">-</span><span class="fl">79.4</span>,<span class="op">-</span><span class="fl">72.0</span>,<span class="op">-</span><span class="fl">55.0</span>,<span class="op">-</span><span class="fl">41.1</span>,<span class="op">-</span><span class="fl">82.8</span>]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [recordHigh, averageHigh, dailyMean, averageLow, recordLow]</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>yticks <span class="op">=</span> [<span class="st">'record high'</span>, <span class="st">'aver.high'</span>, <span class="st">'daily mean'</span>, <span class="st">'aver.low'</span>, <span class="st">'record low'</span>]</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>heatmap <span class="op">=</span> go.Heatmap(z<span class="op">=</span>data, x<span class="op">=</span>months, y<span class="op">=</span>yticks)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([heatmap])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 5: other colourmaps
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Try a few different colourmaps, e.g.&nbsp;‘Viridis’, ‘Jet’, ‘Rainbow’. What colourmaps are available?</p>
+</div>
+</div>
+</div>
+</section>
+<section id="contour-maps" class="level3">
+<h3 class="anchored" data-anchor-id="contour-maps">Contour maps</h3>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 6: contour map
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pretend that our heatmap is defined over a 2D domain and plot the same temperature data as a contour map. Remove the <code>Year</code> data (last column) and use <code>go.Contour</code> to plot the 2D contour map.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="download-data" class="level3">
+<h3 class="anchored" data-anchor-id="download-data">Download data</h3>
+<p>Open a terminal window inside Jupyter (New | Terminal) and run these commands:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://tinyurl.com/pvzip <span class="at">-O</span> paraview.zip</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> paraview.zip</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> data/<span class="pp">*</span>.<span class="dt">{csv</span><span class="op">,</span><span class="dt">nc}</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="geographical-scatterplot" class="level3">
+<h3 class="anchored" data-anchor-id="geographical-scatterplot">Geographical scatterplot</h3>
+<p>Go back to your Python Jupyter Notebook. Now let’s do a scatterplot on top of a geographical map:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> log10</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'cities.csv'</span>)   <span class="co"># lists name,pop,lat,lon for 254 Canadian cities and towns</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'text'</span>] <span class="op">=</span> df[<span class="st">'name'</span>] <span class="op">+</span> <span class="st">'&lt;br&gt;Population '</span> <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>             (df[<span class="st">'pop'</span>]<span class="op">/</span><span class="fl">1e6</span>).astype(<span class="bu">str</span>) <span class="op">+</span><span class="st">' million'</span> <span class="co"># add new column for mouse-over</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>largest, smallest <span class="op">=</span> df[<span class="st">'pop'</span>].<span class="bu">max</span>(), df[<span class="st">'pop'</span>].<span class="bu">min</span>()</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize(x):</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> log10(x<span class="op">/</span>smallest)<span class="op">/</span>log10(largest<span class="op">/</span>smallest)   <span class="co"># x scaled into [0,1]</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'logsize'</span>] <span class="op">=</span> <span class="bu">round</span>(df[<span class="st">'pop'</span>].<span class="bu">apply</span>(normalize)<span class="op">*</span><span class="dv">255</span>)   <span class="co"># new column</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> go.Scattergeo(</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    lon <span class="op">=</span> df[<span class="st">'lon'</span>], lat <span class="op">=</span> df[<span class="st">'lat'</span>], text <span class="op">=</span> df[<span class="st">'text'</span>],</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    marker <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        size <span class="op">=</span> df[<span class="st">'pop'</span>]<span class="op">/</span><span class="dv">5000</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> df[<span class="st">'logsize'</span>],</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        colorscale <span class="op">=</span> <span class="st">'Viridis'</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        showscale <span class="op">=</span> <span class="va">True</span>,   <span class="co"># show the colourbar</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        line <span class="op">=</span> <span class="bu">dict</span>(width<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">'rgb(40,40,40)'</span>),</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        sizemode <span class="op">=</span> <span class="st">'area'</span>))</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title <span class="op">=</span> <span class="st">'City populations'</span>,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>                       showlegend <span class="op">=</span> <span class="va">False</span>,   <span class="co"># do not show legend for first plot</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                       geo <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                           scope <span class="op">=</span> <span class="st">'north america'</span>,</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                           resolution <span class="op">=</span> <span class="dv">50</span>,   <span class="co"># base layer resolution of km/mm</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                           lonaxis <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">130</span>,<span class="op">-</span><span class="dv">55</span>]), lataxis <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">44</span>,<span class="dv">70</span>]), <span class="co"># plot range</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                           showland <span class="op">=</span> <span class="va">True</span>, landcolor <span class="op">=</span> <span class="st">'rgb(217,217,217)'</span>,</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                           showrivers <span class="op">=</span> <span class="va">True</span>, rivercolor <span class="op">=</span> <span class="st">'rgb(153,204,255)'</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                           showlakes <span class="op">=</span> <span class="va">True</span>, lakecolor <span class="op">=</span> <span class="st">'rgb(153,204,255)'</span>,</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                           subunitwidth <span class="op">=</span> <span class="dv">1</span>, subunitcolor <span class="op">=</span> <span class="st">"rgb(255,255,255)"</span>,   <span class="co"># province border</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>                           countrywidth <span class="op">=</span> <span class="dv">2</span>, countrycolor <span class="op">=</span> <span class="st">"rgb(255,255,255)"</span>))  <span class="co"># country border</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[cities], layout<span class="op">=</span>layout)</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 7: ten largest cities
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Modify the code to display only 10 largest cities.</p>
+</div>
+</div>
+</div>
+<p>Recall how we combined several scatter plots in one figure before. You can combine several plots on top of a single map – let’s <strong>combine scattergeo + choropleth</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'cities.csv'</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'text'</span>] <span class="op">=</span> df[<span class="st">'name'</span>] <span class="op">+</span> <span class="st">'&lt;br&gt;Population '</span> <span class="op">+</span> <span class="op">\</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>             (df[<span class="st">'pop'</span>]<span class="op">/</span><span class="fl">1e6</span>).astype(<span class="bu">str</span>)<span class="op">+</span><span class="st">' million'</span> <span class="co"># add new column for mouse-over</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> go.Scattergeo(lon <span class="op">=</span> df[<span class="st">'lon'</span>],</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>                       lat <span class="op">=</span> df[<span class="st">'lat'</span>],</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>                       text <span class="op">=</span> df[<span class="st">'text'</span>],</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>                       marker <span class="op">=</span> <span class="bu">dict</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                           size <span class="op">=</span> df[<span class="st">'pop'</span>]<span class="op">/</span><span class="dv">5000</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                           color <span class="op">=</span> <span class="st">"lightblue"</span>,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>                           line <span class="op">=</span> <span class="bu">dict</span>(width<span class="op">=</span><span class="fl">0.5</span>, color<span class="op">=</span><span class="st">'rgb(40,40,40)'</span>),</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                           sizemode <span class="op">=</span> <span class="st">'area'</span>))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>gdp <span class="op">=</span> pd.read_csv(<span class="st">'gdp.csv'</span>)   <span class="co"># read name, gdp, code for 222 countries</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>c1 <span class="op">=</span> [<span class="dv">0</span>,<span class="st">"rgb(5, 10, 172)"</span>]     <span class="co"># define colourbar from top (0) to bottom (1)</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>c2, c3 <span class="op">=</span> [<span class="fl">0.35</span>,<span class="st">"rgb(40, 60, 190)"</span>], [<span class="fl">0.5</span>,<span class="st">"rgb(70, 100, 245)"</span>]</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>c4, c5 <span class="op">=</span> [<span class="fl">0.6</span>,<span class="st">"rgb(90, 120, 245)"</span>], [<span class="fl">0.7</span>,<span class="st">"rgb(106, 137, 247)"</span>]</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>c6 <span class="op">=</span> [<span class="dv">1</span>,<span class="st">"rgb(220, 220, 220)"</span>]</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>countries <span class="op">=</span> go.Choropleth(locations <span class="op">=</span> gdp[<span class="st">'CODE'</span>],</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>                          z <span class="op">=</span> gdp[<span class="st">'GDP (BILLIONS)'</span>],</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>                          text <span class="op">=</span> gdp[<span class="st">'COUNTRY'</span>],</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>                          colorscale <span class="op">=</span> [c1,c2,c3,c4,c5,c6],</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                          autocolorscale <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                          reversescale <span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>                          marker <span class="op">=</span> <span class="bu">dict</span>(line <span class="op">=</span> <span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgb(180,180,180)'</span>,width <span class="op">=</span> <span class="fl">0.5</span>)),</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>                          zmin <span class="op">=</span> <span class="dv">0</span>,</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>                          colorbar <span class="op">=</span> <span class="bu">dict</span>(tickprefix <span class="op">=</span> <span class="st">'$'</span>,title <span class="op">=</span> <span class="st">'GDP&lt;br&gt;Billions US$'</span>))</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(hovermode <span class="op">=</span> <span class="st">"x"</span>, showlegend <span class="op">=</span> <span class="va">False</span>)  <span class="co"># do not show legend for first plot</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[cities,countries], layout<span class="op">=</span>layout)</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="d-topographic-elevation" class="level3">
+<h3 class="anchored" data-anchor-id="d-topographic-elevation">3D Topographic elevation</h3>
+<p>Let’s plot some tabulated topographic elevation data:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>table <span class="op">=</span> pd.read_csv(<span class="st">'mt_bruno_elevation.csv'</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>surface <span class="op">=</span> go.Surface(z<span class="op">=</span>table.values)  <span class="co"># use 2D numpy array format</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title<span class="op">=</span><span class="st">'Mt Bruno Elevation'</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                   width<span class="op">=</span><span class="dv">1200</span>, height<span class="op">=</span><span class="dv">1200</span>,    <span class="co"># image size</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>                   margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">65</span>, r<span class="op">=</span><span class="dv">10</span>, b<span class="op">=</span><span class="dv">65</span>, t<span class="op">=</span><span class="dv">90</span>))   <span class="co"># margins around the plot</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure([surface], layout<span class="op">=</span>layout)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise 8: plot a 2D function
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Plot a 2D function f(x,y) = (1−y) sin(πx) + y sin^2(2πx), where x,y ∈ [0,1] on a 100^2 grid.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="elevated-2d-functions" class="level3">
+<h3 class="anchored" data-anchor-id="elevated-2d-functions">Elevated 2D functions</h3>
+<p>Let’s define a different colourmap by adding <code>colorscale='Viridis'</code> inside <code>go.Surface()</code>. This is our current code:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span>   <span class="co"># plot resolution</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="dv">0</span>,<span class="dv">1</span>,n)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> linspace(<span class="dv">0</span>,<span class="dv">1</span>,n)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>Y, X <span class="op">=</span> meshgrid(x, y)   <span class="co"># meshgrid() returns two 2D arrays storing x/y respectively at each mesh point</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> (<span class="dv">1</span><span class="op">-</span>Y)<span class="op">*</span>sin(pi<span class="op">*</span>X) <span class="op">+</span> Y<span class="op">*</span>(sin(<span class="dv">2</span><span class="op">*</span>pi<span class="op">*</span>X))<span class="op">**</span><span class="dv">2</span>   <span class="co"># array operation</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> go.Surface(z<span class="op">=</span>F, colorscale<span class="op">=</span><span class="st">'Viridis'</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(width<span class="op">=</span><span class="dv">1000</span>, height<span class="op">=</span><span class="dv">1000</span>, scene<span class="op">=</span>go.layout.Scene(zaxis<span class="op">=</span>go.layout.scene.ZAxis(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>,<span class="dv">2</span>])))<span class="op">;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[data], layout<span class="op">=</span>layout)</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="lighting-control" class="level3">
+<h3 class="anchored" data-anchor-id="lighting-control">Lighting control</h3>
+<p>Let’s change the default light in the room by adding <code>lighting=dict(ambient=0.1)</code> inside <code>go.Surface()</code>. Now our plot is much darker!</p>
+<ul>
+<li><code>ambient</code> controls the light in the room (default = 0.8)</li>
+<li><code>roughness</code> controls amount of light scattered (default = 0.5)</li>
+<li><code>diffuse</code> controls the reflection angle width (default = 0.8)</li>
+<li><code>fresnel</code> controls light washout (default = 0.2)</li>
+<li><code>specular</code> induces bright spots (default = 0.05)</li>
+</ul>
+<p>Let’s try <code>lighting=dict(ambient=0.1,specular=0.3)</code> – now we have lots of specular light!</p>
+</section>
+<section id="d-parametric-plots" class="level3">
+<h3 class="anchored" data-anchor-id="d-parametric-plots">3D parametric plots</h3>
+<p>In plotly documentation you can find quite a lot of <a href="https://plot.ly/python/3d-charts">different 3D plot types</a>. Here is something visually very different, but it still uses <code>go.Surface(x,y,z)</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> pi, sin, cos, mgrid</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>dphi, dtheta <span class="op">=</span> pi<span class="op">/</span><span class="dv">250</span>, pi<span class="op">/</span><span class="dv">250</span>    <span class="co"># 0.72 degrees</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>[phi, theta] <span class="op">=</span> mgrid[<span class="dv">0</span>:pi<span class="op">+</span>dphi<span class="op">*</span><span class="fl">1.5</span>:dphi, <span class="dv">0</span>:<span class="dv">2</span><span class="op">*</span>pi<span class="op">+</span>dtheta<span class="op">*</span><span class="fl">1.5</span>:dtheta]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># define two 2D grids: both phi and theta are (252,502) numpy arrays</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> sin(<span class="dv">4</span><span class="op">*</span>phi)<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> cos(<span class="dv">2</span><span class="op">*</span>phi)<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> sin(<span class="dv">6</span><span class="op">*</span>theta)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> cos(<span class="dv">6</span><span class="op">*</span>theta)<span class="op">**</span><span class="dv">4</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> r<span class="op">*</span>sin(phi)<span class="op">*</span>cos(theta)   <span class="co"># x is also (252,502)</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> r<span class="op">*</span>cos(phi)              <span class="co"># y is also (252,502)</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> r<span class="op">*</span>sin(phi)<span class="op">*</span>sin(theta)   <span class="co"># z is also (252,502)</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>surface <span class="op">=</span> go.Surface(x<span class="op">=</span>x, y<span class="op">=</span>y, z<span class="op">=</span>z, colorscale<span class="op">=</span><span class="st">'Viridis'</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(title<span class="op">=</span><span class="st">'parametric plot'</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[surface], layout<span class="op">=</span>layout)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="d-scatter-plots" class="level3">
+<h3 class="anchored" data-anchor-id="d-scatter-plots">3D scatter plots</h3>
+<p>Let’s take a look at a 3D scatter plot using the <code>country index</code> data from http://www.prosperity.com for 142 countries:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">'legatum2015.csv'</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>spheres <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>df.economy,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                       y<span class="op">=</span>df.entrepreneurshipOpportunity,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>                       z<span class="op">=</span>df.governance,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                       text<span class="op">=</span>df.country,</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                       mode<span class="op">=</span><span class="st">'markers'</span>,</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                       marker<span class="op">=</span><span class="bu">dict</span>(</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>                           sizemode <span class="op">=</span> <span class="st">'diameter'</span>,</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>                           sizeref <span class="op">=</span> <span class="fl">0.3</span>,   <span class="co"># max(safetySecurity+5.5) / 32</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                           size <span class="op">=</span> df.safetySecurity<span class="op">+</span><span class="fl">5.5</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>                           color <span class="op">=</span> df.education,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>                           colorscale <span class="op">=</span> <span class="st">'Viridis'</span>,</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>                           colorbar <span class="op">=</span> <span class="bu">dict</span>(title <span class="op">=</span> <span class="st">'Education'</span>),</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>                           line <span class="op">=</span> <span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgb(140, 140, 170)'</span>)))   <span class="co"># sphere edge</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(height<span class="op">=</span><span class="dv">900</span>, width<span class="op">=</span><span class="dv">900</span>,</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>                   title<span class="op">=</span><span class="st">'Each sphere is a country sized by safetySecurity'</span>,</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                   scene <span class="op">=</span> <span class="bu">dict</span>(xaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'economy'</span>),</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                                yaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'entrepreneurshipOpportunity'</span>),</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                                zaxis<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">'governance'</span>)))</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[spheres], layout<span class="op">=</span>layout)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="d-graphs" class="level3">
+<h3 class="anchored" data-anchor-id="d-graphs">3D graphs</h3>
+<p>We can plot 3D graphs. Consider a Dorogovtsev-Goltsev-Mendes graph: <em>in each subsequent generation, every edge from the previous generation yields a new node, and the new graph can be made by connecting together three previous-generation graphs</em>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>generation <span class="op">=</span> <span class="dv">5</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> nx.dorogovtsev_goltsev_mendes_graph(generation)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(H.number_of_nodes(), <span class="st">'nodes and'</span>, H.number_of_edges(), <span class="st">'edges'</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Force Atlas 2 graph layout from https://github.com/tpoisot/nxfa2.git</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> nx.spectral_layout(H,scale<span class="op">=</span><span class="dv">1</span>,dim<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>Xn <span class="op">=</span> [pos[i][<span class="dv">0</span>] <span class="cf">for</span> i <span class="kw">in</span> pos]   <span class="co"># x-coordinates of all nodes</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>Yn <span class="op">=</span> [pos[i][<span class="dv">1</span>] <span class="cf">for</span> i <span class="kw">in</span> pos]   <span class="co"># y-coordinates of all nodes</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>Zn <span class="op">=</span> [pos[i][<span class="dv">2</span>] <span class="cf">for</span> i <span class="kw">in</span> pos]   <span class="co"># z-coordinates of all nodes</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>Xe, Ye, Ze <span class="op">=</span> [], [], []</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> edge <span class="kw">in</span> H.edges():</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    Xe <span class="op">+=</span> [pos[edge[<span class="dv">0</span>]][<span class="dv">0</span>], pos[edge[<span class="dv">1</span>]][<span class="dv">0</span>], <span class="va">None</span>]   <span class="co"># x-coordinates of all edge ends</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    Ye <span class="op">+=</span> [pos[edge[<span class="dv">0</span>]][<span class="dv">1</span>], pos[edge[<span class="dv">1</span>]][<span class="dv">1</span>], <span class="va">None</span>]   <span class="co"># y-coordinates of all edge ends</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    Ze <span class="op">+=</span> [pos[edge[<span class="dv">0</span>]][<span class="dv">2</span>], pos[edge[<span class="dv">1</span>]][<span class="dv">2</span>], <span class="va">None</span>]   <span class="co"># z-coordinates of all edge ends</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>degree <span class="op">=</span> [deg[<span class="dv">1</span>] <span class="cf">for</span> deg <span class="kw">in</span> H.degree()]   <span class="co"># list of degrees of all nodes</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> [<span class="bu">str</span>(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(H.number_of_nodes())]</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>Xe, y<span class="op">=</span>Ye, z<span class="op">=</span>Ze,</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>                     mode<span class="op">=</span><span class="st">'lines'</span>,</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>                     marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">12</span>,line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgba(217, 217, 217, 0.14)'</span>,width<span class="op">=</span><span class="fl">0.5</span>)),</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>                     hoverinfo<span class="op">=</span><span class="st">'none'</span>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>nodes <span class="op">=</span> go.Scatter3d(x<span class="op">=</span>Xn, y<span class="op">=</span>Yn, z<span class="op">=</span>Zn,</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>                     mode<span class="op">=</span><span class="st">'markers'</span>,</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>                     marker<span class="op">=</span><span class="bu">dict</span>(sizemode <span class="op">=</span> <span class="st">'area'</span>,</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>                                 sizeref <span class="op">=</span> <span class="fl">0.01</span>, size<span class="op">=</span>degree,</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>                                 color<span class="op">=</span>degree, colorscale<span class="op">=</span><span class="st">'Viridis'</span>,</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>                                 line<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span><span class="st">'rgb(50,50,50)'</span>, width<span class="op">=</span><span class="fl">0.5</span>)),</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>                     text<span class="op">=</span>labels, hoverinfo<span class="op">=</span><span class="st">'text'</span>)</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>axis <span class="op">=</span> <span class="bu">dict</span>(showline<span class="op">=</span><span class="va">False</span>, zeroline<span class="op">=</span><span class="va">False</span>, showgrid<span class="op">=</span><span class="va">False</span>, showticklabels<span class="op">=</span><span class="va">False</span>, title<span class="op">=</span><span class="st">''</span>)</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>layout <span class="op">=</span> go.Layout(</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    title <span class="op">=</span> <span class="bu">str</span>(generation) <span class="op">+</span> <span class="st">"-generation Dorogovtsev-Goltsev-Mendes graph"</span>,</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">1000</span>, height<span class="op">=</span><span class="dv">1000</span>,</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>    showlegend<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>    scene<span class="op">=</span><span class="bu">dict</span>(xaxis<span class="op">=</span>go.layout.scene.XAxis(axis),</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>               yaxis<span class="op">=</span>go.layout.scene.YAxis(axis),</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>               zaxis<span class="op">=</span>go.layout.scene.ZAxis(axis)),</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span>go.layout.Margin(t<span class="op">=</span><span class="dv">100</span>))</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[edges,nodes], layout<span class="op">=</span>layout)</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="d-functions" class="level3">
+<h3 class="anchored" data-anchor-id="d-functions">3D functions</h3>
+<p>Let’s create an isosurface of a <code>decoCube</code> function at f=0.03. Isosurfaces are returned as a list of polygons, and for plotting polygons in plotly we need to use <code>plotly.figure_factory.create_trisurf()</code> which replaces <code>plotly.graph_objs.Figure()</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotly <span class="im">import</span> figure_factory <span class="im">as</span> FF</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> mgrid</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> measure</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>X,Y,Z <span class="op">=</span> mgrid[<span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>, <span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>, <span class="op">-</span><span class="fl">1.2</span>:<span class="fl">1.2</span>:<span class="ot">30j</span>] <span class="co"># three 30^3 grids, each side [-1.2,1.2] in 30 steps</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> ((X<span class="op">*</span>X<span class="op">+</span>Y<span class="op">*</span>Y<span class="op">-</span><span class="fl">0.64</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (Z<span class="op">*</span>Z<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> <span class="op">\</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    ((Y<span class="op">*</span>Y<span class="op">+</span>Z<span class="op">*</span>Z<span class="op">-</span><span class="fl">0.64</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (X<span class="op">*</span>X<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>) <span class="op">*</span> <span class="op">\</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    ((Z<span class="op">*</span>Z<span class="op">+</span>X<span class="op">*</span>X<span class="op">-</span><span class="fl">0.64</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> (Y<span class="op">*</span>Y<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>vertices, triangles, normals, values <span class="op">=</span> measure.marching_cubes(F, <span class="fl">0.03</span>)  <span class="co"># create an isosurface</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>x,y,z <span class="op">=</span> <span class="bu">zip</span>(<span class="op">*</span>vertices)   <span class="co"># zip(*...) is opposite of zip(...): unzips a list of tuples</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> FF.create_trisurf(x<span class="op">=</span>x, y<span class="op">=</span>y, z<span class="op">=</span>z, plot_edges<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                        simplices<span class="op">=</span>triangles, title<span class="op">=</span><span class="st">"Isosurface"</span>, height<span class="op">=</span><span class="dv">1200</span>, width<span class="op">=</span><span class="dv">1200</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Try switching <code>plot_edges=False</code> to <code>plot_edges=True</code> – you’ll see individual polygons!</p>
+<!-- ### NetCDF data -->
+<!-- #### 2D slices through a 3D dataset -->
+<!-- How about processing real data? -->
+<!-- ```py -->
+<!-- import plotly.offline as py -->
+<!-- py.init_notebook_mode(connected=True) -->
+<!-- import plotly.graph_objs as go -->
+<!-- from netCDF4 import Dataset    # Note: need netCDF4 installed -->
+<!-- dataset = Dataset('sineEnvelope.nc') -->
+<!-- name = list(dataset.variables.keys())[0]   # variable name -->
+<!-- print(name) -->
+<!-- var = dataset.variables[name] -->
+<!-- print(var.shape) -->
+<!-- image = go.Heatmap(z=var[:,:,49])   # use layer 50 (in the middle) -->
+<!-- layout = go.Layout(width=800, height=800, margin=dict(l=65,r=10,b=65,t=90)) -->
+<!-- fig = go.Figure(data=[image], layout=layout) -->
+<!-- py.iplot(fig,auto_open=False) -->
+<!-- ``` -->
+<!-- > ## Exercise 9 -->
+<!-- > Use the last two codes to plot an isosurface of `sineEnvelope.nc` dataset at f=0.5. -->
+<!-- #### Orthogonal 2D slices -->
+<!-- Let's do three orthogonal slices through our dataset: -->
+<!-- ```py -->
+<!-- import numpy as np -->
+<!-- import plotly.offline as py -->
+<!-- py.init_notebook_mode(connected=True) -->
+<!-- import plotly.graph_objs as go -->
+<!-- from netCDF4 import Dataset -->
+<!-- dataset = Dataset('sineEnvelope.nc') -->
+<!-- name = list(dataset.variables.keys())[0]   # variable name -->
+<!-- var = dataset.variables[name]   # dataset variable -->
+<!-- vmin, vmax = np.min(var), np.max(var)   # global dataset min/max -->
+<!-- x, y, z = np.linspace(0.005,0.995,100), np.linspace(0.005,0.995,100), np.linspace(0.005,0.995,100) -->
+<!-- slicePosition = [0,0,0]   # indices 0..99 -->
+<!-- print('slices through the point', x[slicePosition[0]], y[slicePosition[1]], z[slicePosition[2]]) -->
+<!-- # --- create the XY-slice -->
+<!-- X, Y = np.meshgrid(x,y)   # each is a 100x100 mesh covering [0,1] in each dimension -->
+<!-- Z = z[slicePosition[2]] * np.ones((100,100))   # 100x100 array of constant value -->
+<!-- surfz = var[:,:,slicePosition[2]]   # 100x100 array of function values -->
+<!-- slicez = go.Surface(x=X, y=Y, z=Z, surfacecolor=surfz, cmin=vmin, cmax=vmax, showscale=False) -->
+<!-- # --- create the YZ-slice -->
+<!-- Y, Z = np.meshgrid(y,z)   # each is a 100x100 mesh covering [0,1] in each dimension -->
+<!-- X = x[slicePosition[0]] * np.ones((100,100))   # 100x100 array of constant value -->
+<!-- surfx = var[slicePosition[0],:,:]   # 100x100 array of function values -->
+<!-- slicex = go.Surface(x=X, y=Y, z=Z, surfacecolor=surfx, cmin=vmin, cmax=vmax, showscale=True) -->
+<!-- # --- create the XZ-slice -->
+<!-- X, Z = np.meshgrid(x,z) -->
+<!-- Y = y[slicePosition[1]] * np.ones((100,100))   # 100x100 array of constant value -->
+<!-- surfy = var[:,slicePosition[1],:] -->
+<!-- slicey = go.Surface(x=X, y=Y, z=Z, surfacecolor=surfy, cmin=vmin, cmax=vmax, showscale=False) -->
+<!-- # --- plot the three slices -->
+<!-- axis = dict(showbackground=True,  backgroundcolor="rgb(230, 230,230)", -->
+<!--             gridcolor="rgb(255, 255, 255)", zerolinecolor="rgb(255, 255, 255)") -->
+<!-- layout = go.Layout(title='Orthogonal slices through volumetric data',  -->
+<!--                    width=900, height=900, -->
+<!--                    scene=go.Scene(xaxis=go.XAxis(axis), -->
+<!--                                yaxis=go.YAxis(axis),  -->
+<!--                                zaxis=go.ZAxis(axis),  -->
+<!--                                aspectratio=dict(x=1, y=1, z=1))) -->
+<!-- fig = go.Figure(data=[slicez,slicey,slicex], layout=layout) -->
+<!-- py.iplot(fig,auto_open=False) -->
+<!-- ``` -->
+<!-- ## Animation -->
+<!-- For animations, you need to pass the third (`frames`) argument to `go.Figure()`: -->
+<!-- ```py -->
+<!-- import plotly.offline as py -->
+<!-- py.init_notebook_mode(connected=True) -->
+<!-- import plotly.graph_objs as go -->
+<!-- import numpy as np -->
+<!-- t = np.linspace(0,10,100) -->
+<!-- x, y = t/3*np.cos(t), t/3*np.sin(t) -->
+<!-- line1 = go.Scatter(x=x, y=y, mode='lines', line=dict(width=10, color='blue')) -->
+<!-- line2 = go.Scatter(x=x, y=y, mode='lines', line=dict(width=2, color='blue')) -->
+<!-- layout = go.Layout(title='Moving dot', -->
+<!--                    xaxis=dict(range=[-10,10]), -->
+<!--                    yaxis=dict(scaleanchor="x", scaleratio=1),   # 1:1 aspect ratio -->
+<!--                    showlegend = False, -->
+<!--                    updatemenus= [{'type': 'buttons', -->
+<!--                                   'buttons': [{'label': 'Replay', -->
+<!--                                                'method': 'animate', -->
+<!--                                                'args': [None]}]}]) -->
+<!-- nframes = 20 -->
+<!-- s = np.linspace(0,10,nframes) -->
+<!-- xdot, ydot = s/3*np.cos(s), s/3*np.sin(s) -->
+<!-- frames = [dict(data=[go.Scatter(x=[xdot[k]], y=[ydot[k]], -->
+<!--                                 mode='markers', marker=dict(color='red', size=30))]) -->
+<!--           for k in range(nframes)] -->
+<!-- # line1 will be shown before the first frame, line2 will be shown in each frame -->
+<!-- fig = go.Figure(data=[line1,line2], layout=layout, frames=frames) -->
+<!-- py.iplot(fig,auto_open=False) -->
+<!-- ``` -->
+<!-- I could not find how to control the animation speed. Obviously, it should be via a keyword to either -->
+<!-- `go.Figure()` or `py.iplot`. -->
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
