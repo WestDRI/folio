@@ -1,0 +1,313 @@
+---
+title: "Introduction"
+---
+
+- Developed by a Montreal-based company <https://plotly.com>{target="_blank"}
+- Open-source scientific plotting Python library for Python, R, MATLAB, Perl, Julia
+- Front end uses JavaScript/HTML/CSS and D3.js visualization library, with Plotly JavaScript library on top
+- Supports over 50 unique chart types
+
+<!-- Generated plots can be
+1. browsed online
+1. stored as offline html5 files
+1. displayed inside a Jupyter notebook -->
+
+<!--
+abc
+==========================================================================================
+Phase 1: The Foundations (30 Minutes)
+    The "Why" of Interactive Viz: Why static charts aren't always enough (tooltips, zooming, filtering).
+    Plotly Express (PX) vs. Graph Objects (GO): Understanding the high-level API for speed vs. the low-level API for total control.
+    The Basic Recipe:
+        Loading data (Pandas integration).
+        The standard syntax: fig = px.chart_type(data, x, y, color...).
+        fig.show() and the interactive toolbar.
+Phase 2: Essential Chart Types & Customization (40 Minutes)
+    Comparison & Distribution:
+        Dynamic Bar Charts (sorting and stacking).
+        Histograms and Box Plots for statistical snapshots.
+    Correlation & Trends:
+        Scatter plots with size and color dimensions.
+        Adding trendlines and marginal rugs.
+    Refining the Aesthetics:
+        Updating traces and layouts (fig.update_layout).
+        Customizing hover labels (the most powerful feature for user engagement).
+Phase 3: Advanced Visuals & Faceting (30 Minutes)
+    Facet Plots (Subplots): Breaking down complex data into a grid of charts based on a category.
+    Time Series: Handling dates, range sliders, and selectors.
+    Animated Data: Using the animation_frame parameter to show how data changes over time (the "Hans Rosling" effect).
+Phase 4: Exporting & Next Steps (20 Minutes)
+    Saving your work: Exporting as standalone HTML files or static images.
+    The Ecosystem: A 5-minute intro to Dash (turning your plots into full web apps).
+    Q&A / Mini-Challenge: Give students a fresh dataset and ask them to find one trend and highlight it using a custom hover label.
+Suggested Tools for the Workshop
+    Environment: Google Colab or Jupyter Notebooks (zero setup required for students).
+    Dataset: Use a "tidy" dataset like the built-in gapminder, tips, or stocks datasets provided by plotly.express.data.
+Tips for a Successful Session
+    The "Copy-Paste" Rule: Provide a GitHub gist or a starter notebook. In a 2-hour window, you don't want students stuck on a syntax error; you want them experimenting with parameters.
+    Focus on Hover: Spend extra time showing how to clean up hover text. It's the difference between a "techy" chart and a professional one.
+
+import plotly.express as px
+fig = px.chart_type(
+    data_frame = df,           # Your Pandas DataFrame
+    x = "column_a",            # Column for x-axis
+    y = "column_b",            # Column for y-axis
+    color = "column_c",        # Color-coding by category
+    title = "My Chart Title"   # Always label your work!
+)
+fig.show()
+
+2. Common Chart Types
+Goal,Function,Key Arguments
+Trends,px.line(),"line_group, markers=True"
+Correlation,px.scatter(),"size, hover_name, trendline=""ols"""
+Parts of Whole,px.bar(),"barmode=""group"" or ""stack"""
+Distributions,px.histogram(),"nbins, marginal=""rug"" or ""box"""
+Hierarchies,px.treemap(),"path=['level1', 'level2'], values"
+
+3. Customizing the "Look & Feel"
+fig.update_layout(
+    title_font_size=24,
+    template="plotly_dark", # Try 'ggplot2', 'seaborn', 'none'
+    showlegend=False
+)
+fig.update_traces(marker_color="red", selector=dict(type="bar"))
+
+4. The "Magic" Parameters
+Add these inside your px function call for instant interactivity:
+    Faceting (Subplots): facet_col="category_column" (creates a grid of charts).
+    Animation: animation_frame="year_column" (adds a play button).
+    Hover Data: hover_data=["extra_col1", "extra_col2"] (adds more info to tooltips).
+    Log Scales: log_x=True or log_y=True.
+	
+fig.write_html("my_report.html")
+fig.write_image("my_report.png")   # requires 'kaleido' library
+
+==========================================================================================
+-->
+
+## Links
+
+1. [Online gallery](https://plotly.com/python){target="_blank"} with code examples by category
+1. [Plotly Express tutorial](https://plotly.com/python/plotly-express){target="_blank"}, also plotly.express
+1. [Plotly Community Forum](https://community.plotly.com){target="_blank"}
+1. [Keyword index](https://plot.ly/python/reference){target="_blank"}
+1. [Getting started guide](https://plot.ly/python/getting-started){target="_blank"}
+1. [Plotly vs
+   matplotlib](https://www.fabi.ai/blog/plotly-vs-matplotlib-a-quick-comparison-with-visual-guides){target="_blank"}
+   (with video)
+1. [Displaying Figures](https://plot.ly/python/offline){target="_blank"} (including offscreen into a file)
+1. [Saving static images (PNG, PDF, etc) ](https://plot.ly/python/static-image-export){target="_blank"}
+1. [Plotly and IPython / Jupyter notebook](https://plot.ly/ipython-notebooks){target="_blank"} with additional
+   plotting examples
+
+<!-- 1. [Code examples](https://plot.ly/create) -->
+<!-- 1. [Community feed with gallery](https://plot.ly/feed) -->
+<!-- 1. [Creating HTML or PDF reports in Python](https://plot.ly/python/#report-generation) -->
+<!-- 1. [Connecting to databases](https://plot.ly/python/#databases) -->
+<!-- 1. [Creating dashboards](https://plot.ly/python/dashboard) with Dash Enterprise -->
+
+## Today's setup
+
+Point your browser to <https://jupyter.cass.vastcloud.org>{target="_blank"}, log in with your username and
+password (supplied by the instructor), specify the runtime of at least 2 hours (and leave all other settings
+at their default values), and start a Jupyter notebook.
+
+## Installation on your own computer
+
+If you are brave enough to try today's examples on your own computer, you will need Python 3 and a Python
+package manager. Then, use your favourite installer to install Plotly, ideally inside a dedicated virtual
+environment:
+
+```sh
+$ pip install plotly
+$ uv pip install plotly
+$ conda install -c conda-forge plotly
+```
+
+Other recommended libraries to install for today's session:
+
+- `jupyter`
+- `nbformat` to plot inside Jupyter notebooks
+- `kaleido` to save plots to PNG
+- `numpy`
+- `pandas`
+- `networkx`
+- `scikit-image`
+
+## Displaying Plotly figures
+
+### Renderers
+
+With Plotly, you can:
+
+1. work inside a Python shell in the terminal,
+2. save your script into a `*.py` file and then run it, or
+3. run your script inside a Jupyter notebook.
+
+Plotly supports a number of renderers, and it will attempt to choose an appropriate renderer automatically --
+in my experience, often not very successfully. You can examine the selected default renderer with:
+
+```py
+import plotly.io as pio
+pio.renderers   # show default and available renderers
+```
+
+You can overwrite the default by setting it manually inside your session or inside your code, e.g.
+
+```py
+pio.renderers.default = 'browser'          # open each plot in a new browser tab
+pio.renderers.default = 'notebook'         # plot inside a Jupyter notebook
+pio.renderers.default = 'plotly_mimetype'  # default for Jupyter, fails with remote JH
+```
+
+If you want to have this setting persistent across interactive sessions (and not set it manually or in the
+code), you can create a file `~/.plotly_startup.py` with the following:
+
+```py
+try:
+    import plotly.io as pio
+    pio.renderers.default = "browser"
+except ImportError:
+    pass
+```
+
+and set `export PYTHONSTARTUP=~/.plotly_startup.py` in your `~/.bashrc` file. Note that `$PYTHONSTARTUP` can
+be used to customize only your interactive Python sessions (in the terminal or Jupyter), i.e. it does not
+execute when you run a script. When running a script, you could insert
+
+```py
+import plotly.io as pio
+pio.renderers.default = "browser"
+```
+
+directly into the script.
+
+<!-- 'iframe'               Shows plot inline (only in Jupyter) -->
+<!-- 'notebook_connected'   Full interactivity in Jupyter -->
+
+<!-- png_renderer = pio.renderers["png"] -->
+<!-- png_renderer.width = 500 -->
+<!-- png_renderer.height = 500 -->
+
+### Working in a Jupyter notebook
+
+Let me demonstrate this using a renderer with a simple plot. Inside a Jupyter notebook, set the renderer and
+then create a basic line plot:
+
+```py
+import plotly.io as pio
+pio.renderers.default = 'notebook'
+```
+```py
+import plotly.graph_objs as go
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+y = sin(1/x)
+line = go.Scatter(x=x, y=y, mode='lines+markers', name='sin(1/x)')
+   # this is a trace = a fundamental building block of a plot;
+   # think of it as a single set of data and the instructions on how to draw it
+```
+```py
+# Option 1
+go.Figure([line])   # pass data = a list of trace instances
+                    # plot should automatically dispay inside the notebook
+```
+```py
+# Option 2
+fig = go.Figure([line])   # no plot displayed at this point
+fig.show()                # plot should dispay inside the notebook
+```
+
+If you want to save your figure, you can mouse over the plot and select "Download plot as a
+PNG". Alternatively, you can do this from the code:
+
+```py
+fig.write_html("lines.html")            # interactive HTML file
+fig.write_image("lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, webp, pdf
+                                        # requires 'kaleido' library and Chromium engine library
+                                        # will take a while in Jupyter
+```
+
+The last command is meant for the Python shell, not for Jupyter. If run in Jupyter, it'll use an external
+library `kaleido` which in turn will the Chromium engine system library, and the whole process will **take
+minutes** -- something to keep in mind.
+
+### Working in a Python shell
+
+Now, let me switch briefly to running Plotly on my computer:
+
+```py
+import plotly.io as pio
+pio.renderers.default   # 'browser'
+```
+```py
+import plotly.graph_objs as go
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+y = sin(1/x)
+line = go.Scatter(x=x, y=y, mode='lines+markers', name='sin(1/x)')
+fig = go.Figure([line])   # no plot displayed at this point
+```
+```py
+fig.show()                # plot should dispay inside a new browser tab
+
+fig.write_html("lines.html")            # interactive HTML file
+fig.write_image("lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, webp, pdf
+```
+
+::: {.callout-important}
+## Key point
+In general, use `fig.show()` to enforce displaying the plot (shell or Jupyter), but it shouldn't be needed
+inside a Jupyter notebook if you use the command `go.Figure([line])` without saving the figure to a variable
+-- then your plot will be displayed automatically.
+:::
+
+### Running a local script
+
+Let me save the following as a local file `test.py`:
+
+```py
+import plotly.io as pio
+pio.renderers.default = "browser"
+import plotly.graph_objs as go
+
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+y = sin(1/x)
+line = go.Scatter(x=x, y=y, mode='lines+markers', name='sin(1/x)')
+fig = go.Figure([line])   # no plot displayed at this point
+fig.show()
+```
+
+and then run it:
+
+```sh
+python test.py
+```
+
+This should open a new local browser tab with the plot.
+
+### Running a remote script
+
+To run a similar script from the command line on the training cluster, I need to change the last line
+`fig.show()` to `fig.write_image("lines.png")` to write directly into a file, since there is no browser to
+open a tab in on the remote system.
+
+You can find more details at <https://plotly.com/python/renderers>{target="_blank"}.
+
+## Two plotting interfaces
+
+1. original Plotly Graph Objects library `plotly.graph_objs`
+    - most capable plotting interface -- you saw its example in the previous section
+	- can combine multiple traces (building blocks) from different sources in a single plot
+    - more flexible, deeper access to various plot properties, great for detailed customization
+1. newer [Plotly Express](https://plotly.com/python/plotly-express){target="_blank"} library `plotly.express`
+   for rapid data exploration
+    - high-level interface
+	- built on top of Graph Objects
+	- provides 30+ functions for creating different types of figures in a single function call
+
+Both interfaces can work with data from NumPy arrays, Xarrays, Pandas dataframes, basic Python iterables,
+etc. And you can mix the two interfaces in a single script, e.g. create a simple figure with Plotly Express
+and then customize it with Graph Objects controls.

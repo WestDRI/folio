@@ -1,0 +1,157 @@
+---
+title: "Plotly Express (data exploration) library"
+---
+
+<!-- video tutorial https://plotly.com/python/plotly-express -->
+
+In Plotly Express you can create a plot with a single function call.
+
+::: {.callout-note}
+##### When not to use Plotly Express (and use Graph Objects instead)
+1. **Multiple traces**: if you want to overlay let's say a scatter plot, a bar chart, and a trend line that
+   all use different data sources. GO makes this much cleaner!
+1. **Fine-tuned markers**: you need deeper access to marker properties, e.g. the line border of a circle,
+   opacity, custom hover data or format.
+1. **Performance**: for extremely large datasets, `go.Scattergl` (the WebGL version of `go.Scatter`) provides
+   significantly better performance than standard scatter plots.
+:::
+
+Let's create a simple line plot in Plotly Express, using data from NumPy arrays:
+
+```py
+import plotly.express as px
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+y = sin(1/x)
+px.line(x=x, y=y, markers=True)
+```
+
+Alternatively, you can feed a dataframe:
+
+```py
+import plotly.express as px
+from numpy import linspace, sin
+import pandas as pd
+x = linspace(0.01,1,100)
+df = pd.DataFrame({'col1': x, 'col2': sin(1/x)})
+px.line(df, x='col1', y='col2', markers=True)
+```
+
+Or you can feed a dictionary:
+
+```py
+import plotly.express as px
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+d = {'key1': x, 'key2': sin(1/x)}
+px.line(d, x='key1', y='key2', markers=True)
+```
+
+Try `markers=False` to hide the points. Note that in `px.line` there is no built-in argument to change the
+marker style, or hide the line, or assign a specific colour, or do many other customizations. All of these
+things can be done easily, if you notice that `px.line` outputs a Graph Objects figure:
+
+```py
+fig = px.line(x=x, y=y, markers=True)
+print(type(fig))
+```
+
+so you can use Graph Objects's standard controls to modify your Plotly Express figure. We will study these
+controls in the next section.
+
+### Tip data
+
+To see Plotly Express really shine, we should play with a slightly larger dataset containing several
+variables. The module `px.data` comes with several datasets included. Let's take a dataset describing
+restaurant tips from 244 transactions and build a histogram:
+
+```py
+import plotly.express as px
+df = px.data.tips()
+df
+```
+```py
+px.histogram(df, x="total_bill")
+```
+
+Let's colour these transactions by the day of the week:
+
+```py
+px.histogram(df, x="total_bill", color="day")
+```
+
+Let's build a scatter plot:
+
+```py
+px.scatter(df, x="total_bill", y="tip", color="time", size="size")
+```
+
+### Gapminder data
+
+Let's take a look at the Gapminder 2007 dataset that contains one row per each country:
+
+```py
+import plotly.express as px
+df = px.data.gapminder().query("year==2007")
+df.shape   # 142 rows and 8 columns
+df
+```
+```py
+px.scatter(df, x="gdpPercap", y="lifeExp")   # this should be familiar
+```
+
+Try hovering over individual data points. Which data fields do you see?
+
+1. add `log_x=True`
+1. add `hover_name="country"`
+1. add `size="pop"`
+1. add `size_max=60`
+1. add `color="continent"` - can now turn continents off/on
+
+Let's try a single-axis scatter plot:
+
+```py
+px.strip(df, x="lifeExp")
+```
+
+1. add `hover_name="country"`
+1. add `color="continent"` - now a separate plot for each continent
+1. change strip to histogram
+1. can turn continents off/on in the legend
+1. add `marginal="rug"` to show countries in a rug plot
+1. add `y="pop"` to switch from country count to population along the vertical axis
+1. add `facet_col="continent"` to break continents into facet columns
+
+
+Let's check several plot types:
+
+```py
+px.bar(df, color="lifeExp", x="pop", y="continent", hover_name="country")
+
+px.sunburst(df, color="lifeExp", values="pop", path=["continent", "country"],
+            hover_name="country", height=800)
+
+px.treemap(df, color="lifeExp", values="pop", path=["continent", "country"],
+           hover_name="country", height=500)
+
+px.choropleth(df, color="lifeExp", locations="iso_alpha", hover_name="country", height=580)
+```
+
+<!-- - gridded data => heatmaps -->
+<!-- - polar plots -->
+<!-- - multivariate or categorical => parallel coordinates plot -->
+<!-- - ternary plots (below) -->
+<!-- - 3D data -->
+
+### Montreal's elections data
+
+A *ternary plot* shows compositions of three components that sum to a constant (usually 1 or 100%). Here is an
+ternary plot example with Montreal's 2013 municipal elections data covering 58 electoral districts and 3
+candidates:
+
+```py
+df = px.data.election()
+px.scatter_ternary(df, a="Joly", b="Coderre", c="Bergeron", color="winner",
+                   size="total", hover_name="district", size_max=15,
+                   color_discrete_map={"Joly": "blue", "Bergeron": "green", "Coderre": "red"})
+```
