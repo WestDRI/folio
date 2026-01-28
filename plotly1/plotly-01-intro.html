@@ -595,7 +595,7 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In general, use <code>fig.show()</code> to enforce displaying the plot (shell or Jupyter), but it shouldn’t be needed inside a Jupyter notebook if you use the command <code>go.Figure([line])</code> without saving the figure to a variable – then your plot will be displayed automatically.</p>
+<p>In general, use <code>fig.show()</code> to enforce displaying the plot (shell or Jupyter). This command is not necessary inside a Jupyter notebook if you create a figure with <code>go.Figure(...)</code> without saving it to a variable – then your plot should be displayed automatically.</p>
 </div>
 </div>
 </section>
@@ -618,14 +618,15 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 </section>
 <section id="running-a-remote-script" class="level3">
 <h3 class="anchored" data-anchor-id="running-a-remote-script">Running a remote script</h3>
-<p>To run a similar script from the command line on the training cluster, I need to change the last line <code>fig.show()</code> to <code>fig.write_image("lines.png")</code> to write directly into a file, since there is no browser to open a tab in on the remote system.</p>
+<p>On a remote system, there is no browser in which we could open a new tab. To run this script from the command line on the training cluster, we need to change the last line <code>fig.show()</code> to <code>fig.write_image("lines.png")</code> to write directly into a file.</p>
 <p>You can find more details at <a href="https://plotly.com/python/renderers" target="_blank">https://plotly.com/python/renderers</a>.</p>
 </section>
 </section>
 <section id="two-plotting-interfaces" class="level2">
 <h2 class="anchored" data-anchor-id="two-plotting-interfaces">Two plotting interfaces</h2>
+<p>At the moment, Plotly offers two plotting interfaces:</p>
 <ol type="1">
-<li>original Plotly Graph Objects library <code>plotly.graph_objs</code>
+<li>original Graph Objects library <code>plotly.graph_objs</code>
 <ul>
 <li>most capable plotting interface – you saw its example in the previous section</li>
 <li>can combine multiple traces (building blocks) from different sources in a single plot</li>
@@ -635,7 +636,7 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 <ul>
 <li>high-level interface</li>
 <li>built on top of Graph Objects</li>
-<li>provides 30+ functions for creating different types of figures in a single function call</li>
+<li>provides 30+ functions for creating different types of figures in a <strong>single function call</strong></li>
 </ul></li>
 </ol>
 <p>Both interfaces can work with data from NumPy arrays, Xarrays, Pandas dataframes, basic Python iterables, etc. And you can mix the two interfaces in a single script, e.g.&nbsp;create a simple figure with Plotly Express and then customize it with Graph Objects controls.</p>
