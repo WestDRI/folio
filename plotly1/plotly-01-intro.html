@@ -399,21 +399,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Open-source scientific plotting library for Python, R, MATLAB, Perl, Julia</li>
 <li>Front end uses JavaScript/HTML/CSS and D3.js visualization library, with Plotly JavaScript library on top</li>
 <li>Supports over 50 unique chart types</li>
-<li>Out of the box, provides basic interactivity (hover over data, zoom in, etc.)</li>
+<li>Out of the box, provides basic interactivity (hover over data, zoom in, etc.) and animation with sliders</li>
 <li>With Dash, can script any interaction (sliders, buttons, selection, …) with callback functions</li>
 </ul>
-<!-- Generated plots can be
-1. browsed online
-1. stored as offline html5 files
-1. displayed inside a Jupyter notebook -->
 <!--
-abc
 ==========================================================================================
-    The Basic Recipe:
-        Loading data (Pandas integration).
-        The standard syntax: fig = px.chart_type(data, x, y, color...).
-        fig.show() and the interactive toolbar.
-Phase 2: Essential Chart Types & Customization (40 Minutes)
     Comparison & Distribution:
         Dynamic Bar Charts (sorting and stacking).
         Histograms and Box Plots for statistical snapshots.
@@ -423,32 +413,22 @@ Phase 2: Essential Chart Types & Customization (40 Minutes)
     Refining the Aesthetics:
         Updating traces and layouts (fig.update_layout).
         Customizing hover labels (the most powerful feature for user engagement).
-Phase 3: Advanced Visuals & Faceting (30 Minutes)
+
+Advanced Visuals & Faceting:
     Facet Plots (Subplots): Breaking down complex data into a grid of charts based on a category.
     Time Series: Handling dates, range sliders, and selectors.
     Animated Data: Using the animation_frame parameter to show how data changes over time (the "Hans Rosling" effect).
-Phase 4: Exporting & Next Steps (20 Minutes)
+
+Exporting & Next Steps
     Saving your work: Exporting as standalone HTML files or static images.
     The Ecosystem: A 5-minute intro to Dash (turning your plots into full web apps).
-    Q&A / Mini-Challenge: Give students a fresh dataset and ask them to find one trend and highlight it using a custom hover label.
-Suggested Tools for the Workshop
-    Environment: Google Colab or Jupyter Notebooks (zero setup required for students).
-    Dataset: Use a "tidy" dataset like the built-in gapminder, tips, or stocks datasets provided by plotly.express.data.
-Tips for a Successful Session
-    The "Copy-Paste" Rule: Provide a GitHub gist or a starter notebook. In a 2-hour window, you don't want students stuck on a syntax error; you want them experimenting with parameters.
-    Focus on Hover: Spend extra time showing how to clean up hover text. It's the difference between a "techy" chart and a professional one.
+    Q&A / Mini-Challenge: Give students a fresh dataset and ask them to find one trend and highlight it using
+    a custom hover label.
 
-import plotly.express as px
-fig = px.chart_type(
-    data_frame = df,           # Your Pandas DataFrame
-    x = "column_a",            # Column for x-axis
-    y = "column_b",            # Column for y-axis
-    color = "column_c",        # Color-coding by category
-    title = "My Chart Title"   # Always label your work!
-)
-fig.show()
+Focus on Hover: Spend extra time showing how to clean up hover text. It's the difference between a "techy"
+chart and a professional one.
 
-2. Common Chart Types
+Common Chart Types
 Goal,Function,Key Arguments
 Trends,px.line(),"line_group, markers=True"
 Correlation,px.scatter(),"size, hover_name, trendline=""ols"""
@@ -456,31 +436,8 @@ Parts of Whole,px.bar(),"barmode=""group"" or ""stack"""
 Distributions,px.histogram(),"nbins, marginal=""rug"" or ""box"""
 Hierarchies,px.treemap(),"path=['level1', 'level2'], values"
 
-3. Customizing the "Look & Feel"
-fig.update_layout(
-    title_font_size=24,
-    template="plotly_dark", # Try 'ggplot2', 'seaborn', 'none'
-    showlegend=False
-)
-fig.update_traces(marker_color="red", selector=dict(type="bar"))
-
-4. The "Magic" Parameters
-Add these inside your px function call for instant interactivity:
-    Faceting (Subplots): facet_col="category_column" (creates a grid of charts).
-    Animation: animation_frame="year_column" (adds a play button).
-    Hover Data: hover_data=["extra_col1", "extra_col2"] (adds more info to tooltips).
-    Log Scales: log_x=True or log_y=True.
-    
-fig.write_html("my_report.html")
-fig.write_image("my_report.png")   # requires 'kaleido' library
-
 ==========================================================================================
 -->
-<!-- 1. [Code examples](https://plot.ly/create) -->
-<!-- 1. [Community feed with gallery](https://plot.ly/feed) -->
-<!-- 1. [Creating HTML or PDF reports in Python](https://plot.ly/python/#report-generation) -->
-<!-- 1. [Connecting to databases](https://plot.ly/python/#databases) -->
-<!-- 1. [Creating dashboards](https://plot.ly/python/dashboard) with Dash Enterprise -->
 <section id="todays-setup" class="level2">
 <h2 class="anchored" data-anchor-id="todays-setup">Today’s setup</h2>
 <p>Point your browser to <a href="https://jupyter.cass.vastcloud.org" target="_blank">https://jupyter.cass.vastcloud.org</a>, log in with your username and password (supplied by the instructor), specify the runtime of at least 2 hours (and leave all other settings at their default values), and start a Jupyter notebook.</p>
@@ -498,8 +455,8 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 <li><code>kaleido</code> to save plots to PNG</li>
 <li><code>numpy</code></li>
 <li><code>pandas</code></li>
-<li><code>networkx</code></li>
-<li><code>scikit-image</code></li>
+<li><code>networkx</code> to work with networks</li>
+<li><code>scikit-image</code> to create an isosurface with Marching Cubes algorithm</li>
 </ul>
 </section>
 <section id="displaying-plotly-figures" class="level2">
@@ -545,7 +502,7 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>line <span class="op">=</span> go.Scatter(x<span class="op">=</span>x, y<span class="op">=</span>y, mode<span class="op">=</span><span class="st">'lines+markers'</span>, name<span class="op">=</span><span class="st">'sin(1/x)'</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>   <span class="co"># this is a trace = a fundamental building block of a plot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>   <span class="co"># this is a trace = fundamental building block of a plot;</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>   <span class="co"># think of it as a single set of data and the instructions on how to draw it</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Option 1</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>go.Figure([line])   <span class="co"># pass data = a list of trace instances</span></span>
@@ -585,7 +542,7 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In general, use <code>fig.show()</code> to enforce displaying the plot (shell or Jupyter). This command is not necessary inside a Jupyter notebook if you create a figure with <code>go.Figure(...)</code> without saving it to a variable – then your plot should be displayed automatically.</p>
+<p>In general, use <code>fig.show()</code> to enforce displaying the plot (shell or Jupyter). Depending on your setup, this command might not be necessary inside a Jupyter notebook if you create a figure with <code>go.Figure(...)</code> without saving it to a variable – then your plot should be displayed automatically.</p>
 </div>
 </div>
 </section>
