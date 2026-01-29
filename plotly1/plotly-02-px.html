@@ -341,6 +341,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Interactive apps with Dash</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly1/plotly-05-links.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Links</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -351,9 +357,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#tip-data" id="toc-tip-data" class="nav-link active" data-scroll-target="#tip-data">Tip data</a></li>
+  <li><a href="#tips-data" id="toc-tips-data" class="nav-link active" data-scroll-target="#tips-data">Tips data</a></li>
   <li><a href="#gapminder-data" id="toc-gapminder-data" class="nav-link" data-scroll-target="#gapminder-data">Gapminder data</a></li>
   <li><a href="#montreals-elections-data" id="toc-montreals-elections-data" class="nav-link" data-scroll-target="#montreals-elections-data">Montreal’s elections data</a></li>
+  <li><a href="#animation" id="toc-animation" class="nav-link" data-scroll-target="#animation">Animation</a></li>
   </ul>
 </nav>
     </div>
@@ -404,26 +411,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Alternatively, you can feed a dataframe:</p>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>, title <span class="op">=</span> <span class="st">"My chart title"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alternatively, you can provide a DataFrame as input:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">'col1'</span>: x, <span class="st">'col2'</span>: sin(<span class="dv">1</span><span class="op">/</span>x)})</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>px.line(df, x<span class="op">=</span><span class="st">'col1'</span>, y<span class="op">=</span><span class="st">'col2'</span>, markers<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Or you can feed a dictionary:</p>
+<p>Or you can provide a dictionary:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> {<span class="st">'key1'</span>: x, <span class="st">'key2'</span>: sin(<span class="dv">1</span><span class="op">/</span>x)}</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>px.line(d, x<span class="op">=</span><span class="st">'key1'</span>, y<span class="op">=</span><span class="st">'key2'</span>, markers<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Try <code>markers=False</code> to hide the points. Note that in <code>px.line</code> there is no built-in argument to change the marker style, or hide the line, or assign a specific colour, or do many other customizations. All of these things can be done easily, if you notice that <code>px.line</code> outputs a Graph Objects figure:</p>
+<p>Try <code>markers=False</code> to hide the points. Note that in <code>px.line</code> there is no built-in argument to change the marker style, or hide the line, or assign a specific colour, or do many other customizations. All of these things are easy to do once you notice that <code>px.line</code> returns a Graph Objects figure:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(fig))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>so you can use Graph Objects’s standard controls to modify your Plotly Express figure. We will study these controls in the next section.</p>
-<section id="tip-data" class="level3">
-<h3 class="anchored" data-anchor-id="tip-data">Tip data</h3>
+<section id="tips-data" class="level2">
+<h2 class="anchored" data-anchor-id="tips-data">Tips data</h2>
 <p>To see Plotly Express really shine, we should play with a slightly larger dataset containing several variables. The module <code>px.data</code> comes with several datasets included. Let’s take a dataset describing restaurant tips from 244 transactions and build a histogram:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.tips()</span>
@@ -434,8 +441,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Let’s build a scatter plot:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>px.scatter(df, x<span class="op">=</span><span class="st">"total_bill"</span>, y<span class="op">=</span><span class="st">"tip"</span>, color<span class="op">=</span><span class="st">"time"</span>, size<span class="op">=</span><span class="st">"size"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="gapminder-data" class="level3">
-<h3 class="anchored" data-anchor-id="gapminder-data">Gapminder data</h3>
+<section id="gapminder-data" class="level2">
+<h2 class="anchored" data-anchor-id="gapminder-data">Gapminder data</h2>
 <p>Let’s take a look at the Gapminder 2007 dataset that contains one row per each country:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.gapminder().query(<span class="st">"year==2007"</span>)</span>
@@ -461,7 +468,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>add <code>y="pop"</code> to switch from country count to population along the vertical axis</li>
 <li>add <code>facet_col="continent"</code> to break continents into facet columns</li>
 </ol>
-<p>Let’s check several plot types:</p>
+<p>Let’s check several other plot types:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>px.bar(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, x<span class="op">=</span><span class="st">"pop"</span>, y<span class="op">=</span><span class="st">"continent"</span>, hover_name<span class="op">=</span><span class="st">"country"</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>px.sunburst(df, color<span class="op">=</span><span class="st">"lifeExp"</span>, values<span class="op">=</span><span class="st">"pop"</span>, path<span class="op">=</span>[<span class="st">"continent"</span>, <span class="st">"country"</span>],</span>
@@ -477,13 +484,67 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- - ternary plots (below) -->
 <!-- - 3D data -->
 </section>
-<section id="montreals-elections-data" class="level3">
-<h3 class="anchored" data-anchor-id="montreals-elections-data">Montreal’s elections data</h3>
+<section id="montreals-elections-data" class="level2">
+<h2 class="anchored" data-anchor-id="montreals-elections-data">Montreal’s elections data</h2>
 <p>A <em>ternary plot</em> shows compositions of three components that sum to a constant (usually 1 or 100%). Here is an ternary plot example with Montreal’s 2013 municipal elections data covering 58 electoral districts and 3 candidates:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.election()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>px.scatter_ternary(df, a<span class="op">=</span><span class="st">"Joly"</span>, b<span class="op">=</span><span class="st">"Coderre"</span>, c<span class="op">=</span><span class="st">"Bergeron"</span>, color<span class="op">=</span><span class="st">"winner"</span>,</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                   size<span class="op">=</span><span class="st">"total"</span>, hover_name<span class="op">=</span><span class="st">"district"</span>, size_max<span class="op">=</span><span class="dv">15</span>,</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                   color_discrete_map<span class="op">=</span>{<span class="st">"Joly"</span>: <span class="st">"blue"</span>, <span class="st">"Bergeron"</span>: <span class="st">"green"</span>, <span class="st">"Coderre"</span>: <span class="st">"red"</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="animation" class="level2">
+<h2 class="anchored" data-anchor-id="animation">Animation</h2>
+<p>In Plotly Express, with a dataframe input, you can animate in one of the columns.</p>
+<ul>
+<li>values from <code>animation_frame</code> column are used to assign marks to animation frames</li>
+<li>rows with matching <code>animation_group</code> values will be treated as if they describe the same object in each frame</li>
+</ul>
+<p>In other words, with <code>animation_group="country"</code>, each country will correspond to one moving object in the animation.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> px.data.gapminder()</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>px.scatter(df, x<span class="op">=</span><span class="st">"gdpPercap"</span>, y<span class="op">=</span><span class="st">"lifeExp"</span>, animation_frame<span class="op">=</span><span class="st">"year"</span>, animation_group<span class="op">=</span><span class="st">"country"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>           size<span class="op">=</span><span class="st">"pop"</span>, color<span class="op">=</span><span class="st">"continent"</span>, hover_name<span class="op">=</span><span class="st">"country"</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>           log_x<span class="op">=</span><span class="va">True</span>, size_max<span class="op">=</span><span class="dv">55</span>, range_x<span class="op">=</span>[<span class="dv">200</span>,<span class="dv">80000</span>], range_y<span class="op">=</span>[<span class="dv">25</span>,<span class="dv">90</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="../fig/anim1.png" class="img-fluid"></p>
+<p>Here it is important to set <code>range_x</code> and <code>range_y</code> to ensure that all objects are shown in every frame. Without these, the axis ranges are determined by the first frame and remain fixed throughout the animation.</p>
+<p>Next, let try to build data to be used for animation from scratch. Here is a simple spiral with 30 points:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>npoints <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">10</span>,npoints)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> t<span class="op">*</span>np.cos(t), t<span class="op">*</span>np.sin(t)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>fig.update_yaxes(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">8</span>, <span class="dv">10</span>], scaleanchor<span class="op">=</span><span class="st">"x"</span>, scaleratio<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>fig.update_traces(marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Add <code>animation_frame=range(npoints))</code> to <code>px.line</code>, and now you can play it back! Plotly will notice that in the line</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>, animation_frame<span class="op">=</span><span class="bu">range</span>(npoints))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>x</code>, <code>y</code> and <code>animation_frame</code> all have the same length, so it will treat the subsequent elements of <code>x</code> and <code>y</code> arrays as a “running” pair of x,y-coordinates for individual frames.</p>
+<p><img src="../fig/anim2.png" class="img-fluid"></p>
+<p>What if you want to have multiple objects per frame, e.g.&nbsp;two dots on two spirals, respectively? One option would to use Graph Objects where you can plot two spirals at the same time.</p>
+<p>Another option is to format your data as a dataframe:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>nframes <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">10</span>, nframes)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>x1, y1 <span class="op">=</span> t<span class="op">*</span>np.cos(t), t<span class="op">*</span>np.sin(t)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>x2, y2 <span class="op">=</span> t<span class="op">/</span><span class="dv">2</span><span class="op">*</span>np.cos(t), t<span class="op">/</span><span class="dv">2</span><span class="op">*</span>np.sin(t)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"time"</span>: np.concatenate([t, t]),   <span class="co"># merge two time arrays</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"x"</span>: np.concatenate([x1, x2]),</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"y"</span>: np.concatenate([y1, y2]),</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dotID"</span>: np.concatenate([[<span class="dv">1</span>]<span class="op">*</span>nframes, [<span class="dv">2</span>]<span class="op">*</span>nframes])</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.scatter(df, x<span class="op">=</span><span class="st">"x"</span>, y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>                 animation_frame<span class="op">=</span><span class="st">"time"</span>, animation_group<span class="op">=</span><span class="st">"dotID"</span>,</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>                 color<span class="op">=</span><span class="st">"dotID"</span>, color_continuous_scale<span class="op">=</span><span class="st">"Jet"</span>)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>fig.update_yaxes(<span class="bu">range</span><span class="op">=</span>[<span class="op">-</span><span class="dv">8</span>, <span class="dv">10</span>], scaleanchor<span class="op">=</span><span class="st">"x"</span>, scaleratio<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>fig.update_traces(marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">20</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><img src="../fig/anim3.png" class="img-fluid"></p>
 
 
 </section>

@@ -341,6 +341,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">Interactive apps with Dash</span></a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plotly1/plotly-05-links.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Links</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -399,8 +405,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>can create different tabs inside the app, with rules for switching between them,</li>
 <li>even can create an entire website with user guides, plots, code examples, etc.</li>
 </ul>
-<!-- &nbsp; -->
-<p>To install the core Dash library, use your favourite installer, ideally inside a dedicated virtual environment:</p>
+<p>To install the core Dash library, use your favourite installer, ideally inside a dedicated virtual environment, e.g.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pip install dash</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> uv pip install dash</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> conda install <span class="at">-c</span> conda-forge dash</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -441,8 +446,8 @@ Caution
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install dash-ag-grid                <span class="co"># to display tabular data components</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install dash-bootstrap-components   <span class="co"># community-maintained styling library</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install dash-mantine-components     <span class="co"># community-maintained styling library</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="our-baseline-plot-without-dash" class="level3">
-<h3 class="anchored" data-anchor-id="our-baseline-plot-without-dash">Our baseline plot without Dash</h3>
+<section id="our-baseline-plot-without-dash" class="level2">
+<h2 class="anchored" data-anchor-id="our-baseline-plot-without-dash">Our baseline plot without Dash</h2>
 <p>On my computer I already have a setup that opens every Plotly plot in a new browser tab, using the setup mentioned at the start of this workshop. As a reminder, if you need to redirect your plot, use one of these options:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'notebook'</span></span>
@@ -467,8 +472,8 @@ Caution
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>fig.update_layout(xaxis<span class="op">=</span><span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>]), yaxis<span class="op">=</span><span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>]))</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="our-baseline-plot-in-dash" class="level3">
-<h3 class="anchored" data-anchor-id="our-baseline-plot-in-dash">Our baseline plot in Dash</h3>
+<section id="our-baseline-plot-in-dash" class="level2">
+<h2 class="anchored" data-anchor-id="our-baseline-plot-in-dash">Our baseline plot in Dash</h2>
 <p>To serve our Graph Objects plot inside Dash, we need to create a script <code>scatter1.py</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save this as scatter1.py</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
@@ -538,8 +543,8 @@ Note
 </div>
 </div>
 </section>
-<section id="make-it-interactive" class="level3">
-<h3 class="anchored" data-anchor-id="make-it-interactive">Make it interactive</h3>
+<section id="make-it-interactive" class="level2">
+<h2 class="anchored" data-anchor-id="make-it-interactive">Make it interactive</h2>
 <p>Let’s add two new elements to our script:</p>
 <ol type="1">
 <li>a slider, to select the number of points, and</li>
@@ -574,8 +579,8 @@ Note
 <p>In this script, we moved the figure-drawing code into the callback function, since it depends on the input number of points and must be re-executed each time we move slider.</p>
 <p>Inside the callback function, the argument name <code>selected</code> is used only inside the function.</p>
 </section>
-<section id="add-some-style" class="level3">
-<h3 class="anchored" data-anchor-id="add-some-style">Add some style</h3>
+<section id="add-some-style" class="level2">
+<h2 class="anchored" data-anchor-id="add-some-style">Add some style</h2>
 <p>At the moment, our application is very minimal in appearance. While we could style it using HTML and CSS, that approach assumes some familiarity with CSS. Dash provides higher-level components that make styling much easier. A popular option in industry, Dash Enterprise (requires a commercial license starting at 35k per year) provides Dash Design Kit, but it’s not an option for us.</p>
 <p>Fortunately, the Dash community has developed two open-source libraries – Dash Bootstrap Components and Dash Mantine Components – that make styling Dash apps much easier. They are easy to install:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> uv pip install dash-bootstrap-components</span>
@@ -623,8 +628,8 @@ Note
 </figure>
 </div>
 </section>
-<section id="multiple-inputs" class="level3">
-<h3 class="anchored" data-anchor-id="multiple-inputs">Multiple inputs</h3>
+<section id="multiple-inputs" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-inputs">Multiple inputs</h2>
 <p>Now, let’s add more controls – two extra sliders and radio buttons (only one selection) – for the total of 4 inputs to the callback function. All interactive controls are sitting inside a single column, and are all packaged into their own <code>html.Div</code> with <code>mb-4</code> margins for nicer visual separation:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save this as scatter5.py</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
@@ -697,8 +702,8 @@ Note
 <span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>app.run(debug<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="../fig/dash5.png" class="img-fluid"></p>
 </section>
-<section id="multiple-independent-outputs" class="level3">
-<h3 class="anchored" data-anchor-id="multiple-independent-outputs">Multiple independent outputs</h3>
+<section id="multiple-independent-outputs" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-independent-outputs">Multiple independent outputs</h2>
 <!-- one control for multiple plots (multiple outputs) https://dash.plotly.com/basic-callbacks -->
 <p>Now we go back to a single, vertical slider for the number of points, and add two histogram plots showing the distribution of all points in the scatter plot along the x- and y-axis, respectively. The slider affects all three plots – and this is the only connection between the plots. For example, if you zoom in on an area in the scatter plot, the histogram plots will not change.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save this as scatter6.py</span></span>
@@ -751,8 +756,8 @@ Note
 <span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>app.run(debug<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="../fig/dash6.png" class="img-fluid"></p>
 </section>
-<section id="connected-plots" class="level3">
-<h3 class="anchored" data-anchor-id="connected-plots">Connected plots</h3>
+<section id="connected-plots" class="level2">
+<h2 class="anchored" data-anchor-id="connected-plots">Connected plots</h2>
 <p>Let’s remove the slider, and add a Lasso selection in the scatter plot and show the x- and y-histograms only for the points selected with Lasso. If there is no selection, add a text “Select points to see details” to the histograms.</p>
 <p>The callback function has:</p>
 <ul>
@@ -810,8 +815,8 @@ Note
 <span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>app.run(debug<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><img src="../fig/dash7.png" class="img-fluid"></p>
 </section>
-<section id="other-controls" class="level3">
-<h3 class="anchored" data-anchor-id="other-controls">Other controls</h3>
+<section id="other-controls" class="level2">
+<h2 class="anchored" data-anchor-id="other-controls">Other controls</h2>
 <p>The Dash Core Components (<code>dcc</code>) library offers the following interactive controls:</p>
 <div class="column" style="width:80%;">
 <table class="caption-top table">
@@ -870,8 +875,8 @@ Note
 </table>
 </div>
 </section>
-<section id="publishing-hosting" class="level3">
-<h3 class="anchored" data-anchor-id="publishing-hosting">Publishing / hosting</h3>
+<section id="publishing-hosting" class="level2">
+<h2 class="anchored" data-anchor-id="publishing-hosting">Publishing / hosting</h2>
 <p>A Dash app requires a server – you can’t just save its output to a standalone html5 file. If you want to share your Dash app with the world, you have several options:</p>
 <ol type="1">
 <li>spin up a Dash app on your own VM – you can build one for free on one of our Clouds systems, or pay to use a commercial cloud,</li>
