@@ -3,9 +3,11 @@ title: "Introduction"
 ---
 
 - Developed by a Montreal-based company <https://plotly.com>{target="_blank"}
-- Open-source scientific plotting Python library for Python, R, MATLAB, Perl, Julia
+- Open-source scientific plotting library for Python, R, MATLAB, Perl, Julia
 - Front end uses JavaScript/HTML/CSS and D3.js visualization library, with Plotly JavaScript library on top
 - Supports over 50 unique chart types
+- Out of the box, provides basic interactivity (hover over data, zoom in, etc.)
+- With Dash, can script any interaction (sliders, buttons, selection, ...) with callback functions
 
 <!-- Generated plots can be
 1. browsed online
@@ -15,9 +17,6 @@ title: "Introduction"
 <!--
 abc
 ==========================================================================================
-Phase 1: The Foundations (30 Minutes)
-    The "Why" of Interactive Viz: Why static charts aren't always enough (tooltips, zooming, filtering).
-    Plotly Express (PX) vs. Graph Objects (GO): Understanding the high-level API for speed vs. the low-level API for total control.
     The Basic Recipe:
         Loading data (Pandas integration).
         The standard syntax: fig = px.chart_type(data, x, y, color...).
@@ -85,21 +84,6 @@ fig.write_image("my_report.png")   # requires 'kaleido' library
 
 ==========================================================================================
 -->
-
-## Links
-
-1. [Online gallery](https://plotly.com/python){target="_blank"} with code examples by category
-1. [Plotly Express tutorial](https://plotly.com/python/plotly-express){target="_blank"}, also plotly.express
-1. [Plotly Community Forum](https://community.plotly.com){target="_blank"}
-1. [Keyword index](https://plot.ly/python/reference){target="_blank"}
-1. [Getting started guide](https://plot.ly/python/getting-started){target="_blank"}
-1. [Plotly vs
-   matplotlib](https://www.fabi.ai/blog/plotly-vs-matplotlib-a-quick-comparison-with-visual-guides){target="_blank"}
-   (with video)
-1. [Displaying Figures](https://plot.ly/python/offline){target="_blank"} (including offscreen into a file)
-1. [Saving static images (PNG, PDF, etc) ](https://plot.ly/python/static-image-export){target="_blank"}
-1. [Plotly and IPython / Jupyter notebook](https://plot.ly/ipython-notebooks){target="_blank"} with additional
-   plotting examples
 
 <!-- 1. [Code examples](https://plot.ly/create) -->
 <!-- 1. [Community feed with gallery](https://plot.ly/feed) -->
@@ -300,11 +284,11 @@ You can find more details at <https://plotly.com/python/renderers>{target="_blan
 
 At the moment, Plotly offers two plotting interfaces:
 
-1. original Graph Objects library `plotly.graph_objs`
-    - most capable plotting interface -- you saw its example in the previous section
+1. original Graph Objects library `plotly.graph_objs` (GO) for total control
+    - most capable, lower-level plotting interface -- you saw its example few minutes ago
 	- can combine multiple traces (building blocks) from different sources in a single plot
     - more flexible, deeper access to various plot properties, great for detailed customization
-1. newer [Plotly Express](https://plotly.com/python/plotly-express){target="_blank"} library `plotly.express`
+1. newer [Plotly Express](https://plotly.com/python/plotly-express){target="_blank"} (PX) library `plotly.express`
    for rapid data exploration
     - high-level interface
 	- built on top of Graph Objects
@@ -312,4 +296,5 @@ At the moment, Plotly offers two plotting interfaces:
 
 Both interfaces can work with data from NumPy arrays, Xarrays, Pandas dataframes, basic Python iterables,
 etc. And you can mix the two interfaces in a single script, e.g. create a simple figure with Plotly Express
-and then customize it with Graph Objects controls.
+and then customize it with Graph Objects controls -- you will see many examples of this in the section on
+Dash.

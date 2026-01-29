@@ -30,7 +30,7 @@ scatterternary, splom, streamtube, sunburst, surface, table, treemap, violin,
 volume, waterfall
 ```
 
-### Scatter plots
+## Scatter plots
 
 At the very beginning of this workshop we saw an example of a Scatter plot with Graph Objects:
 
@@ -48,43 +48,71 @@ Let's print the dataset `line`:
 ```py
 type(line)    # plotly.graph_objs._scatter.Scatter
 print(line)   # it's a dictionary!
+line['name']   # returns a string
+line['x']      # returns a numpy array
 ```
 
-It is a plotly object which is actually a Python dictionary, with all elements clearly identified (plot type,
-x NumPy array, y NumPy array, line type, legend line name). So, `go.Scatter` simply creates a dictionary with
-the corresponding `type` element. **This variable `line` completely describes our plot!*** Then we create a
-list of such objects and pass it to the plotting routine.
+It is a plotly object which is actually a Python dictionary underneath, with all elements clearly identified
+(plot type, x NumPy array, y NumPy array, line type, legend line name). So, `go.Scatter` simply creates a
+dictionary with the corresponding `type` element. **Right now, this variable `line` completely describes our
+plot!** To create a plot in Graph Objects, we pass a list of such objects to a plotting function.
 
 ::: {.callout-note}
+##### Traces
+In Plotly, these objects are called *traces*, and they are a fundamental building block of a plot.
+:::
+
+::: {.callout-note}
+##### Hovering with a mouse
 Hovering over each data point will reveal their coordinates. Use the toolbar at the top. When zooming in/out,
 double-clicking on the plot will reset it.
 :::
 
 ::: {.callout-caution collapse="true"}
-## Exercise 1: two traces
+##### Exercise 1: two traces
 Pass a list of two traces to the plotting routine with `data = [line1,line2]`. Let the second trace `line2`
 contain another mathematical function. The idea is to have multiple objects in the plot.
 :::
 
 ::: {.callout-caution collapse="true"}
-## Exercise 2: add dots
+##### Exercise 2: add dots
 Add a bunch of dots to the plot with `dots = go.Scatter(x=[.2,.4,.6,.8], y=[2,1.5,2,1.2])`. What is
 default scatter mode?
 :::
 
 ::: {.callout-caution collapse="true"}
-## Exercise 3: style the dots
-Change line colour and width by adding the dictionary `line=dict(color=('rgb(10,205,24)'),width=4)` to `dots`.
+##### Exercise 3: style the dots
+Change line colour and width by adding the dictionary `line=dict(color=('rgb(10,205,24)'),width=4)` to
+`dots`. Make the colour yellow -- there are two ways to do this: via RGB and by passing a string. Now make the
+line markers green.
 :::
 
 ::: {.callout-caution collapse="true"}
-## Exercise 4: random filled circles
+##### Exercise 4: random filled circles
 Create a scatter plot of 300 random filled blue circles inside a unit square. Their random opacity must
 anti-correlate with their size (bigger circles should be more transparent) -- see the plot below.
 ![](/fig/ex4.png)
 :::
 
-### Bar plots
+For more precise customization, try updating a layout after creating the figure:
+
+```py
+fig = go.Figure(...)
+fig.update_layout(xaxis=dict(tickfont=dict(size=24), range=[0, 1]),
+                  yaxis=dict(tickfont=dict(size=24), range=[0, 1]))
+fig.show()
+```
+
+::: {.callout-note}
+##### Updating layout
+You can use `fig.update_layout` with both Graph Objects and Plotly Express, as both create the same type of object.
+:::
+
+
+
+
+
+## Bar plots
 
 Let's try a Bar plot, constructing `data` directly in one line from the dictionary:
 
@@ -127,7 +155,7 @@ help(go.Layout)
 
 There are many attributes!
 
-### Heatmaps
+## Heatmaps
 
 * go.Area() for plotting **wind rose charts**
 * go.Box() for **basic box plots**
@@ -149,38 +177,43 @@ fig = go.Figure([heatmap])
 fig.show()
 ```
 
+With heatmaps, very often people plot NumPy arrays. The function `go.Heatmap` is happy to take a 2D NumPy
+array: change `z=data` to `z=np.array(data)` to verify this.
+
+
+
+
 ::: {.callout-caution collapse="true"}
-## Exercise 5: other colourmaps
-Try a few different colourmaps, e.g. 'Viridis', 'Jet', 'Rainbow'. What colourmaps are available?
+##### Exercise 5: other colourmaps
+Add an argument to `go.Heatmap` to try a few different colourmaps, e.g. 'Viridis', 'Jet', 'Rainbow'. What
+colourmaps are available?
 :::
 
-### Contour maps
+## Contour maps
 
 ::: {.callout-caution collapse="true"}
-## Exercise 6: contour map
+##### Exercise 6: contour map
 Pretend that our heatmap is defined over a 2D domain and plot the same temperature data as a contour
 map. Remove the `Year` data (last column) and use `go.Contour` to plot the 2D contour map.
 :::
 
-### Download data
+## Geographical scatterplot
 
-Open a terminal window inside Jupyter (New | Terminal) and run these commands:
+In our next plot, we will read data from a file. Let's copy a few data files into our home directory. Open a
+terminal window inside Jupyter (+ | Terminal) and run this command:
 
 ```sh
-wget https://tinyurl.com/pvzip -O paraview.zip
-unzip paraview.zip
-mv data/*.{csv,nc} .
+unzip /project/def-sponsor00/shared/paraview.zip \
+	  data/{cities,gdp,mt_bruno_elevation,legatum2015}.csv
 ```
 
-### Geographical scatterplot
-
-Go back to your Python Jupyter Notebook. Now let's do a scatterplot on top of a geographical map:
+Next, switch back to your Python notebook. Let's do a scatterplot on top of a geographical map:
 
 ```py
 import plotly.graph_objs as go
 import pandas as pd
 from math import log10
-df = pd.read_csv('cities.csv')   # lists name,pop,lat,lon for 254 Canadian cities and towns
+df = pd.read_csv('data/cities.csv')   # lists name,pop,lat,lon for 254 Canadian cities and towns
 df['text'] = df['name'] + '<br>Population ' + \
              (df['pop']/1e6).astype(str) +' million' # add new column for mouse-over
 
@@ -214,7 +247,7 @@ fig.show()
 ```
 
 ::: {.callout-caution collapse="true"}
-## Exercise 7: ten largest cities
+##### Exercise 7: ten largest cities
 Modify the code to display only 10 largest cities.
 :::
 
@@ -224,7 +257,7 @@ of a single map -- let's **combine scattergeo + choropleth**:
 ```py
 import plotly.graph_objs as go
 import pandas as pd
-df = pd.read_csv('cities.csv')
+df = pd.read_csv('data/cities.csv')
 df['text'] = df['name'] + '<br>Population ' + \
              (df['pop']/1e6).astype(str)+' million' # add new column for mouse-over
 cities = go.Scattergeo(lon = df['lon'],
@@ -235,7 +268,7 @@ cities = go.Scattergeo(lon = df['lon'],
                            color = "lightblue",
                            line = dict(width=0.5, color='rgb(40,40,40)'),
                            sizemode = 'area'))
-gdp = pd.read_csv('gdp.csv')   # read name, gdp, code for 222 countries
+gdp = pd.read_csv('data/gdp.csv')   # read name, gdp, code for 222 countries
 c1 = [0,"rgb(5, 10, 172)"]     # define colourbar from top (0) to bottom (1)
 c2, c3 = [0.35,"rgb(40, 60, 190)"], [0.5,"rgb(70, 100, 245)"]
 c4, c5 = [0.6,"rgb(90, 120, 245)"], [0.7,"rgb(106, 137, 247)"]
@@ -254,14 +287,14 @@ fig = go.Figure(data=[cities,countries], layout=layout)
 fig.show()
 ```
 
-### 3D Topographic elevation
+## 3D topographic elevation
 
 Let's plot some tabulated topographic elevation data:
 
 ```py
 import plotly.graph_objs as go
 import pandas as pd
-table = pd.read_csv('mt_bruno_elevation.csv')
+table = pd.read_csv('data/mt_bruno_elevation.csv')
 surface = go.Surface(z=table.values)  # use 2D numpy array format
 layout = go.Layout(title='Mt Bruno Elevation',
                    width=1200, height=1200,    # image size
@@ -270,31 +303,26 @@ fig = go.Figure([surface], layout=layout)
 fig.show()
 ```
 
-::: {.callout-caution collapse="true"}
-## Exercise 8: plot a 2D function
-Plot a 2D function f(x,y) = (1−y) sin(πx) + y sin^2(2πx), where x,y ∈ [0,1] on a 100^2 grid.
-:::
+You can rotate this plot in 3D!
 
-### Elevated 2D functions
+## 3D plot of a 2D function $f(x,y)$
 
-Let's define a different colourmap by adding `colorscale='Viridis'` inside `go.Surface()`. This is our
-current code:
+Next, let's plot a 2D function $f(x,y) = (1−y)\sin(\pi x) + y\sin^2(2\pi x)$, where $x,y\in [0,1]$ on a
+$100^2$ grid, using `colorscale='Viridis'`:
 
 ```py
 import plotly.graph_objs as go
 from numpy import *
 n = 100   # plot resolution
 x = linspace(0,1,n)
-y = linspace(0,1,n)
-Y, X = meshgrid(x, y)   # meshgrid() returns two 2D arrays storing x/y respectively at each mesh point
-F = (1-Y)*sin(pi*X) + Y*(sin(2*pi*X))**2   # array operation
+y = linspace(0,1,n).reshape(n,1)
+F = (1-Y)*sin(pi*x) + y*(sin(2*pi*x))**2   # array operation
 data = go.Surface(z=F, colorscale='Viridis')
-layout = go.Layout(width=1000, height=1000, scene=go.layout.Scene(zaxis=go.layout.scene.ZAxis(range=[-1,2])));
-fig = go.Figure(data=[data], layout=layout)
-fig.show()
+layout = go.Layout(width=1000, height=1000)
+go.Figure(data=[data], layout=layout)
 ```
 
-### Lighting control
+## Lighting controls
 
 Let's change the default light in the room by adding `lighting=dict(ambient=0.1)` inside `go.Surface()`. Now
 our plot is much darker!
@@ -305,9 +333,9 @@ our plot is much darker!
 * `fresnel` controls light washout (default = 0.2)
 * `specular` induces bright spots (default = 0.05)
 
-Let's try `lighting=dict(ambient=0.1,specular=0.3)` -- now we have lots of specular light!
+Let's try `lighting=dict(ambient=0.1,specular=0.3)` -- now there is a lot of reflected light!
 
-### 3D parametric plots
+## 3D parametric plots
 
 In plotly documentation you can find quite a lot of
 [different 3D plot types](https://plot.ly/python/3d-charts). Here is something visually very different,
@@ -329,14 +357,14 @@ fig = go.Figure(data=[surface], layout=layout)
 fig.show()
 ```
 
-### 3D scatter plots
+## 3D scatter plots
 
 Let's take a look at a 3D scatter plot using the `country index` data from http://www.prosperity.com for 142 countries:
 
 ```py
 import plotly.graph_objs as go
 import pandas as pd
-df = pd.read_csv('legatum2015.csv')
+df = pd.read_csv('data/legatum2015.csv')
 spheres = go.Scatter3d(x=df.economy,
                        y=df.entrepreneurshipOpportunity,
                        z=df.governance,
@@ -359,7 +387,7 @@ fig = go.Figure(data=[spheres], layout=layout)
 fig.show()
 ```
 
-### 3D graphs
+## 3D graphs
 
 We can plot 3D graphs. Consider a Dorogovtsev-Goltsev-Mendes graph: *in each subsequent generation, every
 edge from the previous generation yields a new node, and the new graph can be made by connecting together
@@ -410,7 +438,7 @@ fig = go.Figure(data=[edges,nodes], layout=layout)
 fig.show()
 ```
 
-### 3D functions
+## 3D function $f(x,y,z)$
 
 Let's create an isosurface of a `decoCube` function at f=0.03. Isosurfaces are returned as a list of
 polygons, and for plotting polygons in plotly we need to use `plotly.figure_factory.create_trisurf()`
@@ -426,24 +454,28 @@ F = ((X*X+Y*Y-0.64)**2 + (Z*Z-1)**2) * \
     ((Z*Z+X*X-0.64)**2 + (Y*Y-1)**2)
 vertices, triangles, normals, values = measure.marching_cubes(F, 0.03)  # create an isosurface
 x,y,z = zip(*vertices)   # zip(*...) is opposite of zip(...): unzips a list of tuples
-fig = FF.create_trisurf(x=x, y=y, z=z, plot_edges=False,
-                        simplices=triangles, title="Isosurface", height=1200, width=1200)
-fig.show()
+FF.create_trisurf(x=x, y=y, z=z, plot_edges=False,
+                  simplices=triangles, title="Isosurface", height=800, width=800)
 ```
 
 Try switching `plot_edges=False` to `plot_edges=True` -- you'll see individual polygons!
 
-<!-- ### NetCDF data -->
-<!-- #### 2D slices through a 3D dataset -->
 
-<!-- How about processing real data? -->
+
+
+
+
+
+
+
+<!-- ## 3D dataset from a file -->
+
+<!-- How about plotting a 3D dataset from a file? In this section we'll be reading data from a NetCDF file. -->
 
 <!-- ```py -->
-<!-- import plotly.offline as py -->
-<!-- py.init_notebook_mode(connected=True) -->
 <!-- import plotly.graph_objs as go -->
 <!-- from netCDF4 import Dataset    # Note: need netCDF4 installed -->
-<!-- dataset = Dataset('sineEnvelope.nc') -->
+<!-- dataset = Dataset('data/sineEnvelope.nc') -->
 <!-- name = list(dataset.variables.keys())[0]   # variable name -->
 <!-- print(name) -->
 <!-- var = dataset.variables[name] -->
@@ -454,7 +486,7 @@ Try switching `plot_edges=False` to `plot_edges=True` -- you'll see individual p
 <!-- py.iplot(fig,auto_open=False) -->
 <!-- ``` -->
 
-<!-- > ## Exercise 9 -->
+<!-- > ##### Exercise 9 -->
 <!-- > Use the last two codes to plot an isosurface of `sineEnvelope.nc` dataset at f=0.5. -->
 
 <!-- #### Orthogonal 2D slices -->
@@ -463,11 +495,9 @@ Try switching `plot_edges=False` to `plot_edges=True` -- you'll see individual p
 
 <!-- ```py -->
 <!-- import numpy as np -->
-<!-- import plotly.offline as py -->
-<!-- py.init_notebook_mode(connected=True) -->
 <!-- import plotly.graph_objs as go -->
 <!-- from netCDF4 import Dataset -->
-<!-- dataset = Dataset('sineEnvelope.nc') -->
+<!-- dataset = Dataset('data/sineEnvelope.nc') -->
 <!-- name = list(dataset.variables.keys())[0]   # variable name -->
 <!-- var = dataset.variables[name]   # dataset variable -->
 <!-- vmin, vmax = np.min(var), np.max(var)   # global dataset min/max -->
@@ -506,19 +536,52 @@ Try switching `plot_edges=False` to `plot_edges=True` -- you'll see individual p
 <!-- py.iplot(fig,auto_open=False) -->
 <!-- ``` -->
 
-<!-- ## Animation -->
+
+
+
+
+## Animation
+
+There is quite a bit to say about creating animations with Graph Objects, but we can't really cover it in this
+workshop. Perhaps, we could offer a webinar on this topic in the future?
+
+
+
+
+
+<!-- ```py -->
+<!-- import plotly.express as px -->
+<!-- import numpy as np -->
+
+<!-- npoints = 30 -->
+<!-- t = np.linspace(0,10,npoints) -->
+<!-- x, y = t*np.cos(t), t*np.sin(t) -->
+
+<!-- fig = px.line(x=x, y=y, markers=True) -->
+<!-- fig.update_yaxes(range=[-8, 10], scaleanchor="x", scaleratio=1) -->
+<!-- fig.update_traces(marker=dict(size=20)) -->
+<!-- ``` -->
+
+
+
+
+
+
+
 
 <!-- For animations, you need to pass the third (`frames`) argument to `go.Figure()`: -->
 
 <!-- ```py -->
-<!-- import plotly.offline as py -->
-<!-- py.init_notebook_mode(connected=True) -->
 <!-- import plotly.graph_objs as go -->
 <!-- import numpy as np -->
+
 <!-- t = np.linspace(0,10,100) -->
 <!-- x, y = t/3*np.cos(t), t/3*np.sin(t) -->
 <!-- line1 = go.Scatter(x=x, y=y, mode='lines', line=dict(width=10, color='blue')) -->
 <!-- line2 = go.Scatter(x=x, y=y, mode='lines', line=dict(width=2, color='blue')) -->
+<!-- # line1 will be shown before the first frame -->
+<!-- # line2 will be shown in each frame -->
+
 <!-- layout = go.Layout(title='Moving dot', -->
 <!--                    xaxis=dict(range=[-10,10]), -->
 <!--                    yaxis=dict(scaleanchor="x", scaleratio=1),   # 1:1 aspect ratio -->
@@ -528,15 +591,23 @@ Try switching `plot_edges=False` to `plot_edges=True` -- you'll see individual p
 <!--                                                'method': 'animate', -->
 <!--                                                'args': [None]}]}]) -->
 <!-- nframes = 20 -->
-<!-- s = np.linspace(0,10,nframes) -->
-<!-- xdot, ydot = s/3*np.cos(s), s/3*np.sin(s) -->
+<!-- time = np.linspace(0,10,nframes) -->
+<!-- xdot, ydot = time/3*np.cos(time), time/3*np.sin(time) -->
 <!-- frames = [dict(data=[go.Scatter(x=[xdot[k]], y=[ydot[k]], -->
 <!--                                 mode='markers', marker=dict(color='red', size=30))]) -->
 <!--           for k in range(nframes)] -->
-<!-- # line1 will be shown before the first frame, line2 will be shown in each frame -->
-<!-- fig = go.Figure(data=[line1,line2], layout=layout, frames=frames) -->
-<!-- py.iplot(fig,auto_open=False) -->
+<!-- go.Figure(data=[line1,line2], layout=layout, frames=frames) -->
 <!-- ``` -->
 
-<!-- I could not find how to control the animation speed. Obviously, it should be via a keyword to either -->
-<!-- `go.Figure()` or `py.iplot`. -->
+
+
+<!-- The 'frames' property is a tuple of instances of Frame that may be specified as: -->
+<!--       - A list or tuple of instances of plotly.graph_objs.Frame -->
+<!--       - A list or tuple of dicts of string/value properties that -->
+<!--         will be passed to the Frame constructor -->
+
+
+
+
+<!-- I could not find a way to control the animation speed. Perhaps, a keen eye will spot a relevant keyword in -->
+<!-- `go.Figure`? -->

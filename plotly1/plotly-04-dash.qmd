@@ -17,10 +17,8 @@ Some of its features:
 - can create different tabs inside the app, with rules for switching between them,
 - even can create an entire website with user guides, plots, code examples, etc.
 
-<!-- &nbsp; -->
-
 To install the core Dash library, use your favourite installer, ideally inside a dedicated virtual
-environment:
+environment, e.g.
 
 ```sh
 $ pip install dash
@@ -75,7 +73,7 @@ uv pip install dash-bootstrap-components   # community-maintained styling librar
 uv pip install dash-mantine-components     # community-maintained styling library
 ```
 
-### Our baseline plot without Dash
+## Our baseline plot without Dash
 
 On my computer I already have a setup that opens every Plotly plot in a new browser tab, using the setup
 mentioned at the start of this workshop. As a reminder, if you need to redirect your plot, use one of these
@@ -114,7 +112,7 @@ fig.update_layout(xaxis=dict(range=[0,1]), yaxis=dict(range=[0, 1]))
 fig.show()
 ```
 
-### Our baseline plot in Dash
+## Our baseline plot in Dash
 
 To serve our Graph Objects plot inside Dash, we need to create a script `scatter1.py`:
 
@@ -184,7 +182,7 @@ A single running app can have multiple instances, i.e. multiple users can connec
 time, each user with their own interactive view and state.
 :::
 
-### Make it interactive
+## Make it interactive
 
 Let's add two new elements to our script:
 
@@ -226,7 +224,7 @@ number of points and must be re-executed each time we move slider.
 
 Inside the callback function, the argument name `selected` is used only inside the function.
 
-### Add some style
+## Add some style
 
 At the moment, our application is very minimal in appearance. While we could style it using HTML and CSS, that
 approach assumes some familiarity with CSS. Dash provides higher-level components that make styling much
@@ -284,7 +282,7 @@ app.run(debug=True)
 
 ![](/fig/dash4.png){width=80% fig-align="center"}
 
-### Multiple inputs
+## Multiple inputs
 
 Now, let's add more controls -- two extra sliders and radio buttons (only one selection) -- for the total of 4
 inputs to the callback function. All interactive controls are sitting inside a single column, and are all
@@ -364,7 +362,7 @@ app.run(debug=True)
 
 ![](/fig/dash5.png)
 
-### Multiple independent outputs
+## Multiple independent outputs
 
 <!-- one control for multiple plots (multiple outputs) https://dash.plotly.com/basic-callbacks -->
 
@@ -426,7 +424,7 @@ app.run(debug=True)
 
 ![](/fig/dash6.png)
 
-### Connected plots
+## Connected plots
 
 Let's remove the slider, and add a Lasso selection in the scatter plot and show the x- and y-histograms only
 for the points selected with Lasso. If there is no selection, add a text "Select points to see details" to the
@@ -492,7 +490,7 @@ app.run(debug=True)
 
 ![](/fig/dash7.png)
 
-### Other controls
+## Other controls
 
 The Dash Core Components (`dcc`) library offers the following interactive controls:
 
@@ -512,7 +510,7 @@ The Dash Core Components (`dcc`) library offers the following interactive contro
 | dcc.Tabs | switch between different dashboard tabs |
 :::
 
-### Publishing / hosting
+## Publishing / hosting
 
 A Dash app requires a server -- you can't just save its output to a standalone html5 file. If you want to
 share your Dash app with the world, you have several options:

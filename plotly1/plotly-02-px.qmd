@@ -23,10 +23,10 @@ import plotly.express as px
 from numpy import linspace, sin
 x = linspace(0.01,1,100)
 y = sin(1/x)
-px.line(x=x, y=y, markers=True)
+px.line(x=x, y=y, markers=True, title = "My chart title")
 ```
 
-Alternatively, you can feed a dataframe:
+Alternatively, you can provide a DataFrame as input:
 
 ```py
 import plotly.express as px
@@ -37,7 +37,7 @@ df = pd.DataFrame({'col1': x, 'col2': sin(1/x)})
 px.line(df, x='col1', y='col2', markers=True)
 ```
 
-Or you can feed a dictionary:
+Or you can provide a dictionary:
 
 ```py
 import plotly.express as px
@@ -49,7 +49,7 @@ px.line(d, x='key1', y='key2', markers=True)
 
 Try `markers=False` to hide the points. Note that in `px.line` there is no built-in argument to change the
 marker style, or hide the line, or assign a specific colour, or do many other customizations. All of these
-things can be done easily, if you notice that `px.line` outputs a Graph Objects figure:
+things are easy to do once you notice that `px.line` returns a Graph Objects figure:
 
 ```py
 fig = px.line(x=x, y=y, markers=True)
@@ -59,7 +59,7 @@ print(type(fig))
 so you can use Graph Objects's standard controls to modify your Plotly Express figure. We will study these
 controls in the next section.
 
-### Tip data
+## Tips data
 
 To see Plotly Express really shine, we should play with a slightly larger dataset containing several
 variables. The module `px.data` comes with several datasets included. Let's take a dataset describing
@@ -86,7 +86,7 @@ Let's build a scatter plot:
 px.scatter(df, x="total_bill", y="tip", color="time", size="size")
 ```
 
-### Gapminder data
+## Gapminder data
 
 Let's take a look at the Gapminder 2007 dataset that contains one row per each country:
 
@@ -123,7 +123,7 @@ px.strip(df, x="lifeExp")
 1. add `facet_col="continent"` to break continents into facet columns
 
 
-Let's check several plot types:
+Let's check several other plot types:
 
 ```py
 px.bar(df, color="lifeExp", x="pop", y="continent", hover_name="country")
@@ -143,7 +143,7 @@ px.choropleth(df, color="lifeExp", locations="iso_alpha", hover_name="country", 
 <!-- - ternary plots (below) -->
 <!-- - 3D data -->
 
-### Montreal's elections data
+## Montreal's elections data
 
 A *ternary plot* shows compositions of three components that sum to a constant (usually 1 or 100%). Here is an
 ternary plot example with Montreal's 2013 municipal elections data covering 58 electoral districts and 3
@@ -155,3 +155,85 @@ px.scatter_ternary(df, a="Joly", b="Coderre", c="Bergeron", color="winner",
                    size="total", hover_name="district", size_max=15,
                    color_discrete_map={"Joly": "blue", "Bergeron": "green", "Coderre": "red"})
 ```
+
+## Animation
+
+In Plotly Express, with a dataframe input, you can animate in one of the columns.
+
+- values from `animation_frame` column are used to assign marks to animation frames
+- rows with matching `animation_group` values will be treated as if they describe the same object in each
+  frame
+  
+In other words, with `animation_group="country"`, each country will correspond to one moving object in the
+animation.
+
+```py
+import plotly.express as px
+df = px.data.gapminder()
+px.scatter(df, x="gdpPercap", y="lifeExp", animation_frame="year", animation_group="country",
+           size="pop", color="continent", hover_name="country",
+           log_x=True, size_max=55, range_x=[200,80000], range_y=[25,90])
+```
+
+![](/fig/anim1.png){}
+
+Here it is important to set `range_x` and `range_y` to ensure that all objects are shown in every
+frame. Without these, the axis ranges are determined by the first frame and remain fixed throughout the
+animation.
+
+Next, let try to build data to be used for animation from scratch. Here is a simple spiral with 30 points:
+
+```py
+import plotly.express as px
+import numpy as np
+
+npoints = 30
+t = np.linspace(0,10,npoints)
+x, y = t*np.cos(t), t*np.sin(t)
+
+fig = px.line(x=x, y=y, markers=True)
+fig.update_yaxes(range=[-8, 10], scaleanchor="x", scaleratio=1)
+fig.update_traces(marker=dict(size=20))
+```
+
+Add `animation_frame=range(npoints))` to `px.line`, and now you can play it back! Plotly will notice that in
+the line
+
+```py
+fig = px.line(x=x, y=y, markers=True, animation_frame=range(npoints))
+```
+
+`x`, `y` and `animation_frame` all have the same length, so it will treat the subsequent elements of `x` and
+`y` arrays as a "running" pair of x,y-coordinates for individual frames.
+
+![](/fig/anim2.png){}
+
+What if you want to have multiple objects per frame, e.g. two dots on two spirals, respectively? One option
+would to use Graph Objects where you can plot two spirals at the same time.
+
+Another option is to format your data as a dataframe:
+
+```py
+import pandas as pd
+import numpy as np
+import plotly.express as px
+
+nframes = 30
+t = np.linspace(0, 10, nframes)
+x1, y1 = t*np.cos(t), t*np.sin(t)
+x2, y2 = t/2*np.cos(t), t/2*np.sin(t)
+df = pd.DataFrame({
+    "time": np.concatenate([t, t]),   # merge two time arrays
+    "x": np.concatenate([x1, x2]),
+    "y": np.concatenate([y1, y2]),
+    "dotID": np.concatenate([[1]*nframes, [2]*nframes])
+})
+
+fig = px.scatter(df, x="x", y="y",
+                 animation_frame="time", animation_group="dotID",
+                 color="dotID", color_continuous_scale="Jet")
+fig.update_yaxes(range=[-8, 10], scaleanchor="x", scaleratio=1)
+fig.update_traces(marker=dict(size=20))
+```
+
+![](/fig/anim3.png){}
