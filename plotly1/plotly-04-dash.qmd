@@ -27,16 +27,17 @@ $ conda install -c conda-forge dash
 ```
 
 ::: {.callout-caution}
+While you can run Dash inside JupyterHub on the training cluster, I have not succeeded in getting
+`jupyter_mode="inline"` to work as intended for displaying interactive Dash apps inside a remote Jupyter
+notebook. By default, Dash starts a standalone web server, and JupyterHub (even when running on the same
+compute node) has no awareness of it.
 
-While you can run Dash inside JupyterHub on the training cluster, I have not succeeded in making
-`jupyter_mode="inline"` work as intended, to display interactive Dash apps inside the remote Jupyter
-notebook. By default, Dash is starting a normal web server and JupyterHub (running on the same compute node)
-has no idea it exists. There are manual ways to connect the two, but then the browser will block this mixed
-content (a Jupyter notebook and an app from a separate server) for security reasons.
+There are manual ways to connect the two, but in practice the browser blocks this setup as mixed content
+for security reasons, since the notebook and the Dash app are served from separate web servers.
 
-Long story short, I have not yet found a reliable and simple way to run Dash in a remote Jupyter notebook on
-the training cluster. Moreover, Dash library does not provide a way to kill the server -- instead you do this
-by killing the underlying Python process, which will further complicate our setup.
+Long story short, I haven't found a reliable, simple way to run Dash in a remote Jupyter notebook on the
+training cluster. On top of that, Dash doesn't offer a clean way to stop the server — you have to kill the
+underlying Python process, which makes the setup even more awkward.
 
 **For these reasons, I will demo it locally on my computer** -- which is probably how you should develop Dash
 apps in the first place.
@@ -114,23 +115,24 @@ fig.show()
 
 ## Our baseline plot in Dash
 
-To serve our Graph Objects plot inside Dash, we need to create a script `scatter1.py`:
+To serve our Graph Objects plot inside Dash, we create a script `scatter1.py`:
 
 ```py
 # save this as scatter1.py
 import plotly.graph_objs as go
 import numpy as np
-from dash import Dash, html, dcc
+from dash import Dash, html, dcc   # dcc = Dash Core Components library
 
 npoints = 100
 trace = go.Scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
                    mode='markers', marker=dict(size=[30]*npoints))
 fig = go.Figure(data=[trace])
-fig.update_layout(xaxis=dict(range=[0,1]), yaxis=dict(range=[0, 1]), width=800, height=800)
+fig.update_layout(xaxis=dict(range=[0,1]), yaxis=dict(range=[0, 1]),
+                  width=800, height=800)
 
-app = Dash()                # launch an instance of a Dash app
+app = Dash()          # launch an instance of a Dash app
 app.layout = [
-    html.Div(children='Dash scatter plot with Graph Objects'),   # content container
+    html.Div(children='Dash scatter plot with GO'),   # content container
     dcc.Graph(figure=fig)   # our plot container from Dash Core Components
 ]
 app.run(debug=True)   # run the instance
@@ -142,8 +144,8 @@ You must run a Dash script by passing it to the Python interpreter:
 python scatter1.py
 ```
 Because of how Dash is designed, running this script from a Python shell won't work (nothing will happen if
-you try). One particularly nice feature of Dash -- that would not be possible in a shell -- is *hot reloading*:
-whenever you change the script file, Dash automatically re-executes it and refreshes the app.
+you try). One particularly nice feature of Dash -- that would be difficult to replicate in a shell -- is *hot
+reloading*: whenever you change the script file, Dash automatically re-executes it and refreshes the app.
 :::
 
 

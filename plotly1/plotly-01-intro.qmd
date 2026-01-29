@@ -6,22 +6,11 @@ title: "Introduction"
 - Open-source scientific plotting library for Python, R, MATLAB, Perl, Julia
 - Front end uses JavaScript/HTML/CSS and D3.js visualization library, with Plotly JavaScript library on top
 - Supports over 50 unique chart types
-- Out of the box, provides basic interactivity (hover over data, zoom in, etc.)
+- Out of the box, provides basic interactivity (hover over data, zoom in, etc.) and animation with sliders
 - With Dash, can script any interaction (sliders, buttons, selection, ...) with callback functions
 
-<!-- Generated plots can be
-1. browsed online
-1. stored as offline html5 files
-1. displayed inside a Jupyter notebook -->
-
 <!--
-abc
 ==========================================================================================
-    The Basic Recipe:
-        Loading data (Pandas integration).
-        The standard syntax: fig = px.chart_type(data, x, y, color...).
-        fig.show() and the interactive toolbar.
-Phase 2: Essential Chart Types & Customization (40 Minutes)
     Comparison & Distribution:
         Dynamic Bar Charts (sorting and stacking).
         Histograms and Box Plots for statistical snapshots.
@@ -31,32 +20,22 @@ Phase 2: Essential Chart Types & Customization (40 Minutes)
     Refining the Aesthetics:
         Updating traces and layouts (fig.update_layout).
         Customizing hover labels (the most powerful feature for user engagement).
-Phase 3: Advanced Visuals & Faceting (30 Minutes)
+
+Advanced Visuals & Faceting:
     Facet Plots (Subplots): Breaking down complex data into a grid of charts based on a category.
     Time Series: Handling dates, range sliders, and selectors.
     Animated Data: Using the animation_frame parameter to show how data changes over time (the "Hans Rosling" effect).
-Phase 4: Exporting & Next Steps (20 Minutes)
+
+Exporting & Next Steps
     Saving your work: Exporting as standalone HTML files or static images.
     The Ecosystem: A 5-minute intro to Dash (turning your plots into full web apps).
-    Q&A / Mini-Challenge: Give students a fresh dataset and ask them to find one trend and highlight it using a custom hover label.
-Suggested Tools for the Workshop
-    Environment: Google Colab or Jupyter Notebooks (zero setup required for students).
-    Dataset: Use a "tidy" dataset like the built-in gapminder, tips, or stocks datasets provided by plotly.express.data.
-Tips for a Successful Session
-    The "Copy-Paste" Rule: Provide a GitHub gist or a starter notebook. In a 2-hour window, you don't want students stuck on a syntax error; you want them experimenting with parameters.
-    Focus on Hover: Spend extra time showing how to clean up hover text. It's the difference between a "techy" chart and a professional one.
+    Q&A / Mini-Challenge: Give students a fresh dataset and ask them to find one trend and highlight it using
+    a custom hover label.
 
-import plotly.express as px
-fig = px.chart_type(
-    data_frame = df,           # Your Pandas DataFrame
-    x = "column_a",            # Column for x-axis
-    y = "column_b",            # Column for y-axis
-    color = "column_c",        # Color-coding by category
-    title = "My Chart Title"   # Always label your work!
-)
-fig.show()
+Focus on Hover: Spend extra time showing how to clean up hover text. It's the difference between a "techy"
+chart and a professional one.
 
-2. Common Chart Types
+Common Chart Types
 Goal,Function,Key Arguments
 Trends,px.line(),"line_group, markers=True"
 Correlation,px.scatter(),"size, hover_name, trendline=""ols"""
@@ -64,32 +43,8 @@ Parts of Whole,px.bar(),"barmode=""group"" or ""stack"""
 Distributions,px.histogram(),"nbins, marginal=""rug"" or ""box"""
 Hierarchies,px.treemap(),"path=['level1', 'level2'], values"
 
-3. Customizing the "Look & Feel"
-fig.update_layout(
-    title_font_size=24,
-    template="plotly_dark", # Try 'ggplot2', 'seaborn', 'none'
-    showlegend=False
-)
-fig.update_traces(marker_color="red", selector=dict(type="bar"))
-
-4. The "Magic" Parameters
-Add these inside your px function call for instant interactivity:
-    Faceting (Subplots): facet_col="category_column" (creates a grid of charts).
-    Animation: animation_frame="year_column" (adds a play button).
-    Hover Data: hover_data=["extra_col1", "extra_col2"] (adds more info to tooltips).
-    Log Scales: log_x=True or log_y=True.
-	
-fig.write_html("my_report.html")
-fig.write_image("my_report.png")   # requires 'kaleido' library
-
 ==========================================================================================
 -->
-
-<!-- 1. [Code examples](https://plot.ly/create) -->
-<!-- 1. [Community feed with gallery](https://plot.ly/feed) -->
-<!-- 1. [Creating HTML or PDF reports in Python](https://plot.ly/python/#report-generation) -->
-<!-- 1. [Connecting to databases](https://plot.ly/python/#databases) -->
-<!-- 1. [Creating dashboards](https://plot.ly/python/dashboard) with Dash Enterprise -->
 
 ## Today's setup
 
@@ -116,8 +71,8 @@ Other recommended libraries to install for today's session:
 - `kaleido` to save plots to PNG
 - `numpy`
 - `pandas`
-- `networkx`
-- `scikit-image`
+- `networkx` to work with networks
+- `scikit-image` to create an isosurface with Marching Cubes algorithm
 
 ## Displaying Plotly figures
 
@@ -189,7 +144,7 @@ from numpy import linspace, sin
 x = linspace(0.01,1,100)
 y = sin(1/x)
 line = go.Scatter(x=x, y=y, mode='lines+markers', name='sin(1/x)')
-   # this is a trace = a fundamental building block of a plot;
+   # this is a trace = fundamental building block of a plot;
    # think of it as a single set of data and the instructions on how to draw it
 ```
 ```py
@@ -242,9 +197,9 @@ fig.write_image("lines.png", scale=2)   # static, supports svg, png, jpg/jpeg, w
 
 ::: {.callout-important}
 ## Key point
-In general, use `fig.show()` to enforce displaying the plot (shell or Jupyter). This command is not necessary
-inside a Jupyter notebook if you create a figure with `go.Figure(...)` without saving it to a variable
--- then your plot should be displayed automatically.
+In general, use `fig.show()` to enforce displaying the plot (shell or Jupyter). Depending on your setup, this
+command might not be necessary inside a Jupyter notebook if you create a figure with `go.Figure(...)` without
+saving it to a variable -- then your plot should be displayed automatically.
 :::
 
 ### Running a local script

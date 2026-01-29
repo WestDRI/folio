@@ -120,8 +120,7 @@ Let's try a Bar plot, constructing `data` directly in one line from the dictiona
 import plotly.graph_objs as go
 bar = go.Bar(x=['Vancouver', 'Calgary', 'Toronto', 'Montreal', 'Halifax'],
                y=[2463431, 1392609, 5928040, 4098927, 403131])
-fig = go.Figure(data=[bar])
-fig.show()
+go.Figure(data=[bar])
 ```
 
 Let's plot inner city population vs. greater metro area for each city:
@@ -133,8 +132,7 @@ proper = [662_248, 1_306_784, 2_794_356, 1_762_949, 439_819]
 metro = [3_108_926, 1_688_000, 6_491_000, 4_615_154, 530_167]
 bar1 = go.Bar(x=cities, y=proper, name='inner city')
 bar2 = go.Bar(x=cities, y=metro, name='greater area')
-fig = go.Figure(data=[bar1,bar2])
-fig.show()
+go.Figure(data=[bar1,bar2])
 ```
 
 Let's now do a stacked plot, with *outer city* population on top of *inner city* population:
@@ -143,8 +141,7 @@ Let's now do a stacked plot, with *outer city* population on top of *inner city*
 outside = [m-p for p,m in zip(proper,metro)]   # need to subtract
 bar1 = go.Bar(x=cities, y=proper, name='inner city')
 bar2 = go.Bar(x=cities, y=outside, name='outer city')
-fig = go.Figure(data=[bar1,bar2], layout=go.Layout(barmode='stack'))   # new element!
-fig.show()
+go.Figure(data=[bar1,bar2], layout=go.Layout(barmode='stack'))   # new element!
 ```
 
 What else can we modify in the layout?
@@ -173,8 +170,7 @@ recordLow = [-41.1,-58.9,-71.1,-75.0,-78.3,-82.8,-80.6,-79.3,-79.4,-72.0,-55.0,-
 data = [recordHigh, averageHigh, dailyMean, averageLow, recordLow]
 yticks = ['record high', 'aver.high', 'daily mean', 'aver.low', 'record low']
 heatmap = go.Heatmap(z=data, x=months, y=yticks)
-fig = go.Figure([heatmap])
-fig.show()
+go.Figure([heatmap])
 ```
 
 With heatmaps, very often people plot NumPy arrays. The function `go.Heatmap` is happy to take a 2D NumPy
@@ -232,18 +228,16 @@ cities = go.Scattergeo(
         line = dict(width=0.5, color='rgb(40,40,40)'),
         sizemode = 'area'))
 layout = go.Layout(title = 'City populations',
-                       showlegend = False,   # do not show legend for first plot
-                       geo = dict(
-                           scope = 'north america',
-                           resolution = 50,   # base layer resolution of km/mm
-                           lonaxis = dict(range=[-130,-55]), lataxis = dict(range=[44,70]), # plot range
-                           showland = True, landcolor = 'rgb(217,217,217)',
-                           showrivers = True, rivercolor = 'rgb(153,204,255)',
-                           showlakes = True, lakecolor = 'rgb(153,204,255)',
-                           subunitwidth = 1, subunitcolor = "rgb(255,255,255)",   # province border
-						   countrywidth = 2, countrycolor = "rgb(255,255,255)"))  # country border
-fig = go.Figure(data=[cities], layout=layout)
-fig.show()
+                   width=800, showlegend = False,
+                   geo = dict(scope = 'north america',
+                              resolution = 50,   # base layer resolution of km/mm
+                              lonaxis = dict(range=[-130,-55]), lataxis = dict(range=[44,70]), # plot range
+                              showland = True, landcolor = 'rgb(217,217,217)',
+                              showrivers = True, rivercolor = 'rgb(153,204,255)',
+                              showlakes = True, lakecolor = 'rgb(153,204,255)',
+                              subunitwidth = 1, subunitcolor = "rgb(255,255,255)",   # province border
+						      countrywidth = 2, countrycolor = "rgb(255,255,255)"))  # country border
+go.Figure(data=[cities], layout=layout)
 ```
 
 ::: {.callout-caution collapse="true"}
@@ -283,8 +277,7 @@ countries = go.Choropleth(locations = gdp['CODE'],
                           zmin = 0,
                           colorbar = dict(tickprefix = '$',title = 'GDP<br>Billions US$'))
 layout = go.Layout(hovermode = "x", showlegend = False)  # do not show legend for first plot
-fig = go.Figure(data=[cities,countries], layout=layout)
-fig.show()
+go.Figure(data=[cities,countries], layout=layout)
 ```
 
 ## 3D topographic elevation
@@ -299,8 +292,7 @@ surface = go.Surface(z=table.values)  # use 2D numpy array format
 layout = go.Layout(title='Mt Bruno Elevation',
                    width=1200, height=1200,    # image size
                    margin=dict(l=65, r=10, b=65, t=90))   # margins around the plot
-fig = go.Figure([surface], layout=layout)
-fig.show()
+go.Figure([surface], layout=layout)
 ```
 
 You can rotate this plot in 3D!
@@ -353,8 +345,7 @@ y = r*cos(phi)              # y is also (252,502)
 z = r*sin(phi)*sin(theta)   # z is also (252,502)
 surface = go.Surface(x=x, y=y, z=z, colorscale='Viridis')
 layout = go.Layout(title='parametric plot')
-fig = go.Figure(data=[surface], layout=layout)
-fig.show()
+go.Figure(data=[surface], layout=layout)
 ```
 
 ## 3D scatter plots
@@ -370,21 +361,19 @@ spheres = go.Scatter3d(x=df.economy,
                        z=df.governance,
                        text=df.country,
                        mode='markers',
-                       marker=dict(
-                           sizemode = 'diameter',
-                           sizeref = 0.3,   # max(safetySecurity+5.5) / 32
-                           size = df.safetySecurity+5.5,
-                           color = df.education,
-                           colorscale = 'Viridis',
-                           colorbar = dict(title = 'Education'),
-                           line = dict(color='rgb(140, 140, 170)')))   # sphere edge
+                       marker=dict(sizemode = 'diameter',
+                                   sizeref = 0.3,   # max(safetySecurity+5.5) / 32
+                                   size = df.safetySecurity+5.5,
+                                   color = df.education,
+                                   colorscale = 'Viridis',
+                                   colorbar = dict(title = 'Education'),
+                                   line = dict(color='rgb(140, 140, 170)')))   # sphere edge
 layout = go.Layout(height=900, width=900,
                    title='Each sphere is a country sized by safetySecurity',
                    scene = dict(xaxis=dict(title='economy'),
                                 yaxis=dict(title='entrepreneurshipOpportunity'),
                                 zaxis=dict(title='governance')))
-fig = go.Figure(data=[spheres], layout=layout)
-fig.show()
+go.Figure(data=[spheres], layout=layout)
 ```
 
 ## 3D graphs
@@ -400,7 +389,6 @@ import sys
 generation = 5
 H = nx.dorogovtsev_goltsev_mendes_graph(generation)
 print(H.number_of_nodes(), 'nodes and', H.number_of_edges(), 'edges')
-# Force Atlas 2 graph layout from https://github.com/tpoisot/nxfa2.git
 pos = nx.spectral_layout(H,scale=1,dim=3)
 Xn = [pos[i][0] for i in pos]   # x-coordinates of all nodes
 Yn = [pos[i][1] for i in pos]   # y-coordinates of all nodes
@@ -434,8 +422,7 @@ layout = go.Layout(
                yaxis=go.layout.scene.YAxis(axis),
                zaxis=go.layout.scene.ZAxis(axis)),
     margin=go.layout.Margin(t=100))
-fig = go.Figure(data=[edges,nodes], layout=layout)
-fig.show()
+go.Figure(data=[edges,nodes], layout=layout)
 ```
 
 ## 3D function $f(x,y,z)$
