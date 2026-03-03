@@ -19,7 +19,7 @@ installing [the free Home Edition of MobaXterm](https://mobaxterm.mobatek.net/do
 
 **Materials**: Please download a [ZIP file](https://nextcloud.computecanada.ca/index.php/s/DyG3CrCHRLeqPML/download) with all slides
    (single PDF combining all chapters) and sample codes. A copy of this file is also available on the training
-   cluster.
+   cluster at `/project/def-sponsor00/shared/introHPC.zip`.
 
 ## Hardware
 
@@ -54,6 +54,7 @@ install.packages("brms")      # took 22m to compile
 install.packages("lme4")      # took 4m
 install.packages("afex")      # took 6m
 install.packages("ordinal")   # took under 1m
+# install.packages("tidyverse", repos="https://mirror.rcg.sfu.ca/mirror/CRAN/") 
 ...
 ```
 ```sh
@@ -96,6 +97,8 @@ programming in this course). Context switching between threads of the same proce
   (multiple cluster nodes). With multi-processing there is no scaling limitation, but traditionally it has
   been more difficult to write code for distributed-memory systems.
 
+![](/fig/multiThreadProcess.jpg){width=95%}
+
 You can parallelize your code with multiple threads, or with multiple processes, or both (hybrid
 parallelization) -- see an example below:
 
@@ -134,3 +137,12 @@ Can these run in parallel? If yes, do they use shared-memory, distributed-memory
 
 - typically run Bayesian and CLMM, and mixed-effects logistic and linear regressions with datasets ranging
   from ~3K to ~15K data points
+
+## Resource monitoring
+
+- How much memory will my code use?
+- How long will it run?
+
+Finally, you will need to test + understand how your workflows scale with increasing problem sizes and CPU
+core counts. Here, you should be prepared for plenty of surprises, as scaling behaviour is often
+non-intuitive, e.g. performance can plateau or even degrade as you add more resources to the problem.
