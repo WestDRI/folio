@@ -295,6 +295,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#threads-vs.-processes" id="toc-threads-vs.-processes" class="nav-link" data-scroll-target="#threads-vs.-processes">Threads vs.&nbsp;processes</a></li>
   <li><a href="#computationally-intensive-statistical-models" id="toc-computationally-intensive-statistical-models" class="nav-link" data-scroll-target="#computationally-intensive-statistical-models">Computationally intensive statistical models</a></li>
+  <li><a href="#resource-monitoring" id="toc-resource-monitoring" class="nav-link" data-scroll-target="#resource-monitoring">Resource monitoring</a></li>
   </ul>
 </nav>
     </div>
@@ -325,7 +326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Instructors</strong>: Alex Razoumov and Marie-Hélène Burle (SFU)</p>
 <p><strong>Prerequisites:</strong> Working knowledge of the Linux Bash shell. We will provide guest accounts to one of our Linux systems.</p>
 <p><strong>Software</strong>: All attendees will need a remote secure shell (SSH) client installed on their computer in order to participate in the course exercises. On Mac and Linux computers SSH is usually pre-installed (try typing <code>ssh</code> in a terminal to make sure it is there). Many versions of Windows also provide an OpenSSH client by default – try opening PowerShell and typing <code>ssh</code> to see if it is available. If not, then we recommend installing <a href="https://mobaxterm.mobatek.net/download.html">the free Home Edition of MobaXterm</a>.</p>
-<p><strong>Materials</strong>: Please download a <a href="https://nextcloud.computecanada.ca/index.php/s/DyG3CrCHRLeqPML/download">ZIP file</a> with all slides (single PDF combining all chapters) and sample codes. A copy of this file is also available on the training cluster.</p>
+<p><strong>Materials</strong>: Please download a <a href="https://nextcloud.computecanada.ca/index.php/s/DyG3CrCHRLeqPML/download">ZIP file</a> with all slides (single PDF combining all chapters) and sample codes. A copy of this file is also available on the training cluster at <code>/project/def-sponsor00/shared/introHPC.zip</code>.</p>
 <section id="hardware" class="level2">
 <h2 class="anchored" data-anchor-id="hardware">Hardware</h2>
 <p>Training cluster: 6 compute nodes, each with 4 cores and 15gb memory.</p>
@@ -354,7 +355,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"lme4"</span>)      <span class="co"># took 4m</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"afex"</span>)      <span class="co"># took 6m</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"ordinal"</span>)   <span class="co"># took under 1m</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("tidyverse", repos="https://mirror.rcg.sfu.ca/mirror/CRAN/") </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> og+X,og-r /project/def-sponsor00/shared                   <span class="co"># protected</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> og+rX /project/def-sponsor00/shared/workshop20260304   <span class="co"># open</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To use these packages, as any user in the same Unix group:</p>
@@ -374,6 +376,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Threads within a process communicate via shared memory, so <strong>multi-threading</strong> is always limited to shared memory within one node.</li>
 <li>Processes communicate via messages (over the cluster interconnect or via shared memory). <strong>Multi-processing</strong> can be in shared memory (one node, multiple CPU cores) or distributed memory (multiple cluster nodes). With multi-processing there is no scaling limitation, but traditionally it has been more difficult to write code for distributed-memory systems.</li>
 </ul>
+<p><img src="./fig/multiThreadProcess.jpg" class="img-fluid" style="width:95.0%"></p>
 <p>You can parallelize your code with multiple threads, or with multiple processes, or both (hybrid parallelization) – see an example below:</p>
 <p><img src="./fig/hybridParallelism.png" class="img-fluid" style="width:95.0%"></p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -427,6 +430,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>typically run Bayesian and CLMM, and mixed-effects logistic and linear regressions with datasets ranging from ~3K to ~15K data points</li>
 </ul>
+</section>
+<section id="resource-monitoring" class="level2">
+<h2 class="anchored" data-anchor-id="resource-monitoring">Resource monitoring</h2>
+<ul>
+<li>How much memory will my code use?</li>
+<li>How long will it run?</li>
+</ul>
+<p>Finally, you will need to test + understand how your workflows scale with increasing problem sizes and CPU core counts. Here, you should be prepared for plenty of surprises, as scaling behaviour is often non-intuitive, e.g.&nbsp;performance can plateau or even degrade as you add more resources to the problem.</p>
 
 
 </section>
