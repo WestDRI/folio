@@ -1,85 +1,99 @@
 ---
-title: "Hands-on with ParaView's Programmable Filter & Source for scientific visualization"
+title: "Programmable Filter / Source in ParaView"
 aliases:
   - /programmable
 ---
 
-**November 14<sup>th</sup>, 10am-noon Pacific Time**
+<!-- longer title: "Hands-on with ParaView's Programmable Filter & Source for scientific visualization" -->
+
+**March 17<sup>th</sup>, 10am-noon Pacific Time**
 
 **Instructor**: Alex Razoumov (SFU)
 
 **Software**: To participate in the course exercises, you will need to [install
 ParaView](https://www.paraview.org/download){target="_blank"} on your computer and [download this ZIP
-file](https://bit.ly/programmableZip) (27MB). Unpack it to find the following data files: *cube.txt*,
+file](https://bit.ly/programmableZip) (27MB). Unpack it and find the following data files: *cube.txt*,
 *tabulatedGrid.csv*, *compact150.nc*, and *sineEnvelope.nc*.
 
-## ParaView
+<!-- to upload this ZIP file: `cd ~/programmableFilter && make upload` -->
 
-![](/fig/programmable/paraview.jpg)
+<!-- ## ParaView -->
 
-- <http://www.paraview.org>{target="_blank"}
-- Started in 2000 as a collaboration between Los Alamos National Lab and Kitware Inc., later joined by Sandia
-  National Labs and other partners; first public release in 2002
-- Source code available [on GitHub](https://github.com/Kitware/ParaView){target="_blank"}, or can be
-  downloaded as a [pre-compiled binary for Linux/Mac/Windows](https://www.paraview.org/download){target="_blank"}
-- To visualize extremely large datasets on distributed memory machines
-- Both interactive and Python scripting
-- Client-server for remote interactive visualization
-- Uses MPI for distributed-memory parallelism on HPC clusters
-- ParaView is based on VTK (Visualization Toolkit)
-  - not the only VTK-based open-source scientific renderer,
-  e.g. [VisIt](https://visit-dav.github.io/visit-website){target="_blank"}, MayaVi (Python + numpy + scipy +
-  VTK), an of course a number of Kitware's own tools besides ParaView are based on VTK
-  - VTK can be used as a standalone renderer from C++, Python, and now JavaScript
+<!-- ![](/fig/programmable/paraview.jpg) -->
 
-We teach both beginner's (typically full-day) ParaView workshops and additional, more advanced topics:
+<!-- - <http://www.paraview.org>{target="_blank"} -->
+<!-- - Started in 2000 as a collaboration between Los Alamos National Lab and Kitware Inc., later joined by Sandia -->
+<!--   National Labs and other partners; first public release in 2002 -->
+<!-- - Source code available [on GitHub](https://github.com/Kitware/ParaView){target="_blank"}, or can be -->
+<!--   downloaded as a [pre-compiled binary for Linux/Mac/Windows](https://www.paraview.org/download){target="_blank"} -->
+<!-- - To visualize extremely large datasets on distributed memory machines -->
+<!-- - Both interactive and Python scripting -->
+<!-- - Client-server for remote interactive visualization -->
+<!-- - Uses MPI for distributed-memory parallelism on HPC clusters -->
+<!-- - ParaView is based on VTK (Visualization Toolkit) -->
+<!--   - not the only VTK-based open-source scientific renderer, -->
+<!--   e.g. [VisIt](https://visit-dav.github.io/visit-website){target="_blank"}, MayaVi (Python + numpy + scipy + -->
+<!--   VTK), an of course a number of Kitware's own tools besides ParaView are based on VTK -->
+<!--   - VTK can be used as a standalone renderer from C++, Python, and now JavaScript -->
 
-🔵 VTK programming (overlap with today's topic)  
-✅ Web-based 3D scientific visualization: ParaViewWeb, VTK.js, ParaView Glance, ParaView Lite, Visualizer  
-✅ ParaView Cinema  
-✅ Catalyst in-situ visualization library  
-🔵 AMR (multi-resolution) \& multi-block datasets  
-✅ CPU-based ray tracing and photorealistic rendering with OSPRay  
-✏️ Ray tracing on CUDA-supported cards with Nvidia OptiX
-✏️ Scalable 3D volumetric visualization on GPU clusters with NVIDIA IndeX  
-✅ Remote and parallel interactive visualization  
-✅ Batch visualization  
-✅ Advanced scripting  
-✅ **Programmable Filter & Source in ParaView**  
-🔵 Writing ParaView plugins  
-✅ Advanced animation  
-✅ Topological data analysis  
-✏️ Using ParaView with special hardware: HMDs, stereo projectors, Looking Glass
+<!-- We teach both beginner's (typically full-day) ParaView workshops and additional, more advanced topics: -->
+
+<!-- 🔵 VTK programming (overlap with today's topic)   -->
+<!-- ✅ Web-based 3D scientific visualization: ParaViewWeb, VTK.js, ParaView Glance, ParaView Lite, Visualizer   -->
+<!-- ✅ ParaView Cinema   -->
+<!-- ✅ Catalyst in-situ visualization library   -->
+<!-- 🔵 AMR (multi-resolution) \& multi-block datasets   -->
+<!-- ✅ CPU-based ray tracing and photorealistic rendering with OSPRay   -->
+<!-- ✏️ Ray tracing on CUDA-supported cards with Nvidia OptiX -->
+<!-- ✏️ Scalable 3D volumetric visualization on GPU clusters with NVIDIA IndeX   -->
+<!-- ✅ Remote and parallel interactive visualization   -->
+<!-- ✅ Batch visualization   -->
+<!-- ✅ Advanced scripting   -->
+<!-- ✅ **Programmable Filter & Source in ParaView**   -->
+<!-- 🔵 Writing ParaView plugins   -->
+<!-- ✅ Advanced animation   -->
+<!-- ✅ Topological data analysis   -->
+<!-- ✏️ Using ParaView with special hardware: HMDs, stereo projectors, Looking Glass -->
 
 
-You can watch some of these webinar recordings at
-[https://bit.ly/vispages](https://training.westdri.ca/tools/visualization){target="_blank"}.
+<!-- You can watch some of these webinar recordings at -->
+<!-- [https://bit.ly/vispages](https://training.westdri.ca/tools/visualization){target="_blank"}. -->
 
-### Python scripting
+## Intro
+
+### Python scripting in ParaView
 
 Inside ParaView you can use Python scripting in several places:
 
-- Any ParaView workflow can be saved as a Python script (Tools | Start/Stop Trace)
-  - run via `pvpython`, or `pvbatch` (especially useful for batch visualization)
-  - run via View | Python Shell
-- Any ParaView state can be saved as a Python script (File | Save State)
-  - run via File | Load State
-- Filters | Python Calculator
-- Filters | Programmable Filter / Source
+1. Any ParaView workflow can be saved as a Python script (Tools | Start/Stop Trace)
+    - run via `pvpython`, or `pvbatch` (especially useful for batch visualization)
+    - run via View | Python Shell
+    - run via `paraview --script=...` (automatically starts ParaView GUI)
+1. Any ParaView state can be saved as a Python script (File | Save State, select Python format)
+    - run via File | Load State
+1. Filters | Python Calculator -- intermediate between regular Calculator and Programmable Filter, can create
+   new variables but not new grids
+1. Filters | Programmable Filter / Source -- today's workshop
 
-Why would you want to use the Programmable Filter / Source? Fundamentally, these tools let you create custom
-VTK objects directly from ParaView. Let's say we want to plot a projection of a cubic dataset along one of its
-principal axes, or do some other transformation for which there is no filter.
+**Why would you want to use the Programmable Filter or Programmable Source?**
 
+- Short answer: when standard filters (Clip, Slice, Contour, etc) are not enough.
+- Longer answer: Fundamentally, Programmable Filter and Source let you create custom VTK objects directly
+  within ParaView. For example, suppose we want to plot a projection of a cubic dataset along one of its
+  principal axes, or perform some other transformation for which no built-in filter exists. We can compute
+  this projection ourselves and store it in ParaView as a new mesh, offset from the original volume.
+
+::: {style="text-align: center;"}
 ![](/fig/programmable/projection1.png){width=80%}
+:::
 
-Calculator / Python Calculator filter cannot modify the geometry ...
+Calculator / Python Calculator filter cannot modify the geometry or create new meshes ...
 
-### VTK data types
+### Common VTK data types
 
 ![](/fig/programmable/vtkDataTypes.png "from the VTK Textbook"){width=80%}
 
-In today's examples we will create datasets in the following formats:
+In today's workshop, we will create datasets in the following formats:
 
 1. vtkImageData,
 1. vtkPolyData, and
@@ -88,7 +102,7 @@ In today's examples we will create datasets in the following formats:
 For simplicity, we will skip the examples with Output Data Set Type = **vtkUnstructuredGrid** -- that would
 produce the most versatile object, but with any unstructured cells you will have to describe the connections
 between their points needed to form these cells. You can find a couple of examples of creating
-vtkUnstructuredGrid in a [2021 webinar](https://training.westdri.ca/tools/visualization#programmable){target="_blank"}.
+vtkUnstructuredGrid in [our 2021 webinar](https://training.westdri.ca/tools/visualization#programmable){target="_blank"}.
 
 ### Programmable Filter workflow
 
@@ -102,36 +116,65 @@ vtkUnstructuredGrid in a [2021 webinar](https://training.westdri.ca/tools/visual
 <!-- - either use the default **output** for your selected Output Data Set Type, or create your own custom -->
 <!--   **output** object -->
   
-4. Depending on **output**'s type, might need to describe it in the RequestInformation Script box
+4. Depending on **output**'s type, might need to describe it in the Script (RequestInformation) box
 5. Hit Apply
 
 ### Programmable Source workflow
 
-Same as Programmable Filter but without an input.
+Same as Programmable Filter but without an input. You can:
 
-1. build an object programmatically
+1. build an object programmatically from scratch, or
 1. read and process data from a file
 
-## Simple Programmable Filter example
+## Programmable Filter examples
+### Example 1: warp into 3D
 
-Start with a very simple example. Let's create a 2D Gaussian
+In this simple example, we will warp a 2D grid into the third dimension by the value of a 2D function and
+compute a new point data array from coordinate values.
+
+Let's start with a 2D Gaussian:
 
 $$f(\vec r)=e^{-\frac{|\vec r-\vec r_0|^2}{2\sigma^2}},\quad\vec r\in\mathbb{R}^2$$
 
 centered at (0,0).
 
 1. Apply Sources | **Plane** at $100^2$ resolution
-1. Apply **Programmable Filter**
+
+::: {.callout-caution}
+##### Exercise
+What VTK data type is this plane?
+:::
+
+2. Apply **Programmable Filter**
   - set Output Data Set Type = Same as Input
-  - this will create the same discretization (vtkPolyData) as its input, without the fields (PointData)
-3. Let's print some info
+  - this will create the same discretization as its input, without the fields (PointData)
+3. Let's print some info, one line at a time:
+
+::: {.callout-note}
+##### Show ParaView's terminal output window
+View | Output Messages
+:::
+
 ```py
 print(type(output))   # paraview.vtk.numpy_interface.dataset_adapter.PolyData
-print(dir(output))
-print(output.Points.shape)   # actually a 3D dataset
-print(output.Points)         # but all z-coordinates are 0s
+# print(dir(output))
+# print(output.Points.shape)   # 3D coordinates x,y,z
+# print(output.Points)         # but all z-coordinates are 0s
 ```
 3. Paste into Script
+
+::: {.callout-note}
+With Output Data Set Type = Same as Input, ParaView will copy `inputs` geometry into `output` geometry and set
+the same coordinates:
+```py
+output.Points[:,0] = inputs[0].Points[:,0]
+output.Points[:,1] = inputs[0].Points[:,1]
+output.Points[:,2] = inputs[0].Points[:,2]
+```
+:::
+
+We will overwrite the z-coordinate, warping the geometry into the 3rd dimension:
+
 ```py
 x = inputs[0].Points[:,0]
 y = inputs[0].Points[:,1]
@@ -139,9 +182,17 @@ output.Points[:,2] = 0.5*exp(-(x**2+y**2)/(2*0.02))
 dataArray = 0.3 + 2*output.Points[:,2]
 output.PointData.append(dataArray, "pnew")   # add the new data array to our output
 ```
-3. Display in 3D, colour with `pnew`
 
+::: {.callout-caution}
+##### Exercise
+What are the dimensions of `dataArray`?
+:::
+
+4. Display in 3D, colour with `pnew`
+
+::: {style="text-align: center;"}
 ![](/fig/programmable/gaussian.png){width=60%}
+:::
 
 <!-- ```py -->
 <!-- numPoints = inputs[0].GetNumberOfPoints() -->
@@ -149,10 +200,13 @@ output.PointData.append(dataArray, "pnew")   # add the new data array to our out
 <!-- print(numPoints, numCells) -->
 <!-- ``` -->
 
-- A scalar field is stored as a flat, 1D array over 3D points
+::: {.callout-note}
+A scalar field is stored as a flat, 1D array over 3D points
 ```py
 print(output.PointData["pnew"].shape)
 ```
+:::
+
 - Multiple ways to access data, e.g. these two lines point to the same array
 ```py
 print(output.PointData["pnew"])
@@ -161,16 +215,118 @@ print(output.GetPointData().GetArray("pnew"))
 - The same for points
 ```py
 print(output.GetNumberOfPoints())
-print(output.GetPoint(1005))
-print(output.Points[1005,:])
+print(output.GetPoint(1005))   # x,y,z coordinates of a specific point
+print(output.Points[1005,:])   # same
 ```
 
-## Programmable Source
 
-Let's switch to the Programmable Source. It has no input, so we will need to set its Output Data Set Type to
-one of the VTK data types.
 
-### Build a custom reader
+
+### Example 2: NumPy vectorization
+
+In this example, we will compute a new data array on the *existing geometry* using NumPy-based
+vectorization. This you could also do using other methods, but the point of this example is to show how you
+can do NumPy vectorization inside the Programmable Filter.
+
+1. load `sineEnvelope.nc`
+1. apply Filters | Gradient, save as "v"
+1. Apply Filters | Programmable Filter, set Output Data Set Type = Same as Input, paste into Script:
+
+```py
+import numpy as np
+input_data = inputs[0].PointData['v']
+mag = np.linalg.norm(input_data, axis=1)
+output.PointData.append(mag, 'Magnitude' )
+```
+4. Render as Surface, colour by Magnitude
+
+::: {style="text-align: center;"}
+![](/fig/programmable/magnitude.png){width=70%}
+:::
+
+
+
+
+
+
+
+
+
+## Programmable Source examples
+
+Now we'll switch to the Programmable Source. It has no input, so we will need to set its Output Data Set Type
+to one of the VTK data types.
+
+### Example 1:  point cloud
+<!-- programmatically generated -->
+
+Here we use Programmable Source to create a vtkPolyData object, add a bunch of points, and create a single
+cell to make these points visible in Surface view.
+
+Reset your ParaView session and then:
+
+1. Apply **Programmable Source**, set Output Data Set Type = vtkPolyData
+1. Paste this code into Script:
+<!-- # programmatically generated point cloud -->
+<!-- # https://youtu.be/aPKVrrzYGdo?t=1202 -->
+<!-- # Programmable Source -->
+<!-- # vtkPolyData -->
+```py
+from numpy import abs, random, sin, cos, pi, arcsin
+
+numPoints = 1_000_000
+r = abs(random.randn(numPoints))             # 1D array drawn from a normal (Gaussian) distribution
+theta = arcsin(2.*random.rand(numPoints)-1.) # 1D array drawn from a uniform [0,1) distribution
+phi = 2.*pi*random.rand(numPoints)           # 1D array drawn from a uniform [0,1) distribution
+
+x = r*cos(theta)*sin(phi)
+y = r*cos(theta)*cos(phi)
+z = r*sin(theta)
+coordinates = vtk.numpy_interface.algorithms.make_vector(x, y, z)   # numpy array (numPoints,3)
+
+output.Points = coordinates              # set point coordinates
+output.PointData.append(r, "r")          # append a scalar field on points
+output.PointData.append(phi, "phi")      # append another scalar field on points
+```
+
+3. Points are not visible in ParaView <font size="+2">⇨</font> either (a) switch to Point Gaussian
+    representation, or (b) in Script's **output** create a single cell without connections:
+
+::: {.callout-note}
+##### vtk.VTK_POLY_VERTEX
+`vtk.VTK_POLY_VERTEX` is a special implementation of `vtkCell` that does not have connections but lets you
+group a set of points in a single cell that will be visible in the *Surface* representation, even though there
+are no polygons or surfaces.
+:::
+	
+```py
+pointIds = vtk.vtkIdList()
+pointIds.SetNumberOfIds(numPoints)   # allocate memory for describing 1e6 points in a cell
+for i in range(numPoints):           # create an ordered set of 1e6 points
+    pointIds.SetId(i, i)             # i-th point will be listed at i-th place
+output.Allocate(1)                   # allocate space for a single cell
+output.InsertNextCell(vtk.VTK_POLY_VERTEX, pointIds)   # insert this cell into the output
+```
+
+![](/fig/programmable/cloud1.png){width=80%}
+
+4. Colour by radius
+4. Apply **Clip** (need the cell for that)
+4. Optionally switch back to Point Gaussian representation
+
+![](/fig/programmable/cloud2.png){width=80%}
+
+<!-- output.Points = coordinates -->
+<!-- # ------ -->
+<!-- points = vtk.vtkPoints() -->
+<!-- points.SetData(vtk.numpy_interface.dataset_adapter. -->
+<!--                numpyTovtkDataArray(coordinates, 'Points')) # set coordinates -->
+<!-- output.SetPoints(points)    # add these points to vtkPolyData -->
+
+
+
+
+### Example 2: custom reader
 
 A common use of Programmable Source is to *prototype readers*. Let's quickly create our own reader for a CSV
 file with 3D data on a grid.
@@ -179,9 +335,9 @@ We will start with a conventional approach to reading CSV files:
 
 1. File | Open, navigate to `tabulatedGrid.csv`, select CSV Reader
 1. Pass tabular data through **Table To Structured Grid**
-  - set data extent in each dimension
-  - specify `x/y/z` columns
-  - colour with `scalar`
+    - set data extent in each dimension
+    - specify `x/y/z` columns
+    - colour with `scalar`
 
 Now let's replace this with reading the CSV file directly to the Cartesian mesh, without using the File | Open
 dialogue. Reset your ParaView and then:
@@ -213,9 +369,31 @@ output.GetPointData().SetScalars(vtk_data_array)
 3. The Image (Uniform Rectilinear Grid) array is properly created (check the Information tab!), but nothing
   shows up ...
 
-We need to tell the ParaView pipeline about the dimensionality of our vtkImageData!
+There is **one additional step**: we need to tell ParaView about the dimensionality and data extent of our
+vtkImageData, so that ParaView could set the view. A proper file reader plugin (written in C++ with VTK
+library calls) would set this in the background.
 
-4. Into Request Information paste this code:
+::: {.callout-note}
+##### RequestInformation box
+With the Programmable Filter, ParaView adopts a 2-pass pipeline, where for some data types / scenarios it
+needs to know more about the data before it runs the code in Script. This metadata is provided inside the
+Script (RequestInformation) box.
+
+The reason this is needed in this example is that in a distributed environment a parallel `pvserver` must know
+the data extents in advance (before running the Script) in order to decide how to decompose the data across
+MPI ranks before reading it. When the data is read, the Script fills the corresponding memory blocks on each
+MPI rank.
+
+In some cases this additional information in the RequestInformation box is not required (and you can safely
+leave the box empty), for example:
+
+1.	Output Data Set Type = Same as Input <font size="+2">⇨</font> the output data will be decomposed in
+      exactly the same way as the input data.
+1.	Output Data Set Type = vtkPolyData <font size="+2">⇨</font> Polygonal Data is not automatically decomposed
+      at read time (recall our workshop on Remote visualization).
+:::
+
+4. Into Script (RequestInformation) box paste this code:
 
 ```py
 from paraview import util
@@ -223,11 +401,11 @@ nx, ny, nz = 10, 10, 10
 util.SetOutputWholeExtent(self, [0,nx-1,0,ny-1,0,nz-1])
 ```
 
-### Exercise: reveal the data in the cube
+::: {.callout-caution}
+##### Exercise: reveal the data in the cube
+The file `cube.txt` has 125,000 integers (stored in 50 lines of text, each line containing 2500 integers) that
+were computed and printed with this Julia code:
 
-The file `cube.txt` has 125,000 integers that were computed and printed with this Julia code:
-- 50 lines
-- each line contains 2500 integers
 ```jl
 for i in 1:50
     for j in 1:50
@@ -238,15 +416,19 @@ for i in 1:50
     println()
 end
 ```
+:::
 
 You need to modify the previous Programmable Source to read this data.
 
-<!-- Solution is in `~/Documents/11-programmableFilterData/solutions.md` -->
+<!-- Solution is in `~/programmableFilter/solutions.md` -->
 
-### Write a 3D function directly into Cartesian mesh: numpy → VTK
+
+
+### Example 3: 3D function
+<!-- directly into Cartesian mesh: numpy → VTK -->
 
 Similar to using a Source to read data from a file, you can use a Source to create a discretized version of a
-3D function.
+3D function in memory, without storing any data on disk.
 
 1. Apply **Programmable Source**, set Output Data Set Type = vtkImageData
 1. Into Script paste this code:
@@ -272,7 +454,7 @@ vtk_data_array.SetNumberOfComponents(1)
 vtk_data_array.SetName("density")
 output.GetPointData().SetScalars(vtk_data_array)   # use it as a scalar field in the output
 ```
-3. Into Request Information paste this code:
+3. Into Script (RequestInformation) paste this code:
 ```py
 from paraview import util
 n = 100
@@ -281,9 +463,13 @@ util.SetOutputWholeExtent(self, [0,n-1,0,n-1,0,n-1])
 
 ![](/fig/programmable/envelope.png){width=80%}
 
-### Single helix source example from ParaView docs
 
-Let's create from scratch a Polygonal Data object.
+
+### Example 4: single helix
+
+In this example, adapted from the ParaView documentation, we construct a Polygonal Data object from
+scratch. The code here is very similar to the point cloud code in Example 1, except that we use
+`vtk.VTK_POLY_LINE` instead of `vtk.VTK_POLY_VERTEX` for the cell type.
 
 1. Apply **Programmable Source**, set Output Data Set Type = vtkPolyData
 1. Paste this code:
@@ -317,63 +503,16 @@ output.InsertNextCell(vtk.VTK_POLY_LINE, pointIds)   # add this 'cell' to the vt
 
 <!-- Double helix source example from ParaView docs -->
 
-### Programmatically generated point cloud
+::: {.callout-caution}
+##### Take-home exercise
+Using multiple `VTK_POLY_LINE` cells, recreate the double helix shown in the picture above.
+:::
 
-Here we use exactly the same technique (use Source to create a vtkPolyData object, add a bunch of points,
-create a single cell) with a very different looking result.
+## Practical case studies
+### Case 1: projection onto a plane
+<!-- numpy → VTK -->
 
-1. Apply **Programmable Source**, set Output Data Set Type = vtkPolyData
-1. Paste this code:
-<!-- # programmatically generated point cloud -->
-<!-- # https://youtu.be/aPKVrrzYGdo?t=1202 -->
-<!-- # Programmable Source -->
-<!-- # vtkPolyData -->
-```py
-from numpy import abs, random, sin, cos, pi, arcsin
-
-numPoints = 1_000_000
-r = abs(random.randn(numPoints))               # 1D array drawn from a normal (Gaussian) distribution
-theta = arcsin(2.*random.rand(numPoints)-1.)   # use 1D array drawn from a uniform [0,1) distribution
-phi = 2.*pi*random.rand(numPoints)             # use 1D array drawn from a uniform [0,1) distribution
-
-x = r*cos(theta)*sin(phi)
-y = r*cos(theta)*cos(phi)
-z = r*sin(theta)
-coordinates = vtk.numpy_interface.algorithms.make_vector(x, y, z)   # numpy array (numPoints,3)
-
-output.Points = coordinates              # set point coordinates
-output.PointData.append(r, "r")          # append a scalar field on points
-output.PointData.append(phi, "phi")      # append another scalar field on points
-```
-
-3. Points are not visible in ParaView ⇨ either (a) switch to Point Gaussian representation, or (b) in Script's
-    **output** create a single cell without connections
-	
-```py
-pointIds = vtk.vtkIdList()
-pointIds.SetNumberOfIds(numPoints)
-for p in range(numPoints):
-    pointIds.SetId(p, p)
-output.Allocate(1)     # allocate space for a single cell
-output.InsertNextCell(vtk.VTK_POLY_VERTEX, pointIds)
-```
-
-![](/fig/programmable/cloud1.png){width=80%}
-
-4. Colour by radius
-4. Apply **Clip** (need the cell for that)
-4. Optionally switch back to Point Gaussian representation
-
-![](/fig/programmable/cloud2.png){width=80%}
-
-<!-- output.Points = coordinates -->
-<!-- # ------ -->
-<!-- points = vtk.vtkPoints() -->
-<!-- points.SetData(vtk.numpy_interface.dataset_adapter. -->
-<!--                numpyTovtkDataArray(coordinates, 'Points')) # set coordinates -->
-<!-- output.SetPoints(points)    # add these points to vtkPolyData -->
-
-## Projection to a plane: numpy → VTK
+Recall the earlier task in which we wanted to project a cube onto a plane offset to the side.
 
 1. Load `sineEnvelope.nc`
 1. Apply **Programmable Filter**, set Output Data Set Type = vtkImageData
@@ -398,7 +537,7 @@ vtk_data_array.SetNumberOfComponents(1)
 vtk_data_array.SetName("projection")
 output.GetPointData().SetScalars(vtk_data_array)
 ```
-4. Into Request Information paste this code:
+4. Into Script (RequestInformation) paste this code:
 ```py
 from paraview import util
 n = 100
@@ -407,16 +546,21 @@ util.SetOutputWholeExtent(self, [0,n-1,0,n-1,0,0])
 
 ![](/fig/programmable/projection3.png){width=80%}
 
-## Exercise: plotting spherical dataset as 3D Mollweide map
+### Case 2 (exercise): spherical dataset as a 3D Mollweide map
 
 <!-- Mollweide projection mantle convection -->
 <!-- ~/Documents/visualizeThis/ieee2021/submissions/lucasTemor/vis21g-sub1007-i5.mp4 -->
+
+Here we recreate a technique from the Best Cover Visualization submission at IEEE 2021 SciVis Contest.
 
 - [Spherical dataset animation](https://scivis2021.netlify.app){target="_blank"}: the traditional view
 - [Best Cover Visualization submission](https://scivis2021.netlify.app/results#best-cover-visualization){target="_blank"} with the 3D Mollweide projection
 - On presenter's laptop watch the full video `open $(fd vis21g-sub1007-i5.mp4 ~/Documents)`
 
-### Playing with the dataset in standalone Python
+#### Playing with the dataset in standalone Python
+
+Install standalone Python along with `xarray` and `netcdf4` libraries on your computer. Then use it to run
+this code:
 
 ```py
 import xarray as xr
@@ -425,7 +569,7 @@ print(data)                      # show all variables inside this dataset
 
 print(data.r)                    # radial discretization
 print(data.temperature.values)   # this is a 180x201x360 numpy array
-data["temperature anomaly"].shape
+data["temperature"].shape
 
 print(data.lon.values)
 print(data.lat.values)
@@ -465,7 +609,7 @@ phi = data.lat.values[50]
 mollweide(lam,phi)
 ```
 
-### Back to ParaView
+#### Back to ParaView
 
 Our goal is to create something like this:
 ![](/fig/programmable/convection.png){width=80%}
@@ -516,8 +660,8 @@ for i in range(nlat):   # the order of loops should reverse-match SetExtent
     for j in range(nr):
         for k in range(nlon):
             inx = k + i*nlon*nr + j*nlon
+            lon, r, lat = inputs[0].GetPoint(inx)[0:3]
             if j == 0:   # inner radius = base layer
-                lon, r, lat = inputs[0].GetPoint(inx)[0:3]
                 x[k,i], y[k,i] = mollweide(lon,lat)
             points.InsertNextPoint(x[k,i],y[k,i],0.01*j)
             temp.InsertNextValue(temp_in.GetValue(inx))
@@ -526,7 +670,9 @@ output.SetPoints(points)
 output.GetPointData().SetScalars(temp)
 ```
 
-Optionally, you can paste the following into RequestInformation Script:
+Optionally, you can paste the following into the Script (RequestInformation) box. In this example, ParaView
+can infer the metadata from the main Script, but in parallel execution the RequestInformation section may
+still be needed.
 
 ```py
 from paraview import util
@@ -534,22 +680,36 @@ nlon, nr, nlat = 360, 201, 180
 util.SetOutputWholeExtent(self,[0,nlon-1,0,nr-1,0,nlat-1])   # the order is fixed and copied from input
 ```
 
-## Saving workflow
+## Outro
 
-- Save as a ParaView state file <font size="+2">⇨</font> filter's Python code with appear inside an XML element
-- Save as a Python state file ⇨ filter's Python code with appear inside `programmableFilter1.Script` variable
+### Embedding Programmable Filter code inside a state file
 
-## Summary
+- If saving as a PVSM state file <font size="+2">⇨</font> filter's Python code with appear inside an XML element
+- If saving as a Python state file <font size="+2">⇨</font> filter's Python code with appear inside
+  `programmableFilter1.Script` variable -- two nested layers of Python scripting!
 
-- Workflow suggestions
-  - use `print` from inside the Filter/Source
-  - go slowly and save frequently, as ParaView *will crash* when you don't allocate objects properly inside
-        Programmable Filter/Source
-- Links
-  - [Programmable Filter](https://docs.paraview.org/en/latest/ReferenceManual/pythonProgrammableFilter.html){target="_blank"}
-    in the offical ParaView documentation
-  - an article [NumPy to VTK: Converting your NumPy arrays to VTK arrays and files](https://pyscience.wordpress.com/2014/09/06/numpy-to-vtk-converting-your-numpy-arrays-to-vtk-arrays-and-files){target="_blank"}
-  - first half of the [talk by Jean M. Favre](https://youtu.be/aPKVrrzYGdo){target="_blank"} (Swiss National Supercomputing Centre)
-- Future topic: converting Programmable Filter's code to a plugin
-  - code its own custom GUI Properties using Python decorators
-  - after loading your plugin, it should be available as a normal filter or source in the menu
+### Workflow suggestions
+
+1. use `print` inside the Filter/Source Script box
+1. go slowly and save frequently, as ParaView *will crash* when you don't allocate objects properly inside
+   Programmable Filter/Source
+
+### Links
+
+- [Programmable Filter](https://docs.paraview.org/en/latest/ReferenceManual/pythonProgrammableFilter.html){target="_blank"} in the offical ParaView documentation
+- Read an article [NumPy to VTK: Converting your NumPy arrays to VTK arrays and files](https://pyscience.wordpress.com/2014/09/06/numpy-to-vtk-converting-your-numpy-arrays-to-vtk-arrays-and-files){target="_blank"}
+- Watch the first half of the [talk by Jean M. Favre](https://youtu.be/aPKVrrzYGdo){target="_blank"} (Swiss
+  National Supercomputing Centre) on moving from the Programmable Source/Filter to reader plugins
+
+### Ideas for the future
+
+1. Case study: identify "vortex cores" in a CFD dataset using a custom Q-criterion script
+1. Case study: filter data based on a complex multi-variable condition
+1. vtkTable data
+1. Using `dsa` bridge to treat VTK arrays like NumPy arrays for fast calculations
+1. Time NumPy-based vectorization vs. `for` loops
+1. Working with time-varying data + setting up the temporal range in Script (RequestInformation)
+<!-- 1. RequestUpdateExtent Script: managing how data is requested across time or MPI ranks -->
+1. Converting Programmable Filter's code to a plugin
+    - code its own custom GUI Properties using Python decorators
+    - after loading your plugin, it should be available as a normal filter or source in the menu
