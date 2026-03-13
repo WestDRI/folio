@@ -99,9 +99,9 @@ In today's workshop, we will create datasets in the following formats:
 1. vtkPolyData, and
 1. vtkStructuredGrid.
 
-For simplicity, we will skip the examples with Output Data Set Type = **vtkUnstructuredGrid** -- that would
-produce the most versatile object, but with any unstructured cells you will have to describe the connections
-between their points needed to form these cells. You can find a couple of examples of creating
+For simplicity, we will skip examples with `Output Data Set Type = vtkUnstructuredGrid`. While this output
+type would produce the most versatile object, unstructured cells require you to explicitly define the
+connectivity between their points resulting in additional code. You can find a couple of examples of creating
 vtkUnstructuredGrid in [our 2021 webinar](https://training.westdri.ca/tools/visualization#programmable){target="_blank"}.
 
 ### Programmable Filter workflow
@@ -308,13 +308,17 @@ output.Allocate(1)                   # allocate space for a single cell
 output.InsertNextCell(vtk.VTK_POLY_VERTEX, pointIds)   # insert this cell into the output
 ```
 
+::: {style="text-align: center;"}
 ![](/fig/programmable/cloud1.png){width=80%}
+:::
 
 4. Colour by radius
 4. Apply **Clip** (need the cell for that)
 4. Optionally switch back to Point Gaussian representation
 
+::: {style="text-align: center;"}
 ![](/fig/programmable/cloud2.png){width=80%}
+:::
 
 <!-- output.Points = coordinates -->
 <!-- # ------ -->
@@ -402,7 +406,7 @@ util.SetOutputWholeExtent(self, [0,nx-1,0,ny-1,0,nz-1])
 ```
 
 ::: {.callout-caution}
-##### Exercise: reveal the data in the cube
+##### Take-home exercise: reveal the data in the cube
 The file `cube.txt` has 125,000 integers (stored in 50 lines of text, each line containing 2500 integers) that
 were computed and printed with this Julia code:
 
@@ -461,7 +465,10 @@ n = 100
 util.SetOutputWholeExtent(self, [0,n-1,0,n-1,0,n-1])
 ```
 
+::: {style="text-align: center;"}
 ![](/fig/programmable/envelope.png){width=80%}
+:::
+
 
 
 
@@ -499,7 +506,9 @@ output.Allocate(1)     # allocate space for one vtkPolyLine 'cell' to the vtkPol
 output.InsertNextCell(vtk.VTK_POLY_LINE, pointIds)   # add this 'cell' to the vtkPolyData object
 ```
 
+::: {style="text-align: center;"}
 ![](/fig/programmable/helix.png){width=95%}
+:::
 
 <!-- Double helix source example from ParaView docs -->
 
@@ -544,7 +553,9 @@ n = 100
 util.SetOutputWholeExtent(self, [0,n-1,0,n-1,0,0])
 ```
 
+::: {style="text-align: center;"}
 ![](/fig/programmable/projection3.png){width=80%}
+:::
 
 ### Case 2 (exercise): spherical dataset as a 3D Mollweide map
 
@@ -612,7 +623,10 @@ mollweide(lam,phi)
 #### Back to ParaView
 
 Our goal is to create something like this:
+
+::: {style="text-align: center;"}
 ![](/fig/programmable/convection.png){width=80%}
+:::
 
 1. load `compact150.nc`, uncheck Spherical Coordinates
 2. apply Programmable Filter, set Output Data Set Type = vtkStructuredGrid
