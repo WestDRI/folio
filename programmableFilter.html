@@ -450,7 +450,7 @@ window.Quarto = {
 <li>vtkPolyData, and</li>
 <li>vtkStructuredGrid.</li>
 </ol>
-<p>For simplicity, we will skip the examples with Output Data Set Type = <strong>vtkUnstructuredGrid</strong> – that would produce the most versatile object, but with any unstructured cells you will have to describe the connections between their points needed to form these cells. You can find a couple of examples of creating vtkUnstructuredGrid in <a href="https://training.westdri.ca/tools/visualization#programmable" target="_blank">our 2021 webinar</a>.</p>
+<p>For simplicity, we will skip examples with <code>Output Data Set Type = vtkUnstructuredGrid</code>. While this output type would produce the most versatile object, unstructured cells require you to explicitly define the connectivity between their points resulting in additional code. You can find a couple of examples of creating vtkUnstructuredGrid in <a href="https://training.westdri.ca/tools/visualization#programmable" target="_blank">our 2021 webinar</a>.</p>
 </section>
 <section id="programmable-filter-workflow" class="level3">
 <h3 class="anchored" data-anchor-id="programmable-filter-workflow">Programmable Filter workflow</h3>
@@ -674,13 +674,17 @@ Note
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    pointIds.SetId(i, i)             <span class="co"># i-th point will be listed at i-th place</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>output.Allocate(<span class="dv">1</span>)                   <span class="co"># allocate space for a single cell</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>output.InsertNextCell(vtk.VTK_POLY_VERTEX, pointIds)   <span class="co"># insert this cell into the output</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="text-align: center;">
 <p><img src="./fig/programmable/cloud1.png" class="img-fluid" style="width:80.0%"></p>
+</div>
 <ol start="4" type="1">
 <li>Colour by radius</li>
 <li>Apply <strong>Clip</strong> (need the cell for that)</li>
 <li>Optionally switch back to Point Gaussian representation</li>
 </ol>
+<div style="text-align: center;">
 <p><img src="./fig/programmable/cloud2.png" class="img-fluid" style="width:80.0%"></p>
+</div>
 <!-- output.Points = coordinates -->
 <!-- # ------ -->
 <!-- points = vtk.vtkPoints() -->
@@ -759,7 +763,7 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Exercise: reveal the data in the cube
+<span class="screen-reader-only">Caution</span>Take-home exercise: reveal the data in the cube
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -811,7 +815,9 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> paraview <span class="im">import</span> util</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>util.SetOutputWholeExtent(<span class="va">self</span>, [<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="text-align: center;">
 <p><img src="./fig/programmable/envelope.png" class="img-fluid" style="width:80.0%"></p>
+</div>
 </section>
 <section id="example-4-single-helix" class="level3">
 <h3 class="anchored" data-anchor-id="example-4-single-helix">Example 4: single helix</h3>
@@ -840,7 +846,9 @@ Note
 <span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>output.Allocate(<span class="dv">1</span>)     <span class="co"># allocate space for one vtkPolyLine 'cell' to the vtkPolyData object</span></span>
 <span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>output.InsertNextCell(vtk.VTK_POLY_LINE, pointIds)   <span class="co"># add this 'cell' to the vtkPolyData object</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="text-align: center;">
 <p><img src="./fig/programmable/helix.png" class="img-fluid" style="width:95.0%"></p>
+</div>
 <!-- Double helix source example from ParaView docs -->
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -891,7 +899,9 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> paraview <span class="im">import</span> util</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>util.SetOutputWholeExtent(<span class="va">self</span>, [<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,n<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="text-align: center;">
 <p><img src="./fig/programmable/projection3.png" class="img-fluid" style="width:80.0%"></p>
+</div>
 </section>
 <section id="case-2-exercise-spherical-dataset-as-a-3d-mollweide-map" class="level3">
 <h3 class="anchored" data-anchor-id="case-2-exercise-spherical-dataset-as-a-3d-mollweide-map">Case 2 (exercise): spherical dataset as a 3D Mollweide map</h3>
@@ -946,7 +956,10 @@ Note
 </section>
 <section id="back-to-paraview" class="level4">
 <h4 class="anchored" data-anchor-id="back-to-paraview">Back to ParaView</h4>
-<p>Our goal is to create something like this: <img src="./fig/programmable/convection.png" class="img-fluid" style="width:80.0%"></p>
+<p>Our goal is to create something like this:</p>
+<div style="text-align: center;">
+<p><img src="./fig/programmable/convection.png" class="img-fluid" style="width:80.0%"></p>
+</div>
 <ol type="1">
 <li>load <code>compact150.nc</code>, uncheck Spherical Coordinates</li>
 <li>apply Programmable Filter, set Output Data Set Type = vtkStructuredGrid</li>
