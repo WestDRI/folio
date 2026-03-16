@@ -1,0 +1,311 @@
+---
+title: "In-situ visualization with ParaView's Catalyst2"
+aliases:
+  - /catalyst
+---
+
+<!-- longer title: "Hands-on with ParaView's Programmable Filter & Source for scientific visualization" -->
+
+**March 24<sup>th</sup>**, 10am-12pm
+
+- 2022-Sep webinar slides <https://training.westdri.ca/tools/visualization>{target="_blank"} (scroll down to
+  *In-situ visualization with ParaView Catalyst2*)
+- today's data file <https://nextcloud.computecanada.ca/index.php/s/j4d4YHqFar9KRFF/download>{target="_blank"}
+  (~137kB ZIP file)
+
+## Installation
+
+### Compile Catalyst2 library
+
+```sh
+user01@cass
+mkdir -p /project/def-sponsor00/shared && cd /project/def-sponsor00/shared
+echo "export CATA=/project/def-sponsor00/shared/insitu" >> ~/.bashrc
+source ~/.bashrc
+mkdir -p $CATA && cd $CATA
+git clone https://gitlab.kitware.com/paraview/catalyst.git catalyst-src
+cd catalyst-src
+mkdir -p build && cd build
+module load cmake/3.31.0
+module load gcc/12.3 python/3.12.4 hdf5/1.14.6 netcdf/4.9.3 openvkl/1.3.2
+module load scipy-stack/2026a ospray/2.12.0 tbb/2021.10.0
+cmake -G Ninja .. -DCMAKE_INSTALL_PREFIX=$CATA/catalyst
+ninja   # build
+ctest   # optionally, 100% tests passed, 0 tests failed out of 29
+ninja install
+```
+
+### Compile ParaView
+
+To run a Catalyst-instrumented simulation code, `libcatalyst-paraview.so` must be available at runtime. While
+Catalyst2 documentation suggests that a precompiled ParaView may be used, many users report issues that are
+resolved only after compiling ParaView from source, likely due to MPI version mismatches.
+
+<!-- In the following instructions, after "mkdir -p build && cd build", in the past I needed to patch a rectilinear -->
+<!-- bug as described at https://bit.ly/3UJCOGI in Jean M. Favre's comment -->
+<!-- FILE=VTKExtensions/Conduit/vtkConduitSource.cxx  VTK/IO/CatalystConduit/vtkConduitSource.cxx -->
+<!-- sed -i -e 's|SetYCoordinates(xArray)|SetYCoordinates(yArray)|' $FILE -->
+<!-- sed -i -e 's|SetZCoordinates(xArray)|SetZCoordinates(zArray)|' $FILE -->
+
+```sh
+user01@cass
+cd $CATA
+module load gcc/12.3 python/3.12.4 openvkl/1.3.2 hdf5/1.14.6 netcdf/4.9.3
+# module load hdf5-mpi/1.14.2 pnetcdf/1.12.3
+module load scipy-stack/2026a ospray/2.12.0 tbb/2021.10.0 cmake/3.31.0
+wget https://www.paraview.org/files/v6.0/ParaView-v6.0.1.tar.xz
+unpack and cd there
+mkdir -p build && cd build
+>>> to support either onscreen or offscreen rendering, must set to ON at least one of:
+>>> `VTK_USE_X`, `VTK_USE_COCOA`, `VTK_OPENGL_HAS_OSMESA`, `VTK_OPENGL_HAS_EGL` or `VTK_USE_SDL2`
+FLAGS=(
+   -DCMAKE_INSTALL_PREFIX=$CATA/paraview
+   -DVTK_OPENGL_HAS_OSMESA=ON
+   -DPARAVIEW_USE_MPI=ON -DBUILD_TESTING=OFF
+   -DVTK_USE_X=OFF -DPARAVIEW_USE_QT=OFF
+   -DPARAVIEW_USE_PYTHON=ON -DPython3_FIND_STRATEGY=LOCATION -DPython3_ROOT_DIR=$EBROOTPYTHON
+   -DPARAVIEW_BUILD_SHARED_LIBS=ON
+   -DPARAVIEW_ENABLE_RAYTRACING=ON
+   -DPARAVIEW_ENABLE_FFMPEG=ON
+   -DPARAVIEW_ENABLE_CATALYST=ON
+   -Dcatalyst_DIR=$CATA/catalyst/lib64/cmake/catalyst-2.0
+)
+cmake .. "${FLAGS[@]}"
+export LD_LIBRARY_PATH=$CATA/catalyst/lib64:$LD_LIBRARY_PATH   # otherwise undefined references to `catalyst_conduit_node_load`, ...
+make -j8
+make install
+cd $CATA/ParaView-v6.0.1/
+shopt -s extglob            # enable extended globbing
+/bin/rm -rf !("Examples")   # keep only Examples
+/bin/rm .clang-* .kitware-release.json
+shopt -u extglob            # disable extended globbing
+```
+
+Alternatively could compile from `git clone https://gitlab.kitware.com/paraview/paraview.git ParaView-latest`.
+
+Finally, make it available to all `user{01..99}` of this research group (`def-sponsor00`):
+
+```sh
+chmod og+X,og-r /project/def-sponsor00/shared
+chmod -R g+rX $CATA
+```
+
+## Running the official Examples/Catalyst2 examples
+
+```sh
+user01@cass
+cp -r $CATA/ParaView-v6.0.1/Examples .
+cd Examples/Catalyst2/CFullExample
+module load gcc/12.3 cmake/3.31.0
+cmake -Dcatalyst_DIR=$CATA/catalyst/lib64/cmake/catalyst-2.0 .
+make
+
+export CATALYST_IMPLEMENTATION_PATHS=$CATA/paraview/lib64/catalyst
+export CATALYST_IMPLEMENTATION_NAME=paraview
+
+salloc --time=0:30:0 --mem-per-cpu=3600
+./bin/CFullExampleV2 catalyst_pipeline.py                # serial run, no files written, just terminal output
+
+salloc --ntasks=2 --time=0:15:0 --mem-per-cpu=3600
+mpirun -np 2 ./bin/CFullExampleV2 catalyst_pipeline.py   # each MPI rank will output below; can see in `bounds`
+```
+
+You should see something line this:
+
+```output
+executing catalyst_pipeline
+(3.538s) [pvbatch] v2_internals.py:212 WARN| Module 'catalyst_pipeline'
+          missing Catalyst 'options', will use a default options object
+-----------------------------------
+executing (cycle=0, time=0.0)
+bounds: (0.0, 69.0, 0.0, 64.9, 0.0, 55.9)
+velocity-magnitude-range: (0.0, 0.0)
+pressure-range: (0.0, 0.0)
+-----------------------------------
+executing (cycle=1, time=0.1)
+bounds: (0.0, 69.0, 0.0, 64.9, 0.0, 55.9)
+velocity-magnitude-range: (0.0, 6.490000000000001)
+pressure-range: (0.05000000074505806, 0.05000000074505806)
+```
+
+At the moment, running the code does not produce any data files or images. Instead, we want it to generate a
+*representative dataset* that can be used to develop a visualization script, which can later be passed to the
+simulation code for live visualization.
+
+Where can we get this representative dataset? There are three ways described in the slides. Here we focus on
+the last two.
+
+### 2 -- creating a representative dataset with `CatalystAdaptor.h`
+
+<!-- ### Producing a representative dataset in Examples/Catalyst2/CxxImageDataExample -->
+
+A relevant helper code can be found in the C++ Image Data example. Let's compile and run this example:
+
+```sh
+user01@cass
+cd $CATA/ParaView-v6.0.1/Examples/Catalyst2/CxxImageDataExample
+module load gcc/12.3 cmake/3.31.0
+cmake -Dcatalyst_DIR=$CATA/catalyst/lib64/cmake/catalyst-2.0 .
+>>> edit FEDriver.cxx
+  unsigned int numberOfTimeSteps = 100;
+make
+
+export CATALYST_IMPLEMENTATION_PATHS=$CATA/paraview/lib64/catalyst
+export CATALYST_IMPLEMENTATION_NAME=paraview
+salloc --time=0:30:0 --mem-per-cpu=3600
+./bin/CxxImageDataExampleV2 catalyst_pipeline.py   # no file output
+```
+
+If you want file output, it'll be written by the following code inside the function `Initialize(...)` inside
+`CatalystAdaptor.h`:
+
+```cxx
+  conduit_cpp::Node node;
+  for (int cc = 1; cc < argc; ++cc)
+  {
+    if (strcmp(argv[cc], "--output") == 0 && (cc + 1) < argc)
+    {
+      node["catalyst/pipelines/0/type"].set("io");
+      node["catalyst/pipelines/0/filename"].set(argv[cc + 1]);
+      node["catalyst/pipelines/0/channel"].set("grid");
+      ++cc;
+    }
+  }
+```
+
+Continue working inside the Slurm job:
+
+```sh
+./bin/CxxImageDataExampleV2 --output dataset-%04ts.vtpd   # works great, writes 10 steps as vtkPartitionedDataset (*.vtpd)
+# ./bin/CxxImageDataExampleV2 --output dataset.vtpd       # would write just one timestep
+```
+
+Now you should see 10 VTK files `dataset-000{0..9}.vtpd` and 10 subdirectories `dataset-000{0..9}`.
+
+### 3 -- creating a representative dataset with `gridwriter.py`
+
+```sh
+cp ../SampleScripts/gridwriter.py .
+>>> edit gridwriter.py
+  catalystChannel = "grid"
+./bin/CxxImageDataExampleV2 gridwriter.py
+```
+
+Now you should see `datasets/` subdirectory with 2 timesteps.
+
+### From representative dataset to an in-situ script
+
+Download `datasets/grid_000005*` to your local machine and load it into ParaView:
+
+```sh
+cass
+tar cvfz 111.tgz datasets/grid_000005*
+```
+```sh
+laptop
+cd ~/tmp/catalyst
+scp cass:insitu/ParaView-v6.0.1/Examples/Catalyst2/CxxImageDataExample/111.tgz .
+unpack it here
+```
+
+1. apply Filters | Contour, generate 5 surfaces of mag(velocity) on a linear scale
+1. apply Extractors | Image | PNG, set resolution to 1080p
+1. File | SaveCatalystState... - save it as `extract-contour.py`
+
+Edit `extract-contour.py`:
+
+```txt
+< grid = XMLPartitionedDatasetReader(registrationName='grid', FileName=['/Users/razoumov/tmp/catalyst/datasets/grid_000005.vtpd'])
+---
+> grid = XMLPartitionedDatasetReader(registrationName='grid')
+```
+
+### From the in-situ script to in-situ visualization
+
+Upload `extract-contour.py` to the cluster:
+
+```sh
+scp extract-contour.py cass:insitu/ParaView-v6.0.1/Examples/Catalyst2/CxxImageDataExample/
+```
+
+Inside `CatalystAdaptor.h` we have:
+
+```cxx
+// We only have 1 channel here. Let's name it 'grid'.
+auto channel = exec_params["catalyst/channels/grid"];
+```
+
+i.e. the channels in the simulation code and in the Catalyst script `extract-contour.py`
+(`registrationName='grid') have matching names, so the simulation data will be found by the Catalyst script.
+
+```sh
+  # export LD_LIBRARY_PATH=/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Compiler/gcc9/openvkl/0.10.0/lib64:$LD_LIBRARY_PATH
+./bin/CxxImageDataExampleV2 extract-contour.py
+```
+
+download `datasets/RenderView1_00000*` to your laptop:
+
+```sh
+scp cass:insitu/ParaView-v6.0.1/Examples/Catalyst2/CxxImageDataExample/datasets/RenderView1_00000* .
+```
+
+## Adapting and running our own C code
+
+<!-- abc -->
+
+We need to expose data arrays in our code to the Catalyst2 library.
+
+
+
+
+
+
+
+
+```sh
+wget https://nextcloud.computecanada.ca/index.php/s/j4d4YHqFar9KRFF/download -O catalyst.zip
+unpack this file
+cd standalone-mpi/imageData
+>>> modify FEDriver.c to run only one timestep
+make
+
+export CATALYST_IMPLEMENTATION_PATHS=$CATA/paraview/lib64/catalyst
+export CATALYST_IMPLEMENTATION_NAME=paraview
+./bin/CImageDataExampleV2 --output output-%04ts.vtpd                  # one file per timestep
+# mpirun -np 2 ./bin/CImageDataExampleV2 --output output-%04ts.vtpd   # decomposed domain
+tar cvfz 111.tgz output*
+```
+
+```sh
+laptop
+scp cass:standalone-mpi/imageData/111.tgz .
+```
+
+Unpack and load the file into ParaView. Then
+
+1. Contour at $\rho=0.3$
+1. apply Extractors | Image | PNG
+1. File | Save Catalyst State... - save it as `extract-threshold.py`
+
+Edit `extract-threshold2.py`
+- remove `FileName`, leave just `registrationName`
+
+```sh
+scp extract-threshold.py cass:standalone-mpi/imageData
+```
+
+```sh
+cass
+>>> edit FEDriver.c
+  unsigned int numberOfTimeSteps = 10;
+make
+./bin/CImageDataExampleV2 extract-threshold.py
+tar cvfz 111.tgz datasets/RenderView1_00000*
+```
+
+```sh
+laptop
+scp cass:standalone-mpi/imageData/111.tgz .
+unpack it
+open datasets/RenderView1_00000*
+```
