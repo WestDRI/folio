@@ -450,20 +450,20 @@ window.Quarto = {
 <li>vtkPolyData, and</li>
 <li>vtkStructuredGrid.</li>
 </ol>
-<p>For simplicity, we will skip examples with <code>Output Data Set Type = vtkUnstructuredGrid</code>. While this output type would produce the most versatile object, unstructured cells require you to explicitly define the connectivity between their points resulting in additional code. You can find a couple of examples of creating vtkUnstructuredGrid in <a href="https://training.westdri.ca/tools/visualization#programmable" target="_blank">our 2021 webinar</a>.</p>
+<p>For simplicity, we will skip examples with <code>OutputDataSetType = vtkUnstructuredGrid</code>. While this output type would produce the most versatile object, unstructured cells require you to explicitly define the connectivity between their points resulting in additional code. You can find a couple of examples of creating vtkUnstructuredGrid in <a href="https://training.westdri.ca/tools/visualization#programmable" target="_blank">our 2021 webinar</a>.</p>
 </section>
 <section id="programmable-filter-workflow" class="level3">
 <h3 class="anchored" data-anchor-id="programmable-filter-workflow">Programmable Filter workflow</h3>
 <ol type="1">
 <li>Apply <strong>Programmable Filter</strong> to a ParaView pipeline object</li>
-<li>Select Output Data Set Type: either Same as Input, or one of the VTK data types from above</li>
+<li>Select OutputDataSetType: either Same as Input, or one of the VTK data types from above</li>
 <li>In the Script box, write Python code: <strong>input</strong> from a pipeline object → <strong>output</strong></li>
 </ol>
 <ul>
 <li>use <code>inputs[0].Points[:,0:3]</code> and/or <code>inputs[0].PointData['array name']</code> and/or <code>inputs[0].CellData['array name']</code> to compute your <strong>output</strong>: points, cells, and data arrays</li>
 <li>some objects take/pass multiple <code>inputs[:]</code></li>
 </ul>
-<!-- - either use the default **output** for your selected Output Data Set Type, or create your own custom -->
+<!-- - either use the default **output** for your selected OutputDataSetType, or create your own custom -->
 <!--   **output** object -->
 <ol start="4" type="1">
 <li>Depending on <strong>output</strong>’s type, might need to describe it in the Script (RequestInformation) box</li>
@@ -507,7 +507,7 @@ window.Quarto = {
 <li>Apply <strong>Programmable Filter</strong></li>
 </ol>
 <ul>
-<li>set Output Data Set Type = Same as Input</li>
+<li>set OutputDataSetType = Same as Input</li>
 <li>this will create the same discretization as its input, without the fields (PointData)</li>
 </ul>
 <ol start="3" type="1">
@@ -543,7 +543,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>With Output Data Set Type = Same as Input, ParaView will copy <code>inputs</code> geometry into <code>output</code> geometry and set the same coordinates:</p>
+<p>With OutputDataSetType = Same as Input, ParaView will copy <code>inputs</code> geometry into <code>output</code> geometry and set the same coordinates:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>output.Points[:,<span class="dv">0</span>] <span class="op">=</span> inputs[<span class="dv">0</span>].Points[:,<span class="dv">0</span>]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>output.Points[:,<span class="dv">1</span>] <span class="op">=</span> inputs[<span class="dv">0</span>].Points[:,<span class="dv">1</span>]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>output.Points[:,<span class="dv">2</span>] <span class="op">=</span> inputs[<span class="dv">0</span>].Points[:,<span class="dv">2</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -611,7 +611,7 @@ Note
 <ol type="1">
 <li>load <code>sineEnvelope.nc</code></li>
 <li>apply Filters | Gradient, save as “v”</li>
-<li>Apply Filters | Programmable Filter, set Output Data Set Type = Same as Input, paste into Script:</li>
+<li>Apply Filters | Programmable Filter, set OutputDataSetType = Same as Input, paste into Script:</li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>input_data <span class="op">=</span> inputs[<span class="dv">0</span>].PointData[<span class="st">'v'</span>]</span>
@@ -627,14 +627,14 @@ Note
 </section>
 <section id="programmable-source-examples" class="level2">
 <h2 class="anchored" data-anchor-id="programmable-source-examples">Programmable Source examples</h2>
-<p>Now we’ll switch to the Programmable Source. It has no input, so we will need to set its Output Data Set Type to one of the VTK data types.</p>
+<p>Now we’ll switch to the Programmable Source. It has no input, so we will need to set its OutputDataSetType to one of the VTK data types.</p>
 <section id="example-1-point-cloud" class="level3">
 <h3 class="anchored" data-anchor-id="example-1-point-cloud">Example 1: point cloud</h3>
 <!-- programmatically generated -->
 <p>Here we use Programmable Source to create a vtkPolyData object, add a bunch of points, and create a single cell to make these points visible in Surface view.</p>
 <p>Reset your ParaView session and then:</p>
 <ol type="1">
-<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkPolyData</li>
+<li>Apply <strong>Programmable Source</strong>, set OutputDataSetType = vtkPolyData</li>
 <li>Paste this code into Script: <!-- # programmatically generated point cloud --> <!-- # https://youtu.be/aPKVrrzYGdo?t=1202 --> <!-- # Programmable Source --> <!-- # vtkPolyData --></li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> <span class="bu">abs</span>, random, sin, cos, pi, arcsin</span>
@@ -707,7 +707,7 @@ Note
 </ol>
 <p>Now let’s replace this with reading the CSV file directly to the Cartesian mesh, without using the File | Open dialogue. Reset your ParaView and then:</p>
 <ol type="1">
-<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkImageData</li>
+<li>Apply <strong>Programmable Source</strong>, set OutputDataSetType = vtkImageData</li>
 <li>Into Script paste this code: <!-- output = self.GetOutput() --></li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -746,8 +746,8 @@ Note
 <p>The reason this is needed in this example is that in a distributed environment a parallel <code>pvserver</code> must know the data extents in advance (before running the Script) in order to decide how to decompose the data across MPI ranks before reading it. When the data is read, the Script fills the corresponding memory blocks on each MPI rank.</p>
 <p>In some cases this additional information in the RequestInformation box is not required (and you can safely leave the box empty), for example:</p>
 <ol type="1">
-<li>Output Data Set Type = Same as Input <font size="+2">⇨</font> the output data will be decomposed in exactly the same way as the input data.</li>
-<li>Output Data Set Type = vtkPolyData <font size="+2">⇨</font> Polygonal Data is not automatically decomposed at read time (recall our workshop on Remote visualization).</li>
+<li>OutputDataSetType = Same as Input <font size="+2">⇨</font> the output data will be decomposed in exactly the same way as the input data.</li>
+<li>OutputDataSetType = vtkPolyData <font size="+2">⇨</font> Polygonal Data is not automatically decomposed at read time (recall our workshop on Remote visualization).</li>
 </ol>
 </div>
 </div>
@@ -786,7 +786,7 @@ Note
 <!-- directly into Cartesian mesh: numpy → VTK -->
 <p>Similar to using a Source to read data from a file, you can use a Source to create a discretized version of a 3D function in memory, without storing any data on disk.</p>
 <ol type="1">
-<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkImageData</li>
+<li>Apply <strong>Programmable Source</strong>, set OutputDataSetType = vtkImageData</li>
 <li>Into Script paste this code:</li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin, sqrt</span>
@@ -823,7 +823,7 @@ Note
 <h3 class="anchored" data-anchor-id="example-4-single-helix">Example 4: single helix</h3>
 <p>In this example, adapted from the ParaView documentation, we construct a Polygonal Data object from scratch. The code here is very similar to the point cloud code in Example 1, except that we use <code>vtk.VTK_POLY_LINE</code> instead of <code>vtk.VTK_POLY_VERTEX</code> for the cell type.</p>
 <ol type="1">
-<li>Apply <strong>Programmable Source</strong>, set Output Data Set Type = vtkPolyData</li>
+<li>Apply <strong>Programmable Source</strong>, set OutputDataSetType = vtkPolyData</li>
 <li>Paste this code: <!-- # No `output = self.GetOutput()` here as that would give vtkmodules.vtkCommonDataModel.vtkPolyData which has no --> <!-- # 'PointData' attribute. Instead we are using the default output which has type --> <!-- # paraview.vtk.numpy_interface.dataset_adapter.PolyData. --></li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -873,7 +873,7 @@ Note
 <p>Recall the earlier task in which we wanted to project a cube onto a plane offset to the side.</p>
 <ol type="1">
 <li>Load <code>sineEnvelope.nc</code></li>
-<li>Apply <strong>Programmable Filter</strong>, set Output Data Set Type = vtkImageData</li>
+<li>Apply <strong>Programmable Filter</strong>, set OutputDataSetType = vtkImageData</li>
 <li>Into Script paste this code: <!-- # output = self.GetOutput() --></li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>numPoints <span class="op">=</span> inputs[<span class="dv">0</span>].GetNumberOfPoints()</span>
@@ -962,7 +962,7 @@ Note
 </div>
 <ol type="1">
 <li>load <code>compact150.nc</code>, uncheck Spherical Coordinates</li>
-<li>apply Programmable Filter, set Output Data Set Type = vtkStructuredGrid</li>
+<li>apply Programmable Filter, set OutputDataSetType = vtkStructuredGrid</li>
 <li>let’s start playing with the data in the Script dialogue:</li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(inputs[<span class="dv">0</span>].GetNumberOfPoints())         <span class="co"># 13024800 = 360*201*180</span></span>
