@@ -99,21 +99,21 @@ In today's workshop, we will create datasets in the following formats:
 1. vtkPolyData, and
 1. vtkStructuredGrid.
 
-For simplicity, we will skip examples with `Output Data Set Type = vtkUnstructuredGrid`. While this output
-type would produce the most versatile object, unstructured cells require you to explicitly define the
-connectivity between their points resulting in additional code. You can find a couple of examples of creating
+For simplicity, we will skip examples with `OutputDataSetType = vtkUnstructuredGrid`. While this output type
+would produce the most versatile object, unstructured cells require you to explicitly define the connectivity
+between their points resulting in additional code. You can find a couple of examples of creating
 vtkUnstructuredGrid in [our 2021 webinar](https://training.westdri.ca/tools/visualization#programmable){target="_blank"}.
 
 ### Programmable Filter workflow
 
 1. Apply **Programmable Filter** to a ParaView pipeline object
-1. Select Output Data Set Type: either Same as Input, or one of the VTK data types from above
+1. Select OutputDataSetType: either Same as Input, or one of the VTK data types from above
 1. In the Script box, write Python code: **input** from a pipeline object → **output**
   - use `inputs[0].Points[:,0:3]` and/or `inputs[0].PointData['array name']` and/or
     `inputs[0].CellData['array name']` to compute your **output**: points, cells, and data arrays
   - some objects take/pass multiple `inputs[:]`
 
-<!-- - either use the default **output** for your selected Output Data Set Type, or create your own custom -->
+<!-- - either use the default **output** for your selected OutputDataSetType, or create your own custom -->
 <!--   **output** object -->
   
 4. Depending on **output**'s type, might need to describe it in the Script (RequestInformation) box
@@ -146,7 +146,7 @@ What VTK data type is this plane?
 :::
 
 2. Apply **Programmable Filter**
-  - set Output Data Set Type = Same as Input
+  - set OutputDataSetType = Same as Input
   - this will create the same discretization as its input, without the fields (PointData)
 3. Let's print some info, one line at a time:
 
@@ -164,7 +164,7 @@ print(type(output))   # paraview.vtk.numpy_interface.dataset_adapter.PolyData
 3. Paste into Script
 
 ::: {.callout-note}
-With Output Data Set Type = Same as Input, ParaView will copy `inputs` geometry into `output` geometry and set
+With OutputDataSetType = Same as Input, ParaView will copy `inputs` geometry into `output` geometry and set
 the same coordinates:
 ```py
 output.Points[:,0] = inputs[0].Points[:,0]
@@ -230,7 +230,7 @@ can do NumPy vectorization inside the Programmable Filter.
 
 1. load `sineEnvelope.nc`
 1. apply Filters | Gradient, save as "v"
-1. Apply Filters | Programmable Filter, set Output Data Set Type = Same as Input, paste into Script:
+1. Apply Filters | Programmable Filter, set OutputDataSetType = Same as Input, paste into Script:
 
 ```py
 import numpy as np
@@ -254,7 +254,7 @@ output.PointData.append(mag, 'Magnitude' )
 
 ## Programmable Source examples
 
-Now we'll switch to the Programmable Source. It has no input, so we will need to set its Output Data Set Type
+Now we'll switch to the Programmable Source. It has no input, so we will need to set its OutputDataSetType
 to one of the VTK data types.
 
 ### Example 1:  point cloud
@@ -265,7 +265,7 @@ cell to make these points visible in Surface view.
 
 Reset your ParaView session and then:
 
-1. Apply **Programmable Source**, set Output Data Set Type = vtkPolyData
+1. Apply **Programmable Source**, set OutputDataSetType = vtkPolyData
 1. Paste this code into Script:
 <!-- # programmatically generated point cloud -->
 <!-- # https://youtu.be/aPKVrrzYGdo?t=1202 -->
@@ -346,7 +346,7 @@ We will start with a conventional approach to reading CSV files:
 Now let's replace this with reading the CSV file directly to the Cartesian mesh, without using the File | Open
 dialogue. Reset your ParaView and then:
 
-1. Apply **Programmable Source**, set Output Data Set Type = vtkImageData
+1. Apply **Programmable Source**, set OutputDataSetType = vtkImageData
 1. Into Script paste this code:
 <!-- output = self.GetOutput() -->
 ```py
@@ -391,9 +391,9 @@ MPI rank.
 In some cases this additional information in the RequestInformation box is not required (and you can safely
 leave the box empty), for example:
 
-1.	Output Data Set Type = Same as Input <font size="+2">⇨</font> the output data will be decomposed in
+1.	OutputDataSetType = Same as Input <font size="+2">⇨</font> the output data will be decomposed in
       exactly the same way as the input data.
-1.	Output Data Set Type = vtkPolyData <font size="+2">⇨</font> Polygonal Data is not automatically decomposed
+1.	OutputDataSetType = vtkPolyData <font size="+2">⇨</font> Polygonal Data is not automatically decomposed
       at read time (recall our workshop on Remote visualization).
 :::
 
@@ -434,7 +434,7 @@ You need to modify the previous Programmable Source to read this data.
 Similar to using a Source to read data from a file, you can use a Source to create a discretized version of a
 3D function in memory, without storing any data on disk.
 
-1. Apply **Programmable Source**, set Output Data Set Type = vtkImageData
+1. Apply **Programmable Source**, set OutputDataSetType = vtkImageData
 1. Into Script paste this code:
 ```py
 from numpy import linspace, sin, sqrt
@@ -478,7 +478,7 @@ In this example, adapted from the ParaView documentation, we construct a Polygon
 scratch. The code here is very similar to the point cloud code in Example 1, except that we use
 `vtk.VTK_POLY_LINE` instead of `vtk.VTK_POLY_VERTEX` for the cell type.
 
-1. Apply **Programmable Source**, set Output Data Set Type = vtkPolyData
+1. Apply **Programmable Source**, set OutputDataSetType = vtkPolyData
 1. Paste this code:
 <!-- # No `output = self.GetOutput()` here as that would give vtkmodules.vtkCommonDataModel.vtkPolyData which has no -->
 <!-- # 'PointData' attribute. Instead we are using the default output which has type -->
@@ -524,7 +524,7 @@ Using multiple `VTK_POLY_LINE` cells, recreate the double helix shown in the pic
 Recall the earlier task in which we wanted to project a cube onto a plane offset to the side.
 
 1. Load `sineEnvelope.nc`
-1. Apply **Programmable Filter**, set Output Data Set Type = vtkImageData
+1. Apply **Programmable Filter**, set OutputDataSetType = vtkImageData
 1. Into Script paste this code:
 <!-- # output = self.GetOutput() -->
 ```py
@@ -629,7 +629,7 @@ Our goal is to create something like this:
 :::
 
 1. load `compact150.nc`, uncheck Spherical Coordinates
-2. apply Programmable Filter, set Output Data Set Type = vtkStructuredGrid
+2. apply Programmable Filter, set OutputDataSetType = vtkStructuredGrid
 3. let's start playing with the data in the Script dialogue:
 
 ```py
