@@ -564,24 +564,24 @@ Note
 </section>
 <section id="julia-on-the-training-cluster-for-this-workshop" class="level3">
 <h3 class="anchored" data-anchor-id="julia-on-the-training-cluster-for-this-workshop">Julia on the training cluster for this workshop</h3>
-<p>We have Julia on our training cluster <em>julia.vastcloud.org</em>.</p>
+<p>We have Julia on our training cluster <em>cass.vastcloud.org</em>.</p>
+<!-- node   = { type = "c4-15gb-83", tags = ["node"], count = 10 }   # 17 for the full-scale cluster -->
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+<span class="screen-reader-only">Note</span>Our training cluster
 </div>
 </div>
 <div class="callout-body-container callout-body">
-Our training cluster has:
 <ul>
 <li>
 one fairly small login node,
 </li>
 <li>
-6 compute nodes with 8 cores and 30GB of memory on each &nbsp;⟹&nbsp; 3.75GB/core, 48 cores in total
+10 compute nodes with 4 cores and 15GB of memory on each &nbsp;⇨&nbsp; 3.75GB/core, 40 cores in total
 </li>
 </ul>
 </div>
@@ -600,7 +600,7 @@ one fairly small login node,
 <p>We will now distribute accounts and passwords to connect to the cluster.</p>
 </div>
 </div>
-<p>Normally, you would install Julia packages yourself. A typical package installation however takes several hundred MBs of RAM, a fairly long time, and creates many small files. Our training cluster runs on top of virtualized hardware with a shared filesystem. If several dozen workshop participants start installing packages at the same time, this will hammer the filesystem and will make it slow for all participants for quite a while.</p>
+<p>Normally, you would install Julia packages yourself. A typical package installation however takes several hundred MBs of RAM, a fairly long time, and creates many small files. Our training cluster runs on top of virtualized hardware with a shared filesystem. If many workshop participants start installing packages at the same time, this will hammer the filesystem and will make it slow for all participants for quite a while.</p>
 <p>Instead, for this workshop, you will run:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source /project/def-sponsor00/shared/julia/config/loadJulia.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This script loads the Julia module and sets environment variables to point to a central environment in which we have pre-installed all the packages for this workshop.</p>
@@ -625,7 +625,7 @@ Note
 <h3 class="anchored" data-anchor-id="where-to-run-the-repl">Where to run the REPL</h3>
 <p>You could now technically launch a Julia REPL (Read-Eval-Print-Loop). However, this would launch it on the login node and if everybody does this at the same time, we would probably crash our training cluster.</p>
 <p>Instead, you will first launch an interactive job by running the Slurm command <code>salloc</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> salloc <span class="at">--mem-per-cpu</span><span class="op">=</span>3600M <span class="at">--cpus-per-task</span><span class="op">=</span>2 <span class="at">--time</span><span class="op">=</span>2:0:0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> salloc <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--cpus-per-task</span><span class="op">=</span>2 <span class="at">--time</span><span class="op">=</span>2:0:0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This puts you on a compute node and gives you 2 CPU cores for up to 2 hours.</p>
 <p>Now you can launch the Julia REPL and try to run a couple of commands:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> julia</span>
@@ -694,7 +694,7 @@ C-s     forward search</code></pre>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source /project/def-sponsor00/shared/julia/config/loadJulia.sh</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: launch an interactive job on a compute node</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> salloc <span class="at">--mem-per-cpu</span><span class="op">=</span>3600M <span class="at">--cpus-per-task</span><span class="op">=</span>2 <span class="at">--time</span><span class="op">=</span>2:0:0</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> salloc <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--cpus-per-task</span><span class="op">=</span>2 <span class="at">--time</span><span class="op">=</span>2:0:0</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 3: launch the Julia REPL</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> julia</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -705,7 +705,7 @@ C-s     forward search</code></pre>
 </section>
 <section id="running-scripts-as-batch-jobs" class="level2">
 <h2 class="anchored" data-anchor-id="running-scripts-as-batch-jobs">Running scripts as batch jobs</h2>
-<p>Now, if we want to get an even bigger speedup, we could use even more CPUs per task. The problem is that our training cluster only has ~60 compute cores, so if we use <code>--cpus-per-task=4</code> some of us could be left waiting for Slurm while the others play with several CPUs for two hours. This is not an efficient approach. This is equally true on production clusters: if you want to run an interactive job using a lot of resources, you might have to wait for a long time.</p>
+<p>Now, if we want to get an even bigger speedup, we could use even more CPUs per task. The problem is that our training cluster only has ~40 compute cores, so if we use <code>--cpus-per-task=4</code> some of us could be left waiting for Slurm while the others play with several CPUs for two hours. This is not an efficient approach. This is equally true on production clusters: if you want to run an interactive job using a lot of resources, you might have to wait for a long time.</p>
 <p>On production clusters, a much better approach is to put our Julia code in a Julia script and run it through a batch job by using the Slurm command <code>sbatch</code>.</p>
 <!-- You can run a Julia script with `julia julia_script.jl`. -->
 <!-- So all we need to do is to submit a shell script to `sbatch` that contains information for Slurm and the code to run (`julia julia_script.jl`). -->
@@ -713,7 +713,7 @@ C-s     forward search</code></pre>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=4</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600M</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">julia</span> <span class="at">-t</span> 4 julia_script.jl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then we submit our job script:</p>

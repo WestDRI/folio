@@ -593,7 +593,7 @@ Note
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+<span class="screen-reader-only">Note</span>More accurate timing
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -654,7 +654,13 @@ Note
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="pp">@btime</span> <span class="fu">quick</span>(<span class="fu">Int64</span>(<span class="fl">1e9</span>))    <span class="co"># correct result, 1.825 ns runtime</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="pp">@btime</span> <span class="fu">quick</span>(<span class="fu">Int64</span>(<span class="fl">1e15</span>))   <span class="co"># correct result, 1.827 ns runtime</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In all these cases we see ~2 ns running time – this can’t be correct! What is going on here? It turns out that Julia is replacing the summation with the exact formula <span class="math display">\[\frac{n(n+1)}{2}.\]</span></p>
-<p>We want to: 1. force computation <span class="math inline">\(~\Rightarrow~\)</span> we’ll compute something more complex than simple integer summation, so that it cannot be replaced with a formula 1. exclude compilation time <span class="math inline">\(~\Rightarrow~\)</span> we’ll package the code into a function + precompile it 1. make use of optimizations for type stability <span class="math inline">\(~\Rightarrow~\)</span> package into a function + precompile it 1. time only the CPU-intensive loops</p>
+<p>We want to:</p>
+<ol type="1">
+<li>force computation <span class="math inline">\(~\Rightarrow~\)</span> we’ll compute something more complex than simple integer summation, so that it cannot be replaced with a formula</li>
+<li>exclude compilation time <span class="math inline">\(~\Rightarrow~\)</span> we’ll package the code into a function + precompile it</li>
+<li>make use of optimizations for type stability <span class="math inline">\(~\Rightarrow~\)</span> package into a function + precompile it</li>
+<li>time only the CPU-intensive loops</li>
+</ol>
 <!-- > **Note:** for shorter runs (ms) you may want to use `@btime` from BenchmarkTools. -->
 </section>
 <section id="slow-series" class="level2">
@@ -869,7 +875,7 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=...</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600M</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:10:00</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=def-someuser</span></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load julia</span>
