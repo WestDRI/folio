@@ -35,12 +35,12 @@ julia -p 8 code.jl     # run the code with Julia control process + 8 worker proc
 #!/bin/bash
 #SBATCH --ntasks=8
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=3600M
+#SBATCH --mem-per-cpu=3600
 #SBATCH --time=00:10:00
 #SBATCH --account=def-someuser
 srun hostname -s > hostfile   # parallel I/O
 sleep 5
-module load julia/1.7.0
+module load julia
 julia --machine-file ./hostfile ./code.jl
 ```
 
@@ -65,7 +65,7 @@ Let's start an interactive MPI job:
 
 ```sh
 source /project/def-sponsor00/shared/julia/config/loadJulia.sh
-salloc --mem-per-cpu=3600M --time=2:0:0 --ntasks=4
+salloc --mem-per-cpu=3600 --time=2:0:0 --ntasks=4
 ```
 
 Inside this job, start Julia with `julia` (single control process).

@@ -98,6 +98,7 @@ end
 `julia -t 4`, the times change to 0.84s, 0.93s, 0.79s.
 
 ::: {.callout-note}
+##### More accurate timing
 There is also `@btime` from BenchmarkTools package that has several advantages over `@time`. We
 will switch to it soon.
 :::
@@ -191,6 +192,7 @@ In all these cases we see ~2 ns running time -- this can't be correct! What is g
 that Julia is replacing the summation with the exact formula $$\frac{n(n+1)}{2}.$$
 
 We want to:
+
 1. force computation $~\Rightarrow~$ we'll compute something more complex than simple integer summation, so
    that it cannot be replaced with a formula
 1. exclude compilation time $~\Rightarrow~$ we'll package the code into a function + precompile it
@@ -452,7 +454,7 @@ other.
 #!/bin/bash
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=...
-#SBATCH --mem-per-cpu=3600M
+#SBATCH --mem-per-cpu=3600
 #SBATCH --time=00:10:00
 #SBATCH --account=def-someuser
 module load julia
