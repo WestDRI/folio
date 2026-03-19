@@ -452,7 +452,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#parallelizing-the-vectorized-code" id="toc-parallelizing-the-vectorized-code" class="nav-link active" data-scroll-target="#parallelizing-the-vectorized-code">Parallelizing the vectorized code</a></li>
   <li><a href="#alternative-parallel-solution" id="toc-alternative-parallel-solution" class="nav-link" data-scroll-target="#alternative-parallel-solution">Alternative parallel solution</a></li>
-  <li><a href="#running-multi-threaded-julia-codes-on-a-production-cluster" id="toc-running-multi-threaded-julia-codes-on-a-production-cluster" class="nav-link" data-scroll-target="#running-multi-threaded-julia-codes-on-a-production-cluster">Running multi-threaded Julia codes on a production cluster</a></li>
+  <li><a href="#running-multi-threaded-julia-codes-on-a-cluster" id="toc-running-multi-threaded-julia-codes-on-a-cluster" class="nav-link" data-scroll-target="#running-multi-threaded-julia-codes-on-a-cluster">Running multi-threaded Julia codes on a cluster</a></li>
   </ul>
 </nav>
     </div>
@@ -497,14 +497,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>stability <span class="op">=</span> <span class="pp">@btime</span> <span class="fu">map</span>(pixel, point);   <span class="co"># no const keyword this time!</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and remove the original definition of the <code>stability</code> array: it is now defined in the line above.</p>
-<p>Running this new, vectorized version of the serial code on my laptop, I see <code>@btime</code> report 1.011 s.</p>
+<p>Running this new, vectorized version of the serial code on my laptop, I see <code>@btime</code> report 885ms.</p>
 <section id="parallelizing-the-vectorized-code" class="level2">
 <h2 class="anchored" data-anchor-id="parallelizing-the-vectorized-code">Parallelizing the vectorized code</h2>
 <ol type="1">
 <li>Load ThreadsX library.</li>
 <li>Replace <code>map()</code> with <code>ThreadsX.map()</code>.</li>
 </ol>
-<p>With 8 threads on my laptop, the runtime went down to 180.815 – 5.6X speedup. On 8 cores on the training cluster I see 6.5X speedup.</p>
+<p>With 8 threads on my laptop, the runtime went down to 263ms – 3.4X speedup. On 8 cores on the training cluster I see a 6.5X speedup.</p>
 </section>
 <section id="alternative-parallel-solution" class="level2">
 <h2 class="anchored" data-anchor-id="alternative-parallel-solution">Alternative parallel solution</h2>
@@ -520,8 +520,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> stability</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="running-multi-threaded-julia-codes-on-a-production-cluster" class="level2">
-<h2 class="anchored" data-anchor-id="running-multi-threaded-julia-codes-on-a-production-cluster">Running multi-threaded Julia codes on a production cluster</h2>
+<section id="running-multi-threaded-julia-codes-on-a-cluster" class="level2">
+<h2 class="anchored" data-anchor-id="running-multi-threaded-julia-codes-on-a-cluster">Running multi-threaded Julia codes on a cluster</h2>
 <p>Before we jump to multi-processing in Julia, let us remind you how to run multi-threaded Julia codes on an HPC cluster.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>

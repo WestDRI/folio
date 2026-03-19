@@ -569,7 +569,7 @@ Note
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="cn">ENV</span>[<span class="st">"GKSwstype"</span>] <span class="op">=</span> <span class="st">"100"</span>   <span class="co"># operate in headless mode</span></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> <span class="st">"</span><span class="sc">$</span>(height)<span class="st">x</span><span class="sc">$</span>(width)<span class="st">"</span></span>
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="fu">heatmap</span>(stability, size<span class="op">=</span>(width,height), color<span class="op">=:</span>gist_ncar), fname)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let’s run this code with <code>julia juliaSetSerial.jl</code>. On my laptop it reports 931.024 ms.</p>
+<p>Let’s run this code with <code>julia juliaSetSerial.jl</code>. On my laptop it reports 659ms.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -580,7 +580,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Without the two <code>const</code> keywords the code will slow down to 1.599 s on the same laptop. This shows the importance of insuring type stability in Julia: for these global variables making their type constant allows Julia not to check their type inside the loop <code>@btime for i in 1:height, j in 1:width</code> at runtime, making the code run faster. Note that making the array <code>stability</code> constant simply insures that its type will not change; its elements are still mutable and can be assigned values. An alternative solution would be to package this loop into a function where all variables are already local with a known, pre-compiled type:</p>
+<p>Without the two <code>const</code> keywords the code will slow down to 1.669s on the same laptop. This shows the importance of insuring type stability in Julia: for these global variables making their type constant allows Julia not to check their type inside the loop <code>@btime for i in 1:height, j in 1:width</code> at runtime, making the code run faster. Note that making the array <code>stability</code> constant simply insures that its type will not change; its elements are still mutable and can be assigned values. An alternative solution would be to package this loop into a function where all variables are already local with a known, pre-compiled type:</p>
 </div>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">juliaSet</span>(height, width)</span>
@@ -602,7 +602,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Built-in plotting in Julia is fairly slow and will take forever for drawing much larger fractals (e.g.&nbsp;<span class="math inline">\(8000^2\)</span>). A faster alternative is to save your plot as compressed NetCDF and visualize it with something faster, e.g.&nbsp;ParaView. The code for this is below. Note that as of February 2022 Julia’s NetCDF library does not yet work on Apple’s M1 processors.</p>
+<p>Built-in plotting in Julia is fairly slow and will take forever for drawing much larger fractals (e.g.&nbsp;<span class="math inline">\(8000^2\)</span>). A faster alternative is to save your plot as compressed NetCDF and visualize it with something faster, e.g.&nbsp;ParaView. The code for this is below.</p>
 </div>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"Writing NetCDF ..."</span>)</span>
@@ -640,7 +640,7 @@ Note
 <li>Load Base.Threads.</li>
 <li>Add <code>@threads</code> before the outer loop, and time this parallel loop.</li>
 </ol>
-<p>On my laptop with 8 threads the timing is 193.942 ms (4.8X speedup) which is good but not great – certainly worse than linear speedup … The speedup on the training cluster is not great either. There could be several potential problems:</p>
+<p>On my laptop with 8 threads the timing is 126ms (5.2X speedup) which is good but not great – certainly worse than a linear speedup … The speedup on the training cluster is not great either. There could be several potential problems:</p>
 <ol type="1">
 <li>False sharing effect (cache issues with multiple threads writing into adjacent array elements).</li>
 <li>Less than perfect load balancing between different threads.</li>
