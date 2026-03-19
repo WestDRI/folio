@@ -34,6 +34,13 @@ Let's run our first multi-threaded code:
 end
 ```
 
+::: {.callout-note}
+##### Confusion with `threadid())` reporting
+In a multi-threaded task, recent versions of Julia start thread counting for *worker* threads from 2 (the
+main/interactive thread still being 1), whereas the earlier versions were starting counting worker threads
+from 1.
+:::
+
 This would split the loop between 2 threads running on two CPU cores: each core would be running one thread.
 
 <!-- taking turns running -->
@@ -75,7 +82,7 @@ end
 @time test(n)
 ```
 
-On the training cluster in three runs I get 2.52s, 2.45s, 2.43s.
+On my computer in three runs I get 0.670s, 0.644s, 0.609s.
 
 The multi-threaded code performs faster:
 
@@ -91,11 +98,10 @@ function test(n)   # multi-threaded code
 end
 
 @time test(n)
-
 ```
 
--- on the same cluster I see 1.49s, 1.54s, 1.41s. If I reschedule the job with `--cpus-per-task=4` and use
-`julia -t 4`, the times change to 0.84s, 0.93s, 0.79s.
+-- on the same computer I see 0.375s, 0.372s, 0.422s. If I reschedule the job with `--cpus-per-task=4` and use
+`julia -t 4`, the times change to 0.266s, 0.202s, 0.225s.
 
 ::: {.callout-note}
 ##### More accurate timing
@@ -151,24 +157,25 @@ end
 println("total = ", total)
 ```
 
-On the training cluster I get 10.87s, 10.36s, 11.07s. Here `@time` also includes JIT compilation time
-(marginal here). Let's switch to `@btime` from BenchmarkTools: it runs the code several times, reports the
-shortest time, and prints the result only once. Therefore, with `@btime` you don't need to precompile the
-code.
+On my computer I get 26.73s, 26.84s, 26.58s. Here `@time` also includes JIT compilation time (marginal
+here). Let's switch to `@btime` from BenchmarkTools: it runs the code several times, reports the shortest
+time, and prints the result only once. Therefore, with `@btime` you don't need to precompile the code.
+
+In this example, to get the correct `total`, we'll have to significantly modify our code:
 
 ```jl
 using BenchmarkTools
 n = Int64(1e8)
 @btime begin
-    total = Int128(0)   # 128-bit for the result!
-	for i in 1:n
-	    total += i
-	end
+    global total = Int128(0)   # 128-bit for the result!
+    for i in 1:n
+	    global total += i
+    end
 end
 println("total = ", total)
 ```
 ```sh
-10.865 s
+5.749s - quite different from the previous numbers
 ```
 
 Next we'll package this code into a function:
@@ -268,7 +275,7 @@ function slow(n::Int64, digitSequence::Int)
 	end
     return total
 end
-@btime slow(Int64(1e8), 9)   # total = 13.277605949858103, runtime 2.986 s
+@btime slow(Int64(1e8), 9)   # total = 13.277605949858103, runtime 518ms
 ```
 
 ## 1st multi-threaded version: using an atomic variable
@@ -280,6 +287,14 @@ of waiting involved, and the code should be relatively slow.
 ```jl
 using Base.Threads
 using BenchmarkTools
+
+function digitsin(digitSequence::Int, num)
+    base = 10
+    while (digitSequence ÷ base > 0); base *= 10; end
+    while num > 0; (num % base) == digitSequence && return true; num ÷= 10; end
+    return false
+end
+
 function slow(n::Int64, digitSequence::Int)
 	total = Atomic{Float64}(0)
     @threads for i in 1:n
@@ -289,6 +304,7 @@ function slow(n::Int64, digitSequence::Int)
     end
     return total[]
 end
+
 @btime slow(Int64(1e8), 9)
 ```
 
@@ -300,8 +316,8 @@ atomicThreads.jl`). Next, time it with 2 or 4 threads (parallel run `julia -t 2 
 get any speedup? Make sure you obtain the correct numerical result.
 :::
 
-With one thread I measured 2.838 s. The runtime stayed essentially the same (now we are using `atomic_add()`) which
-makes sense: with one thread there is no waiting for the variable to be released.
+With one thread I measured 653ms. The runtime stayed essentially the same (now we are using `atomic_add()`)
+which makes sense: with one thread there is no waiting for the variable to be released.
 
 - With 2 threads, I measured XXX -- let's discuss! Is this what we expected?
 - With 4 threads, I measured YYY -- let's discuss! Is this what we expected?
@@ -321,15 +337,24 @@ this code faster?
 ```jl
 using Base.Threads
 using BenchmarkTools
+
+function digitsin(digitSequence::Int, num)
+    base = 10
+    while (digitSequence ÷ base > 0); base *= 10; end
+    while num > 0; (num % base) == digitSequence && return true; num ÷= 10; end
+    return false
+end
+
 function slow(n::Int64, digitSequence::Int)
     total = zeros(Float64, nthreads())
     @threads for i in 1:n
         if !digitsin(digitSequence, i)
-            total[threadid()] += 1.0 / i
+            total[threadid()-1] += 1.0 / i
         end
     end
     return sum(total)
 end
+
 @btime slow(Int64(1e8), 9)
 ```
 
@@ -358,24 +383,24 @@ function digitsin(digitSequence::Int, num)
     return false
 end
 
- # Our initial function:
+# Our initial function:
 function slow(n::Int64, digitSequence::Int)
     total = zeros(Float64, nthreads())
     @threads for i in 1:n
         if !digitsin(digitSequence, i)
-            total[threadid()] += 1.0 / i
+            total[threadid()-1] += 1.0 / i
         end
     end
     return sum(total)
 end
 
- # Function optimized to prevent false sharing:
+# Function optimized to prevent false sharing:
 function space(n::Int64, digitSequence::Int)
     space = 8 # assume a 64-byte cache line, hence 8 Float64 elements per cache line
     total = zeros(Float64, nthreads()*space)
     @threads for i in 1:n
         if !digitsin(digitSequence, i)
-            total[threadid()*space] += 1.0 / i
+            total[(threadid()-1)*space] += 1.0 / i
         end
     end
     return sum(total)
@@ -383,27 +408,38 @@ end
 
 @btime slow(Int64(1e8), 9)
 @btime space(Int64(1e8), 9)
-
 ```
 
-Here are the timings from two successive calls to `slow()` and `space()` on the the training cluster:
+**Update 2**: in recent Julia versions, false sharing has been significantly minimized. Here are the timings
+from two successive calls to `slow()` and `space()` on my computer:
+
+<!-- ```sh -->
+<!-- [~/tmp]$ julia separateSums.jl  -->
+<!--   2.836 s (7 allocations: 656 bytes) -->
+<!--   2.882 s (7 allocations: 704 bytes) -->
+<!-- [~/tmp]$ julia -t 4 separateSums.jl  -->
+<!--   935.609 ms (23 allocations: 2.02 KiB) -->
+<!--   687.972 ms (23 allocations: 2.23 KiB) -->
+<!-- [~/tmp]$ julia -t 10 separateSums.jl -->
+<!--   608.226 ms (53 allocations: 4.73 KiB) -->
+<!--   275.662 ms (54 allocations: 5.33 KiB) -->
+<!-- ``` -->
+
+<!-- The speedup is substantial! -->
+<!-- We see similar speedup with `space = 4`, but not quite with `space = 2`, suggesting that we are dealing with -->
+<!-- 32-byte cache lines on our system. -->
 
 ```sh
-[~/tmp]$ julia separateSums.jl 
-  2.836 s (7 allocations: 656 bytes)
-  2.882 s (7 allocations: 704 bytes)
-[~/tmp]$ julia -t 4 separateSums.jl 
-  935.609 ms (23 allocations: 2.02 KiB)
-  687.972 ms (23 allocations: 2.23 KiB)
-[~/tmp]$ julia -t 10 separateSums.jl
-  608.226 ms (53 allocations: 4.73 KiB)
-  275.662 ms (54 allocations: 5.33 KiB)
+[~/tmp]$ julia separateSums.jl
+  525.799 ms (9 allocations: 496 bytes)
+  526.418 ms (9 allocations: 576 bytes)
+[~/tmp]$ julia -t 2 separateSums.jl
+  274.016 ms (14 allocations: 896 bytes)
+  270.299 ms (14 allocations: 1.02 KiB)
+[~/tmp]$ julia -t 4 separateSums.jl
+  143.470 ms (24 allocations: 1.62 KiB)
+  139.236 ms (24 allocations: 1.91 KiB)
 ```
-
-The speedup is substantial!
-
-We see similar speedup with `space = 4`, but not quite with `space = 2`, suggesting that we are dealing with
-32-byte cache lines on our system.
 
 <!-- > ### <font style="color:blue">Exercise "Threads.3a"</font> -->
 <!-- > Save this code as `separateSums.jl` (along with other necessary bits) and run it on four threads from the -->
@@ -419,6 +455,14 @@ individual thread. For each thread we explicitly compute the `start` and `finish
 ```jl
 using Base.Threads
 using BenchmarkTools
+
+function digitsin(digitSequence::Int, num)
+    base = 10
+    while (digitSequence ÷ base > 0); base *= 10; end
+    while num > 0; (num % base) == digitSequence && return true; num ÷= 10; end
+    return false
+end
+
 function slow(n::Int64, digitSequence::Int)
     numthreads = nthreads()
     threadSize = floor(Int64, n/numthreads)   # number of terms per thread (except last thread)
@@ -435,15 +479,17 @@ function slow(n::Int64, digitSequence::Int)
     end
     return sum(total)
 end
+
 @btime slow(Int64(1e8), 9)
 ```
 
-Let's time this version together with `heavyThreads.jl`: 984.076 ms -- is this the fastest version?
+Let's time this version together with `heavyThreads.jl`: 524.122 ms → 274.436 ms → 141.827 ms when going 1
+core → 2 cores → 4 cores.
 
-::: {.callout-caution collapse="true"}
-## Exercise Threads.3
-Would the runtime be different if we use 2 threads instead of 4?
-:::
+<!-- ::: {.callout-caution collapse="true"} -->
+<!-- ## Exercise Threads.3 -->
+<!-- Would the runtime be different if we use 2 threads instead of 4? -->
+<!-- ::: -->
 
 Finally, below are the timings on Cedar with `heavyThreads.jl`. Note that the times reported here were
 measured with 1.6.2. Going from 1.5 to 1.6, Julia saw quite a big improvement (~30%) in performance, plus a
@@ -478,7 +524,7 @@ Consider this:
 using Base.Threads
 import Base.Threads: @spawn # has to be explicitly imported to avoid potential conflict with Distributed.@spawn
 nthreads()                  # make sure you have access to multiple threads
-threadid()                  # always shows 1 = local thread
+threadid()                  # always shows 1 = local/interactive thread
 fetch(@spawn threadid())    # run this function on another available thread and get the result
 ```
 
@@ -539,8 +585,10 @@ function slow(n::Int64, digitSequence::Int, a::Int64, b::Int64, numsubs=16)
 end
 
 n = Int64(1e8)
-@btime slow(n, 9, 1, n, 1)   # run the code in serial (one interval, use one thread)
-@btime slow(n, 9, 1, n, 4)   # 4 intervals, all but one spawned on one of `nthreads()` threads
+@time slow(n, 9, 1, n, 1)    # run the code in serial (one interval, use one thread)
+@time slow(n, 9, 1, n, 4)    # 4 intervals, all but one spawned on one of `nthreads()` threads
+@time slow(n, 9, 1, n, 16)   # 16 intervals, better saturation of threads,
+                             # all but one spawned on one of `nthreads()` threads
 ```
 
 There are two important considerations here:
