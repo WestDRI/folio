@@ -1,0 +1,537 @@
+---
+title: "Modern tools for web visualization"
+aliases:
+  - /trame
+---
+
+**March 27<sup>th</sup>**, 10am-12pm
+
+Earlier in this Winter Series we covered [building interactive web apps with Plotly
+Dash](plotly1/plotly-04-dash.html){target="_blank"}. Some of its features:
+
+- you can mix and match multiple Plotly figures in a single web app
+- multiple interactive controls: dropdowns and radio buttons (select one), checklists (select multiple),
+  text/number input fields, sliders, etc.
+- mouse selection in one plot can show in other plots,
+- can create different tabs inside the app, with rules for switching between them,
+- even can create an entire website with user guides, plots, code examples, etc.
+
+On May-19, we'll also offer a
+[webinar](https://training.westdri.ca/events/upcoming-training-winter-spring-2026){target="_blank"} demoing
+building the same set of Python dashboards using Python Shiny and Plotly Dash, each offering different
+approaches to creating reactive interfaces and interactive visualizations.
+
+In today's workshop, we'll focus on 3D web visualization using tools from the VTK ecosystem. That is, we'll
+take workflows you're familiar within ParaView and bring them online as interactive visualizations.
+
+## Evolution of VTK
+
+<!-- server side vs. client side -->
+
+- VTK (Visualization Toolkit)
+  - C++ library, initial release in 1993
+  - handles I/O, data processing, rendering
+  - interpreted interface layer in Python (started in late 1990s, full API coverage by \~2018)
+  - runs server-side only (C++ or Python)
+- Vtk.js is a rewrite of (most of) VTK in JavaScript
+  - runs client-side only (in the browser), started in 2016
+  - rendering limited by the browser
+  - somewhat limited processing and I/O
+- Previous (pre-2021) state-of-the-art web visualization
+  - standalone vtk.js applications, e.g. ParaView Glance or ParaView Divvy
+  - vtk.js applications interacting with a remote ParaView server using ParaViewWeb framework, e.g.
+    - ParaView Visualizer (recreating full ParaView functionality on the web)
+    - ParaView Lite (lighter workflows than ParaView Visualizer)
+- In all these cases you create web apps in JavaScript, or use existing apps
+
+## Quick glance at ... Glance
+
+Of all pre-2021 applications, ParaView Glance is the one I still recommend -- here is a [live
+demo](https://kitware.github.io/glance/app/?name=sineEnvelope.vtkjs&url=https://raw.githubusercontent.com/razoumov/publish/master/data/sineEnvelope.vtkjs){target="_blank"}.
+
+You can import any ParaView scene (a collection of pre-computed polygons) into ParaView Glance for live online
+visualization and to easily share your 3D content with peers and the broader public.
+
+Glance is a standalone web application (written in JavaScript and vtk.js) that runs without a server, enabling
+visualization of small to medium-sized data. Server support is planned for future releases.
+
+1. Create a visualization with several layers, make all layers visible in the pipeline
+1. File | Export Scene... as VTKJS to your computer
+1. Open <https://kitware.github.io/paraview-glance/app>{target="_blank"}
+1. Drag the newly saved file to the dropzone on the website
+1. Interact with individual layers in 3D: rotate and zoom, change visibility, representation, variable,
+   colourmap, opacity
+
+To automatically load a visualisation into Glance, use the query syntax
+`GLANCEAPPURL?name=FILENAME&url=FILEURL` to pass `name` and `url` of your publicly accessible dataset to the
+web server -- study the live demo link above as an example. To include into websites, you can use JavaScript
+to parse long URL strings (see an example in our regular ParaView slides).
+
+## Trame intro
+
+- Open-source server-connected web dashboard platform with a Python interface into which you can plug different components:
+  - some mix of VTK and vtk.js (via an adaptor) scripts
+  - ParaView scripts
+  - Matplotlib scripts
+  - Plotly scripts
+  - Vega-Altair scripts
+  - etc
+- Created by Kitware: v1 in September 2021, now on v3.10
+- Pronounced [trʌm]
+- Built on top of VTK and ParaView
+- All Python scripts run on the server backend
+- Interactive graphical widgets rendered either on the server (and displayed in your browser) or directly in your browser
+
+### Architecture
+
+::: {style="text-align: center;"}
+![Figure by Kitware](/fig/trameArch.png){width=95%}
+:::
+
+<!-- #figure(image("arch.png", width: 62%), caption: "By Kitware, Inc.") -->
+
+- Single backend Python code on the server (cloud, HPC, Jupyter, desktop app)
+- UI (layout/buttons/...) via Vuetify (Material Design component framework) toolkit on top of Vue.js, nicely
+  abstracted
+- Plots supplied by widgets
+- **State variables** automatically synced between the **backend** and the **frontend (UI)**
+- **Controller actions** can be called from (1) Python, (2) frontend, or (3) state changes
+
+### Links
+
+- [Front page](https://kitware.github.io/trame){target="_blank"} -- click on any example (top menu) to get its source code
+- [Source code](https://github.com/Kitware/trame){target="_blank"} -- check `examples/`
+- [Official tutorial](https://kitware.github.io/trame/guide/tutorial){target="_blank"}
+  - excellent self-guided tour, probably the best starting point
+  - today I will show many examples from their tutorial
+- [Official documentation](https://trame.readthedocs.io){target="_blank"}
+  - use the left-side menu: trame API, client API, ...
+- [Discussion forum](https://github.com/Kitware/trame/discussions){target="_blank"}
+
+### Installation
+
+On your own computer, you can use your favourite package manager, e.g. `uv`:
+
+```sh
+uv venv ~/env-trame --python 3.12   # create a new virtual env
+source ~/env-trame/bin/activate
+uv pip install trame                # trame core
+uv pip install trame-vuetify        # UI widgets
+uv pip install trame-components     # other components to work with VTK/ParaView scenes
+uv pip install trame-vtk            # VTK widgets for trame
+uv pip install vtk                  # if running plain VTK code
+uv pip install trame-matplotlib     # matplotlib widgets for trame
+uv pip install trame-plotly         # plotly widgets for trame
+...
+deactivate
+```
+
+If you want to run trame inside Jupyter notebooks, also add:
+
+```sh
+uv pip install setuptools jupyterlab
+```
+
+On the training cluster, I already installed it via:
+
+```sh
+mkdir -p /project/def-sponsor00/shared
+cd /project/def-sponsor00/shared
+module load python/3.12.4 vtk/9.4.2
+python -m venv env-trame
+source env-trame/bin/activate
+pip install --no-index --upgrade pip
+pip install --no-index msgpack requests
+python -m pip install trame trame-vuetify trame-vtk
+...
+deactivate
+chmod og+X,og-r /project/def-sponsor00/shared
+chmod -R og+rX /project/def-sponsor00/shared/env-trame
+```
+
+so that you can load it with:
+
+```sh
+source /project/def-sponsor00/shared/env-trame/bin/activate
+```
+
+### Get the tutorial codes
+
+```sh
+--- laptop ---
+git clone https://github.com/Kitware/trame-tutorial.git
+cd trame-tutorial
+git branch -m master main
+```
+
+In this workshop I'll be showing heavily modified examples from this tutorial: simplified coding style, some
+additional examples, but on your end I suggest you begin with cloning the official tutorial examples.
+
+I also created an upstream repository on the training cluster:
+
+```sh
+--- cass ---
+mkdir -p /project/def-sponsor00/shared/trame-tutorial
+cd /project/def-sponsor00/shared/trame-tutorial
+git config --global init.defaultBranch main
+git init
+git config receive.denyCurrentBranch updateInstead
+```
+
+pushed my local repository to it:
+
+```sh
+--- laptop ---
+git remote add cass cass:/project/def-sponsor00/shared/trame-tutorial
+git add ...
+git commit -m ...
+git push cass main
+```
+
+and made it readable to all users:
+
+```sh
+--- cass --
+chmod -R og+rX /project/def-sponsor00/shared/trame-tutorial
+```
+
+so you can copy *my exact examples* from there.
+
+## Layouts
+
+Study the code `00_setup/app.py` -- it creates a single-page layout without a drawer.
+
+```sh
+source ~/env-trame/bin/activate
+cd trame-tutorial
+
+python 00_setup/app.py               # use default port 8080
+python 00_setup/app.py --port 1234   # use specific port
+python 00_setup/app.py --server      # prevent your browser from opening automatically
+```
+
+Now change `SinglePageLayout` to `SinglePageWithDrawerLayout`.
+
+<!-- // - explain 4 things: state, events, widgets, ui -->
+
+## Running on a remote server
+
+<!-- == Server on a VM, client on a phone -->
+
+```sh
+--- cass --
+source /project/def-sponsor00/shared/env-trame/bin/activate
+git clone /project/def-sponsor00/shared/trame-tutorial
+cd trame-tutorial
+python 00_setup/app.py --host 127.0.0.1 --port 8080 --server
+
+--- laptop ---
+ssh cass -L 8080:localhost:8080
+
+--- laptop ---
+open http://localhost:8080
+```
+
+Binding the server to `127.0.0.1` on a publicly accessible host is *very important for security*: the host
+ignores any incoming traffic on that port from the outside world, but you can still connect via an ssh tunnel.
+
+On a compute node behind a firewall on a cluster, you will have to set up the tunnel as `ssh cass -L
+8080:<nodename>:8080`.
+
+<!-- python 04_application/coneMeshContour.py --host 0.0.0.0 --port 8080 --server -->
+<!-- - Point my phone's browser to VM's port 8080 to view the visualization -->
+<!-- #figure(image("phone.jpg", width: 17%)) -->
+
+## Matplotlib
+
+### Add a simple Matplotlib widget
+
+As you know, the original [Matplotlib](https://matplotlib.org){target="_blank"} produces static plots. We can
+make them interactive with trame. Let's start with a basic plot -- study and run the code
+`06_matplotlib/line1-static.py`
+
+- Can hide `v3.VContainer` line
+- Check [v3.VContainer documentation](https://trame.readthedocs.io/en/latest/trame.widgets.vuetify3.html#trame.widgets.vuetify3.VContainer){target="_blank"}
+
+### Add a state variable
+
+- `state = server.state` is where you store data that can change dynamically and is automatically synced
+   between the backend (Python on the server) and the frontend (browser UI)
+- You can watch for changes in state on the backend using the `@state.change` decorator that will run a
+  callback function
+  - callback functions are defined with `@state.change`
+- Study and run the code `06_matplotlib/line2-slider.py`
+
+```py
+v3.VSlider(v_model=("wavenumber", defaultWave), min=0.1, max=5, step=0.1,
+           hide_details=True, density="compact", style="max-width: 300px;")
+v3.VBtn("Reset", click=lambda: setattr(state, "wavenumber", defaultWave))
+```
+
+```py
+@state.change("wavenumber")
+def update_plot(wavenumber, **kwargs):   # callback function
+    line.set_ydata(np.sin(wavenumber*x))
+    fig.canvas.draw_idle()   # redraw locally in matplotlib
+    plot.update()            # notify Trame to refresh image in browser
+```
+
+### Interactive slice through a 3D function
+
+Here we visualize an interactive slice through a 3D *sine envelope* function defined inside a unit cube
+$x_i\in[0,1]$:
+
+$$
+f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\right)-0.5}
+{\left[0.001(\xi_i^2+\xi_{i+1}^2)+1\right]^2}+0.5\right]\text{, where }\xi_i\equiv30(x_i-0.5),
+$$
+
+discretized on a $100^3$ Cartesian grid and stored in `sineEnvelope.nc`
+
+- Code in `06_matplotlib/slice2-streamlined.py`
+- Define `slice` state variable
+- Redraw the image with:
+
+```py
+@state.change("slice")       # watch for slice changes
+def update_plot(slice, **kwargs):
+    ax.imshow(data[:, :, slice], origin="lower")
+    fig.canvas.draw_idle()   # redraw locally in matplotlib
+    plot.update()            # notify Trame to refresh image in browser
+```
+
+<!-- == Plotly widgets -->
+
+<!-- - #link("https://plotly.com/python")[Plotly] is another popular plotting library for Python -->
+<!--   - produces interactive HTML5 plots -->
+<!-- - Study and run the code `07_plotly/1-line-slider.py` -->
+<!--   - single `wavenumber` slider -->
+<!-- - Add a second slider in `07_plotly/2-line-twoSliders.py` -->
+<!--   - one slider per variable -->
+<!--   - both variables are input to the callback function to update the plot: -->
+<!-- ```py -->
+<!-- @state.change("wavenumber", "amplitude") -->
+<!-- def update_plot(wavenumber, amplitude, **kwargs): -->
+<!--     fig.data[0].y = amplitude * np.sin(wavenumber * x) -->
+<!--     plot.update()  # refresh Plotly widget in the browser -->
+<!-- ``` -->
+<!-- - Move both sliders to the side drawer `07_plotly/3-line-addDrawer.py` -->
+
+## Plotly
+
+### Example of a more complex 2x2 layout with Plotly widgets
+
+We can create Plotly dashboards with Dash, but here is an example of doing the same in trame -- see the code
+in `07_plotly/4-dashboard2x2.py`.
+
+- 4 separate Plotly figures, including an interactive 3D plot
+- 2 callback functions
+- 2 familiar sliders (controlling fig1 and fig2)
+- one additional slider for a 3D slice position in fig3
+
+::: {style="text-align: center;"}
+![Figure by Kitware](/fig/dash22.png)
+:::
+
+## VTK + trame
+
+VTK can be integrated into trame with various levels of granularity:
+
+1. local vtk.js (client-side only)
+1. hybrid: remote VTK for processing (creating meshes) and local vtk.js for rendering
+1. remote VTK for processing and rendering on the server, pixels sent to the client
+
+
+### Client-side rendering with vtk.js only
+
+- Code in `01_no_vtk/client.py`
+- No traditional Python VTK code in this example
+- Import a lightweight adaptor to present VTK objects to the UI:
+```py
+from trame.widgets import vtk
+```
+- `vtk.VtkAlgorithm` handles the state variable as an argument (no explicit callback function)
+- Run the code -- all rendering is done on the client
+- Add a second VTK object:
+
+```py
+with vtk.VtkGeometryRepresentation():
+    vtk.VtkAlgorithm(vtk_class="vtkSphereSource")
+```
+
+### VTK rendering
+
+- Python interface to VTK provides the full functionality of the C++ API
+  - handles I/O, data processing, rendering
+- Usual steps to render an object in VTK
+  - should be familiar to anyone with some VTK experience in C++ or Python
+#text(size: 9pt)[
+  1. Create a renderer, then a render window, and link them together by adding the renderer to the render
+     window (a render window can hold multiple renderers)
+  2. Create an interactor (which provides a platform-independent interaction mechanism for mouse/key events),
+     connect it to the render window, and ensure it tracks the camera
+  3. Create a source, e.g. a cone
+  4. Create a mapper (a graphical representation) and set the cone source as its input
+  5. Create an actor and assign the mapper to it
+  6. Add the actor to the renderer (a renderer can hold multiple actors), then reset the camera to frame the scene
+]
+- Check the code in `01_vtk/coneCylinder.py`
+  - two objects, each with its own mapper and actor
+  - do either local (vtk.js on the client from received geometry) or remote (on the server and send images to
+    the client) rendering
+
+### Render a VTK dataset from a file
+
+- Code in `01_vtk/sine1-static.py`
+  - loads `sineEnvelope.vti` file on the server
+  - applies an Outline Filter, creates a outline mapper, then an outline actor
+  - applies a Contour Filter at $rho=0.15$, creates a contour mapper, then a contour actor
+  - adds both actors to the renderer
+- Local rendering is noticeably faster even for this small dataset
+  - local rendering: working with geometry on the client
+  - remote rendering: receiving pixelated images
+- Add a contour slider and a callback function -- see `01_vtk/sine2-slider.py`
+
+```py
+@state.change("contourValue")
+def update_contour(contourValue, **kwargs):
+    contour.SetValue(0, float(contourValue))
+    view.update()
+```
+
+### Controller actions
+
+- Functions that can be called from **Python** or from **the frontend UI** (e.g. a button click) or from **state changes**
+  - defined with `@ctrl.add` decorator
+- Example in `03_html/click.py`
+
+```py
+from trame.app import get_server
+from trame.ui.vuetify3 import SinglePageLayout
+from trame.widgets import vuetify3 as v3
+
+server = get_server(client_type = "vue3")
+ctrl = server.controller
+
+@ctrl.add("printout")
+def reset_plot():   # this function gets triggered when you click Print
+    print("Another line!")
+
+# ctrl.printout()   # syntax to call it in the main Python code
+
+with SinglePageLayout(server) as layout:   # create a UI
+    with layout.content:
+        v3.VBtn("Print", click=ctrl.printout)
+
+server.start()
+```
+
+### Complex visualization app
+
+Code `04_application/coneMeshContour.py` adapted from the tutorial:
+
+- reads an Unstructured Grid file on the server
+- creates an entire visualization pipeline in the drawer
+- packs pipeline elements into collapsible Vuetify UI cards
+- good usage example for `vuetify.VCol()` and `vuetify.VRow()`
+- the original Python code is 500+ lines
+
+::: {style="text-align: center;"}
+![Figure by Kitware](/fig/complexApp.png){width=95%}
+:::
+
+## ParaView
+
+Code `05_paraview/cone.py` adapted from the tutorial. To run it, use ParaView's Python, pointing to the
+correct venv  with `--venv` instead of `source`:
+
+```sh
+cd ~/tmp/trame-tutorial
+pvpython 05_paraview/cone.py --venv ~/env-trame
+```
+
+- `paraview.VtkRemoteView` uses ParaView's Python VTK pipeline underneath to render the image on the server,
+  delivers this image to the browser, works right out of the box
+- `paraview.VtkLocalView` *should* deliver the cone's geometry to the browser for rendering via vtk.js, but
+  apparently it does not, and the view appears empty ... not sure why
+
+ParaView Python workflows are much more compact than VTK Python workflows. To learn more about ParaView Python
+scripting, use the Trace Tool in ParaView's GUI.
+
+### ParaView state loader via the command line
+
+Code `05_paraview/stateLoader.py` adapted from the tutorial.
+
+Open local ParaView GUI and:
+
+1. load `~/training/paraviewWorkshop/data/sineEnvelope.nc`
+1. create a interactive visualization with several layers
+1. save the state as `05_paraview/demo.pvsm`
+
+Run the trame script:
+
+```sh
+pvpython 05_paraview/stateLoaderFromFlag.py --venv ~/env-trame --data 05_paraview/demo.pvsm
+```
+
+Temporarily remove the data file `sineEnvelope.nc` from its location to verify that `demo.pvsm` uses live
+data.
+
+### ParaView state loader via upload
+
+Code `05_paraview/uploadState.py`. Run it this way:
+
+```sh
+pvpython 05_paraview/uploadState.py --venv ~/env-trame
+```
+
+- It'll prompt you to upload the state (.pvsm) file -- use `05_paraview/demo.pvsm`
+- We save the content of this uploaded file `bytes = file["content"]` into a remote file `uploaded_state.pvsm`
+  on the server
+- It'll read the data file `sineEnvelope.nc` on the server side
+- For a flashier demo, expand this script to upload a data file as well
+  - the entire visualization could be run without any pre-existing files on the server (upload both .pvsm and
+    .nc)
+  - good starting point is the documentation <https://kitware.github.io/trame/examples/core/files.html>{target="_blank"}
+
+## Multi-user setup
+
+- For development purposes, a simple `trame.app` serves a single user
+- To scale to multiple users in a production environment, you need a setup that isolates user sessions while
+  allowing a single server process to handle all connections
+  - apparently, several ways to do this using third-party web development tools
+  - since I'm not a web developer, I have not explored this in detail
+
+## Visualizer as a `trame.app`
+
+A decade ago, the original ParaViewWeb-based Visualizer (a JavaScript frontend communicating with a remote
+ParaView server) implemented most of ParaView's functionality in the browser.
+
+Kitware is working on a [Visualizer implementation in
+trame](https://kitware.github.io/trame/examples/apps/visualizer.html){target="_blank"}:
+
+- need to request access (work in progress in a private repo ... I have not tried it)
+- shows the power of trame!
+- few other complete trame apps on the same page
+
+<!-- Remaining topics: -->
+<!-- - `03_html/many.py` -->
+<!-- - `08_testing/uploadPolygonalData.py` -->
+
+## Summary
+
+- Enables any Python developer to create stunning interactive web visualizations using their favourite
+  data-processing engine (`numpy`, `pandas`, `xarray`, `pytables`, ...)
+- Provides integration with popular Python analysis/visualization libraries such as VTK, ParaView, Matplotlib,
+  Plotly, Vega-Altair, etc.
+- A trame app is a single Python application
+  - can run in the cloud, on HPC, within Jupyter, or bundled locally like any desktop app
+  - displays everywhere via the web (phone, tablet, laptop)
+- Utilizes a dedicated stateful server process per client
+- Uses Vuetify UI toolkit, a no-design-skills-required open-source UI library for JavaScript / TypeScript, but
+  expresses the UI design in plain Python code
+- Excellent documentation
+  - tutorial <https://kitware.github.io/trame/guide/tutorial>{target="_blank"}
+  - official documentation <https://trame.readthedocs.io>{target="_blank"}
+  - discussion forum <https://github.com/Kitware/trame/discussions>{target="_blank"}
+  - found Sebastien Jourdain's 2022-Oct [Trame Intro (for developers) course](https://vimeo.com/761096621){target="_blank"} very useful
