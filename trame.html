@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Modern tools for web visualization – Various courses</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-aa2c5b05260b8b4637d981a92a35b106.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-1c00b3d2570248330863d676921d972d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-aa2c5b05260b8b4637d981a92a35b106.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles-ls.css">
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#evolution-of-vtk" id="toc-evolution-of-vtk" class="nav-link active" data-scroll-target="#evolution-of-vtk">Evolution of VTK</a></li>
+  <li><a href="#quick-glance-at-glance" id="toc-quick-glance-at-glance" class="nav-link" data-scroll-target="#quick-glance-at-glance">Quick glance at … Glance</a></li>
+  <li><a href="#trame-intro" id="toc-trame-intro" class="nav-link" data-scroll-target="#trame-intro">Trame intro</a>
+  <ul class="collapse">
+  <li><a href="#architecture" id="toc-architecture" class="nav-link" data-scroll-target="#architecture">Architecture</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#get-the-tutorial-codes" id="toc-get-the-tutorial-codes" class="nav-link" data-scroll-target="#get-the-tutorial-codes">Get the tutorial codes</a></li>
+  </ul></li>
+  <li><a href="#layouts" id="toc-layouts" class="nav-link" data-scroll-target="#layouts">Layouts</a></li>
+  <li><a href="#running-on-a-remote-server" id="toc-running-on-a-remote-server" class="nav-link" data-scroll-target="#running-on-a-remote-server">Running on a remote server</a></li>
+  <li><a href="#matplotlib" id="toc-matplotlib" class="nav-link" data-scroll-target="#matplotlib">Matplotlib</a>
+  <ul class="collapse">
+  <li><a href="#add-a-simple-matplotlib-widget" id="toc-add-a-simple-matplotlib-widget" class="nav-link" data-scroll-target="#add-a-simple-matplotlib-widget">Add a simple Matplotlib widget</a></li>
+  <li><a href="#add-a-state-variable" id="toc-add-a-state-variable" class="nav-link" data-scroll-target="#add-a-state-variable">Add a state variable</a></li>
+  <li><a href="#interactive-slice-through-a-3d-function" id="toc-interactive-slice-through-a-3d-function" class="nav-link" data-scroll-target="#interactive-slice-through-a-3d-function">Interactive slice through a 3D function</a></li>
+  </ul></li>
+  <li><a href="#plotly" id="toc-plotly" class="nav-link" data-scroll-target="#plotly">Plotly</a>
+  <ul class="collapse">
+  <li><a href="#example-of-a-more-complex-2x2-layout-with-plotly-widgets" id="toc-example-of-a-more-complex-2x2-layout-with-plotly-widgets" class="nav-link" data-scroll-target="#example-of-a-more-complex-2x2-layout-with-plotly-widgets">Example of a more complex 2x2 layout with Plotly widgets</a></li>
+  </ul></li>
+  <li><a href="#vtk-trame" id="toc-vtk-trame" class="nav-link" data-scroll-target="#vtk-trame">VTK + trame</a>
+  <ul class="collapse">
+  <li><a href="#client-side-rendering-with-vtk.js-only" id="toc-client-side-rendering-with-vtk.js-only" class="nav-link" data-scroll-target="#client-side-rendering-with-vtk.js-only">Client-side rendering with vtk.js only</a></li>
+  <li><a href="#vtk-rendering" id="toc-vtk-rendering" class="nav-link" data-scroll-target="#vtk-rendering">VTK rendering</a></li>
+  <li><a href="#render-a-vtk-dataset-from-a-file" id="toc-render-a-vtk-dataset-from-a-file" class="nav-link" data-scroll-target="#render-a-vtk-dataset-from-a-file">Render a VTK dataset from a file</a></li>
+  <li><a href="#controller-actions" id="toc-controller-actions" class="nav-link" data-scroll-target="#controller-actions">Controller actions</a></li>
+  <li><a href="#complex-visualization-app" id="toc-complex-visualization-app" class="nav-link" data-scroll-target="#complex-visualization-app">Complex visualization app</a></li>
+  </ul></li>
+  <li><a href="#paraview" id="toc-paraview" class="nav-link" data-scroll-target="#paraview">ParaView</a>
+  <ul class="collapse">
+  <li><a href="#paraview-state-loader-via-the-command-line" id="toc-paraview-state-loader-via-the-command-line" class="nav-link" data-scroll-target="#paraview-state-loader-via-the-command-line">ParaView state loader via the command line</a></li>
+  <li><a href="#paraview-state-loader-via-upload" id="toc-paraview-state-loader-via-upload" class="nav-link" data-scroll-target="#paraview-state-loader-via-upload">ParaView state loader via upload</a></li>
+  </ul></li>
+  <li><a href="#multi-user-setup" id="toc-multi-user-setup" class="nav-link" data-scroll-target="#multi-user-setup">Multi-user setup</a></li>
+  <li><a href="#visualizer-as-a-trame.app" id="toc-visualizer-as-a-trame.app" class="nav-link" data-scroll-target="#visualizer-as-a-trame.app">Visualizer as a <code>trame.app</code></a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Modern tools for web visualization</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>March 27<sup>th</sup></strong>, 10am-12pm</p>
+<p>Earlier in this Winter Series we covered <a href="plotly1/plotly-04-dash.html" target="_blank">building interactive web apps with Plotly Dash</a>. Some of its features:</p>
+<ul>
+<li>you can mix and match multiple Plotly figures in a single web app</li>
+<li>multiple interactive controls: dropdowns and radio buttons (select one), checklists (select multiple), text/number input fields, sliders, etc.</li>
+<li>mouse selection in one plot can show in other plots,</li>
+<li>can create different tabs inside the app, with rules for switching between them,</li>
+<li>even can create an entire website with user guides, plots, code examples, etc.</li>
+</ul>
+<p>On May-19, we’ll also offer a <a href="https://training.westdri.ca/events/upcoming-training-winter-spring-2026" target="_blank">webinar</a> demoing building the same set of Python dashboards using Python Shiny and Plotly Dash, each offering different approaches to creating reactive interfaces and interactive visualizations.</p>
+<p>In today’s workshop, we’ll focus on 3D web visualization using tools from the VTK ecosystem. That is, we’ll take workflows you’re familiar within ParaView and bring them online as interactive visualizations.</p>
+<section id="evolution-of-vtk" class="level2">
+<h2 class="anchored" data-anchor-id="evolution-of-vtk">Evolution of VTK</h2>
+<!-- server side vs. client side -->
+<ul>
+<li>VTK (Visualization Toolkit)
+<ul>
+<li>C++ library, initial release in 1993</li>
+<li>handles I/O, data processing, rendering</li>
+<li>interpreted interface layer in Python (started in late 1990s, full API coverage by ~2018)</li>
+<li>runs server-side only (C++ or Python)</li>
+</ul></li>
+<li>Vtk.js is a rewrite of (most of) VTK in JavaScript
+<ul>
+<li>runs client-side only (in the browser), started in 2016</li>
+<li>rendering limited by the browser</li>
+<li>somewhat limited processing and I/O</li>
+</ul></li>
+<li>Previous (pre-2021) state-of-the-art web visualization
+<ul>
+<li>standalone vtk.js applications, e.g.&nbsp;ParaView Glance or ParaView Divvy</li>
+<li>vtk.js applications interacting with a remote ParaView server using ParaViewWeb framework, e.g.
+<ul>
+<li>ParaView Visualizer (recreating full ParaView functionality on the web)</li>
+<li>ParaView Lite (lighter workflows than ParaView Visualizer)</li>
+</ul></li>
+</ul></li>
+<li>In all these cases you create web apps in JavaScript, or use existing apps</li>
+</ul>
+</section>
+<section id="quick-glance-at-glance" class="level2">
+<h2 class="anchored" data-anchor-id="quick-glance-at-glance">Quick glance at … Glance</h2>
+<p>Of all pre-2021 applications, ParaView Glance is the one I still recommend – here is a <a href="https://kitware.github.io/glance/app/?name=sineEnvelope.vtkjs&amp;url=https://raw.githubusercontent.com/razoumov/publish/master/data/sineEnvelope.vtkjs" target="_blank">live demo</a>.</p>
+<p>You can import any ParaView scene (a collection of pre-computed polygons) into ParaView Glance for live online visualization and to easily share your 3D content with peers and the broader public.</p>
+<p>Glance is a standalone web application (written in JavaScript and vtk.js) that runs without a server, enabling visualization of small to medium-sized data. Server support is planned for future releases.</p>
+<ol type="1">
+<li>Create a visualization with several layers, make all layers visible in the pipeline</li>
+<li>File | Export Scene… as VTKJS to your computer</li>
+<li>Open <a href="https://kitware.github.io/paraview-glance/app" target="_blank">https://kitware.github.io/paraview-glance/app</a></li>
+<li>Drag the newly saved file to the dropzone on the website</li>
+<li>Interact with individual layers in 3D: rotate and zoom, change visibility, representation, variable, colourmap, opacity</li>
+</ol>
+<p>To automatically load a visualisation into Glance, use the query syntax <code>GLANCEAPPURL?name=FILENAME&amp;url=FILEURL</code> to pass <code>name</code> and <code>url</code> of your publicly accessible dataset to the web server – study the live demo link above as an example. To include into websites, you can use JavaScript to parse long URL strings (see an example in our regular ParaView slides).</p>
+</section>
+<section id="trame-intro" class="level2">
+<h2 class="anchored" data-anchor-id="trame-intro">Trame intro</h2>
+<ul>
+<li>Open-source server-connected web dashboard platform with a Python interface into which you can plug different components:
+<ul>
+<li>some mix of VTK and vtk.js (via an adaptor) scripts</li>
+<li>ParaView scripts</li>
+<li>Matplotlib scripts</li>
+<li>Plotly scripts</li>
+<li>Vega-Altair scripts</li>
+<li>etc</li>
+</ul></li>
+<li>Created by Kitware: v1 in September 2021, now on v3.10</li>
+<li>Pronounced [trʌm]</li>
+<li>Built on top of VTK and ParaView</li>
+<li>All Python scripts run on the server backend</li>
+<li>Interactive graphical widgets rendered either on the server (and displayed in your browser) or directly in your browser</li>
+</ul>
+<section id="architecture" class="level3">
+<h3 class="anchored" data-anchor-id="architecture">Architecture</h3>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/trameArch.png" class="img-fluid figure-img" style="width:95.0%"></p>
+<figcaption>Figure by Kitware</figcaption>
+</figure>
+</div>
+</div>
+<!-- #figure(image("arch.png", width: 62%), caption: "By Kitware, Inc.") -->
+<ul>
+<li>Single backend Python code on the server (cloud, HPC, Jupyter, desktop app)</li>
+<li>UI (layout/buttons/…) via Vuetify (Material Design component framework) toolkit on top of Vue.js, nicely abstracted</li>
+<li>Plots supplied by widgets</li>
+<li><strong>State variables</strong> automatically synced between the <strong>backend</strong> and the <strong>frontend (UI)</strong></li>
+<li><strong>Controller actions</strong> can be called from (1) Python, (2) frontend, or (3) state changes</li>
+</ul>
+</section>
+<section id="links" class="level3">
+<h3 class="anchored" data-anchor-id="links">Links</h3>
+<ul>
+<li><a href="https://kitware.github.io/trame" target="_blank">Front page</a> – click on any example (top menu) to get its source code</li>
+<li><a href="https://github.com/Kitware/trame" target="_blank">Source code</a> – check <code>examples/</code></li>
+<li><a href="https://kitware.github.io/trame/guide/tutorial" target="_blank">Official tutorial</a>
+<ul>
+<li>excellent self-guided tour, probably the best starting point</li>
+<li>today I will show many examples from their tutorial</li>
+</ul></li>
+<li><a href="https://trame.readthedocs.io" target="_blank">Official documentation</a>
+<ul>
+<li>use the left-side menu: trame API, client API, …</li>
+</ul></li>
+<li><a href="https://github.com/Kitware/trame/discussions" target="_blank">Discussion forum</a></li>
+</ul>
+</section>
+<section id="installation" class="level3">
+<h3 class="anchored" data-anchor-id="installation">Installation</h3>
+<p>On your own computer, you can use your favourite package manager, e.g.&nbsp;<code>uv</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-trame <span class="at">--python</span> 3.12   <span class="co"># create a new virtual env</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame                <span class="co"># trame core</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vuetify        <span class="co"># UI widgets</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-components     <span class="co"># other components to work with VTK/ParaView scenes</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vtk            <span class="co"># VTK widgets for trame</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install vtk                  <span class="co"># if running plain VTK code</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-matplotlib     <span class="co"># matplotlib widgets for trame</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-plotly         <span class="co"># plotly widgets for trame</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If you want to run trame inside Jupyter notebooks, also add:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install setuptools jupyterlab</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>On the training cluster, I already installed it via:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /project/def-sponsor00/shared</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/def-sponsor00/shared</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 vtk/9.4.2</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv env-trame</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> env-trame/bin/activate</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> <span class="at">--upgrade</span> pip</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--no-index</span> msgpack requests</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install trame trame-vuetify trame-vtk</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> og+X,og-r /project/def-sponsor00/shared</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> og+rX /project/def-sponsor00/shared/env-trame</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>so that you can load it with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-trame/bin/activate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="get-the-tutorial-codes" class="level3">
+<h3 class="anchored" data-anchor-id="get-the-tutorial-codes">Get the tutorial codes</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Kitware/trame-tutorial.git</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> trame-tutorial</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-m</span> master main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In this workshop I’ll be showing heavily modified examples from this tutorial: simplified coding style, some additional examples, but on your end I suggest you begin with cloning the official tutorial examples.</p>
+<p>I also created an upstream repository on the training cluster:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cass <span class="at">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /project/def-sponsor00/shared/trame-tutorial</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/def-sponsor00/shared/trame-tutorial</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> init</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config receive.denyCurrentBranch updateInstead</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>pushed my local repository to it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add cass cass:/project/def-sponsor00/shared/trame-tutorial</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add ...</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> ...</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push cass main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>and made it readable to all users:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cass <span class="at">--</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> og+rX /project/def-sponsor00/shared/trame-tutorial</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>so you can copy <em>my exact examples</em> from there.</p>
+</section>
+</section>
+<section id="layouts" class="level2">
+<h2 class="anchored" data-anchor-id="layouts">Layouts</h2>
+<p>Study the code <code>00_setup/app.py</code> – it creates a single-page layout without a drawer.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> trame-tutorial</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 00_setup/app.py               <span class="co"># use default port 8080</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 00_setup/app.py <span class="at">--port</span> 1234   <span class="co"># use specific port</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 00_setup/app.py <span class="at">--server</span>      <span class="co"># prevent your browser from opening automatically</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now change <code>SinglePageLayout</code> to <code>SinglePageWithDrawerLayout</code>.</p>
+<!-- // - explain 4 things: state, events, widgets, ui -->
+</section>
+<section id="running-on-a-remote-server" class="level2">
+<h2 class="anchored" data-anchor-id="running-on-a-remote-server">Running on a remote server</h2>
+<!-- == Server on a VM, client on a phone -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cass <span class="at">--</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-trame/bin/activate</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone /project/def-sponsor00/shared/trame-tutorial</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> trame-tutorial</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 00_setup/app.py <span class="at">--host</span> 127.0.0.1 <span class="at">--port</span> 8080 <span class="at">--server</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> cass <span class="at">-L</span> 8080:localhost:8080</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> http://localhost:8080</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Binding the server to <code>127.0.0.1</code> on a publicly accessible host is <em>very important for security</em>: the host ignores any incoming traffic on that port from the outside world, but you can still connect via an ssh tunnel.</p>
+<p>On a compute node behind a firewall on a cluster, you will have to set up the tunnel as <code>ssh cass -L 8080:&lt;nodename&gt;:8080</code>.</p>
+<!-- python 04_application/coneMeshContour.py --host 0.0.0.0 --port 8080 --server -->
+<!-- - Point my phone's browser to VM's port 8080 to view the visualization -->
+<!-- #figure(image("phone.jpg", width: 17%)) -->
+</section>
+<section id="matplotlib" class="level2">
+<h2 class="anchored" data-anchor-id="matplotlib">Matplotlib</h2>
+<section id="add-a-simple-matplotlib-widget" class="level3">
+<h3 class="anchored" data-anchor-id="add-a-simple-matplotlib-widget">Add a simple Matplotlib widget</h3>
+<p>As you know, the original <a href="https://matplotlib.org" target="_blank">Matplotlib</a> produces static plots. We can make them interactive with trame. Let’s start with a basic plot – study and run the code <code>06_matplotlib/line1-static.py</code></p>
+<ul>
+<li>Can hide <code>v3.VContainer</code> line</li>
+<li>Check <a href="https://trame.readthedocs.io/en/latest/trame.widgets.vuetify3.html#trame.widgets.vuetify3.VContainer" target="_blank">v3.VContainer documentation</a></li>
+</ul>
+</section>
+<section id="add-a-state-variable" class="level3">
+<h3 class="anchored" data-anchor-id="add-a-state-variable">Add a state variable</h3>
+<ul>
+<li><code>state = server.state</code> is where you store data that can change dynamically and is automatically synced between the backend (Python on the server) and the frontend (browser UI)</li>
+<li>You can watch for changes in state on the backend using the <code>@state.change</code> decorator that will run a callback function
+<ul>
+<li>callback functions are defined with <code>@state.change</code></li>
+</ul></li>
+<li>Study and run the code <code>06_matplotlib/line2-slider.py</code></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>v3.VSlider(v_model<span class="op">=</span>(<span class="st">"wavenumber"</span>, defaultWave), <span class="bu">min</span><span class="op">=</span><span class="fl">0.1</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">5</span>, step<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>           hide_details<span class="op">=</span><span class="va">True</span>, density<span class="op">=</span><span class="st">"compact"</span>, style<span class="op">=</span><span class="st">"max-width: 300px;"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>v3.VBtn(<span class="st">"Reset"</span>, click<span class="op">=</span><span class="kw">lambda</span>: <span class="bu">setattr</span>(state, <span class="st">"wavenumber"</span>, defaultWave))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@state.change</span>(<span class="st">"wavenumber"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_plot(wavenumber, <span class="op">**</span>kwargs):   <span class="co"># callback function</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    line.set_ydata(np.sin(wavenumber<span class="op">*</span>x))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    fig.canvas.draw_idle()   <span class="co"># redraw locally in matplotlib</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    plot.update()            <span class="co"># notify Trame to refresh image in browser</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="interactive-slice-through-a-3d-function" class="level3">
+<h3 class="anchored" data-anchor-id="interactive-slice-through-a-3d-function">Interactive slice through a 3D function</h3>
+<p>Here we visualize an interactive slice through a 3D <em>sine envelope</em> function defined inside a unit cube <span class="math inline">\(x_i\in[0,1]\)</span>:</p>
+<p><span class="math display">\[
+f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\right)-0.5}
+{\left[0.001(\xi_i^2+\xi_{i+1}^2)+1\right]^2}+0.5\right]\text{, where }\xi_i\equiv30(x_i-0.5),
+\]</span></p>
+<p>discretized on a <span class="math inline">\(100^3\)</span> Cartesian grid and stored in <code>sineEnvelope.nc</code></p>
+<ul>
+<li>Code in <code>06_matplotlib/slice2-streamlined.py</code></li>
+<li>Define <code>slice</code> state variable</li>
+<li>Redraw the image with:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="at">@state.change</span>(<span class="st">"slice"</span>)       <span class="co"># watch for slice changes</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_plot(<span class="bu">slice</span>, <span class="op">**</span>kwargs):</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    ax.imshow(data[:, :, <span class="bu">slice</span>], origin<span class="op">=</span><span class="st">"lower"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    fig.canvas.draw_idle()   <span class="co"># redraw locally in matplotlib</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    plot.update()            <span class="co"># notify Trame to refresh image in browser</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- == Plotly widgets -->
+<!-- - #link("https://plotly.com/python")[Plotly] is another popular plotting library for Python -->
+<!--   - produces interactive HTML5 plots -->
+<!-- - Study and run the code `07_plotly/1-line-slider.py` -->
+<!--   - single `wavenumber` slider -->
+<!-- - Add a second slider in `07_plotly/2-line-twoSliders.py` -->
+<!--   - one slider per variable -->
+<!--   - both variables are input to the callback function to update the plot: -->
+<!-- ```py -->
+<!-- @state.change("wavenumber", "amplitude") -->
+<!-- def update_plot(wavenumber, amplitude, **kwargs): -->
+<!--     fig.data[0].y = amplitude * np.sin(wavenumber * x) -->
+<!--     plot.update()  # refresh Plotly widget in the browser -->
+<!-- ``` -->
+<!-- - Move both sliders to the side drawer `07_plotly/3-line-addDrawer.py` -->
+</section>
+</section>
+<section id="plotly" class="level2">
+<h2 class="anchored" data-anchor-id="plotly">Plotly</h2>
+<section id="example-of-a-more-complex-2x2-layout-with-plotly-widgets" class="level3">
+<h3 class="anchored" data-anchor-id="example-of-a-more-complex-2x2-layout-with-plotly-widgets">Example of a more complex 2x2 layout with Plotly widgets</h3>
+<p>We can create Plotly dashboards with Dash, but here is an example of doing the same in trame – see the code in <code>07_plotly/4-dashboard2x2.py</code>.</p>
+<ul>
+<li>4 separate Plotly figures, including an interactive 3D plot</li>
+<li>2 callback functions</li>
+<li>2 familiar sliders (controlling fig1 and fig2)</li>
+<li>one additional slider for a 3D slice position in fig3</li>
+</ul>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/dash22.png" class="img-fluid figure-img"></p>
+<figcaption>Figure by Kitware</figcaption>
+</figure>
+</div>
+</div>
+</section>
+</section>
+<section id="vtk-trame" class="level2">
+<h2 class="anchored" data-anchor-id="vtk-trame">VTK + trame</h2>
+<p>VTK can be integrated into trame with various levels of granularity:</p>
+<ol type="1">
+<li>local vtk.js (client-side only)</li>
+<li>hybrid: remote VTK for processing (creating meshes) and local vtk.js for rendering</li>
+<li>remote VTK for processing and rendering on the server, pixels sent to the client</li>
+</ol>
+<section id="client-side-rendering-with-vtk.js-only" class="level3">
+<h3 class="anchored" data-anchor-id="client-side-rendering-with-vtk.js-only">Client-side rendering with vtk.js only</h3>
+<ul>
+<li>Code in <code>01_no_vtk/client.py</code></li>
+<li>No traditional Python VTK code in this example</li>
+<li>Import a lightweight adaptor to present VTK objects to the UI:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.widgets <span class="im">import</span> vtk</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>vtk.VtkAlgorithm</code> handles the state variable as an argument (no explicit callback function)</li>
+<li>Run the code – all rendering is done on the client</li>
+<li>Add a second VTK object:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> vtk.VtkGeometryRepresentation():</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    vtk.VtkAlgorithm(vtk_class<span class="op">=</span><span class="st">"vtkSphereSource"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="vtk-rendering" class="level3">
+<h3 class="anchored" data-anchor-id="vtk-rendering">VTK rendering</h3>
+<ul>
+<li>Python interface to VTK provides the full functionality of the C++ API
+<ul>
+<li>handles I/O, data processing, rendering</li>
+</ul></li>
+<li>Usual steps to render an object in VTK
+<ul>
+<li>should be familiar to anyone with some VTK experience in C++ or Python #text(size: 9pt)[</li>
+</ul>
+<ol type="1">
+<li>Create a renderer, then a render window, and link them together by adding the renderer to the render window (a render window can hold multiple renderers)</li>
+<li>Create an interactor (which provides a platform-independent interaction mechanism for mouse/key events), connect it to the render window, and ensure it tracks the camera</li>
+<li>Create a source, e.g.&nbsp;a cone</li>
+<li>Create a mapper (a graphical representation) and set the cone source as its input</li>
+<li>Create an actor and assign the mapper to it</li>
+<li>Add the actor to the renderer (a renderer can hold multiple actors), then reset the camera to frame the scene ]</li>
+</ol></li>
+<li>Check the code in <code>01_vtk/coneCylinder.py</code>
+<ul>
+<li>two objects, each with its own mapper and actor</li>
+<li>do either local (vtk.js on the client from received geometry) or remote (on the server and send images to the client) rendering</li>
+</ul></li>
+</ul>
+</section>
+<section id="render-a-vtk-dataset-from-a-file" class="level3">
+<h3 class="anchored" data-anchor-id="render-a-vtk-dataset-from-a-file">Render a VTK dataset from a file</h3>
+<ul>
+<li>Code in <code>01_vtk/sine1-static.py</code>
+<ul>
+<li>loads <code>sineEnvelope.vti</code> file on the server</li>
+<li>applies an Outline Filter, creates a outline mapper, then an outline actor</li>
+<li>applies a Contour Filter at <span class="math inline">\(rho=0.15\)</span>, creates a contour mapper, then a contour actor</li>
+<li>adds both actors to the renderer</li>
+</ul></li>
+<li>Local rendering is noticeably faster even for this small dataset
+<ul>
+<li>local rendering: working with geometry on the client</li>
+<li>remote rendering: receiving pixelated images</li>
+</ul></li>
+<li>Add a contour slider and a callback function – see <code>01_vtk/sine2-slider.py</code></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">@state.change</span>(<span class="st">"contourValue"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_contour(contourValue, <span class="op">**</span>kwargs):</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    contour.SetValue(<span class="dv">0</span>, <span class="bu">float</span>(contourValue))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    view.update()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="controller-actions" class="level3">
+<h3 class="anchored" data-anchor-id="controller-actions">Controller actions</h3>
+<ul>
+<li>Functions that can be called from <strong>Python</strong> or from <strong>the frontend UI</strong> (e.g.&nbsp;a button click) or from <strong>state changes</strong>
+<ul>
+<li>defined with <code>@ctrl.add</code> decorator</li>
+</ul></li>
+<li>Example in <code>03_html/click.py</code></li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.app <span class="im">import</span> get_server</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.ui.vuetify3 <span class="im">import</span> SinglePageLayout</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.widgets <span class="im">import</span> vuetify3 <span class="im">as</span> v3</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> get_server(client_type <span class="op">=</span> <span class="st">"vue3"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>ctrl <span class="op">=</span> server.controller</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="at">@ctrl.add</span>(<span class="st">"printout"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> reset_plot():   <span class="co"># this function gets triggered when you click Print</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Another line!"</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ctrl.printout()   # syntax to call it in the main Python code</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> SinglePageLayout(server) <span class="im">as</span> layout:   <span class="co"># create a UI</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> layout.content:</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        v3.VBtn(<span class="st">"Print"</span>, click<span class="op">=</span>ctrl.printout)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>server.start()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="complex-visualization-app" class="level3">
+<h3 class="anchored" data-anchor-id="complex-visualization-app">Complex visualization app</h3>
+<p>Code <code>04_application/coneMeshContour.py</code> adapted from the tutorial:</p>
+<ul>
+<li>reads an Unstructured Grid file on the server</li>
+<li>creates an entire visualization pipeline in the drawer</li>
+<li>packs pipeline elements into collapsible Vuetify UI cards</li>
+<li>good usage example for <code>vuetify.VCol()</code> and <code>vuetify.VRow()</code></li>
+<li>the original Python code is 500+ lines</li>
+</ul>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/complexApp.png" class="img-fluid figure-img" style="width:95.0%"></p>
+<figcaption>Figure by Kitware</figcaption>
+</figure>
+</div>
+</div>
+</section>
+</section>
+<section id="paraview" class="level2">
+<h2 class="anchored" data-anchor-id="paraview">ParaView</h2>
+<p>Code <code>05_paraview/cone.py</code> adapted from the tutorial. To run it, use ParaView’s Python, pointing to the correct venv with <code>--venv</code> instead of <code>source</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp/trame-tutorial</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">pvpython</span> 05_paraview/cone.py <span class="at">--venv</span> ~/env-trame</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>paraview.VtkRemoteView</code> uses ParaView’s Python VTK pipeline underneath to render the image on the server, delivers this image to the browser, works right out of the box</li>
+<li><code>paraview.VtkLocalView</code> <em>should</em> deliver the cone’s geometry to the browser for rendering via vtk.js, but apparently it does not, and the view appears empty … not sure why</li>
+</ul>
+<p>ParaView Python workflows are much more compact than VTK Python workflows. To learn more about ParaView Python scripting, use the Trace Tool in ParaView’s GUI.</p>
+<section id="paraview-state-loader-via-the-command-line" class="level3">
+<h3 class="anchored" data-anchor-id="paraview-state-loader-via-the-command-line">ParaView state loader via the command line</h3>
+<p>Code <code>05_paraview/stateLoader.py</code> adapted from the tutorial.</p>
+<p>Open local ParaView GUI and:</p>
+<ol type="1">
+<li>load <code>~/training/paraviewWorkshop/data/sineEnvelope.nc</code></li>
+<li>create a interactive visualization with several layers</li>
+<li>save the state as <code>05_paraview/demo.pvsm</code></li>
+</ol>
+<p>Run the trame script:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pvpython</span> 05_paraview/stateLoaderFromFlag.py <span class="at">--venv</span> ~/env-trame <span class="at">--data</span> 05_paraview/demo.pvsm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Temporarily remove the data file <code>sineEnvelope.nc</code> from its location to verify that <code>demo.pvsm</code> uses live data.</p>
+</section>
+<section id="paraview-state-loader-via-upload" class="level3">
+<h3 class="anchored" data-anchor-id="paraview-state-loader-via-upload">ParaView state loader via upload</h3>
+<p>Code <code>05_paraview/uploadState.py</code>. Run it this way:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pvpython</span> 05_paraview/uploadState.py <span class="at">--venv</span> ~/env-trame</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>It’ll prompt you to upload the state (.pvsm) file – use <code>05_paraview/demo.pvsm</code></li>
+<li>We save the content of this uploaded file <code>bytes = file["content"]</code> into a remote file <code>uploaded_state.pvsm</code> on the server</li>
+<li>It’ll read the data file <code>sineEnvelope.nc</code> on the server side</li>
+<li>For a flashier demo, expand this script to upload a data file as well
+<ul>
+<li>the entire visualization could be run without any pre-existing files on the server (upload both .pvsm and .nc)</li>
+<li>good starting point is the documentation <a href="https://kitware.github.io/trame/examples/core/files.html" target="_blank">https://kitware.github.io/trame/examples/core/files.html</a></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="multi-user-setup" class="level2">
+<h2 class="anchored" data-anchor-id="multi-user-setup">Multi-user setup</h2>
+<ul>
+<li>For development purposes, a simple <code>trame.app</code> serves a single user</li>
+<li>To scale to multiple users in a production environment, you need a setup that isolates user sessions while allowing a single server process to handle all connections
+<ul>
+<li>apparently, several ways to do this using third-party web development tools</li>
+<li>since I’m not a web developer, I have not explored this in detail</li>
+</ul></li>
+</ul>
+</section>
+<section id="visualizer-as-a-trame.app" class="level2">
+<h2 class="anchored" data-anchor-id="visualizer-as-a-trame.app">Visualizer as a <code>trame.app</code></h2>
+<p>A decade ago, the original ParaViewWeb-based Visualizer (a JavaScript frontend communicating with a remote ParaView server) implemented most of ParaView’s functionality in the browser.</p>
+<p>Kitware is working on a <a href="https://kitware.github.io/trame/examples/apps/visualizer.html" target="_blank">Visualizer implementation in trame</a>:</p>
+<ul>
+<li>need to request access (work in progress in a private repo … I have not tried it)</li>
+<li>shows the power of trame!</li>
+<li>few other complete trame apps on the same page</li>
+</ul>
+<!-- Remaining topics: -->
+<!-- - `03_html/many.py` -->
+<!-- - `08_testing/uploadPolygonalData.py` -->
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<ul>
+<li>Enables any Python developer to create stunning interactive web visualizations using their favourite data-processing engine (<code>numpy</code>, <code>pandas</code>, <code>xarray</code>, <code>pytables</code>, …)</li>
+<li>Provides integration with popular Python analysis/visualization libraries such as VTK, ParaView, Matplotlib, Plotly, Vega-Altair, etc.</li>
+<li>A trame app is a single Python application
+<ul>
+<li>can run in the cloud, on HPC, within Jupyter, or bundled locally like any desktop app</li>
+<li>displays everywhere via the web (phone, tablet, laptop)</li>
+</ul></li>
+<li>Utilizes a dedicated stateful server process per client</li>
+<li>Uses Vuetify UI toolkit, a no-design-skills-required open-source UI library for JavaScript / TypeScript, but expresses the UI design in plain Python code</li>
+<li>Excellent documentation
+<ul>
+<li>tutorial <a href="https://kitware.github.io/trame/guide/tutorial" target="_blank">https://kitware.github.io/trame/guide/tutorial</a></li>
+<li>official documentation <a href="https://trame.readthedocs.io" target="_blank">https://trame.readthedocs.io</a></li>
+<li>discussion forum <a href="https://github.com/Kitware/trame/discussions" target="_blank">https://github.com/Kitware/trame/discussions</a></li>
+<li>found Sebastien Jourdain’s 2022-Oct <a href="https://vimeo.com/761096621" target="_blank">Trame Intro (for developers) course</a> very useful</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
