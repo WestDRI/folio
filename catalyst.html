@@ -453,13 +453,15 @@ window.Quarto = {
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CATALYST_IMPLEMENTATION_PATHS</span><span class="op">=</span><span class="va">$CATA</span>/paraview/lib64/catalyst</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CATALYST_IMPLEMENTATION_NAME</span><span class="op">=</span>paraview</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CFullExampleV2</span> catalyst_pipeline.py                <span class="co"># serial run, just terminal output</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--ntasks</span><span class="op">=</span>2 <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ex">mpirun</span> <span class="at">-np</span> 2 ./bin/CFullExampleV2 catalyst_pipeline.py   <span class="co"># parallel run, just terminal output</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>                                                         <span class="co"># each MPI rank will print below</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                                                         <span class="co"># can see in `bounds`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># --- serial job, just terminal output</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc --time=0:30:0 --mem-per-cpu=3600</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ./bin/CFullExampleV2 catalyst_pipeline.py</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CFullExampleV2 catalyst_pipeline.py</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># --- parallel job, just terminal output, each MPI rank prints below, check `bounds`</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc --ntasks=2 --time=0:15:0 --mem-per-cpu=3600</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># mpirun -np 2 ./bin/CFullExampleV2 catalyst_pipeline.py</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--ntasks</span><span class="op">=</span>2 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CFullExampleV2 catalyst_pipeline.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You should see something line this for the serial run:</p>
 <pre class="output"><code>executing catalyst_pipeline
 (3.538s) [pvbatch] v2_internals.py:212 WARN| Module 'catalyst_pipeline'
@@ -498,8 +500,10 @@ pressure-range: (0.05000000074505806, 0.05000000074505806)</code></pre>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CATALYST_IMPLEMENTATION_PATHS</span><span class="op">=</span><span class="va">$CATA</span>/paraview/lib64/catalyst</span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CATALYST_IMPLEMENTATION_NAME</span><span class="op">=</span>paraview</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CxxImageDataExampleV2</span> catalyst_pipeline.py   <span class="co"># no file output</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># --- no file output</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co"># salloc --time=0:30:0 --mem-per-cpu=3600</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># ./bin/CxxImageDataExampleV2 catalyst_pipeline.py</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CxxImageDataExampleV2 catalyst_pipeline.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you want file output, it’ll be written by the following code inside the function <code>Initialize(...)</code> inside <code>CatalystAdaptor.h</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode cxx code-with-copy"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>  conduit_cpp<span class="op">::</span>Node node<span class="op">;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> cc <span class="op">=</span> <span class="dv">1</span><span class="op">;</span> cc <span class="op">&lt;</span> argc<span class="op">;</span> <span class="op">++</span>cc<span class="op">)</span></span>
@@ -513,8 +517,11 @@ pressure-range: (0.05000000074505806, 0.05000000074505806)</code></pre>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Continue working inside the Slurm job:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CxxImageDataExampleV2</span> <span class="at">--output</span> dataset-%04ts.vtpd   <span class="co"># works great, writes 10 steps as vtkPartitionedDataset (*.vtpd)</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ./bin/CxxImageDataExampleV2 --output dataset.vtpd       # would write just one timestep</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- write 10 steps as vtkPartitionedDataset (*.vtpd)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CxxImageDataExampleV2 <span class="at">--output</span> dataset-%04ts.vtpd</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># --- write just the latest timestep</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># srun --mem-per-cpu=3600 ./bin/CxxImageDataExampleV2 --output dataset.vtpd</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now you should see 10 VTK files <code>dataset-000{0..9}.vtpd</code> and 10 subdirectories <code>dataset-000{0..9}</code>.</p>
 </section>
 <section id="creating-a-representative-dataset-with-gridwriter.py" class="level3">
@@ -523,7 +530,7 @@ pressure-range: (0.05000000074505806, 0.05000000074505806)</code></pre>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> edit <span class="ex">gridwriter.py</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">catalystChannel</span> = <span class="st">"grid"</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">frequency</span> = 5   <span class="co"># can also set this</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CxxImageDataExampleV2</span> gridwriter.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CxxImageDataExampleV2 gridwriter.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now you should see <code>datasets/</code> subdirectory with 2 timesteps.</p>
 </section>
 <section id="representative-dataset-in-situ-script" class="level3">
@@ -557,7 +564,7 @@ pressure-range: (0.05000000074505806, 0.05000000074505806)</code></pre>
 <!-- export -->
 <!-- LD_LIBRARY_PATH=/cvmfs/soft.computecanada.ca/easybuild/software/2020/avx2/Compiler/gcc9/openvkl/0.10.0/lib64:$LD_LIBRARY_PATH -->
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cass <span class="at">---</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CxxImageDataExampleV2</span> extract-contour.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CxxImageDataExampleV2 extract-contour.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In your simulation directory, you will find <code>datasets/RenderView1_00000*</code> which you can now download to your laptop:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> cass:Examples/Catalyst2/CxxImageDataExample/datasets/RenderView1_00000<span class="pp">*</span> .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -576,8 +583,8 @@ pressure-range: (0.05000000074505806, 0.05000000074505806)</code></pre>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CATALYST_IMPLEMENTATION_PATHS</span><span class="op">=</span><span class="va">$CATA</span>/paraview/lib64/catalyst</span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">CATALYST_IMPLEMENTATION_NAME</span><span class="op">=</span>paraview</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CImageDataExampleV2</span> <span class="at">--output</span> output-%04ts.vtpd                  <span class="co"># one file per timestep</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co"># mpirun -np 2 ./bin/CImageDataExampleV2 --output output-%04ts.vtpd   # decomposed domain</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CImageDataExampleV2 <span class="at">--output</span> output-%04ts.vtpd                <span class="co"># one file per timestep</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co"># srun --ntasks=2 --mem-per-cpu=3600 ./bin/CImageDataExampleV2 --output output-%04ts.vtpd   # decomposed domain</span></span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz 111.tgz output<span class="pp">*</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> cass:standalone-mpi/imageData/111.tgz .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -594,7 +601,7 @@ pressure-range: (0.05000000074505806, 0.05000000074505806)</code></pre>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> edit <span class="ex">FEDriver.c</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">unsigned</span> int numberOfTimeSteps = 10<span class="kw">;</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./bin/CImageDataExampleV2</span> extract-threshold.py</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./bin/CImageDataExampleV2 extract-threshold.py</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz 111.tgz datasets/RenderView1_00000<span class="pp">*</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> cass:standalone-mpi/imageData/111.tgz .</span>
