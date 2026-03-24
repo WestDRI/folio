@@ -126,13 +126,15 @@ make
 export CATALYST_IMPLEMENTATION_PATHS=$CATA/paraview/lib64/catalyst
 export CATALYST_IMPLEMENTATION_NAME=paraview
 
-salloc --time=0:30:0 --mem-per-cpu=3600
-./bin/CFullExampleV2 catalyst_pipeline.py                # serial run, just terminal output
+# --- serial job, just terminal output
+# salloc --time=0:30:0 --mem-per-cpu=3600
+# ./bin/CFullExampleV2 catalyst_pipeline.py
+srun --mem-per-cpu=3600 ./bin/CFullExampleV2 catalyst_pipeline.py
 
-salloc --ntasks=2 --time=0:15:0 --mem-per-cpu=3600
-mpirun -np 2 ./bin/CFullExampleV2 catalyst_pipeline.py   # parallel run, just terminal output
-                                                         # each MPI rank will print below
-                                                         # can see in `bounds`
+# --- parallel job, just terminal output, each MPI rank prints below, check `bounds`
+# salloc --ntasks=2 --time=0:15:0 --mem-per-cpu=3600
+# mpirun -np 2 ./bin/CFullExampleV2 catalyst_pipeline.py
+srun --ntasks=2 --mem-per-cpu=3600 ./bin/CFullExampleV2 catalyst_pipeline.py
 ```
 
 You should see something line this for the serial run:
@@ -187,8 +189,10 @@ make
 export CATALYST_IMPLEMENTATION_PATHS=$CATA/paraview/lib64/catalyst
 export CATALYST_IMPLEMENTATION_NAME=paraview
 
-salloc --time=0:30:0 --mem-per-cpu=3600
-./bin/CxxImageDataExampleV2 catalyst_pipeline.py   # no file output
+# --- no file output
+# salloc --time=0:30:0 --mem-per-cpu=3600
+# ./bin/CxxImageDataExampleV2 catalyst_pipeline.py
+srun --mem-per-cpu=3600 ./bin/CxxImageDataExampleV2 catalyst_pipeline.py
 ```
 
 If you want file output, it'll be written by the following code inside the function `Initialize(...)` inside
@@ -211,8 +215,11 @@ If you want file output, it'll be written by the following code inside the funct
 Continue working inside the Slurm job:
 
 ```sh
-./bin/CxxImageDataExampleV2 --output dataset-%04ts.vtpd   # works great, writes 10 steps as vtkPartitionedDataset (*.vtpd)
-# ./bin/CxxImageDataExampleV2 --output dataset.vtpd       # would write just one timestep
+# --- write 10 steps as vtkPartitionedDataset (*.vtpd)
+srun --mem-per-cpu=3600 ./bin/CxxImageDataExampleV2 --output dataset-%04ts.vtpd
+
+# --- write just the latest timestep
+# srun --mem-per-cpu=3600 ./bin/CxxImageDataExampleV2 --output dataset.vtpd
 ```
 
 Now you should see 10 VTK files `dataset-000{0..9}.vtpd` and 10 subdirectories `dataset-000{0..9}`.
@@ -224,7 +231,7 @@ cp ../SampleScripts/gridwriter.py .
 >>> edit gridwriter.py
     catalystChannel = "grid"
     frequency = 5   # can also set this
-./bin/CxxImageDataExampleV2 gridwriter.py
+srun --mem-per-cpu=3600 ./bin/CxxImageDataExampleV2 gridwriter.py
 ```
 
 Now you should see `datasets/` subdirectory with 2 timesteps.
@@ -280,7 +287,7 @@ i.e. the channels in the simulation code and in the Catalyst script `extract-con
 
 ```sh
 --- cass ---
-./bin/CxxImageDataExampleV2 extract-contour.py
+srun --mem-per-cpu=3600 ./bin/CxxImageDataExampleV2 extract-contour.py
 ```
 
 In your simulation directory, you will find `datasets/RenderView1_00000*` which you can now download to your
@@ -312,8 +319,8 @@ make
 export CATALYST_IMPLEMENTATION_PATHS=$CATA/paraview/lib64/catalyst
 export CATALYST_IMPLEMENTATION_NAME=paraview
 
-./bin/CImageDataExampleV2 --output output-%04ts.vtpd                  # one file per timestep
-# mpirun -np 2 ./bin/CImageDataExampleV2 --output output-%04ts.vtpd   # decomposed domain
+srun --mem-per-cpu=3600 ./bin/CImageDataExampleV2 --output output-%04ts.vtpd                # one file per timestep
+# srun --ntasks=2 --mem-per-cpu=3600 ./bin/CImageDataExampleV2 --output output-%04ts.vtpd   # decomposed domain
 tar cvfz 111.tgz output*
 ```
 
@@ -341,7 +348,7 @@ scp extract-threshold.py cass:standalone-mpi/imageData
 >>> edit FEDriver.c
     unsigned int numberOfTimeSteps = 10;
 make
-./bin/CImageDataExampleV2 extract-threshold.py
+srun --mem-per-cpu=3600 ./bin/CImageDataExampleV2 extract-threshold.py
 tar cvfz 111.tgz datasets/RenderView1_00000*
 ```
 
