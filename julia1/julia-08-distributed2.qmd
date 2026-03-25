@@ -19,7 +19,7 @@ We can cycle through all available workers:
 ```
 
 ::: {.callout-caution collapse="true"}
-## Exercise Distributed.3
+##### Exercise Distributed.3
 Using this syntax, construct an array `r` of Futures, and then get their results and sum them up with
 ```jl
 print("total = ", sum([fetch(r[i]) for i in 1:nworkers()]))
@@ -37,9 +37,12 @@ With two workers and two CPU cores, we should get times very similar to the last
 much larger numbers of cores!
 
 ::: {.callout-caution collapse="true"}
-## Exercise Distributed.4
+##### Exercise Distributed.4
 If you did the previous exercise with an interactive job, now submit a Slurm batch job running the same code
 on 4 CPU cores. Next, try 8 cores. Did your timing change?
+:::
+
+::: {style="margin-top: 50px;"}
 :::
 
 ### Solution 2: parallel `for` loop with summation reduction
@@ -72,8 +75,8 @@ added together.
 Now let's measure the times:
 
 ```jl
-# slow(10, 9)
-precompile(slow, (Int, Int))
+slow(10, 9)
+# precompile(slow, (Int, Int))
 slow(Int64(1e8), 9)   # total = 13.277605949855722
 ```
 
@@ -93,16 +96,16 @@ function slow(n::Int64, digitSequence::Int)
 end
 @btime slow(Int64(1e8), 9)
 ```
-In either case -- whether using `@time` or `@btime` -- we'll get the single time for the entire parallel loop
-(1.498s in my case).
+In either case -- whether using `@time` or `@btime` -- we'll get the single time for the entire parallel loop,
+around 150ms on my computer with 4 workers.
 :::
 
 ::: {.callout-caution collapse="true"}
-## Exercise Distributed.6
+##### Exercise Distributed.6
 Repeat on 8 CPU cores. Did your timing improve?
 :::
 
-I tested this code (`parallelFor.jl`) on Cedar with v1.5.2 and `n=Int64(1e9)`:
+I tested this code (`parallelFor.jl`) on the old Cedar cluster with v1.5.2 and `n=Int64(1e9)`:
 
 ```sh
 #!/bin/bash
@@ -127,6 +130,9 @@ julia -p $SLURM_NTASKS parallelFor.jl
 | 32 cores, same node |  2.0s |
 | 32 cores across 6 nodes | 11.3s |
 
+::: {style="margin-top: 50px;"}
+:::
+
 ### Solution 3: use `pmap` to map arguments to processes
 
 The `pmap()` function provides another mechanism to launch a function on all available workers:
@@ -139,7 +145,7 @@ showid("I am ")   # on control process
 pmap(showid, ["my id = ", "and mine = ", "reporting", "here we go: "]);
 ```
 
-There are two `pmap()` syntaxes:
+You can use anonymous (lambda) functions inside `pmap()`:
 
 ```jl
 pmap(slow, args)
@@ -173,16 +179,19 @@ println("total = ", sum(pmap(slow, args)))      # launch the function on each wo
 We see the following times from individual processes:
 
 ```sh
-From worker 2:	running on worker 2
-From worker 3:	running on worker 3
-From worker 4:	running on worker 4
-From worker 5:	running on worker 5
-From worker 2:	  0.617099 seconds
-From worker 3:	  0.619604 seconds
-From worker 4:	  0.656923 seconds
-From worker 5:	  0.675806 seconds
+    From worker 5:	running on worker 5
+    From worker 4:	running on worker 4
+    From worker 3:	running on worker 3
+    From worker 2:	running on worker 2
+    From worker 4:	  0.119988 seconds
+    From worker 2:	  0.122788 seconds
+    From worker 3:	  0.137920 seconds
+    From worker 5:	  0.140048 seconds
 total = 13.277605949854518
 ```
+
+::: {style="margin-top: 50px;"}
+:::
 
 ### Hybrid parallelism
 
@@ -218,6 +227,9 @@ $ julia -p 4 -t 2 hybrid.jl
     From worker 4:	Hello, I am thread 1 on proc 4
     From worker 4:	Hello, I am thread 2 on proc 4
 ```
+
+::: {style="margin-top: 50px;"}
+:::
 
 ### Optional integration with Slurm
 
