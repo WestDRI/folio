@@ -531,6 +531,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<div style="margin-top: 50px;">
+
+</div>
 </section>
 <section id="solution-2-parallel-for-loop-with-summation-reduction" class="level3">
 <h3 class="anchored" data-anchor-id="solution-2-parallel-for-loop-with-summation-reduction">Solution 2: parallel <code>for</code> loop with summation reduction</h3>
@@ -549,8 +552,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fl">1</span><span class="op">==</span><span class="fl">2</span> ? <span class="fu">println</span>(<span class="st">"Yes"</span>) <span class="op">:</span> <span class="fu">println</span>(<span class="st">"No"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The outcome of the if/else statement is added to the partial sums at each loop iteration, and all these partial sums are added together.</p>
 <p>Now let’s measure the times:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># slow(10, 9)</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">precompile</span>(slow, (<span class="dt">Int</span>, <span class="dt">Int</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slow</span>(<span class="fl">10</span>, <span class="fl">9</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># precompile(slow, (Int, Int))</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">slow</span>(<span class="fu">Int64</span>(<span class="fl">1e8</span>), <span class="fl">9</span>)   <span class="co"># total = 13.277605949855722</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- > ### <font style="color:blue">Exercise "Distributed.5"</font> -->
 <!-- > Switch from using `@time` to using `@btime` in this code. What changes did you have to make? -->
@@ -572,7 +575,7 @@ Note
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(total)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="pp">@btime</span> <span class="fu">slow</span>(<span class="fu">Int64</span>(<span class="fl">1e8</span>), <span class="fl">9</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In either case – whether using <code>@time</code> or <code>@btime</code> – we’ll get the single time for the entire parallel loop (1.498s in my case).</p>
+<p>In either case – whether using <code>@time</code> or <code>@btime</code> – we’ll get the single time for the entire parallel loop, around 150ms on my computer with 4 workers.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -591,7 +594,7 @@ Note
 </div>
 </div>
 </div>
-<p>I tested this code (<code>parallelFor.jl</code>) on Cedar with v1.5.2 and <code>n=Int64(1e9)</code>:</p>
+<p>I tested this code (<code>parallelFor.jl</code>) on the old Cedar cluster with v1.5.2 and <code>n=Int64(1e9)</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=...   # number of MPI tasks</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
@@ -637,6 +640,9 @@ Note
 </tr>
 </tbody>
 </table>
+<div style="margin-top: 50px;">
+
+</div>
 </section>
 <section id="solution-3-use-pmap-to-map-arguments-to-processes" class="level3">
 <h3 class="anchored" data-anchor-id="solution-3-use-pmap-to-map-arguments-to-processes">Solution 3: use <code>pmap</code> to map arguments to processes</h3>
@@ -646,7 +652,7 @@ Note
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">showid</span>(<span class="st">"I am "</span>)   <span class="co"># on control process</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">pmap</span>(showid, [<span class="st">"my id = "</span>, <span class="st">"and mine = "</span>, <span class="st">"reporting"</span>, <span class="st">"here we go: "</span>]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>There are two <code>pmap()</code> syntaxes:</p>
+<p>You can use anonymous (lambda) functions inside <code>pmap()</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode jl code-with-copy"><code class="sourceCode julia"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pmap</span>(slow, args)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pmap</span>(x<span class="op">-&gt;</span>x<span class="op">^</span><span class="fl">2</span>, [<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>])   <span class="co"># anonymous/lambda function</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pmap</span>(<span class="fu">x-&gt;println</span>(<span class="st">"I am worker "</span>, <span class="fu">myid</span>()), <span class="fu">workers</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -665,15 +671,18 @@ Note
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> [(<span class="fu">Int64</span>(<span class="fl">1e8</span>), <span class="fl">9</span>, j, nw) for j <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span>nw]   <span class="co"># array of tuples to be mapped to workers</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="st">"total = "</span>, <span class="fu">sum</span>(<span class="fu">pmap</span>(slow, args)))      <span class="co"># launch the function on each worker and sum the results</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We see the following times from individual processes:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 2:  running on worker 2</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 3:  running on worker 3</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 4:  running on worker 4</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 5:  running on worker 5</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 2:    0.617099 seconds</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 3:    0.619604 seconds</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 4:    0.656923 seconds</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="ex">From</span> worker 5:    0.675806 seconds</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 5:  running on worker 5</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 4:  running on worker 4</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 3:  running on worker 3</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 2:  running on worker 2</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 4:    0.119988 seconds</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 2:    0.122788 seconds</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 3:    0.137920 seconds</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 5:    0.140048 seconds</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="ex">total</span> = 13.277605949854518</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="margin-top: 50px;">
+
+</div>
 </section>
 <section id="hybrid-parallelism" class="level3">
 <h3 class="anchored" data-anchor-id="hybrid-parallelism">Hybrid parallelism</h3>
@@ -699,6 +708,9 @@ Note
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 3:  Hello, I am thread 2 on proc 3</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 4:  Hello, I am thread 1 on proc 4</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="ex">From</span> worker 4:  Hello, I am thread 2 on proc 4</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="margin-top: 50px;">
+
+</div>
 </section>
 <section id="optional-integration-with-slurm" class="level3">
 <h3 class="anchored" data-anchor-id="optional-integration-with-slurm">Optional integration with Slurm</h3>

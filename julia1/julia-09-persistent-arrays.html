@@ -513,19 +513,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="pp">@fetchfrom</span> <span class="fl">3</span> a           <span class="co"># works: 10 elements</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="pp">@everywhere</span> <span class="kw">function</span> <span class="fu">showArray</span>()</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">global</span> a</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"a = "</span>, a)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="pp">@spawnat</span> <span class="fl">2</span> <span class="fu">showArray</span>()   <span class="co"># works: 5 elements</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="pp">@spawnat</span> <span class="fl">3</span> <span class="fu">showArray</span>()   <span class="co"># works: 10 elements</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="pp">@spawnat</span> <span class="fl">2</span> <span class="pp">@spawnat</span> <span class="fl">3</span> <span class="fu">showArray</span>()   <span class="co"># interestingly, this works as well</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">println</span>(<span class="st">"a = "</span>, a)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="pp">@spawnat</span> <span class="fl">2</span> <span class="fu">showArray</span>()   <span class="co"># works: 5 elements</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="pp">@spawnat</span> <span class="fl">3</span> <span class="fu">showArray</span>()   <span class="co"># works: 10 elements</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="pp">@spawnat</span> <span class="fl">2</span> <span class="pp">@spawnat</span> <span class="fl">3</span> <span class="fu">showArray</span>()   <span class="co"># interestingly, this works as well</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="2" type="1">
 <li>Use distributed arrays (<code>DArray</code>) for distributed storage across multiple workers – we will look into this option in the next section.</li>
 <li>Use remote channels to access (write, read) persistent storage on a single worker.</li>
 </ol>
 <section id="tightly-coupled-parallel-codes" class="level2">
 <h2 class="anchored" data-anchor-id="tightly-coupled-parallel-codes">Tightly coupled parallel codes</h2>
-<p>For tightly coupled parallel codes, you almost always want to have persistent storage on the workers, as allocating/deallocating/sending data from scratch at each step will become too expensive. In this workshop we don’t explore tightly coupled parallel problems, but these can be implemented using one of the 3 methods above. <em>Perhaps, I should do a webinar on this topic.</em></p>
+<p>For tightly coupled parallel codes, you almost always want to have persistent storage on the workers, as allocating/deallocating/sending data from scratch at each step will become too expensive. In this workshop we don’t explore tightly coupled parallel problems, but these can be implemented using one of the 3 methods above. <em>Perhaps, I will do a webinar on this topic.</em></p>
 <p>Alternatively, you can go back to the basics and use <strong>MPI.jl</strong>, or <strong>ParallelStencil.jl</strong> if you need a parallel PDE solver.</p>
 </section>
 <section id="channels" class="level2">
