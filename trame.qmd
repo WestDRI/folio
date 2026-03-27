@@ -4,7 +4,7 @@ aliases:
   - /trame
 ---
 
-**March 27<sup>th</sup>**, 10am-12pm
+**March 27<sup>th</sup>**, 10am-11:30am
 
 Earlier in this Winter Series we covered [building interactive web apps with Plotly
 Dash](plotly1/plotly-04-dash.html){target="_blank"}. Some of its features:
@@ -23,6 +23,10 @@ approaches to creating reactive interfaces and interactive visualizations.
 
 In today's workshop, we'll focus on 3D web visualization using tools from the VTK ecosystem. That is, we'll
 take workflows you're familiar within ParaView and bring them online as interactive visualizations.
+
+While today's session is not recorded, a recording of our November 2025 webinar *"Creating interactive online
+visualizations with Trame"* is available on [this
+page](https://training.westdri.ca/tools/visualization){target="_blank"}.
 
 ## Evolution of VTK
 
@@ -70,12 +74,12 @@ to parse long URL strings (see an example in our regular ParaView slides).
 ## Trame intro
 
 - Open-source server-connected web dashboard platform with a Python interface into which you can plug different components:
-  - some mix of VTK and vtk.js (via an adaptor) scripts
+  - some mix of VTK and vtk.js scripts
   - ParaView scripts
   - Matplotlib scripts
   - Plotly scripts
   - Vega-Altair scripts
-  - etc
+  - etc.
 - Created by Kitware: v1 in September 2021, now on v3.10
 - Pronounced [trʌm]
 - Built on top of VTK and ParaView
@@ -164,10 +168,10 @@ cd trame-tutorial
 git branch -m master main
 ```
 
-In this workshop I'll be showing heavily modified examples from this tutorial: simplified coding style, some
-additional examples, but on your end I suggest you begin with cloning the official tutorial examples.
-
-I also created an upstream repository on the training cluster:
+In this workshop, I'll be using heavily modified versions of the tutorial examples, with a simplified coding
+style and a few additions. For your own work, I recommend starting by cloning the official tutorial
+repository. I've also created an upstream repository on the training cluster that contains all of the modified
+examples:
 
 ```sh
 --- cass ---
@@ -195,7 +199,7 @@ and made it readable to all users:
 chmod -R og+rX /project/def-sponsor00/shared/trame-tutorial
 ```
 
-so you can copy *my exact examples* from there.
+so you can copy *my exact examples* from there -- shown in the *"Running on a remote server"* section below.
 
 ## Layouts
 
@@ -223,20 +227,19 @@ Now change `SinglePageLayout` to `SinglePageWithDrawerLayout`.
 source /project/def-sponsor00/shared/env-trame/bin/activate
 git clone /project/def-sponsor00/shared/trame-tutorial
 cd trame-tutorial
-python 00_setup/app.py --host 127.0.0.1 --port 8080 --server
+python 00_setup/app.py --host 127.0.0.1 --port 808X --server
 
 --- laptop ---
-ssh cass -L 8080:localhost:8080
-
---- laptop ---
+ssh cass -L 8080:localhost:808X
 open http://localhost:8080
 ```
 
 Binding the server to `127.0.0.1` on a publicly accessible host is *very important for security*: the host
-ignores any incoming traffic on that port from the outside world, but you can still connect via an ssh tunnel.
+ignores any incoming traffic on that port from the outside world, but you can still connect via an ssh
+tunnel. It also makes sense to close port 808X in the firewall.
 
-On a compute node behind a firewall on a cluster, you will have to set up the tunnel as `ssh cass -L
-8080:<nodename>:8080`.
+On a compute node behind the cluster's firewall, you will have to set up the tunnel as `ssh cass -L
+8080:<nodename>:808X`.
 
 <!-- python 04_application/coneMeshContour.py --host 0.0.0.0 --port 8080 --server -->
 <!-- - Point my phone's browser to VM's port 8080 to view the visualization -->
@@ -321,36 +324,54 @@ def update_plot(slice, **kwargs):
 
 ### Example of a more complex 2x2 layout with Plotly widgets
 
-We can create Plotly dashboards with Dash, but here is an example of doing the same in trame -- see the code
-in `07_plotly/4-dashboard2x2.py`.
+We can create Plotly dashboards with Dash, but here is an example of building a similar dashboard in trame --
+see the code in `07_plotly/4-dashboard2x2.py`.
 
 - 4 separate Plotly figures, including an interactive 3D plot
 - 2 callback functions
-- 2 familiar sliders (controlling fig1 and fig2)
+- 2 familiar sliders (both controlling fig1 and fig2)
 - one additional slider for a 3D slice position in fig3
 
 ::: {style="text-align: center;"}
-![Figure by Kitware](/fig/dash22.png)
+![](/fig/dash22.png)
 :::
 
-## VTK + trame
+::: {.callout-caution}
+##### Exercise
+Remove two of the plots (fig2 and fig4) without breaking the dashboard. Remove all unnecessary code related to
+the deleted figures. Rearrange the two remaining figures into columns to fill the layout horizontally. From
+the original 75 lines of code, how many do you have left?
+:::
+
+
+
+
+
+
+
+## VTK
 
 VTK can be integrated into trame with various levels of granularity:
 
-1. local vtk.js (client-side only)
-1. hybrid: remote VTK for processing (creating meshes) and local vtk.js for rendering
-1. remote VTK for processing and rendering on the server, pixels sent to the client
+<!-- - try [local rendering]{style="color: tomato;"}: server sends the geometry to the client, vtk.js on the client -->
 
+1. entirely local (client-side) via vtk.js
+1. hybrid: remote VTK for processing (creating meshes) and local vtk.js for rendering, via a
+   `vtk.VtkLocalView` call
+1. remote VTK for processing and rendering on the server, pixels sent to the client, via a `vtk.VtkRemoteView`
+   call
+
+Let's demo these!
 
 ### Client-side rendering with vtk.js only
 
-- Code in `01_no_vtk/client.py`
-- No traditional Python VTK code in this example
-- Import a lightweight adaptor to present VTK objects to the UI:
+You can find the code for this in `01_no_vtk/client.py`. There is no traditional Python VTK code in this
+example. It imports a lightweight adaptor to present VTK objects to the UI:
+
 ```py
 from trame.widgets import vtk
 ```
-- `vtk.VtkAlgorithm` handles the state variable as an argument (no explicit callback function)
+- `vtk.VtkAlgorithm` handles the state variable `resolution` as an argument (no explicit callback function)
 - Run the code -- all rendering is done on the client
 - Add a second VTK object:
 
@@ -361,49 +382,57 @@ with vtk.VtkGeometryRepresentation():
 
 ### VTK rendering
 
-- Python interface to VTK provides the full functionality of the C++ API
-  - handles I/O, data processing, rendering
-- Usual steps to render an object in VTK
-  - should be familiar to anyone with some VTK experience in C++ or Python
-#text(size: 9pt)[
-  1. Create a renderer, then a render window, and link them together by adding the renderer to the render
-     window (a render window can hold multiple renderers)
-  2. Create an interactor (which provides a platform-independent interaction mechanism for mouse/key events),
-     connect it to the render window, and ensure it tracks the camera
-  3. Create a source, e.g. a cone
-  4. Create a mapper (a graphical representation) and set the cone source as its input
-  5. Create an actor and assign the mapper to it
-  6. Add the actor to the renderer (a renderer can hold multiple actors), then reset the camera to frame the scene
-]
-- Check the code in `01_vtk/coneCylinder.py`
-  - two objects, each with its own mapper and actor
-  - do either local (vtk.js on the client from received geometry) or remote (on the server and send images to
-    the client) rendering
+The Python interface to VTK provides the full functionality of the C++ API, handling I/O, data processing, and
+rendering. Whether in C++ or Python, the usual steps to render an object in VTK should be familiar to anyone
+with some VTK experience:
+
+1. Create a renderer, then a render window, and link them together by adding the renderer to the render window
+   (a render window can hold multiple renderers)
+2. Create an interactor (which provides a platform-independent interaction mechanism for mouse/key events),
+   connect it to the render window, and ensure it tracks the camera
+3. Create a source, e.g. a cone
+4. Create a mapper (a graphical representation) and set the cone source as its input
+5. Create an actor and assign the mapper to it
+6. Add the actor to the renderer (a renderer can hold multiple actors), then reset the camera to frame the scene
+
+The code in `01_vtk/coneCylinder.py` does basically that for two objects, each with its own mapper and actor.
+
+- try [local rendering]{style="color: tomato;"}: server sends the geometry to the client, vtk.js on the client
+- try [remote rendering]{style="color: tomato;"}: server renders and sends images to the client
 
 ### Render a VTK dataset from a file
 
 - Code in `01_vtk/sine1-static.py`
   - loads `sineEnvelope.vti` file on the server
-  - applies an Outline Filter, creates a outline mapper, then an outline actor
-  - applies a Contour Filter at $rho=0.15$, creates a contour mapper, then a contour actor
+  - applies an Outline Filter, creates an outline mapper, then an outline actor
+  - applies a Contour Filter at $\rho=0.15$, creates a contour mapper, then a contour actor
   - adds both actors to the renderer
 - Local rendering is noticeably faster even for this small dataset
   - local rendering: working with geometry on the client
   - remote rendering: receiving pixelated images
-- Add a contour slider and a callback function -- see `01_vtk/sine2-slider.py`
 
+::: {.callout-caution}
+##### Exercise: add a slider
+Add a contour slider with the default value of density $\rho=0.15$, along with a callback function
 ```py
 @state.change("contourValue")
 def update_contour(contourValue, **kwargs):
     contour.SetValue(0, float(contourValue))
     view.update()
 ```
+Try doing this without checking the solution in `01_vtk/sine2-slider.py`.
+:::
+
+::: {.callout-caution}
+##### Exercise: Threshold filter
+Replace the Contour filter with the Threshold filter to only show data in the range $0.3\le\rho\le 0.6$.
+:::
 
 ### Controller actions
 
-- Functions that can be called from **Python** or from **the frontend UI** (e.g. a button click) or from **state changes**
-  - defined with `@ctrl.add` decorator
-- Example in `03_html/click.py`
+*Controller actions* -- defined with `@ctrl.add` decorator -- are functions that can be called from **Python**
+or from **the frontend UI** (e.g. a button click) or from **state changes**. You can find an example in
+`03_html/click.py`.
 
 ```py
 from trame.app import get_server
@@ -434,10 +463,10 @@ Code `04_application/coneMeshContour.py` adapted from the tutorial:
 - creates an entire visualization pipeline in the drawer
 - packs pipeline elements into collapsible Vuetify UI cards
 - good usage example for `vuetify.VCol()` and `vuetify.VRow()`
-- the original Python code is 500+ lines
+- the original Python code is 500+ lines (cleaned it to 359 lines)
 
 ::: {style="text-align: center;"}
-![Figure by Kitware](/fig/complexApp.png){width=95%}
+![Figure by Kitware](/fig/complexApp.png)
 :::
 
 ## ParaView
@@ -477,6 +506,14 @@ pvpython 05_paraview/stateLoaderFromFlag.py --venv ~/env-trame --data 05_paravie
 Temporarily remove the data file `sineEnvelope.nc` from its location to verify that `demo.pvsm` uses live
 data.
 
+::: {.callout-caution}
+##### Exercise
+Use a local ParaView to create your own state file and then render it remotely with this script.
+:::
+
+
+
+
 ### ParaView state loader via upload
 
 Code `05_paraview/uploadState.py`. Run it this way:
@@ -485,22 +522,32 @@ Code `05_paraview/uploadState.py`. Run it this way:
 pvpython 05_paraview/uploadState.py --venv ~/env-trame
 ```
 
-- It'll prompt you to upload the state (.pvsm) file -- use `05_paraview/demo.pvsm`
-- We save the content of this uploaded file `bytes = file["content"]` into a remote file `uploaded_state.pvsm`
-  on the server
-- It'll read the data file `sineEnvelope.nc` on the server side
-- For a flashier demo, expand this script to upload a data file as well
-  - the entire visualization could be run without any pre-existing files on the server (upload both .pvsm and
-    .nc)
-  - good starting point is the documentation <https://kitware.github.io/trame/examples/core/files.html>{target="_blank"}
+It'll prompt you to upload the state (.pvsm) file -- use `05_paraview/demo.pvsm`.
+
+Inside the script, we save the content of this uploaded state file into a remote file `uploaded_state.pvsm` on
+the server, which then reads the data file `sineEnvelope.nc` on the server side:
+
+```py
+    bytes = file["content"]
+    with open("uploaded_state.pvsm", "wb") as f:
+        f.write(bytes)
+    simple.LoadState("uploaded_state.pvsm")
+```
+
+::: {.callout-caution}
+##### Take-home exercise: expand this script to upload a data file as well
+For a flashier demo, the visualization can run without any pre-existing files on the server by uploading both
+the state (`.pvsm`) and data (`.nc`) files. A good starting point is the documentation
+<https://kitware.github.io/trame/examples/core/files.html>{target="_blank"}
+:::
 
 ## Multi-user setup
 
-- For development purposes, a simple `trame.app` serves a single user
-- To scale to multiple users in a production environment, you need a setup that isolates user sessions while
-  allowing a single server process to handle all connections
-  - apparently, several ways to do this using third-party web development tools
-  - since I'm not a web developer, I have not explored this in detail
+For development purposes and in these demos, a simple `trame.app` serves a single user.
+
+To scale to multiple users in a production environment, you need a setup that isolates user sessions while
+allowing a single server process to handle all connections. Apparently, there are several ways to do this
+using third-party web development tools. Since I'm not a web developer, I have not explored this in detail.
 
 ## Visualizer as a `trame.app`
 
@@ -520,18 +567,18 @@ trame](https://kitware.github.io/trame/examples/apps/visualizer.html){target="_b
 
 ## Summary
 
-- Enables any Python developer to create stunning interactive web visualizations using their favourite
-  data-processing engine (`numpy`, `pandas`, `xarray`, `pytables`, ...)
-- Provides integration with popular Python analysis/visualization libraries such as VTK, ParaView, Matplotlib,
-  Plotly, Vega-Altair, etc.
-- A trame app is a single Python application
-  - can run in the cloud, on HPC, within Jupyter, or bundled locally like any desktop app
-  - displays everywhere via the web (phone, tablet, laptop)
-- Utilizes a dedicated stateful server process per client
-- Uses Vuetify UI toolkit, a no-design-skills-required open-source UI library for JavaScript / TypeScript, but
-  expresses the UI design in plain Python code
-- Excellent documentation
-  - tutorial <https://kitware.github.io/trame/guide/tutorial>{target="_blank"}
-  - official documentation <https://trame.readthedocs.io>{target="_blank"}
-  - discussion forum <https://github.com/Kitware/trame/discussions>{target="_blank"}
-  - found Sebastien Jourdain's 2022-Oct [Trame Intro (for developers) course](https://vimeo.com/761096621){target="_blank"} very useful
+As we've seen, Trame lets Python developers create interactive web visualizations with their favourite
+data-processing engine (`numpy`, `pandas`, `xarray`, `pytables`, ...). It provides integration with popular
+Python analysis/visualization libraries such as VTK, ParaView, Matplotlib, Plotly, Vega-Altair, etc.
+
+A `trame.app` is a single Python application that can run in the cloud, on HPC systems, within Jupyter, or
+bundled locally like a desktop app. It renders in the browser on any device (phone, tablet, laptop). Each
+client is served by a dedicated stateful server process, and the UI is built with the Vuetify toolkit -- an
+open-source JavaScript/TypeScript library -- while being expressed entirely in Python.
+
+Trame offers excellent documentation and supporting resources:
+
+- tutorial <https://kitware.github.io/trame/guide/tutorial>{target="_blank"}
+- official documentation <https://trame.readthedocs.io>{target="_blank"}
+- discussion forum <https://github.com/Kitware/trame/discussions>{target="_blank"}
+- found Sebastien Jourdain's 2022-Oct [Trame Intro (for developers) course](https://vimeo.com/761096621){target="_blank"} very useful
