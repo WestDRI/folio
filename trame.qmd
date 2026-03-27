@@ -258,12 +258,16 @@ make them interactive with trame. Let's start with a basic plot -- study and run
 
 ### Add a state variable
 
-- `state = server.state` is where you store data that can change dynamically and is automatically synced
-   between the backend (Python on the server) and the frontend (browser UI)
-- You can watch for changes in state on the backend using the `@state.change` decorator that will run a
-  callback function
-  - callback functions are defined with `@state.change`
-- Study and run the code `06_matplotlib/line2-slider.py`
+The server state `state = server.state` is a place where you store data that can change dynamically. It is
+automatically synced between the backend (Python on the server) and the frontend (browser UI). You can watch
+for changes in the state on the backend using the `@state.change` decorator that will run a callback function.
+
+::: {.callout-important}
+##### Key point
+Callback functions are defined with `@state.change` decorator.
+:::
+
+Let's study and run the code `06_matplotlib/line2-slider.py`.
 
 ```py
 v3.VSlider(v_model=("wavenumber", defaultWave), min=0.1, max=5, step=0.1,
@@ -430,9 +434,11 @@ Replace the Contour filter with the Threshold filter to only show data in the ra
 
 ### Controller actions
 
-*Controller actions* -- defined with `@ctrl.add` decorator -- are functions that can be called from **Python**
-or from **the frontend UI** (e.g. a button click) or from **state changes**. You can find an example in
-`03_html/click.py`.
+We've already seen how `@state.change` lets you define callback functions that run whenever a state variable changes.
+
+There is another type of special functions called *controller actions* -- defined with `@ctrl.add` decorator
+-- that can be called from **Python** or from **the frontend UI** (e.g. activated by a button click) or from
+**state changes** (via callback functions). You can find an example in `03_html/click.py`.
 
 ```py
 from trame.app import get_server
@@ -454,6 +460,8 @@ with SinglePageLayout(server) as layout:   # create a UI
 
 server.start()
 ```
+
+The next example has some controller actions.
 
 ### Complex visualization app
 
