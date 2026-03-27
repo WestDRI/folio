@@ -338,7 +338,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#example-of-a-more-complex-2x2-layout-with-plotly-widgets" id="toc-example-of-a-more-complex-2x2-layout-with-plotly-widgets" class="nav-link" data-scroll-target="#example-of-a-more-complex-2x2-layout-with-plotly-widgets">Example of a more complex 2x2 layout with Plotly widgets</a></li>
   </ul></li>
-  <li><a href="#vtk-trame" id="toc-vtk-trame" class="nav-link" data-scroll-target="#vtk-trame">VTK + trame</a>
+  <li><a href="#vtk" id="toc-vtk" class="nav-link" data-scroll-target="#vtk">VTK</a>
   <ul class="collapse">
   <li><a href="#client-side-rendering-with-vtk.js-only" id="toc-client-side-rendering-with-vtk.js-only" class="nav-link" data-scroll-target="#client-side-rendering-with-vtk.js-only">Client-side rendering with vtk.js only</a></li>
   <li><a href="#vtk-rendering" id="toc-vtk-rendering" class="nav-link" data-scroll-target="#vtk-rendering">VTK rendering</a></li>
@@ -380,7 +380,7 @@ window.Quarto = {
 </header>
 
 
-<p><strong>March 27<sup>th</sup></strong>, 10am-12pm</p>
+<p><strong>March 27<sup>th</sup></strong>, 10am-11:30am</p>
 <p>Earlier in this Winter Series we covered <a href="plotly1/plotly-04-dash.html" target="_blank">building interactive web apps with Plotly Dash</a>. Some of its features:</p>
 <ul>
 <li>you can mix and match multiple Plotly figures in a single web app</li>
@@ -391,6 +391,7 @@ window.Quarto = {
 </ul>
 <p>On May-19, we’ll also offer a <a href="https://training.westdri.ca/events/upcoming-training-winter-spring-2026" target="_blank">webinar</a> demoing building the same set of Python dashboards using Python Shiny and Plotly Dash, each offering different approaches to creating reactive interfaces and interactive visualizations.</p>
 <p>In today’s workshop, we’ll focus on 3D web visualization using tools from the VTK ecosystem. That is, we’ll take workflows you’re familiar within ParaView and bring them online as interactive visualizations.</p>
+<p>While today’s session is not recorded, a recording of our November 2025 webinar <em>“Creating interactive online visualizations with Trame”</em> is available on <a href="https://training.westdri.ca/tools/visualization" target="_blank">this page</a>.</p>
 <section id="evolution-of-vtk" class="level2">
 <h2 class="anchored" data-anchor-id="evolution-of-vtk">Evolution of VTK</h2>
 <!-- server side vs. client side -->
@@ -439,12 +440,12 @@ window.Quarto = {
 <ul>
 <li>Open-source server-connected web dashboard platform with a Python interface into which you can plug different components:
 <ul>
-<li>some mix of VTK and vtk.js (via an adaptor) scripts</li>
+<li>some mix of VTK and vtk.js scripts</li>
 <li>ParaView scripts</li>
 <li>Matplotlib scripts</li>
 <li>Plotly scripts</li>
 <li>Vega-Altair scripts</li>
-<li>etc</li>
+<li>etc.</li>
 </ul></li>
 <li>Created by Kitware: v1 in September 2021, now on v3.10</li>
 <li>Pronounced [trʌm]</li>
@@ -526,8 +527,7 @@ window.Quarto = {
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/Kitware/trame-tutorial.git</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> trame-tutorial</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-m</span> master main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In this workshop I’ll be showing heavily modified examples from this tutorial: simplified coding style, some additional examples, but on your end I suggest you begin with cloning the official tutorial examples.</p>
-<p>I also created an upstream repository on the training cluster:</p>
+<p>In this workshop, I’ll be using heavily modified versions of the tutorial examples, with a simplified coding style and a few additions. For your own work, I recommend starting by cloning the official tutorial repository. I’ve also created an upstream repository on the training cluster that contains all of the modified examples:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cass <span class="at">---</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> /project/def-sponsor00/shared/trame-tutorial</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /project/def-sponsor00/shared/trame-tutorial</span>
@@ -543,7 +543,7 @@ window.Quarto = {
 <p>and made it readable to all users:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> cass <span class="at">--</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> <span class="at">-R</span> og+rX /project/def-sponsor00/shared/trame-tutorial</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>so you can copy <em>my exact examples</em> from there.</p>
+<p>so you can copy <em>my exact examples</em> from there – shown in the <em>“Running on a remote server”</em> section below.</p>
 </section>
 </section>
 <section id="layouts" class="level2">
@@ -565,15 +565,13 @@ window.Quarto = {
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-trame/bin/activate</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone /project/def-sponsor00/shared/trame-tutorial</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> trame-tutorial</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 00_setup/app.py <span class="at">--host</span> 127.0.0.1 <span class="at">--port</span> 8080 <span class="at">--server</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> 00_setup/app.py <span class="at">--host</span> 127.0.0.1 <span class="at">--port</span> 808X <span class="at">--server</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> cass <span class="at">-L</span> 8080:localhost:8080</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="ex">---</span> laptop <span class="at">---</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> http://localhost:8080</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Binding the server to <code>127.0.0.1</code> on a publicly accessible host is <em>very important for security</em>: the host ignores any incoming traffic on that port from the outside world, but you can still connect via an ssh tunnel.</p>
-<p>On a compute node behind a firewall on a cluster, you will have to set up the tunnel as <code>ssh cass -L 8080:&lt;nodename&gt;:8080</code>.</p>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> cass <span class="at">-L</span> 8080:localhost:808X</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> http://localhost:8080</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Binding the server to <code>127.0.0.1</code> on a publicly accessible host is <em>very important for security</em>: the host ignores any incoming traffic on that port from the outside world, but you can still connect via an ssh tunnel. It also makes sense to close port 808X in the firewall.</p>
+<p>On a compute node behind the cluster’s firewall, you will have to set up the tunnel as <code>ssh cass -L 8080:&lt;nodename&gt;:808X</code>.</p>
 <!-- python 04_application/coneMeshContour.py --host 0.0.0.0 --port 8080 --server -->
 <!-- - Point my phone's browser to VM's port 8080 to view the visualization -->
 <!-- #figure(image("phone.jpg", width: 17%)) -->
@@ -646,41 +644,47 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 <h2 class="anchored" data-anchor-id="plotly">Plotly</h2>
 <section id="example-of-a-more-complex-2x2-layout-with-plotly-widgets" class="level3">
 <h3 class="anchored" data-anchor-id="example-of-a-more-complex-2x2-layout-with-plotly-widgets">Example of a more complex 2x2 layout with Plotly widgets</h3>
-<p>We can create Plotly dashboards with Dash, but here is an example of doing the same in trame – see the code in <code>07_plotly/4-dashboard2x2.py</code>.</p>
+<p>We can create Plotly dashboards with Dash, but here is an example of building a similar dashboard in trame – see the code in <code>07_plotly/4-dashboard2x2.py</code>.</p>
 <ul>
 <li>4 separate Plotly figures, including an interactive 3D plot</li>
 <li>2 callback functions</li>
-<li>2 familiar sliders (controlling fig1 and fig2)</li>
+<li>2 familiar sliders (both controlling fig1 and fig2)</li>
 <li>one additional slider for a 3D slice position in fig3</li>
 </ul>
 <div style="text-align: center;">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="./fig/dash22.png" class="img-fluid figure-img"></p>
-<figcaption>Figure by Kitware</figcaption>
-</figure>
+<p><img src="./fig/dash22.png" class="img-fluid"></p>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remove two of the plots (fig2 and fig4) without breaking the dashboard. Remove all unnecessary code related to the deleted figures. Rearrange the two remaining figures into columns to fill the layout horizontally. From the original 75 lines of code, how many do you have left?</p>
 </div>
 </div>
 </section>
 </section>
-<section id="vtk-trame" class="level2">
-<h2 class="anchored" data-anchor-id="vtk-trame">VTK + trame</h2>
+<section id="vtk" class="level2">
+<h2 class="anchored" data-anchor-id="vtk">VTK</h2>
 <p>VTK can be integrated into trame with various levels of granularity:</p>
+<!-- - try [local rendering]{style="color: tomato;"}: server sends the geometry to the client, vtk.js on the client -->
 <ol type="1">
-<li>local vtk.js (client-side only)</li>
-<li>hybrid: remote VTK for processing (creating meshes) and local vtk.js for rendering</li>
-<li>remote VTK for processing and rendering on the server, pixels sent to the client</li>
+<li>entirely local (client-side) via vtk.js</li>
+<li>hybrid: remote VTK for processing (creating meshes) and local vtk.js for rendering, via a <code>vtk.VtkLocalView</code> call</li>
+<li>remote VTK for processing and rendering on the server, pixels sent to the client, via a <code>vtk.VtkRemoteView</code> call</li>
 </ol>
+<p>Let’s demo these!</p>
 <section id="client-side-rendering-with-vtk.js-only" class="level3">
 <h3 class="anchored" data-anchor-id="client-side-rendering-with-vtk.js-only">Client-side rendering with vtk.js only</h3>
-<ul>
-<li>Code in <code>01_no_vtk/client.py</code></li>
-<li>No traditional Python VTK code in this example</li>
-<li>Import a lightweight adaptor to present VTK objects to the UI:</li>
-</ul>
+<p>You can find the code for this in <code>01_no_vtk/client.py</code>. There is no traditional Python VTK code in this example. It imports a lightweight adaptor to present VTK objects to the UI:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.widgets <span class="im">import</span> vtk</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li><code>vtk.VtkAlgorithm</code> handles the state variable as an argument (no explicit callback function)</li>
+<li><code>vtk.VtkAlgorithm</code> handles the state variable <code>resolution</code> as an argument (no explicit callback function)</li>
 <li>Run the code – all rendering is done on the client</li>
 <li>Add a second VTK object:</li>
 </ul>
@@ -689,28 +693,19 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 </section>
 <section id="vtk-rendering" class="level3">
 <h3 class="anchored" data-anchor-id="vtk-rendering">VTK rendering</h3>
-<ul>
-<li>Python interface to VTK provides the full functionality of the C++ API
-<ul>
-<li>handles I/O, data processing, rendering</li>
-</ul></li>
-<li>Usual steps to render an object in VTK
-<ul>
-<li>should be familiar to anyone with some VTK experience in C++ or Python #text(size: 9pt)[</li>
-</ul>
+<p>The Python interface to VTK provides the full functionality of the C++ API, handling I/O, data processing, and rendering. Whether in C++ or Python, the usual steps to render an object in VTK should be familiar to anyone with some VTK experience:</p>
 <ol type="1">
 <li>Create a renderer, then a render window, and link them together by adding the renderer to the render window (a render window can hold multiple renderers)</li>
 <li>Create an interactor (which provides a platform-independent interaction mechanism for mouse/key events), connect it to the render window, and ensure it tracks the camera</li>
 <li>Create a source, e.g.&nbsp;a cone</li>
 <li>Create a mapper (a graphical representation) and set the cone source as its input</li>
 <li>Create an actor and assign the mapper to it</li>
-<li>Add the actor to the renderer (a renderer can hold multiple actors), then reset the camera to frame the scene ]</li>
-</ol></li>
-<li>Check the code in <code>01_vtk/coneCylinder.py</code>
+<li>Add the actor to the renderer (a renderer can hold multiple actors), then reset the camera to frame the scene</li>
+</ol>
+<p>The code in <code>01_vtk/coneCylinder.py</code> does basically that for two objects, each with its own mapper and actor.</p>
 <ul>
-<li>two objects, each with its own mapper and actor</li>
-<li>do either local (vtk.js on the client from received geometry) or remote (on the server and send images to the client) rendering</li>
-</ul></li>
+<li>try <span style="color: tomato;">local rendering</span>: server sends the geometry to the client, vtk.js on the client</li>
+<li>try <span style="color: tomato;">remote rendering</span>: server renders and sends images to the client</li>
 </ul>
 </section>
 <section id="render-a-vtk-dataset-from-a-file" class="level3">
@@ -719,8 +714,8 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 <li>Code in <code>01_vtk/sine1-static.py</code>
 <ul>
 <li>loads <code>sineEnvelope.vti</code> file on the server</li>
-<li>applies an Outline Filter, creates a outline mapper, then an outline actor</li>
-<li>applies a Contour Filter at <span class="math inline">\(rho=0.15\)</span>, creates a contour mapper, then a contour actor</li>
+<li>applies an Outline Filter, creates an outline mapper, then an outline actor</li>
+<li>applies a Contour Filter at <span class="math inline">\(\rho=0.15\)</span>, creates a contour mapper, then a contour actor</li>
 <li>adds both actors to the renderer</li>
 </ul></li>
 <li>Local rendering is noticeably faster even for this small dataset
@@ -728,22 +723,42 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 <li>local rendering: working with geometry on the client</li>
 <li>remote rendering: receiving pixelated images</li>
 </ul></li>
-<li>Add a contour slider and a callback function – see <code>01_vtk/sine2-slider.py</code></li>
 </ul>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise: add a slider
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Add a contour slider with the default value of density <span class="math inline">\(\rho=0.15\)</span>, along with a callback function</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">@state.change</span>(<span class="st">"contourValue"</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> update_contour(contourValue, <span class="op">**</span>kwargs):</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    contour.SetValue(<span class="dv">0</span>, <span class="bu">float</span>(contourValue))</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    view.update()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Try doing this without checking the solution in <code>01_vtk/sine2-slider.py</code>.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise: Threshold filter
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Replace the Contour filter with the Threshold filter to only show data in the range <span class="math inline">\(0.3\le\rho\le 0.6\)</span>.</p>
+</div>
+</div>
 </section>
 <section id="controller-actions" class="level3">
 <h3 class="anchored" data-anchor-id="controller-actions">Controller actions</h3>
-<ul>
-<li>Functions that can be called from <strong>Python</strong> or from <strong>the frontend UI</strong> (e.g.&nbsp;a button click) or from <strong>state changes</strong>
-<ul>
-<li>defined with <code>@ctrl.add</code> decorator</li>
-</ul></li>
-<li>Example in <code>03_html/click.py</code></li>
-</ul>
+<p><em>Controller actions</em> – defined with <code>@ctrl.add</code> decorator – are functions that can be called from <strong>Python</strong> or from <strong>the frontend UI</strong> (e.g.&nbsp;a button click) or from <strong>state changes</strong>. You can find an example in <code>03_html/click.py</code>.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.app <span class="im">import</span> get_server</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.ui.vuetify3 <span class="im">import</span> SinglePageLayout</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> trame.widgets <span class="im">import</span> vuetify3 <span class="im">as</span> v3</span>
@@ -771,12 +786,12 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 <li>creates an entire visualization pipeline in the drawer</li>
 <li>packs pipeline elements into collapsible Vuetify UI cards</li>
 <li>good usage example for <code>vuetify.VCol()</code> and <code>vuetify.VRow()</code></li>
-<li>the original Python code is 500+ lines</li>
+<li>the original Python code is 500+ lines (cleaned it to 359 lines)</li>
 </ul>
 <div style="text-align: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="./fig/complexApp.png" class="img-fluid figure-img" style="width:95.0%"></p>
+<p><img src="./fig/complexApp.png" class="img-fluid figure-img"></p>
 <figcaption>Figure by Kitware</figcaption>
 </figure>
 </div>
@@ -805,33 +820,49 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 <p>Run the trame script:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pvpython</span> 05_paraview/stateLoaderFromFlag.py <span class="at">--venv</span> ~/env-trame <span class="at">--data</span> 05_paraview/demo.pvsm</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Temporarily remove the data file <code>sineEnvelope.nc</code> from its location to verify that <code>demo.pvsm</code> uses live data.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use a local ParaView to create your own state file and then render it remotely with this script.</p>
+</div>
+</div>
 </section>
 <section id="paraview-state-loader-via-upload" class="level3">
 <h3 class="anchored" data-anchor-id="paraview-state-loader-via-upload">ParaView state loader via upload</h3>
 <p>Code <code>05_paraview/uploadState.py</code>. Run it this way:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pvpython</span> 05_paraview/uploadState.py <span class="at">--venv</span> ~/env-trame</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>It’ll prompt you to upload the state (.pvsm) file – use <code>05_paraview/demo.pvsm</code></li>
-<li>We save the content of this uploaded file <code>bytes = file["content"]</code> into a remote file <code>uploaded_state.pvsm</code> on the server</li>
-<li>It’ll read the data file <code>sineEnvelope.nc</code> on the server side</li>
-<li>For a flashier demo, expand this script to upload a data file as well
-<ul>
-<li>the entire visualization could be run without any pre-existing files on the server (upload both .pvsm and .nc)</li>
-<li>good starting point is the documentation <a href="https://kitware.github.io/trame/examples/core/files.html" target="_blank">https://kitware.github.io/trame/examples/core/files.html</a></li>
-</ul></li>
-</ul>
+<p>It’ll prompt you to upload the state (.pvsm) file – use <code>05_paraview/demo.pvsm</code>.</p>
+<p>Inside the script, we save the content of this uploaded state file into a remote file <code>uploaded_state.pvsm</code> on the server, which then reads the data file <code>sineEnvelope.nc</code> on the server side:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>    <span class="bu">bytes</span> <span class="op">=</span> <span class="bu">file</span>[<span class="st">"content"</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">"uploaded_state.pvsm"</span>, <span class="st">"wb"</span>) <span class="im">as</span> f:</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        f.write(<span class="bu">bytes</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    simple.LoadState(<span class="st">"uploaded_state.pvsm"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Take-home exercise: expand this script to upload a data file as well
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For a flashier demo, the visualization can run without any pre-existing files on the server by uploading both the state (<code>.pvsm</code>) and data (<code>.nc</code>) files. A good starting point is the documentation <a href="https://kitware.github.io/trame/examples/core/files.html" target="_blank">https://kitware.github.io/trame/examples/core/files.html</a></p>
+</div>
+</div>
 </section>
 </section>
 <section id="multi-user-setup" class="level2">
 <h2 class="anchored" data-anchor-id="multi-user-setup">Multi-user setup</h2>
-<ul>
-<li>For development purposes, a simple <code>trame.app</code> serves a single user</li>
-<li>To scale to multiple users in a production environment, you need a setup that isolates user sessions while allowing a single server process to handle all connections
-<ul>
-<li>apparently, several ways to do this using third-party web development tools</li>
-<li>since I’m not a web developer, I have not explored this in detail</li>
-</ul></li>
-</ul>
+<p>For development purposes and in these demos, a simple <code>trame.app</code> serves a single user.</p>
+<p>To scale to multiple users in a production environment, you need a setup that isolates user sessions while allowing a single server process to handle all connections. Apparently, there are several ways to do this using third-party web development tools. Since I’m not a web developer, I have not explored this in detail.</p>
 </section>
 <section id="visualizer-as-a-trame.app" class="level2">
 <h2 class="anchored" data-anchor-id="visualizer-as-a-trame.app">Visualizer as a <code>trame.app</code></h2>
@@ -848,23 +879,14 @@ f(x_1,x_2,x_3) = \sum_{i=1}^2\left[\frac{\sin^2\left(\sqrt{\xi_i^2+\xi_{i+1}^2}\
 </section>
 <section id="summary" class="level2">
 <h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<ul>
-<li>Enables any Python developer to create stunning interactive web visualizations using their favourite data-processing engine (<code>numpy</code>, <code>pandas</code>, <code>xarray</code>, <code>pytables</code>, …)</li>
-<li>Provides integration with popular Python analysis/visualization libraries such as VTK, ParaView, Matplotlib, Plotly, Vega-Altair, etc.</li>
-<li>A trame app is a single Python application
-<ul>
-<li>can run in the cloud, on HPC, within Jupyter, or bundled locally like any desktop app</li>
-<li>displays everywhere via the web (phone, tablet, laptop)</li>
-</ul></li>
-<li>Utilizes a dedicated stateful server process per client</li>
-<li>Uses Vuetify UI toolkit, a no-design-skills-required open-source UI library for JavaScript / TypeScript, but expresses the UI design in plain Python code</li>
-<li>Excellent documentation
+<p>As we’ve seen, Trame lets Python developers create interactive web visualizations with their favourite data-processing engine (<code>numpy</code>, <code>pandas</code>, <code>xarray</code>, <code>pytables</code>, …). It provides integration with popular Python analysis/visualization libraries such as VTK, ParaView, Matplotlib, Plotly, Vega-Altair, etc.</p>
+<p>A <code>trame.app</code> is a single Python application that can run in the cloud, on HPC systems, within Jupyter, or bundled locally like a desktop app. It renders in the browser on any device (phone, tablet, laptop). Each client is served by a dedicated stateful server process, and the UI is built with the Vuetify toolkit – an open-source JavaScript/TypeScript library – while being expressed entirely in Python.</p>
+<p>Trame offers excellent documentation and supporting resources:</p>
 <ul>
 <li>tutorial <a href="https://kitware.github.io/trame/guide/tutorial" target="_blank">https://kitware.github.io/trame/guide/tutorial</a></li>
 <li>official documentation <a href="https://trame.readthedocs.io" target="_blank">https://trame.readthedocs.io</a></li>
 <li>discussion forum <a href="https://github.com/Kitware/trame/discussions" target="_blank">https://github.com/Kitware/trame/discussions</a></li>
 <li>found Sebastien Jourdain’s 2022-Oct <a href="https://vimeo.com/761096621" target="_blank">Trame Intro (for developers) course</a> very useful</li>
-</ul></li>
 </ul>
 
 
