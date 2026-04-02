@@ -69,11 +69,11 @@ high-level abstractions for data parallelism that take care of all the data dist
 data parallelism in the following lessons, but for now let's compare the benchmark solution
 (`baseSolver.chpl`) with our `coforall` parallelization to see how the performance improved.
 
-Now we'll parallelize our heat transfer solver. Let's copy `baseSolver.chpl` into `parallel1.chpl` and then
-start editing the latter. We'll make the following changes in `parallel1.chpl`:
+Now we'll parallelize our heat transfer solver. Let's copy `baseSolver.chpl` to `taskParallelSolver.chpl` and then
+start editing the latter. We'll make the following changes in `taskParallelSolver.chpl`:
 
 ```
-diff baseSolver.chpl parallel1.chpl
+diff baseSolver.chpl taskParallelSolver.chpl
 18a19,24
 > config const rowtasks = 3, coltasks = 4;   // let's pretend we have 12 cores
 > const nr = rows / rowtasks;    // number of rows per task
@@ -135,8 +135,8 @@ Final temperature at the desired position [200,300] after 7750 iterations is: 24
 The largest temperature difference was 0.00199985
 The simulation took 8.96548 seconds
 
-$ chpl --fast parallel1.chpl -o parallel1
-$ sed -i -e 's|baseSolver|parallel1|' shared.sh
+$ chpl --fast taskParallelSolver.chpl
+$ sed -i -e 's|baseSolver|taskParallelSolver|' shared.sh
 $ sbatch shared.sh
 $ cat solution.out
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
@@ -170,8 +170,8 @@ at each iteration of the while loop).
 Clearly, a better approach would be to launch the parallel tasks just once, and have them execute all the time
 steps, before resuming the main task to print the final results.
 
-Let's copy `parallel1.chpl` into `parallel2.chpl` and then start editing the latter. We'll make the
-following changes:
+Let's copy `taskParallelSolver.chpl` to `taskParallelSolver2.chpl` and then start editing the latter. We'll make
+the following changes:
 
 (1) Move the rows
 
@@ -264,10 +264,11 @@ if taskid == 0 then {       // compute delta right after lock1.waitFor()
 
 (8) Finally, move the boundary conditions (right+bottom edges) before the `while` loop. Why can we do it now?
 
-Now let's compare the performance of `parallel2.chpl` to the benchmark serial solution `baseSolver.chpl`:
+Now let's compare the performance of `taskParallelSolver2.chpl` to the benchmark serial solution
+`baseSolver.chpl`:
 
 ```sh
-$ sed -i -e 's|parallel1|baseSolver|' shared.sh
+$ sed -i -e 's|taskParallelSolver|baseSolver|' shared.sh
 $ sbatch shared.sh
 $ cat solution.out
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
@@ -283,8 +284,8 @@ Final temperature at the desired position [200,300] after 7750 iterations is: 24
 The largest temperature difference was 0.00199985
 The simulation took 9.40637 seconds
 
-$ chpl --fast parallel2.chpl -o parallel2
-$ sed -i -e 's|baseSolver|parallel2|' shared.sh
+$ chpl --fast taskParallelSolver2.chpl
+$ sed -i -e 's|baseSolver|taskParallelSolver2|' shared.sh
 $ sbatch shared.sh
 $ cat solution.out
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
@@ -306,15 +307,15 @@ We get a speedup of 2X on two cores, as we should.
 Finally, here is a parallel scaling test on Cedar inside a 32-core interactive job:
 
 ```sh
-$ ./parallel2 ... --rowtasks=1 --coltasks=1
+$ ./taskParallelSolver2 ... --rowtasks=1 --coltasks=1
 The simulation took 32.2201 seconds
 
-$ ./parallel2 ... --rowtasks=2 --coltasks=2
+$ ./taskParallelSolver2 ... --rowtasks=2 --coltasks=2
 The simulation took 10.197 seconds
 
-$ ./parallel2 ... --rowtasks=4 --coltasks=4
+$ ./taskParallelSolver2 ... --rowtasks=4 --coltasks=4
 The simulation took 3.79577 seconds
 
-$ ./parallel2 ... --rowtasks=4 --coltasks=8
+$ ./taskParallelSolver2 ... --rowtasks=4 --coltasks=8
 The simulation took 2.4874 seconds
 ```

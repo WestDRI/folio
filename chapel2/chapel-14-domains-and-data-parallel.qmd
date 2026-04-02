@@ -170,9 +170,9 @@ forall a in A { // go in parallel through all n^2 elements in A
 writeln(A);
 ```
 
-The syntax `boundingBox=mesh` tells the compiler that the outer edge of our decomposition coincides
-exactly with the outer edge of our domain. Alternatively, the outer decomposition layer could include an
-additional perimeter of *ghost points* if we specify the following:
+The syntax `boundingBox=mesh` tells the compiler that the outer edge of our decomposition coincides exactly
+with the outer edge of our domain. Alternatively, the outer decomposition layer could include an additional
+perimeter of *ghost points* if we specify the following (and *if* we have inner blocks in our decomposition):
 
 ```chpl
 const mesh: domain(2) = {1..n, 1..n};
@@ -234,7 +234,8 @@ On 3 locales we should get:
 {7..8, 1..8}
 ```
 
-Let us count the number of threads by adding the following to our code:
+Assuming we started our job with `--nodes=3 --cpus-per-task=2`, let us count the total number of threads
+participating in our run by adding the following to our code:
 
 ```chpl
 var count = 0;
@@ -330,6 +331,9 @@ for loc in Locales do
 
 In addition to BlockDist and CyclicDist, Chapel has several other predefined distributions: BlockCycDist,
 ReplicatedDist, DimensionalDist2D, ReplicatedDim, BlockCycDim, and StencilDist -- for details please see
-[Chapel's documentation on distributions](https://chapel-lang.org/docs/primers/distributions.html). I would
-particularly advise to check out **StencilDist** which is an enhanced variant of the blockDist distribution: it
-reduces the amount of communication necessary for array accesses across locale boundaries on a grid.
+[Chapel's documentation on
+distributions](https://chapel-lang.org/docs/primers/distributions.html){target="_blank"}. I would particularly
+advise to check out
+[StencilDist](https://chapel-lang.org/docs/modules/dists/StencilDist.html){target="_blank"} which is an
+enhanced variant of the blockDist distribution: it reduces the amount of communication necessary for array
+accesses across locale boundaries on a grid.
