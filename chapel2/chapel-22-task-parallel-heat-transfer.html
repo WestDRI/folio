@@ -395,6 +395,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapel2/chapel-12-shared-memory-julia-set.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Shared-memory Julia set</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-13-multi-locale-chapel.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Multi-locale Chapel</span></a>
   </div>
@@ -408,7 +414,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-15-distributed-julia-set.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Parallel Julia set</span></a>
+ <span class="menu-text">Distributed-memory Julia set</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -606,10 +612,19 @@ task 11: rows 67-100 and columns 76-100</code></pre>
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> largest temperature difference was 0.00199985</span>
 <span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 25.106 seconds</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Both ran to 7750 iterations, with the same numerical results, but the parallel code is nearly 3X slower – that’s terrible!</p>
-<blockquote class="blockquote">
-<h3 id="discussion" class="anchored"><font style="color:blue">Discussion</font></h3>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Discussion
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>What happened!?…</p>
-</blockquote>
+</div>
+</div>
 <p>To understand the reason, let’s analyze the code. When the program starts, the main task does all the declarations and initializations, and then, it enters the main loop of the simulation (the <strong><em>while</em></strong> loop). Inside this loop, the parallel tasks are launched for the first time. When these tasks finish their computations, the main task resumes its execution, it updates <code>delta</code> and T, and everything is repeated again. So, in essence, parallel tasks are launched and terminated 7750 times, which introduces a significant amount of overhead (the time the system needs to effectively start and destroy tasks in the specific hardware, at each iteration of the while loop).</p>
 <p>Clearly, a better approach would be to launch the parallel tasks just once, and have them execute all the time steps, before resuming the main task to print the final results.</p>
 <p>Let’s copy <code>taskParallelSolver.chpl</code> to <code>taskParallelSolver2.chpl</code> and then start editing the latter. We’ll make the following changes:</p>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Parallel Julia set – Various courses</title>
+<title>Julia set on distributed domains – Various courses</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -314,7 +314,7 @@ window.Quarto = {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapel2/chapel-10-intro-parallel.html">PART 2: DATA PARALLELISM</a></li><li class="breadcrumb-item"><a href="../chapel2/chapel-15-distributed-julia-set.html">Parallel Julia set</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapel2/chapel-10-intro-parallel.html">PART 2: DATA PARALLELISM</a></li><li class="breadcrumb-item"><a href="../chapel2/chapel-15-distributed-julia-set.html">Distributed-memory Julia set</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -424,6 +424,12 @@ window.Quarto = {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../chapel2/chapel-12-shared-memory-julia-set.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Shared-memory Julia set</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-13-multi-locale-chapel.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Multi-locale Chapel</span></a>
   </div>
@@ -437,7 +443,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-15-distributed-julia-set.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Parallel Julia set</span></a>
+ <span class="menu-text">Distributed-memory Julia set</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -486,23 +492,16 @@ window.Quarto = {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#shared-memory-julia-set" id="toc-shared-memory-julia-set" class="nav-link active" data-scroll-target="#shared-memory-julia-set">Shared-memory Julia set</a></li>
-  <li><a href="#julia-set-on-distributed-domains" id="toc-julia-set-on-distributed-domains" class="nav-link" data-scroll-target="#julia-set-on-distributed-domains">Julia set on distributed domains</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapel2/chapel-10-intro-parallel.html">PART 2: DATA PARALLELISM</a></li><li class="breadcrumb-item"><a href="../chapel2/chapel-15-distributed-julia-set.html">Parallel Julia set</a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapel2/chapel-10-intro-parallel.html">PART 2: DATA PARALLELISM</a></li><li class="breadcrumb-item"><a href="../chapel2/chapel-15-distributed-julia-set.html">Distributed-memory Julia set</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">Parallel Julia set</h1>
+<h1 class="title">Julia set on distributed domains</h1>
 </div>
 
 
@@ -519,93 +518,6 @@ window.Quarto = {
 </header>
 
 
-<section id="shared-memory-julia-set" class="level2">
-<h2 class="anchored" data-anchor-id="shared-memory-julia-set">Shared-memory Julia set</h2>
-<p>Recall the serial code <code>juliaSetSerial.chpl</code> (without output):</p>
-<pre class="chpl"><code>use Time;
-
-config const c = 0.355 + 0.355i;
-
-proc pixel(z0) {
-  var z = z0*1.2;   // zoom out
-  for i in 1..255 {
-    z = z*z + c;
-    if abs(z) &gt;= 4 then
-      return i;
-  }
-  return 255;
-}
-
-config const n = 2_000;   // vertical and horizontal size of our image
-var y: real;
-var point: complex;
-var watch: stopwatch;
-
-writeln("Computing ", n, "x", n, " Julia set ...");
-var stability: [1..n,1..n] int;
-watch.start();
-for i in 1..n {
-  y = 2*(i-0.5)/n - 1;
-  for j in 1..n {
-    point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}
-watch.stop();
-writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
-<p>Now let’s parallelize this code with <code>forall</code> in shared memory (single locale). Copy <code>juliaSetSerial.chpl</code> into <code>juliaSetParallel.chpl</code> and start modifying it:</p>
-<ol type="1">
-<li>For the outer loop, replace <code>for</code> with <code>forall</code>. This will produce an error about the scope of variables <code>y</code> and <code>point</code>:</li>
-</ol>
-<pre class="output"><code>error: cannot assign to const variable
-note: The shadow variable 'y' is constant due to task intents in this loop
-error: cannot assign to const variable
-note: The shadow variable 'point' is constant due to task intents in this loop</code></pre>
-<blockquote class="blockquote">
-<h3 id="discussion" class="anchored">Discussion</h3>
-<p>Why do you think this message was produced? How do we solve this problem?</p>
-</blockquote>
-<ol start="2" type="1">
-<li>What do we do next?</li>
-</ol>
-<p>Compile and run the code on several CPU cores on 1 node:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># this is shared.sh</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=4</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetParallel</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load chapel-multicore/2.4.0</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetParallel.chpl</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Once you have the working shared-memory parallel code, study its performance.</p>
-<p>Here are my timings on the training cluster:</p>
-<table class="caption-top table">
-<tbody>
-<tr class="odd">
-<td>ncores</td>
-<td>1</td>
-<td>2</td>
-<td>4</td>
-<td>8</td>
-</tr>
-<tr class="even">
-<td>wallclock runtime (sec)</td>
-<td>1.181</td>
-<td>0.568</td>
-<td>0.307</td>
-<td>0.197</td>
-</tr>
-</tbody>
-</table>
-<blockquote class="blockquote">
-<h3 id="discussion-1" class="anchored">Discussion</h3>
-<p>Why do you think the code’s speed does not scale linearly (~6X on 8 cores) with the number of cores?</p>
-</blockquote>
-</section>
-<section id="julia-set-on-distributed-domains" class="level2">
-<h2 class="anchored" data-anchor-id="julia-set-on-distributed-domains">Julia set on distributed domains</h2>
 <p>Copy <code>juliaSetParallel.chpl</code> into <code>juliaSetDistributed.chpl</code> and start modifying it:</p>
 <ol type="1">
 <li>Load <code>BlockDist</code></li>
@@ -640,18 +552,18 @@ var stability: [distributedMesh] int;</code></pre>
   stability[i,j] = pixel(point);
 }</code></pre>
 <p>Compile and run a larger problem (<span class="math inline">\(8000^2\)</span>) across several nodes:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># this is distributed.sh</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=4</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> Running on <span class="va">$SLURM_NNODES</span> nodes</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetDistributed</span> <span class="at">--n</span><span class="op">=</span>8000 <span class="at">-nl</span> <span class="va">$SLURM_NNODES</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetDistributed.chpl</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> distributed.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># this is distributed.sh</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=4</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=1</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> Running on <span class="va">$SLURM_NNODES</span> nodes</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetDistributed</span> <span class="at">--n</span><span class="op">=</span>8000 <span class="at">-nl</span> <span class="va">$SLURM_NNODES</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetDistributed.chpl</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> distributed.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here are my timings on the training cluster (even over a slow interconnect!):</p>
 <table class="caption-top table">
 <tbody>
@@ -694,7 +606,6 @@ Note
 </div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
