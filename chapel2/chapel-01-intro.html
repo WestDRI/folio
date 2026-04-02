@@ -540,11 +540,12 @@ window.Quarto = {
 <li>Compiled language <span class="math inline">\(\Rightarrow\)</span> provides the <strong>speed and performance</strong> of Fortran and C.</li>
 <li>Supports high-level abstractions for data distribution and <strong>data parallel processing</strong>, and for <strong>task parallelism</strong>.</li>
 <li>Based on the <strong>PGAS</strong> (Partitioned Global Address space) programming model: can access variables in global address space from each node, a lot of behind-the-scenes work to reduce/buffer remote memory access.</li>
+<li>Supports <strong>three levels</strong> of hardware parallelism.</li>
 <li>Provides <strong>data-driven placement of computations</strong>. <!-- - allow users to express parallel computations in a natural, almost intuitive, manner --></li>
 <li>Designed around a <strong>multi-resolution</strong> philosophy: users can incrementally add more detail to their original code, to bring it as close to the machine as required, at the same time they can achieve anything you can normally do with MPI and OpenMP.</li>
 </ul>
 <!-- - has its source code stored in text files with the extension `.chpl` -->
-<p>The Chapel community is fairly small: relatively few people know/use Chapel &nbsp;⇄&nbsp; too few libraries. However, you can use functions/libraries written in other languages:</p>
+<p>The Chapel community is fairly small: relatively few people know/use Chapel &nbsp;⇄&nbsp; too few libraries. However, you can use functions/libraries written in other languages.</p>
 <!-- 1. Direct calls will always be serial. -->
 <!-- 1. High-level Chapel parallel libraries can use C/F90/etc libraries underneath. -->
 <!-- 1. A slowly growing base of parallel Chapel libraries. -->
@@ -582,7 +583,7 @@ window.Quarto = {
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano test.chpl        <span class="co"># file is /mnt/test.chpl inside the container and ~ubuntu/tmp/test.chpl on the host VM</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./test <span class="at">-nl</span> 8</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>You can find more information at https://hub.docker.com/r/chapel/chapel</p>
+<p>You can find more information at <a href="https://hub.docker.com/r/chapel/chapel" target="_blank">https://hub.docker.com/r/chapel/chapel</a>.</p>
 </section>
 <section id="running-single-locale-chapel-in-macos" class="level2">
 <h2 class="anchored" data-anchor-id="running-single-locale-chapel-in-macos">Running single-locale Chapel in MacOS</h2>
@@ -601,10 +602,14 @@ window.Quarto = {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Now we will distribute the usernames and passwords. Once you have these, log in to the training cluster and do the following:<br>
-1. load single-locale Chapel and compile a simple code,<br>
-2. write a makefile for compiling Chapel codes, and<br>
-3. submit a serial job script to run Chapel on a compute node.</p>
+<p>Now we will distribute the usernames and passwords. Once you have these, we will log in to the training cluster and do the following:</p>
+<ol type="1">
+<li>load single-locale Chapel and compile a simple code,<br>
+</li>
+<li>write a makefile for compiling Chapel codes, and<br>
+</li>
+<li>submit a serial job script to run Chapel on a compute node.</li>
+</ol>
 </div>
 </div>
 <!-- Depending on where our training cluster is deployed, its Chapel setup might (or not) be different from the -->
@@ -619,7 +624,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>On our current training cluster, for the reasons I will explain during the course, you might want to run the following command when you open a new shell:</p>
+<p>On our current training cluster, for reasons I’ll explain during the course, you may want to run the following command whenever you open a new shell:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/fixModules.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
