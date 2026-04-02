@@ -492,7 +492,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#chapel-a-language-for-parallel-computing-on-large-scale-systems" id="toc-chapel-a-language-for-parallel-computing-on-large-scale-systems" class="nav-link active" data-scroll-target="#chapel-a-language-for-parallel-computing-on-large-scale-systems">Chapel: a language for parallel computing on large-scale systems</a></li>
-  <li><a href="#running-chapel-codes-on-cedar-graham-béluga-narval" id="toc-running-chapel-codes-on-cedar-graham-béluga-narval" class="nav-link" data-scroll-target="#running-chapel-codes-on-cedar-graham-béluga-narval">Running Chapel codes on Cedar / Graham / Béluga / Narval</a></li>
+  <li><a href="#running-chapel-codes-on-fir-nibi-rorqual-narval" id="toc-running-chapel-codes-on-fir-nibi-rorqual-narval" class="nav-link" data-scroll-target="#running-chapel-codes-on-fir-nibi-rorqual-narval">Running Chapel codes on Fir / Nibi / Rorqual / Narval</a></li>
   <li><a href="#running-chapel-codes-inside-a-docker-container" id="toc-running-chapel-codes-inside-a-docker-container" class="nav-link" data-scroll-target="#running-chapel-codes-inside-a-docker-container">Running Chapel codes inside a Docker container</a></li>
   <li><a href="#running-single-locale-chapel-in-macos" id="toc-running-single-locale-chapel-in-macos" class="nav-link" data-scroll-target="#running-single-locale-chapel-in-macos">Running single-locale Chapel in MacOS</a></li>
   <li><a href="#running-chapel-codes-on-the-training-cluster" id="toc-running-chapel-codes-on-the-training-cluster" class="nav-link" data-scroll-target="#running-chapel-codes-on-the-training-cluster">Running Chapel codes on the training cluster</a></li>
@@ -555,13 +555,13 @@ window.Quarto = {
 <!-- {{<note>}} Try to do all exercises in the lessons. The solutions are linked from the course's front page: -->
 <!-- please try not to look at them while working on the problems. {{</note>}} -->
 </section>
-<section id="running-chapel-codes-on-cedar-graham-béluga-narval" class="level2">
-<h2 class="anchored" data-anchor-id="running-chapel-codes-on-cedar-graham-béluga-narval">Running Chapel codes on Cedar / Graham / Béluga / Narval</h2>
-<p>On Alliance’s production clusters Cedar / Graham / Béluga / Narval we have three versions of Chapel:</p>
+<section id="running-chapel-codes-on-fir-nibi-rorqual-narval" class="level2">
+<h2 class="anchored" data-anchor-id="running-chapel-codes-on-fir-nibi-rorqual-narval">Running Chapel codes on Fir / Nibi / Rorqual / Narval</h2>
+<p>On Alliance’s production clusters Fir / Nibi / Rorqual / Narval we have three versions of Chapel:</p>
 <ol type="1">
 <li>single-locale (single-node) <code>chapel-multicore</code></li>
 <li>multi-locale <code>chapel-ucx</code> for InfiniBand clusters (all newer clusters)</li>
-<li>older multi-locale <code>chapel-ofi</code> for OmniPath clusters (Cedar)</li>
+<li>multi-locale <code>chapel-ofi</code> for older OmniPath clusters (keeping for use on Cedar at SFU)</li>
 </ol>
 <p>You can find the documentation on running Chapel in <a href="https://docs.alliancecan.ca/wiki/Chapel" target="_blank">our wiki</a>.</p>
 <p>If you want to start single-locale Chapel, you will need to load <code>chapel-multicore</code> module, e.g.</p>
@@ -609,21 +609,35 @@ window.Quarto = {
 </div>
 <!-- Depending on where our training cluster is deployed, its Chapel setup might (or not) be different from the -->
 <!-- production clusters. -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On our current training cluster, for the reasons I will explain during the course, you might want to run the following command when you open a new shell:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/fixModules.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
 <p>On the training cluster, you can start single-locale Chapel with:</p>
 <!-- ```sh -->
 <!-- $ module load arch/avx2 gcc/9.3.0 chapel-multicore -->
 <!-- ``` -->
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> module load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> module load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- or -->
 <!-- ```sh -->
 <!-- source /project/def-sponsor00/shared/syncHPC/startSingleLocale.sh -->
 <!-- ``` -->
 <p>Let’s write a simple Chapel code, compile and run it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/tmp</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano test.chpl</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span>     writeln<span class="er">(</span><span class="st">'If you can see this, everything works!'</span><span class="kw">);</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/tmp</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano test.chpl</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span>     writeln<span class="er">(</span><span class="st">'If you can see this, everything works!'</span><span class="kw">);</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can optionally pass the flag <code>--fast</code> to the compiler to optimize the binary to run as fast as possible for the given architecture.</p>
 <!-- Chapel was designed from scratch as a new programming language. It is an imperative language with its own
 -->
@@ -635,18 +649,18 @@ window.Quarto = {
 <!-- offered by Chapel. -->
 <p>Depending on the code, it might utilize one / several / all cores on the current node. The command above implies that you are allowed to utilize all cores. This might not be the case on an HPC cluster, where a login node is shared by many people at the same time, and where it might not be a good idea to occupy all cores on a login node with CPU-intensive tasks. Therefore, we’ll be running test Chapel codes inside submitted jobs on compute nodes.</p>
 <p>Let’s write the job script <code>serial.sh</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and then submit it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch serial.sh</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sq                         <span class="co"># same as `squeue -u $USER`</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat slurm-jobID.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch serial.sh</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sq                         <span class="co"># same as `squeue -u $USER`</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat slurm-jobID.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Alternatively, we could work inside a serial interactive job:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> salloc <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> salloc <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- Note that on the training cluster we have: -->
 <!-- - the login node with 16 "p"-type cores and 32GB memory, -->
 <!-- - 8 compute nodes with 16 "c"-type cores and 60GB memory each, for the total of 128 cores. -->
@@ -662,13 +676,13 @@ window.Quarto = {
 <section id="makefiles" class="level2">
 <h2 class="anchored" data-anchor-id="makefiles">Makefiles</h2>
 <p>In the rest of this workshop, we’ll be compiling codes <code>test.chpl</code>, <code>baseSolver.chpl</code>, <code>begin.chpl</code>, <code>cobegin.chpl</code> and many others. To simplify compilation, we suggest writing a file called <code>Makefile</code> in your working directory:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dv">%:</span><span class="dt"> %.chpl</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="er">    </span>chpl <span class="ch">$^</span> -o <span class="ch">$@</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">@</span><span class="fu">find . -maxdepth 1 -type f -executable -exec rm {} +</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode makefile code-with-copy"><code class="sourceCode makefile"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dv">%:</span><span class="dt"> %.chpl</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="er">    </span>chpl <span class="ch">$^</span> -o <span class="ch">$@</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dv">clean:</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">@</span><span class="fu">find . -maxdepth 1 -type f -executable -exec rm {} +</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Note that the 2nd and the 4th lines start with TAB and not with multiple spaces – this is <strong>very important</strong>!</p>
 <p>With this makefile, to compile any Chapel code, e.g.&nbsp;<code>test.chpl</code>, you would type:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> make test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> make test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Add <code>--fast</code> flag to the makefile to optimize your code. And you can type <code>make clean</code> to delete all executables in the current directory.</p>
 
 

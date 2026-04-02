@@ -530,8 +530,8 @@ task 9: rows 67-100 and columns 26-50
 task 10: rows 67-100 and columns 51-75
 task 11: rows 67-100 and columns 76-100</code></pre>
 <p>As you can see, dividing <code>Tnew</code> computation between concurrent tasks could be cumbersome. Chapel provides high-level abstractions for data parallelism that take care of all the data distribution for us. We will study data parallelism in the following lessons, but for now let’s compare the benchmark solution (<code>baseSolver.chpl</code>) with our <code>coforall</code> parallelization to see how the performance improved.</p>
-<p>Now we’ll parallelize our heat transfer solver. Let’s copy <code>baseSolver.chpl</code> into <code>parallel1.chpl</code> and then start editing the latter. We’ll make the following changes in <code>parallel1.chpl</code>:</p>
-<pre><code>diff baseSolver.chpl parallel1.chpl
+<p>Now we’ll parallelize our heat transfer solver. Let’s copy <code>baseSolver.chpl</code> to <code>taskParallelSolver.chpl</code> and then start editing the latter. We’ll make the following changes in <code>taskParallelSolver.chpl</code>:</p>
+<pre><code>diff baseSolver.chpl taskParallelSolver.chpl
 18a19,24
 &gt; config const rowtasks = 3, coltasks = 4;   // let's pretend we have 12 cores
 &gt; const nr = rows / rowtasks;    // number of rows per task
@@ -589,8 +589,8 @@ task 11: rows 67-100 and columns 76-100</code></pre>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> largest temperature difference was 0.00199985</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 8.96548 seconds</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">--fast</span> parallel1.chpl <span class="at">-o</span> parallel1</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|baseSolver|parallel1|'</span> shared.sh</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">--fast</span> taskParallelSolver.chpl</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|baseSolver|taskParallelSolver|'</span> shared.sh</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="ex">Working</span> with a matrix 650x650 to 10000 iterations or dT below 0.002</span>
@@ -612,7 +612,7 @@ task 11: rows 67-100 and columns 76-100</code></pre>
 </blockquote>
 <p>To understand the reason, let’s analyze the code. When the program starts, the main task does all the declarations and initializations, and then, it enters the main loop of the simulation (the <strong><em>while</em></strong> loop). Inside this loop, the parallel tasks are launched for the first time. When these tasks finish their computations, the main task resumes its execution, it updates <code>delta</code> and T, and everything is repeated again. So, in essence, parallel tasks are launched and terminated 7750 times, which introduces a significant amount of overhead (the time the system needs to effectively start and destroy tasks in the specific hardware, at each iteration of the while loop).</p>
 <p>Clearly, a better approach would be to launch the parallel tasks just once, and have them execute all the time steps, before resuming the main task to print the final results.</p>
-<p>Let’s copy <code>parallel1.chpl</code> into <code>parallel2.chpl</code> and then start editing the latter. We’ll make the following changes:</p>
+<p>Let’s copy <code>taskParallelSolver.chpl</code> to <code>taskParallelSolver2.chpl</code> and then start editing the latter. We’ll make the following changes:</p>
 <ol type="1">
 <li>Move the rows</li>
 </ol>
@@ -674,8 +674,8 @@ if taskid == 0 then {       // compute delta right after lock1.waitFor()
 <li><p>Remove the original T[iout,jout] output line.</p></li>
 <li><p>Finally, move the boundary conditions (right+bottom edges) before the <code>while</code> loop. Why can we do it now?</p></li>
 </ol>
-<p>Now let’s compare the performance of <code>parallel2.chpl</code> to the benchmark serial solution <code>baseSolver.chpl</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|parallel1|baseSolver|'</span> shared.sh</span>
+<p>Now let’s compare the performance of <code>taskParallelSolver2.chpl</code> to the benchmark serial solution <code>baseSolver.chpl</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|taskParallelSolver|baseSolver|'</span> shared.sh</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Working</span> with a matrix 650x650 to 10000 iterations or dT below 0.002</span>
@@ -691,8 +691,8 @@ if taskid == 0 then {       // compute delta right after lock1.waitFor()
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> largest temperature difference was 0.00199985</span>
 <span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 9.40637 seconds</span>
 <span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">--fast</span> parallel2.chpl <span class="at">-o</span> parallel2</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|baseSolver|parallel2|'</span> shared.sh</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">--fast</span> taskParallelSolver2.chpl</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|baseSolver|taskParallelSolver2|'</span> shared.sh</span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
 <span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="ex">Working</span> with a matrix 650x650 to 10000 iterations or dT below 0.002</span>
@@ -709,16 +709,16 @@ if taskid == 0 then {       // compute delta right after lock1.waitFor()
 <span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 4.74536 seconds</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We get a speedup of 2X on two cores, as we should.</p>
 <p>Finally, here is a parallel scaling test on Cedar inside a 32-core interactive job:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./parallel2 ... <span class="at">--rowtasks</span><span class="op">=</span>1 <span class="at">--coltasks</span><span class="op">=</span>1</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./taskParallelSolver2 ... <span class="at">--rowtasks</span><span class="op">=</span>1 <span class="at">--coltasks</span><span class="op">=</span>1</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 32.2201 seconds</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./parallel2 ... <span class="at">--rowtasks</span><span class="op">=</span>2 <span class="at">--coltasks</span><span class="op">=</span>2</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./taskParallelSolver2 ... <span class="at">--rowtasks</span><span class="op">=</span>2 <span class="at">--coltasks</span><span class="op">=</span>2</span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 10.197 seconds</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./parallel2 ... <span class="at">--rowtasks</span><span class="op">=</span>4 <span class="at">--coltasks</span><span class="op">=</span>4</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./taskParallelSolver2 ... <span class="at">--rowtasks</span><span class="op">=</span>4 <span class="at">--coltasks</span><span class="op">=</span>4</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 3.79577 seconds</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./parallel2 ... <span class="at">--rowtasks</span><span class="op">=</span>4 <span class="at">--coltasks</span><span class="op">=</span>8</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./taskParallelSolver2 ... <span class="at">--rowtasks</span><span class="op">=</span>4 <span class="at">--coltasks</span><span class="op">=</span>8</span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> simulation took 2.4874 seconds</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
