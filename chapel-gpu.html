@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.36">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,14 +74,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-f418161beb48e0141c760e455f12af2c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-baf333abd407eb98d8b56c64a19f8930.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-a1f619dcb1cd1f6438b99c1b1be2ae3d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-baf333abd407eb98d8b56c64a19f8930.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f7919f14b89ae9a431cba0b331f0b52b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-36dd7d8b62585d533cf42ca23337bbf0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-f7919f14b89ae9a431cba0b331f0b52b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -329,9 +329,9 @@ window.Quarto = {
   <li><a href="#timing-on-the-gpu" id="toc-timing-on-the-gpu" class="nav-link" data-scroll-target="#timing-on-the-gpu">Timing on the GPU</a></li>
   <li><a href="#prime-factorization-of-each-element-of-a-large-array" id="toc-prime-factorization-of-each-element-of-a-large-array" class="nav-link" data-scroll-target="#prime-factorization-of-each-element-of-a-large-array">Prime factorization of each element of a large array</a></li>
   <li><a href="#finer-control" id="toc-finer-control" class="nav-link" data-scroll-target="#finer-control">Finer control</a></li>
-  <li><a href="#multiple-locales-and-multiple-gpus" id="toc-multiple-locales-and-multiple-gpus" class="nav-link" data-scroll-target="#multiple-locales-and-multiple-gpus">Multiple locales and multiple GPUs</a>
+  <li><a href="#multiple-locales-gpus" id="toc-multiple-locales-gpus" class="nav-link" data-scroll-target="#multiple-locales-gpus">Multiple locales / GPUs</a>
   <ul class="collapse">
-  <li><a href="#running-multi-gpu-code-on-fir" id="toc-running-multi-gpu-code-on-fir" class="nav-link" data-scroll-target="#running-multi-gpu-code-on-fir">Running multi-GPU code on Fir</a></li>
+  <li><a href="#running-multi-gpu-code-on-a-production-cluster" id="toc-running-multi-gpu-code-on-a-production-cluster" class="nav-link" data-scroll-target="#running-multi-gpu-code-on-a-production-cluster">Running multi-GPU code on a production cluster</a></li>
   <li><a href="#distributed-a_on_host-array" id="toc-distributed-a_on_host-array" class="nav-link" data-scroll-target="#distributed-a_on_host-array">Distributed <code>A_on_host</code> array</a></li>
   </ul></li>
   <li><a href="#julia-set-problem" id="toc-julia-set-problem" class="nav-link" data-scroll-target="#julia-set-problem">Julia set problem</a>
@@ -729,22 +729,22 @@ A = 49501 49604 49709 49816 49925 50036 50149 50264 50381 50500</code></pre>
 <h2 class="anchored" data-anchor-id="prime-factorization-of-each-element-of-a-large-array">Prime factorization of each element of a large array</h2>
 <p>Now let’s compute a more interesting problem where we do some significant processing of each element, but independently of other elements – this will port nicely to a GPU.</p>
 <p><em>Prime factorization</em> of an integer number is finding all its prime factors. For example, the prime factors of 60 are 2, 2, 3, and 5. Let’s write a function that takes an integer number and returns the <em>sum</em> of all its prime factors. For example, for 60 it will return 2+2+3+5 = 12, for 91 it will return 7+13 = 20, for 101 it will return 101, and so on.</p>
-<pre class="chpl"><code>proc primeFactorizationSum(n: int) {
-  var num = n, total = 0, count = 0;
+<pre class="chpl"><code>proc primeFactorizationSum(n: int): int {
+  var num = n, total = 0;
   while num % 2 == 0 {
+    total += 2;
     num /= 2;
-    count += 1;
   }
-  for j in 1..count do total += 2;
-  for i in 3..(sqrt(n:real)):int by 2 {
-    count = 0;
-    while num % i == 0 {
-      num /= i;
-      count += 1;
+  var divisor = 3;
+  while divisor * divisor &lt;= num {
+    while num % divisor == 0 {
+      total += divisor;
+      num /= divisor;
     }
-    for j in 1..count do total += i;
+    divisor += 2;
   }
-  if num &gt; 2 then total += num;
+  if num &gt; 2 then
+    total += num;
   return total;
 }</code></pre>
 <p>We can test it quickly:</p>
@@ -863,8 +863,8 @@ watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 <pre class="chpl"><code>@gpu.itersPerThread(4) foreach i in 1..128 { ... }</code></pre>
 <p>This setting is probably specific to your computational problem. For these and other per-kernel attributes, please see <a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html">this page</a>.</p>
 </section>
-<section id="multiple-locales-and-multiple-gpus" class="level2">
-<h2 class="anchored" data-anchor-id="multiple-locales-and-multiple-gpus">Multiple locales and multiple GPUs</h2>
+<section id="multiple-locales-gpus" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-locales-gpus">Multiple locales / GPUs</h2>
 <p>If we have access to multiple locales and then multiple GPUs on each of those locales, we would utilize all this processing power through two nested loops, first cycling through all locales and then through all available GPUs on each locale:</p>
 <pre class="chpl"><code>coforall loc in Locales do
   on loc {
@@ -889,18 +889,11 @@ proc primeFactorizationSum(n: int) {
 config const n = 1000;
 var A_on_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
 
-// let's assume that numLocales = 3
-
 coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
-  /* loc=LOCALE0, locChunk=2..334 */
-  /* loc=LOCALE1, locChunk=335..667 */
-  /* loc=LOCALE2, locChunk=668..1000 */
   on loc {
     writeln("loc = ", loc, "   chunk = ", locChunk);
     const numGpus = here.gpus.size;
     coforall (gpu, gpuChunk) in zip(here.gpus, chunks(locChunk, numGpus)) {
-      /* on LOCALE0 will see gpu=LOCALE0-GPU0, gpuChunk=2..168 */
-      /*                     gpu=LOCALE0-GPU1, gpuChunk=169..334 */
       on gpu {
         writeln("loc = ", loc, "   gpu = ", gpu, "   chunk = ", gpuChunk);
         var A_on_device: [gpuChunk] int;
@@ -913,24 +906,37 @@ coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
 }
 
 var lastFewDigits = if n &gt; 5 then n-4..n else 2..n;   // last 5 or fewer digits
-writeln("last few A elements: ", A_on_host[lastFewDigits]);</code></pre>
-<section id="running-multi-gpu-code-on-fir" class="level3">
-<h3 class="anchored" data-anchor-id="running-multi-gpu-code-on-fir">Running multi-GPU code on Fir</h3>
-<p>When we run this code on 2 Fir nodes with 2 GPUs per node:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /home/razoumov/startMultiLocaleGPU.sh</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>0:15:0 <span class="at">--nodes</span><span class="op">=</span>2 <span class="at">--cpus-per-task</span><span class="op">=</span>1 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>v100l:2 <span class="dt">\</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>       <span class="at">--account</span><span class="op">=</span>cc-debug</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- `--reservation=asasfu_756` -->
-<p>we get the following output:</p>
-<pre class="output"><code>loc = LOCALE0   chunk = 2..501
-loc = LOCALE0   gpu = LOCALE0-GPU0   chunk = 2..251
-loc = LOCALE0   gpu = LOCALE0-GPU1   chunk = 252..501
-loc = LOCALE1   chunk = 502..1000
-loc = LOCALE1   gpu = LOCALE1-GPU0   chunk = 502..751
-loc = LOCALE1   gpu = LOCALE1-GPU1   chunk = 752..1000
-last few A elements: 90 997 501 46 21</code></pre>
+writeln("last few A elements: ", A_on_host[lastFewDigits]);
+
+// let's assume that numLocales = 3, and use default n = 1000
+// loc=LOCALE0, locChunk=2..334
+// loc=LOCALE1, locChunk=335..667
+// loc=LOCALE2, locChunk=668..1000
+// on LOCALE0 will see gpu=LOCALE0-GPU0, gpuChunk=2..168
+//                     gpu=LOCALE0-GPU1, gpuChunk=169..334</code></pre>
+<section id="running-multi-gpu-code-on-a-production-cluster" class="level3">
+<h3 class="anchored" data-anchor-id="running-multi-gpu-code-on-a-production-cluster">Running multi-GPU code on a production cluster</h3>
+<p>On Fir, let’s use three nodes, with two GPUs per node:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=3</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=h100:2</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=def-some-user</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 3 <span class="at">--n</span><span class="op">=</span>10_000_000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load cuda/12.2 chapel-ucx-cuda/2.4.0</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> submit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output"><code>loc = LOCALE0   chunk = 2..3333334
+loc = LOCALE0   gpu = LOCALE0-GPU0   chunk = 2..1666668
+loc = LOCALE0   gpu = LOCALE0-GPU1   chunk = 1666669..3333334
+loc = LOCALE1   chunk = 3333335..6666667
+loc = LOCALE1   gpu = LOCALE1-GPU0   chunk = 3333335..5000001
+loc = LOCALE1   gpu = LOCALE1-GPU1   chunk = 5000002..6666667
+loc = LOCALE2   chunk = 6666668..10000000
+loc = LOCALE2   gpu = LOCALE2-GPU0   chunk = 6666668..8333334
+loc = LOCALE2   gpu = LOCALE2-GPU1   chunk = 8333335..10000000
+last few A elements: 4561 1428578 5000001 4894 49</code></pre>
 </section>
 <section id="distributed-a_on_host-array" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-a_on_host-array">Distributed <code>A_on_host</code> array</h3>
@@ -1022,60 +1028,60 @@ for i in 1..n {
 }
 watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb40"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span>  <span class="at">--fast</span> juliaSetSerial.chpl</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span>  <span class="at">--fast</span> juliaSetSerial.chpl</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>It took me 2.34679 seconds to compute a <span class="math inline">\(2000^2\)</span> fractal.</p>
 <section id="porting-the-julia-set-problem-to-a-gpu" class="level3">
 <h3 class="anchored" data-anchor-id="porting-the-julia-set-problem-to-a-gpu">Porting the Julia set problem to a GPU</h3>
 <p>Let’s port this problem to a GPU! Copy <code>juliaSetSerial.chpl</code> to <code>juliaSetGPU.chpl</code> and make the following changes.</p>
 <p><strong>Step 1</strong> (optional, will work only on a physical GPU):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>&gt; if here.gpus.size == 0 {</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>&gt;   writeln("need a GPU ...");</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>&gt;   exit(1);</span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>&gt; if here.gpus.size == 0 {</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>&gt;   writeln("need a GPU ...");</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>&gt;   exit(1);</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>As of this writing, Chapel 2.2 does not support complex arithmetic on a GPU. Independently of the precision, you will get errors at compilation (if marked with <code>@gpu.assertEligible</code>):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>error: Loop is marked with @gpu.assertEligible but is not eligible for execution on a GPU</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex128), which is not marked as GPU eligible</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex64), which is not marked as GPU eligible</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>error: Loop is marked with @gpu.assertEligible but is not eligible for execution on a GPU</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex128), which is not marked as GPU eligible</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex64), which is not marked as GPU eligible</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If not marked with <code>@gpu.assertEligible</code>, the code compiles with complex arithmetic on a GPU, but it seems to take forever to finish.</p>
 <p>Fortunately, we can implement complex arithmetic manually:</p>
 <p><strong>Step 2</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>&lt; proc pixel(z0) {</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>&gt; proc pixel(x0,y0) {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 3</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>&lt;   var z = z0*1.2;   // zoom out</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>&lt; proc pixel(z0) {</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>&gt;   var x = x0*1.2;   // zoom out</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>&gt;   var y = y0*1.2;   // zoom out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 4</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>&lt;     z = z*z + c;</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>&gt; proc pixel(x0,y0) {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 3</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>&lt;   var z = z0*1.2;   // zoom out</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>&gt;     var xnew = x**2 - y**2 + c.re;</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>&gt;     var ynew = 2*x*y + c.im;</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>&gt;     x = xnew;</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>&gt;     y = ynew;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 5</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>&lt;     if z.re**2+z.im**2 &gt;= 16 then // abs(z)&gt;=4 does not work with LLVM</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>&gt;   var x = x0*1.2;   // zoom out</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>&gt;   var y = y0*1.2;   // zoom out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 4</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>&lt;     z = z*z + c;</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>&gt;     if x**2+y**2 &gt;= 16 then</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 6</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>&lt; var stability: [1..n,1..n] int;</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>&gt;     var xnew = x**2 - y**2 + c.re;</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>&gt;     var ynew = 2*x*y + c.im;</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>&gt;     x = xnew;</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>&gt;     y = ynew;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 5</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>&lt;     if z.re**2+z.im**2 &gt;= 16 then // abs(z)&gt;=4 does not work with LLVM</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>&gt; on here.gpus[0] {</span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>&gt;   var stability: [1..n,1..n] int;</span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 7</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>&lt; for i in 1..n {</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>&gt;     if x**2+y**2 &gt;= 16 then</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 6</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>&lt; var stability: [1..n,1..n] int;</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>&gt;   @gpu.assertEligible foreach i in 1..n {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>&gt; on here.gpus[0] {</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>&gt;   var stability: [1..n,1..n] int;</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 7</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>&lt; for i in 1..n {</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>&gt;   @gpu.assertEligible foreach i in 1..n {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Step 8</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>&lt;     var point = 2*(j-0.5)/n - 1 + y*1i;</span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>&lt;     stability[i,j] = pixel(point);</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>&gt;       var x = 2*(j-0.5)/n - 1;</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>&gt;       stability[i,j] = pixel(x,y);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>&lt;     var point = 2*(j-0.5)/n - 1 + y*1i;</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>&lt;     stability[i,j] = pixel(point);</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>&gt;       var x = 2*(j-0.5)/n - 1;</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>&gt;       stability[i,j] = pixel(x,y);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here is the full GPU version of the code <code>juliaSetGPU.chpl</code>:</p>
 <pre class="chpl"><code>use Time;
 
