@@ -1,0 +1,1059 @@
+---
+title: "Numba JIT compilation to CUDA kernels"
+aliases:
+  - /numba-gpu
+---
+
+**April 16<sup>th</sup>, 10:00am–12:00pm Pacific Time**
+
+**Abstract**: In our second GPU Python course this month, participants will learn how to use the Numba
+compiler to harness the full power of NVIDIA GPUs without leaving the Python ecosystem. We will cover
+high-level array acceleration, writing CUDA kernels, managing data transfer and on-device memory, and basic
+performance tuning techniques. As a capstone exercise, we will implement prime factorization on a GPU, with a
+focus on monitoring and optimizing GPU utilization on a cluster.
+
+
+
+
+
+
+## Introduction to Numba and GPU Architecture
+
+<!-- The Numba JIT Compiler: How Numba translates Python to LLVM IR and machine code. -->
+<!-- CPU vs. GPU Execution: SIMT (Single Instruction, Multiple Threads) architecture. -->
+<!-- Environment Setup: Verifying CUDA drivers and toolkits within a Python environment. -->
+
+In the CuPy course last week, Marie-Hélène Burle gave an introduction to the GPU architecture, the available
+GPU programming frameworks, and using GPUs on our clusters. For more details, see these sections:
+
+- [Using GPUs on the Alliance clusters](https://mint.westdri.ca/python/gpu_clusters){target="_blank"}
+- [A brief introduction to CUDA](https://mint.westdri.ca/python/gpu_cuda){target="_blank"}
+- [GPU programming concepts](https://mint.westdri.ca/python/gpu_concepts){target="_blank"}
+
+Briefly:
+
+- A *CUDA kernel* is a function invoked by the CPU (host) and executed massively in parallel on the GPU
+  (device). Each thread applies this function to its own data element, with thousands of threads running in
+  parallel at the same time.
+- For thread hierarchy, CUDA cores are organized into *streaming multiprocessors* (SMs), which are responsible
+  for executing thread blocks. One SM can run a multiple of warps, typically with 32 threads per warp, with
+  the exact numbers depending on the card's architecture.
+- Two hardware examples:
+    1. Current-gen NVIDIA H100 SXM5 card on Fir has 132 SMs, each supporting 2,048 threads, giving a
+       theoretical max of 270,336 concurrent threads.
+	1. Older NVIDIA A100 SXM4 card has 108 SMs, each supporting 2,048 threads, giving a theoretical maximum of
+       221,184 concurrent threads.
+- However, the GPU doesn't execute all threads at once, as execution is interleaved with data movement: many
+  threads are waiting on memory. As a programmer, you want to keep the SMs as busy as possible (high thread
+  occupancy).
+
+
+
+<!-- - to approach peak performance, your kernel must be well optimized for high occupancy -->
+
+
+
+
+
+
+
+
+
+## Installation
+
+On a laptop:
+
+```sh
+uv venv ~/env-numba --python 3.12   # create a new virtual env
+source ~/env-numba/bin/activate
+uv pip install numba
+...
+deactivate
+```
+
+On Fir:
+
+```sh
+module load python/3.12.4
+python -m venv ~/env-numba
+source ~/env-numba/bin/activate
+python -m pip install --upgrade --no-index pip
+python -m pip install --no-index numba
+...
+deactivate
+```
+
+
+
+
+
+
+
+## Running on ...
+
+### ... a production cluster
+
+To list all available GPU types, including MIG instances and full GPUs, you can use the following command
+introduced in Marie's course last week:
+
+```sh
+sinfo -o "%G" | grep gpu | sed 's/gpu://g' | sed 's/),/\n/g' | cut -d: -f1 | sort | uniq
+```
+
+For example, on Fir this will return:
+
+```output
+h100
+nvidia_h100_80gb_hbm3_1g.10gb
+nvidia_h100_80gb_hbm3_2g.20gb
+nvidia_h100_80gb_hbm3_3g.40gb
+```
+
+Then you would submit a job with:
+
+```sh
+source ~/env-numba/bin/activate
+salloc --time=... --mem=... --gpus-per-node=<gpuType>:1 --account=...
+```
+
+<!-- - ReservationName=gpu_mig_test StartTime=2026-03-27T15:44:20 EndTime=2027-03-27T15:44:20 Duration=365-00:00:00 -->
+<!-- - node fc10403: 4 full H100s -->
+<!-- - Adam will be back from Japan on Apr-10 -->
+
+<!-- ```sh -->
+<!-- fir -->
+<!-- scontrol show reservation gpu_mig_test -->
+<!-- squeue --nodes=fc10403   # show currently running jobs on this node -->
+
+<!-- git clone git@github.com:razoumov/chapel.git -->
+<!-- cd chapel/primeFactorization -->
+
+<!-- module load cuda/12.2 chapel-ucx-cuda/2.4.0 -->
+<!-- >>> edit primesGPU.chpl -->
+<!-- make primesGPU -->
+<!-- >>> edit submit.sh -->
+<!-- sbatch submit.sh -->
+<!-- ``` -->
+
+```sh
+fir
+cd ~/numba
+module load cuda/12.6
+source ~/env-numba/bin/activate
+
+salloc --time=1:0:0 --mem=3600 --gpus-per-node=h100:1 --reservation=gpu_mig_test --account=def-razoumov-ac
+
+sbatch submit.sh
+```
+
+::: {.callout-note}
+Since each MIG comes with its own overhead, multi-MIG jobs are no longer allowed on our production
+clusters. If you need more GPU resources, schedule your job on a bigger MIG partition or an entire card.
+:::
+
+<!-- related doc https://docs.google.com/document/d/1X1OpOtaXo93pifkUv4tDX81MteGRsyQWVSvrJrSe4o0 -->
+
+
+
+
+
+### ... the training cluster
+
+```sh
+sinfo -o "%G" | grep gpu | sed 's/gpu://g' | sed 's/),/\n/g' | cut -d: -f1 | sort | uniq
+
+source /project/def-sponsor00/shared/env-numba/bin/activate
+salloc --time=2:0:0 --mem=3600 --gpus-per-node=2g.10gb:1
+
+python
+```
+```py
+from numba import cuda
+
+print(cuda.gpus)                # list of numerical IDs
+cuda.select_device(device_id)   # if several GPUs, select which GPU to use
+```
+
+
+
+
+
+
+
+
+### ... systems without an NVIDIA GPU
+
+Out of the box, Numba's core library provides only CUDA/Nvidia support. Support for AMD GPUs is currently more
+experimental than plug-and-play. There is no native support for Apple's Metal API for GPU acceleration.
+
+Having said that, you can run any Numba-compiled code through a CUDA simulator on CPUs, with zero changes to
+your code. To enable the built-in CUDA simulator:
+
+```sh
+source ~/env-numba/bin/activate
+export NUMBA_ENABLE_CUDASIM=1
+```
+```py
+from numba import cuda
+print(cuda.gpus)   # will return the list of GPUs
+```
+
+::: {.callout-caution}
+##### Warning
+The CUDA simulator runs your Numba-compiled code much slower than the same Numba code compiled for a CPU, and
+~4-5 orders of magnitude slower than on a physical GPU.
+:::
+
+You cannot use CPU multithreading in this mode, as the simulator was designed for testing and debugging, not
+for performance, so it runs on a single thread. With a bit of extra code, you can wrap the simulator into a
+multi-threaded function call, but this is only useful if you really want to speed up testing and don't have
+access to a physical GPU.
+
+
+
+
+
+
+
+
+
+
+## High-level array acceleration with `@vectorize` and `@guvectorize`
+
+<!-- Universal Functions (ufuncs): Creating element-wise array functions that run on the GPU. -->
+<!-- The target="cuda" Decorator: Converting standard NumPy-style logic into accelerated kernels. -->
+<!-- Broadcasting on the GPU: Handling mismatched array dimensions automatically. -->
+
+You might have come across numpy *ufuncs* (universal functions) that operate on `ndarrays` in an
+element-by-element fashion. Numba's `@vectorize` compiles Python functions taking scalar input arguments into
+NumPy ufuncs that run as fast as traditional ufuncs written in C.
+
+There are two ways to use `@vectorize`:
+
+1. For **eager** / decoration-time compilation, you pass one or more type signatures to the decorator.
+2. For **lazy** / call-time compilation, you do not specify type signatures in the function decorator,
+   resulting in a ufunc that dynamically compiles a new kernel when called with a previously unsupported input
+   type.
+
+Here is the decoration-time compilation:
+
+```py
+from numba import vectorize
+import numpy as np
+
+a = np.array([1, 2, 3, 4])
+b = np.array([10, 20, 30, 40])
+np.add(a, b)
+
+@vectorize(['int64(int64, int64)'], target='cuda')  # output(input,input) as a list of strings
+def add(x, y):
+    return x + y
+
+print(add(a, b))
+```
+
+You can even specify multiple types (overloading):
+
+```py
+@vectorize(['int32(int32, int32)', 'int64(int64, int64)',
+            'float32(float32, float32)', 'float64(float64, float64)'])
+def add(x, y):
+    return x + y
+
+a = np.arange(6)               # integer array
+add(a,a)
+
+a = np.linspace(0, 1, 6)   # floar array
+add(a,a)
+
+a = np.linspace(0, 1+1j, 6)    # complex array
+add(a,a)   # error
+```
+```output
+TypeError: ufunc 'add' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
+```
+
+`@vectorize` is useful for creating fast, compiled functions that operate on numpy arrays element by
+element. This will give you additional `ndarray` features such as reduction, accumulation or broadcasting. For
+more general functions, you will want to use the `@cuda.jit` decorator.
+
+::: {.callout-note}
+You can use the following compile targets in `@vectorize`:
+- `cpu` for a single CPU core
+- `parallel` for multi-core CPUs (via multi-threading)
+- `cuda` for Nvidia GPUs
+:::
+
+::: {.callout-note}
+You can also pass `nopython=True` to the decorator to ensure the generated code does not fallback to slow
+object mode.
+:::
+
+While `@vectorize` is for element-by-element math, a more general `@guvectorize` decorator allows you to build
+functions that operate on entire array slices. A good example is a moving average / blur calculation -- you
+can't do it with a standard ufunc because -- to calculate one point -- you need to know its neighbours.
+
+```py
+from numba import guvectorize
+import numpy as np
+
+# () represents a scalar, (n) represents an array of size n
+@guvectorize(['f8[:], i8, f8[:]'], '(n),()->(n)')
+def movingAverage(x, width, res):
+    n = x.shape[0]
+    for i in range(n):
+        start = max(0, i - width // 2)
+        end = min(n, i + width // 2 + 1)
+        total, count = 0.0, 0
+        for j in range(start, end):
+            total += x[j]
+            count += 1
+        res[i] = total / count
+
+data = np.array([10, 20, 30, 40, 50, 60], dtype=np.float64)
+result = movingAverage(data, 3)
+print(result)   # [15. 20. 30. 40. 50. 55.]
+```
+
+
+
+
+
+
+
+
+
+## Writing custom kernels with @cuda.jit
+
+<!-- Kernel Syntax: Understanding the "void" return type and index calculation. -->
+<!-- Thread Hierarchy: Mastering the Grid, Block, and Thread relationship. -->
+<!-- Indexing Logic: Using cuda.grid(1) and cuda.grid(2) for 1D and 2D data processing. -->
+
+Numba supports CUDA GPU programming by directly compiling a *restricted subset* of Python code into CUDA
+kernels. It does *not yet* implement the full CUDA API, but CUDA support in Numba is being actively developed.
+
+A *kernel function* is a GPU function that is called from a CPU. It has two fundamental characteristics:
+
+1. kernels cannot return a value; all results must be written to an array passed to the function, and
+1. kernels must declare their thread hierarchy: the number of blocks and the number of threads per block.
+
+Here is what a kernel declaration looks like:
+
+```py
+from numba import cuda
+
+@cuda.jit
+def kernelFunction(data):
+    ...
+```
+
+::: {.callout-note}
+The input/output array `data` can be defined both on the CPU and the GPU. We will see the examples of both.
+:::
+
+Let's assume we are processing a large number of `data` elements on a GPU. We'll be doing this on a massively
+parallel scale, with each thread on a GPU applying the same calculation to its own array element. There are
+other ways to divide the workload, e.g. using a fixed number of tasks (each processing multiple `data`
+elements) and then having each task run on a separate thread.
+
+::: {.callout-important}
+## Key point
+In all examples in this workshop, we use a separate thread to process each `data` element individually.
+:::
+
+A common techniques in Numba is to define your block size and then calculate the number of blocks needed to
+cover your entire data array when launching this kernel:
+
+```py
+data = ...   # whether defined on a CPU or GPU
+
+threadsPerBlock = 256   # block size; multiple of 32 (32 threads per warp), usually 128 or 256,
+                        # higher number for maximum occupancy for simple kernels;
+                        # 1024 is usually the hardware limit;
+                        # memory is shared among all threads in the block
+
+blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock
+            # number of thread blocks in the grid; make sure there are enough
+            # threads on the GPU to cover every single element in your data
+# this one-liner is equivalent to the following two lines:
+# blocksPerGrid = data.size // threadsPerBlock
+# if data.size > blocksPerGrid*threadsPerBlock: blocksPerGrid += 1
+
+kernelFunction[blocksPerGrid, threadsPerBlock](data)   # start the kernel
+print(data)
+```
+
+::: {.callout-note}
+A kernel launch is a non-blocking (asynchronous) operation: the function returns control to the caller before
+the kernel finishes executing or the data is synchronized back. If you want the CPU to wait for the GPU to
+finish, e.g. to time your GPU code, insert `cuda.synchronize()` after the kernel launch. Transferring data
+back to the CPU with `result = deviceArray.copy_to_host()` also forces synchronization: the CPU waits for the
+GPU to complete all pending work before the data can be safely copied into system memory.
+:::
+
+Besides CUDA kernels, you can also define so-called *device functions*. These are functions that execute on
+the GPU and can only be called from other GPU code, such as a kernel or another device function. Unlike CUDA
+kernels, device functions can accept scalar arguments. We will see an example of a device function in the
+prime factorization section.
+
+
+
+
+
+
+
+## Thread positioning
+
+The kernel function is executed by every thread once. From inside the kernel function, you likely want to
+calculate the thread ID to know which `data` element(s) this thread is responsible for.
+
+```py
+@cuda.jit
+def increment(data):        # kernel function processing a 1D array
+    tx = cuda.threadIdx.x   # threadID in the current thread block, between 0..cuda.blockDim.x-1
+    bx = cuda.blockIdx.x    # blockID in a 1D grid
+    bw = cuda.blockDim.x    # number of threads per block (block width)
+    pos = bx * bw + tx      # flattened index inside the array
+    if pos < data.size:     # check array boundaries, in case there are more threads than data.size
+        data[pos] += 1      # do the computation
+```
+
+The code below launches 1024 threads to process 1000 elements of the `data` array. Because the number of
+threads exceeds the number of elements, an `if` condition inside the kernel is necessary to prevent
+out-of-bounds memory access.
+
+```py
+from numba import cuda
+import numpy as np
+
+@cuda.jit
+def increment(data):        # kernel function processing a 1D array
+    ...
+
+data = np.ones(1_000)
+
+threadsPerBlock = 256
+blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock
+
+test[blocksPerGrid, threadsPerBlock](data)
+```
+
+::: {.callout-caution collapse="true"}
+##### Exercise: 1D indices
+Consider the following code with the same number of `data` elements and the same thread hierarchy -- what will
+its output be? Try to answer this question without running the code.
+```py
+from numba import cuda
+import numpy as np
+
+@cuda.jit
+def test(data):
+    tx = cuda.threadIdx.x   # threadID in the current thread block, between 0..255
+    print(tx, cuda.blockIdx.x, cuda.blockDim.x, cuda.blockDim.y, cuda.blockDim.z)
+
+data = np.ones(1_000)
+
+threadsPerBlock = 256
+blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock
+
+test[blocksPerGrid, threadsPerBlock](data)
+```
+**Hint**: how many threads will run?
+:::
+
+<!-- Answer: we are scheduling 1024 threads, each printing a line, so there will be 1024 lines of output in a -->
+<!-- semi-random order. The lines will contain the following 5 integers: "0..255 0..3 256 1 1". -->
+
+::: {.callout-caution collapse="true"}
+##### Exercise: no data
+Try running the last example removing any reference to `data`, i.e. the kernel-launching line will be:
+```py
+test[blocksPerGrid, threadsPerBlock]()
+```
+:::
+
+<!-- Answer: the function will compile, but it won't launch the kernel, as launching a kernel requires a data -->
+<!-- argument. No input array => no kernel launch. -->
+
+You can simplify the last `increment(data)` to:
+
+```py
+@cuda.jit
+def increment(data):   # 1D example
+    pos = cuda.grid(1)      # absolute position of the current thread in the entire grid of threads
+    if pos < data.size:
+        data[pos] += 1      # do the computation
+```
+
+Let's check out a working 2D example:
+
+```py
+from numba import cuda
+import numpy as np
+import math
+
+# CUDA kernel
+@cuda.jit
+def square(data):
+    i, j = cuda.grid(2)   # x, y position of this thread in the entire 2D grid of threads
+    # print(i,j)
+    rows, cols = data.shape
+    if i < rows and j < cols:
+        data[i,j] += 1
+
+data = np.ones((30,30))
+
+# arrange a 2D grid of threads
+threadsPerBlock = (16,16)
+blocksPerGrid = (math.ceil(data.shape[0] / threadsPerBlock[0]),
+                 math.ceil(data.shape[1] / threadsPerBlock[1]))
+
+square[blocksPerGrid, threadsPerBlock](data)
+print(data)
+```
+
+In this example, CUDA will launch `blocksPerGrid[0] * blocksPerGrid[1] * threadsPerBlock[0] *
+threadsPerBlock[1] = 2*2*16*16 = 1024` threads which is more than the $30^2=900$ array elements, i.e. some of
+the threads won't be doing any real computation. This is because 30 is not divisible by 16.
+
+Similarly to the 1D example, if we remove the array bounds check `if i < rows and j < cols` inside the CUDA
+kernel, some of the threads with local (inside their block) indices `cuda.threadIdx.x=2` or
+`cuda.threadIdx.y=2` that do not have any computation to do would try to write into memory that doesn't exist,
+leading to either an "out of bounds" runtime error or memory corruption.
+
+
+
+
+
+
+
+## Memory management and data transfer
+
+<!-- Host-to-Device Transfers: Moving NumPy arrays to GPU memory using cuda.to_device. -->
+<!-- Managing Output: Pre-allocating device arrays with cuda.device_array. -->
+<!-- Reducing Latency: Strategies to minimize the overhead of moving data across the PCIe bus. -->
+
+In our previous examples, we would pass a data array to a CUDA kernel, which at the end of the computation
+would return a modified array back to the host. In other ways, when launching a kernel, data was automatically
+passed between the host and the device.
+
+In some cases you might want to have more precise control over data movement. For example, you might be
+launching multiple kernels and want to avoid unnecessary data transfer. In such cases you can allocate an
+array directly on the GPU with `cuda.device_array()`:
+
+```py
+device_array = cuda.device_array(1_000_000, dtype=np.int32)    # allocate memory on the GPU
+kernelFunction[blocksPerGrid, threadsPerBlock](device_array)   # launch the kernel without copying data
+```
+
+::: {.callout-note}
+We still must pass the array to the kernel function, even though the array now resides on the GPU.
+:::
+
+Alternatively, you can declare an array on a CPU and then move it manually to the GPU with `cuda.to_device`:
+
+```py
+a = np.zeros(1_000_000, dtype=np.int32)
+device_array = cuda.to_device(a)
+kernelFunction[blocksPerGrid, threadsPerBlock](device_array)   # launch the kernel without copying data
+```
+
+After the computation, the modified array is still on the GPU, so you can copy it back to the host:
+
+```py
+A = device_array.copy_to_host()   # copy the result back to the host
+print(A)
+```
+
+<!-- "Shared memory and thread synchronization" from https://nyu-cds.github.io/python-numba/05-cuda/ -->
+
+
+
+
+
+
+## Benchmarking
+
+Unlike in CuPy with its `cupyx.profiler.benchmark`, Numba does not have a single "one-stop" convenience
+function that handles warm-ups and multiple kernel launches (to get an accurate estimate)
+automatically. Having said that, you have several options.
+
+### Timing on the GPU with CUDA events
+
+The most precise way to time a Numba kernel is using CUDA Events. This method measures time directly on the
+GPU hardware, avoiding the CPU-GPU communication + Python overheads.
+
+```py
+from numba import cuda
+import numpy as np
+import math
+
+@cuda.jit
+def logs(data):
+    i, j = cuda.grid(2)   # x, y position of this thread in the entire 2D grid of threads
+    rows, cols = data.shape
+    if i < rows and j < cols:
+        data[i,j] = math.log10(i+j+1)
+
+# warm-up
+n = 3
+data = np.ones((n,n))
+threadsPerBlock = (3,3)
+blocksPerGrid = (1,1)
+logs[blocksPerGrid, threadsPerBlock](data)
+
+# benchmark the kernel
+n = 10_000
+data = np.ones((n,n))
+threadsPerBlock = (16,16)
+blocksPerGrid = (math.ceil(data.shape[0] / threadsPerBlock[0]), math.ceil(data.shape[1] / threadsPerBlock[1]))
+startEvent, endEvent = cuda.event(), cuda.event()   # create events
+startEvent.record()
+logs[blocksPerGrid, threadsPerBlock](data)
+endEvent.record()
+endEvent.wait()   # make sure the GPU has finished the work
+print("Time in ms:", cuda.event_elapsed_time(startEvent, endEvent))   # 80.928ms 80.723ms 80.208ms
+```
+
+### Timing on the CPU
+
+To time from the CPU side, you must use `cuda.synchronize()` to ensure the GPU has actually finished its work
+before you stop the clock. In the following example we launch the kernel several times and compute the average
+time per run:
+
+```py
+from numba import cuda
+import numpy as np
+import math
+from time import time
+
+# warm-up
+data = np.ones((3,3))
+logs[(1,1),(3,3)](data)
+
+n = 10_000
+data = np.ones((n,n))
+threadsPerBlock = (16,16)
+blocksPerGrid = (math.ceil(data.shape[0] / threadsPerBlock[0]), math.ceil(data.shape[1] / threadsPerBlock[1]))
+numIterations = 10
+
+cuda.synchronize()
+start = time()
+for _ in range(numIterations):
+    logs[blocksPerGrid, threadsPerBlock](data)
+
+cuda.synchronize()
+end = time()
+print("Average time per call in seconds:", round((end-start)/numIterations,6))   # 0.079077s
+```
+
+
+
+
+
+## Prime factorization
+
+Now let's compute a more interesting problem where we do some significant processing of each element of a
+large array, but independently of other elements -- this will port nicely to a GPU. We teach this problem in
+several programming languages.
+
+*Prime factorization* of an integer number is finding all its prime factors. For example, the prime factors of
+60 are 2, 2, 3, and 5. Let's write a function that takes an integer number and returns the *sum* of all its
+prime factors. For example, for 60 it will return 2+2+3+5 = 12, for 91 it will return 7+13 = 20, for 101 it
+will return 101, and so on.
+
+```py
+def primeFactorizationSum(n):
+    total = 0
+    while n % 2 == 0: # handle the number of 2s that divide n
+        total += 2
+        n //= 2
+    divisor = 3       # n must be odd at this point, so we can skip one element
+    while divisor * divisor <= n:
+        while n % divisor == 0:
+            total += divisor
+            n //= divisor
+        divisor += 2
+    if n > 2:         # n is a prime number
+        total += n
+    return total
+```
+
+We can test it quickly:
+
+```py
+primeFactorizationSum(60)            # 12
+primeFactorizationSum(91)            # 20
+primeFactorizationSum(101)           # 101
+primeFactorizationSum(100_000_000)   # 56
+```
+
+Since 1 has no prime factors, we will start computing from 2, and then will apply this function to all
+integers in the range `2..n`, where `n` is a larger number. We will do all computations separately from
+scratch for each number, i.e. we will not cache our results (caching can significantly speed up our
+calculations but the point here is to focus on brute-force computing).
+
+Let's first do this with native Python loops on a CPU:
+
+```py
+import numpy as np
+from time import time
+
+def primeFactorizationSum(n):
+    ...
+
+n = 1_000_000
+A = np.zeros(n-1, dtype=np.int32)   # to fill 2..n
+start = time()
+for i in range(n-1):
+    A[i] = primeFactorizationSum(i+2)
+
+end = time()
+print("Primes sum array:", A)
+print("Time in seconds:", round(end-start,3))
+```
+
+On Fir I am getting: 5.063s 5.054 5.038.
+
+The numerical output is:
+
+```output
+Primes sum array: [  2   3   4 ... 287  77  42]
+```
+
+Next let's run this in Numba on a CPU:
+
+```py
+import numpy as np
+from numba import njit
+from time import time
+
+@njit
+def primeFactorizationSum(n):
+    ...
+
+@njit
+def primes(n):
+    A = np.zeros(n-1, dtype=np.int32)   # to fill 2..n
+    for i in range(n-1):
+        A[i] = primeFactorizationSum(i+2)
+    return A
+
+primes(10)   # dry run to pre-compile
+n = 1_000_000
+
+start = time()
+result = primes(n)
+end = time()
+
+print("Primes sum array:", result)
+print("Time in seconds:", round(end-start,6))
+```
+
+On Fir the time went down to: 172.202ms 172.820 172.306
+
+Finally, let's run this on the GPU:
+
+```py
+from numba import cuda
+import numpy as np
+from time import time
+
+# device function
+@cuda.jit(device=True)
+def primeFactorizationSum(n):
+    ...
+
+@cuda.jit
+def primes(result):
+    # calculate the unique index for this thread
+    # pos = (block_index * block_dimension) + thread_index
+    i = cuda.grid(1)
+    # check boundary to avoid accessing memory outside the array
+    if i < result.size:
+        result[i] = primeFactorizationSum(i+2)
+
+n = 1_000_000
+device_array = cuda.device_array(n-1, dtype=np.int64)   # allocate memory on the GPU
+threadsPerBlock = 256   # thread hierarchy
+blocksPerGrid = (n-1 + (threadsPerBlock - 1)) // threadsPerBlock
+
+start = time()
+primes[blocksPerGrid, threadsPerBlock](device_array)   # launch the kernel
+cuda.synchronize()   # ensure GPU finishes before stopping clock
+end = time()
+
+A = device_array.copy_to_host()   # copy the result back to the host
+print(f"Primes sum array: {A}")
+print("Time in seconds:", round(end-start,6))
+```
+
+Running the big kernel without a warm-up, on Fir my runtimes are: 628.017ms 170.453ms 169.146ms 166.548ms --
+notice how the first number (probably) includes the compilation time, but the numbers are still large, as you
+need a cached code on the GPU to get the maximum GPU performance.
+
+One way to do this is to provide the kernel signature (types) to the decorator by changing `@cuda.jit` to
+`@cuda.jit('(int64[:],)')` -- we are passing an array of `int64`. With this, our runtimes drop to 844μs 835μs
+830μs.
+
+The second solution is to run a warm-up calculation. For example, I can run my entire calculation as a warm-up:
+
+```py
+primes[blocksPerGrid, threadsPerBlock](device_array)
+cuda.synchronize()
+```
+
+but probably a better strategy is to warm-up the GPU with a small calculation:
+
+
+```py
+dummyArray = cuda.device_array(1, dtype=np.int64)   # tiny "dummy" array
+primes[1, 1](dummyArray)   # launch with a single thread to trigger compilation
+cuda.synchronize()
+```
+
+Then our runtime becomes 754μs 752μs 752μs.
+
+::: {.callout-caution collapse="true"}
+##### Bigger calculation
+1. Run the same prime factorization problem on the GPU increasing the problem size to `n=10_000_000` and
+   `n=100_000_000`. Do you see a linear speedup, and why do you think that is?
+1. Try running `n=1_000_000_000` -- you can run out of memory both on the host and on the device. How would
+   you solve these two separate problems?
+:::
+
+
+
+
+
+
+
+
+
+
+
+
+## GPU utilization monitoring
+
+For your past jobs on production clusters, we encourage you to use our [Metrix
+portal](https://docs.alliancecan.ca/wiki/Metrix/en){target="_blank"} which is currently available for
+[Rorqual](https://metrix.rorqual.alliancecan.ca){target="_blank"},
+[Narval](https://portail.narval.calculquebec.ca){target="_blank"} and
+[Nibi](https://portal.nibi.sharcnet.ca){target="_blank"}. The support for Fir will hopefully come very soon.
+
+However, you can also monitor running jobs in real time via command line. The two tools useful for this are
+NVIDIA's `nvidia-smi` and `nvtop`.
+
+Here is how you would use `nvidia-smi`:
+
+1. connect to a currently running job with `srun --jobid=... --pty bash`
+1. run `watch -n 1 nvidia-smi` to execute `nvidia-smi` every second, refreshing the terminal output each time
+1. press Ctrl-C to go back to the prompt on the login node
+
+::: {.callout-caution collapse="true"}
+##### Exercise: quick access to `nvidia-smi`
+Write a bash function `job-nvidia-smi()` that lists all your currently running jobs, picks the latest (highest
+jobID) job from that list, connects to that job and automatically runs `watch -n 1 nvidia-smi`. You can also
+try running `nvidia-smi -l 2` for a scrolling output style. Try this command on a long-running GPU code. How's
+your GPU compute and memory utilization?
+:::
+
+::: {.callout-caution collapse="true"}
+##### Exercise: quick access to `nvtop`
+Next, write a bash function `job-nvtop()` that runs `nvtop` instead. This will show a graph of GPU's compute
+and memory utilization vs. time inside the terminal.
+:::
+
+For more detailed GPU profiling via a GUI, you can run [NVidia Nsight
+Systems](https://docs.alliancecan.ca/wiki/JupyterLab#NVidia_Nsight_Systems){target="_blank"} on one of the
+cluster's GPU interactive nodes via JupyterLab -- we will not cover it here.
+
+
+
+
+
+
+## Basic performance tuning techniques
+
+### Consecutive memory access
+
+When running on a GPU, you want *coalesced memory access*: all threads in a warp should be accessing
+consecutive memory addresses. Let me show an example in which -- instead of consecutive addresses -- we use
+random indices stored in a permutation array on the same GPU.
+
+First, consider this fast code:
+
+```py
+from numba import cuda
+import numpy as np
+import math as m
+from time import time
+
+@cuda.jit
+def squares(result):
+    i = cuda.grid(1)
+    if i < result.size:   # if more threads than array elements, check boundary
+        result[i] = m.log10(i+1)
+
+# warm-up
+devs = cuda.device_array(1, dtype=np.float64)
+squares[1, 1](devs)
+
+n = 100_000_000
+devr = cuda.device_array(n, dtype=np.float64)   # allocate memory on the GPU
+
+# define thread hierarchy
+threadsPerBlock = 256
+blocksPerGrid = (n + (threadsPerBlock - 1)) // threadsPerBlock
+
+# launch the kernel
+start = time()
+squares[blocksPerGrid, threadsPerBlock](devr)
+end = time()
+
+A = devr.copy_to_host()   # copy the result back to the host
+print(f"Squares array: {A}")
+print("Time in μs:", round((end-start)*1e6,3))
+```
+
+Running on Fir's H100, I get these runtimes: 74.625μs 74.863μs 76.294μs.
+
+Next, let's randomize memory access, using an integer permutation array on the device:
+
+```sh
+diff fillNumbaGPU.py fillNumbaGPU-slow.py
+
+< def squares(result):
+---
+> def squares(result, devp):
+
+<         result[i] = m.log10(i+1)
+---
+>         result[devp[i]] = m.log10(i+1)
+
+< squares[1, 1](devs)
+---
+> devp = np.zeros(1, dtype=np.int64)
+> squares[1, 1](devs, devp)
+
+> perm = np.random.permutation(np.arange(0, n))
+> devp = cuda.to_device(perm)
+
+< squares[blocksPerGrid, threadsPerBlock](devr)
+---
+> squares[blocksPerGrid, threadsPerBlock](devr, devp)
+```
+
+Now, on the same GPU, my runtimes jump to 332.117μs 338.316μs 317.812μs -- just shows the importance of having
+consecutive memory inside the same warp.
+
+### CPU ⇄ GPU data transfer
+
+... is relatively slow.
+
+1. Don't pass NumPy arrays directly to a kernel, as Numba will copy them to the GPU and back automatically for
+   every call. Instead, use `cuda.to_device()` to keep data on the GPU between multiple kernel launches.
+1. Organize your data transfer and kernel launches into *CUDA streams*. This will let CUDA overlap data
+   transfers with kernel execution, e.g. preparing next data transfer while the current batch is being
+   computed. Here is an example with two overlapping streams:
+
+```py
+stream1 = cuda.stream()
+stream2 = cuda.stream()
+
+>>> define arrays a1, a2 on the host
+
+d1 = cuda.to_device(a1, stream=stream1)
+d2 = cuda.to_device(a2, stream=stream2)
+
+kernel[blocks, threads, stream1](d1)
+kernel[blocks, threads, stream2](d2)
+
+r1 = d1.copy_to_host(stream=stream1)
+r2 = d2.copy_to_host(stream=stream2)
+
+stream1.synchronize()
+stream2.synchronize()
+```
+
+### Other best practices
+
+1. Always "warm up" your kernel.
+1. Use `float32` math rather than `float64` whenever possible.
+1. Minimize heavy `if` branching in the code (leading to load imbalance), or at least write your code in such
+   a way that each thread has roughly the same amount of computing to do.
+1. If using more threads than data elements, don't forget to check for array boundaries.
+
+
+
+
+
+
+
+<!-- ## Misc notes -->
+
+<!-- ```py -->
+<!-- # @cuda.jit -->
+<!-- # def simpleKernel(A): -->
+<!-- #     for i,a in enumerate(A): -->
+<!-- #         A[i] = float(i) -->
+<!-- #         return A -->
+
+<!-- # import numpy -->
+<!-- # data = numpy.zeros(256) -->
+<!-- # threadsPerBlock = 32 -->
+<!-- # blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock   # number of thread blocks in the grid -->
+<!-- # # threadsPerBlock*blocksPerGrid will give the total number of threads launched -->
+<!-- # simpleKernel[blocksPerGrid, threadsPerBlock](data)   # launch the kernel -->
+<!-- # print(data) -->
+<!-- ``` -->
+
+<!-- Ways to exclude compilation time: -->
+<!-- 1. run the same calculation several times, pick up the shortest -->
+<!-- 2. pre-launch the kernel with a single thread to trigger compilation, using a tiny representative -->
+<!--    dataset/problem (everything with the same type) -->
+<!-- 3. provide the signature to the decorator telling Numba what data types to expect; this forces Numba to -->
+<!--    compile the kernel the moment the function is defined -->
+<!-- 4. CHECK: use `kernel_name.compile(np.float64[:])` (describe type) method -->
+<!-- 5. CHECK: enable Numba cache with `@cuda.jit(cache=True)` that will persist between your Python code restarts -->
+
+<!-- Numba has its own basic implementation of `print` that will run when called on-device, but it does provide all -->
+<!-- print's usual optional arguments. -->
+
+
+
+
+
+
+
+
+
+
+<!-- ## Syllabus -->
+
+<!-- Module 5: Performance Optimization & Shared Memory -->
+
+<!--     Shared Memory: Implementing "tiling" to speed up memory access patterns (e.g., for matrix multiplication). -->
+<!--     Synchronization: Using cuda.syncthreads() to prevent race conditions. -->
+<!--     Atomic Operations: Safely updating global variables across multiple threads. -->
+
+<!-- Module 6: Interoperability and Advanced Features -->
+
+<!--     Integrating with Libraries: Using Numba alongside CuPy and PyTorch. -->
+<!--     Debugging and Profiling: Using the NVIDIA Visual Profiler (Nsight) to identify bottlenecks. -->
+<!--     Fast Math: Trade-offs between precision and speed using the fastmath=True flag. -->
+
+<!-- Hands-On Exercises -->
+
+<!--     Exercise 1: Accelerating a Mandelbrot set generator using @vectorize. -->
+<!--     Exercise 2: Implementing a 2D Heat Equation solver using custom @cuda.jit kernels. -->
+<!--     Exercise 3: Optimizing a matrix-vector product using shared memory tiling. -->
+
+
+
+
+
+
+## Links
+
+- [Good intro to CUDA Programming with Numba](https://nyu-cds.github.io/python-numba/05-cuda){target="_blank"}
