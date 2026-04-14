@@ -516,22 +516,22 @@ prime factors. For example, for 60 it will return 2+2+3+5 = 12, for 91 it will r
 will return 101, and so on.
 
 ```chpl
-proc primeFactorizationSum(n: int) {
-  var num = n, total = 0, count = 0;
+proc primeFactorizationSum(n: int): int {
+  var num = n, total = 0;
   while num % 2 == 0 {
+    total += 2;
     num /= 2;
-    count += 1;
   }
-  for j in 1..count do total += 2;
-  for i in 3..(sqrt(n:real)):int by 2 {
-    count = 0;
-    while num % i == 0 {
-      num /= i;
-      count += 1;
+  var divisor = 3;
+  while divisor * divisor <= num {
+    while num % divisor == 0 {
+      total += divisor;
+      num /= divisor;
     }
-    for j in 1..count do total += i;
+    divisor += 2;
   }
-  if num > 2 then total += num;
+  if num > 2 then
+    total += num;
   return total;
 }
 ```
@@ -663,7 +663,7 @@ please see [this page](https://chapel-lang.org/docs/main/modules/standard/GPU.ht
 
 
 
-## Multiple locales and multiple GPUs
+## Multiple locales / GPUs
 
 If we have access to multiple locales and then multiple GPUs on each of those locales, we would utilize all
 this processing power through two nested loops, first cycling through all locales and then through all
@@ -705,18 +705,11 @@ proc primeFactorizationSum(n: int) {
 config const n = 1000;
 var A_on_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
 
-// let's assume that numLocales = 3
-
 coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
-  /* loc=LOCALE0, locChunk=2..334 */
-  /* loc=LOCALE1, locChunk=335..667 */
-  /* loc=LOCALE2, locChunk=668..1000 */
   on loc {
     writeln("loc = ", loc, "   chunk = ", locChunk);
     const numGpus = here.gpus.size;
     coforall (gpu, gpuChunk) in zip(here.gpus, chunks(locChunk, numGpus)) {
-      /* on LOCALE0 will see gpu=LOCALE0-GPU0, gpuChunk=2..168 */
-      /*                     gpu=LOCALE0-GPU1, gpuChunk=169..334 */
       on gpu {
         writeln("loc = ", loc, "   gpu = ", gpu, "   chunk = ", gpuChunk);
         var A_on_device: [gpuChunk] int;
@@ -730,33 +723,52 @@ coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
 
 var lastFewDigits = if n > 5 then n-4..n else 2..n;   // last 5 or fewer digits
 writeln("last few A elements: ", A_on_host[lastFewDigits]);
+
+// let's assume that numLocales = 3, and use default n = 1000
+// loc=LOCALE0, locChunk=2..334
+// loc=LOCALE1, locChunk=335..667
+// loc=LOCALE2, locChunk=668..1000
+// on LOCALE0 will see gpu=LOCALE0-GPU0, gpuChunk=2..168
+//                     gpu=LOCALE0-GPU1, gpuChunk=169..334
 ```
 
-### Running multi-GPU code on Fir
+### Running multi-GPU code on a production cluster
 
-When we run this code on 2 Fir nodes with 2 GPUs per node:
+On Fir, let's use three nodes, with two GPUs per node:
 
 ```sh
-source /home/razoumov/startMultiLocaleGPU.sh
-salloc --time=0:15:0 --nodes=2 --cpus-per-task=1 --mem-per-cpu=3600 --gpus-per-node=v100l:2 \
-	   --account=cc-debug
+#!/bin/bash
+#SBATCH --time=0:5:0
+#SBATCH --nodes=3
+#SBATCH --mem-per-cpu=3600
+#SBATCH --gpus-per-node=h100:2
+#SBATCH --account=def-some-user
+./primesGPU-distributed -nl 3 --n=10_000_000
+```
+```sh
+module load cuda/12.2 chapel-ucx-cuda/2.4.0
 chpl --fast primesGPU-distributed.chpl
-./primesGPU-distributed -nl 2
+sbatch submit.sh
 ```
-
-<!-- `--reservation=asasfu_756` -->
-
-we get the following output:
-
 ```output
-loc = LOCALE0   chunk = 2..501
-loc = LOCALE0   gpu = LOCALE0-GPU0   chunk = 2..251
-loc = LOCALE0   gpu = LOCALE0-GPU1   chunk = 252..501
-loc = LOCALE1   chunk = 502..1000
-loc = LOCALE1   gpu = LOCALE1-GPU0   chunk = 502..751
-loc = LOCALE1   gpu = LOCALE1-GPU1   chunk = 752..1000
-last few A elements: 90 997 501 46 21
+loc = LOCALE0   chunk = 2..3333334
+loc = LOCALE0   gpu = LOCALE0-GPU0   chunk = 2..1666668
+loc = LOCALE0   gpu = LOCALE0-GPU1   chunk = 1666669..3333334
+loc = LOCALE1   chunk = 3333335..6666667
+loc = LOCALE1   gpu = LOCALE1-GPU0   chunk = 3333335..5000001
+loc = LOCALE1   gpu = LOCALE1-GPU1   chunk = 5000002..6666667
+loc = LOCALE2   chunk = 6666668..10000000
+loc = LOCALE2   gpu = LOCALE2-GPU0   chunk = 6666668..8333334
+loc = LOCALE2   gpu = LOCALE2-GPU1   chunk = 8333335..10000000
+last few A elements: 4561 1428578 5000001 4894 49
 ```
+
+
+
+
+
+
+
 
 ### Distributed `A_on_host` array
 
