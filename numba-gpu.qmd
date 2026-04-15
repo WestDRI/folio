@@ -112,6 +112,7 @@ nvidia_h100_80gb_hbm3_3g.40gb
 Then you would submit a job with:
 
 ```sh
+module load cuda/12.6
 source ~/env-numba/bin/activate
 salloc --time=... --mem=... --gpus-per-node=<gpuType>:1 --account=...
 ```
@@ -260,19 +261,27 @@ a = np.array([1, 2, 3, 4])
 b = np.array([10, 20, 30, 40])
 np.add(a, b)   # built-in compiled NumPy function
 
-# or you can write your own
+# or you can write your own:
+# --- first syntax option
 @vectorize(['int64(int64, int64)'], target='cuda')  # output(input,input) as a list of strings
 def add(x, y):
     return x + y
 
-print(add(a, b))
+# --- second syntax option
+from numba import int64
+@vectorize([int64(int64, int64)], target='cuda')  # output(input,input) as a list of types
+def add(x, y):
+    return x + y
+
+add(a, b)
 ```
 
 You can specify multiple types (overloading):
 
 ```py
-@vectorize(['int32(int32, int32)', 'int64(int64, int64)',
-            'float32(float32, float32)', 'float64(float64, float64)'])
+from numba import int32, int64, float32, float64
+@vectorize([int32(int32, int32), int64(int64, int64),
+            float32(float32, float32), float64(float64, float64)])
 def add(x, y):
     return x + y
 
@@ -289,16 +298,86 @@ add(a,a)   # error
 TypeError: ufunc 'add' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''
 ```
 
+
+
+
+::: {.callout-caution}
+##### Take-home exercise: pairwise distances between geographic locations
+
+If you have two geographic points (lat1,lon1) and (lat2,lon2), you can calculate the shortest distance between
+them using this Python code:
+
+```py
+dlat = lat2 - lat1
+dlon = lon2 - lon1
+a = sin(dlat/2)**2 + cos(lat1)*cos(lat2)*sin(dlon/2)**2
+dradians = 2 * asin(sqrt(a))
+distance = 6371.0 * dradians
+```
+
+where we assume that all input angles (lat1,lon1,lat2,lon2) are in radians.
+
+Let's say we have a single set of `n` random points (drawn from a uniform globe coverage):
+
+```py
+n = 1000
+lat = np.arcsin(2*np.random.rand(n)-1)
+lon = np.random.uniform(0, 2*np.pi, n)
+```
+
+and we want to calculate pairwise distances between all of them. This will be a symmetric matrix (since
+$d_{\rm ij}=d_{\rm ji}$), and we want to exclude the main diagonal (since $d_{\rm ii}=0$), so we need to
+calculate only `(n*n-n)//2` unique pairs.
+
+We need to form four 1D arrays (two latitudes and two longitudes) covering all `(n*n-n)//2` pairs of points,
+and then we'll feed these arrays to a `@vectorize` function. You can form these four arrays in Python either
+with native Python loops:
+
+```py
+uniqueNonZeroDistances = (n*n-n)//2
+lat1 = np.zeros(uniqueNonZeroDistances)
+lon1 = np.zeros(uniqueNonZeroDistances)
+lat2 = np.zeros(uniqueNonZeroDistances)
+lon2 = np.zeros(uniqueNonZeroDistances)
+count = 0
+for i in range(n):
+    for j in range(n):
+        if j>i:
+            lat1[count] = lat[i]
+            lon1[count] = lon[i]
+            lat2[count] = lat[j]
+            lon2[count] = lon[j]
+            count += 1
+```
+
+or with NumPy (preferred) operations:
+
+```py
+iArray, jArray = np.triu_indices(n, k=1)   # indices for the upper-triangle of the n^2 array
+lat1 = lat[iArray]
+lon1 = lon[iArray]
+lat2 = lat[jArray]
+lon2 = lon[jArray]
+```
+
+and then all that remains is to feed these four arrays to the `@vectorize` function.
+
+Put all these pieces together and time your code on the CPU and GPU for `n = 1000`, `n = 2000`, and so on. How
+far can you scale, and why do you run into a limit?
+
+You can use the standard Python `time.time()` function to benchmark your code -- there is an example later in
+these notes.
+:::
+
+
+
+
+
+
+
 `@vectorize` is useful for creating fast, compiled functions that operate on numpy arrays element by
 element. This will give you additional `ndarray` features such as reduction, accumulation or broadcasting. For
 more general functions, you will want to use the `@cuda.jit` decorator.
-
-::: {.callout-note}
-You can use the following compile targets in `@vectorize`:
-- `cpu` for a single CPU core
-- `parallel` for multi-core CPUs (via multi-threading)
-- `cuda` for Nvidia GPUs
-:::
 
 ::: {.callout-note}
 You can also pass `nopython=True` to the decorator to ensure the generated code does not fallback to slow
@@ -306,8 +385,9 @@ object mode.
 :::
 
 While `@vectorize` is for element-by-element math, a more general `@guvectorize` decorator allows you to build
-functions that operate on entire array slices. A good example is a moving average / blur calculation -- you
-can't do it with a standard ufunc because -- to calculate one point -- you need to know its neighbours.
+functions that operate on <span style="color: blue;">entire array slices</span>. A good example is a *moving
+average* (or *blur*) calculation -- you can't implement it with a standard ufunc because computing each point
+requires access to its neighbouring values.
 
 ```py
 from numba import guvectorize
