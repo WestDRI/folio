@@ -33,7 +33,7 @@ GPU programming frameworks, and using GPUs on our clusters. For more details, se
 Briefly:
 
 - A *CUDA kernel* is a function invoked by the CPU (host) and executed massively in parallel on the GPU
-  (device). Each thread applies this function to its own data element, with thousands of threads running in
+  (device). Each thread applies this function to its own data element(s), with thousands of threads running in
   parallel at the same time.
 - For thread hierarchy, CUDA cores are organized into *streaming multiprocessors* (SMs), which are responsible
   for executing thread blocks. One SM can run a multiple of warps, typically with 32 threads per warp, with
@@ -89,9 +89,9 @@ deactivate
 
 
 
-## Running on ...
+## Running ...
 
-### ... a production cluster
+### ... on a production cluster
 
 To list all available GPU types, including MIG instances and full GPUs, you can use the following command
 introduced in Marie's course last week:
@@ -135,16 +135,16 @@ salloc --time=... --mem=... --gpus-per-node=<gpuType>:1 --account=...
 <!-- sbatch submit.sh -->
 <!-- ``` -->
 
-```sh
-fir
-cd ~/numba
-module load cuda/12.6
-source ~/env-numba/bin/activate
+<!-- ```sh -->
+<!-- fir -->
+<!-- cd ~/numba -->
+<!-- module load cuda/12.6 -->
+<!-- source ~/env-numba/bin/activate -->
 
-salloc --time=1:0:0 --mem=3600 --gpus-per-node=h100:1 --reservation=gpu_mig_test --account=def-razoumov-ac
+<!-- salloc --time=1:0:0 --mem=3600 --gpus-per-node=h100:1 --reservation=gpu_mig_test --account=def-razoumov-ac -->
 
-sbatch submit.sh
-```
+<!-- sbatch submit.sh -->
+<!-- ``` -->
 
 ::: {.callout-note}
 Since each MIG comes with its own overhead, multi-MIG jobs are no longer allowed on our production
@@ -157,7 +157,7 @@ clusters. If you need more GPU resources, schedule your job on a bigger MIG part
 
 
 
-### ... the training cluster
+### ... on a training cluster
 
 ```sh
 sinfo -o "%G" | grep gpu | sed 's/gpu://g' | sed 's/),/\n/g' | cut -d: -f1 | sort | uniq
@@ -181,7 +181,7 @@ cuda.select_device(device_id)   # if several GPUs, select which GPU to use
 
 
 
-### ... systems without an NVIDIA GPU
+### ... without an NVIDIA GPU
 
 Out of the box, Numba's core library provides only CUDA/Nvidia support. Support for AMD GPUs is currently more
 experimental than plug-and-play. There is no native support for Apple's Metal API for GPU acceleration.
@@ -224,18 +224,33 @@ access to a physical GPU.
 <!-- The target="cuda" Decorator: Converting standard NumPy-style logic into accelerated kernels. -->
 <!-- Broadcasting on the GPU: Handling mismatched array dimensions automatically. -->
 
+We start with high-level element-wise array functions that run on a GPU, and in the next chapter we'll talk
+about writing custom CUDA kernels.
+
 You might have come across numpy *ufuncs* (universal functions) that operate on `ndarrays` in an
 element-by-element fashion. Numba's `@vectorize` compiles Python functions taking scalar input arguments into
 NumPy ufuncs that run as fast as traditional ufuncs written in C.
 
+::: {.callout-note}
+##### Available targets
+`@vectorize` decorator supports the following compilation targets:
+
+- `target='cpu'` is the default, single-threaded mode
+- `target='parallel'` for a multi-core CPU (multi-threaded)
+- `target='cuda'` for an NVIDIA GPU
+:::
+
 There are two ways to use `@vectorize`:
 
-1. For **eager** / decoration-time compilation, you pass one or more type signatures to the decorator.
-2. For **lazy** / call-time compilation, you do not specify type signatures in the function decorator,
-   resulting in a ufunc that dynamically compiles a new kernel when called with a previously unsupported input
-   type.
+1. On both CPUs and <span style="color: blue;">**GPUs**</span>, for **eager** / decoration-time compilation,
+   you pass one or more type signatures to the decorator.
+2. On CPUs only, for **lazy** / call-time compilation, you do not specify type signatures in the function
+   decorator, resulting in a ufunc that dynamically compiles a new kernel when called with a previously
+   unsupported input type. This results in a slow first call. You would select call-time compilation if you
+   want a generic function that will work on many input data types, without having to specify the types in the
+   function decorator.
 
-Here is the decoration-time compilation:
+On a GPU you can only use the decoration-time compilation:
 
 ```py
 from numba import vectorize
@@ -243,8 +258,9 @@ import numpy as np
 
 a = np.array([1, 2, 3, 4])
 b = np.array([10, 20, 30, 40])
-np.add(a, b)
+np.add(a, b)   # built-in compiled NumPy function
 
+# or you can write your own
 @vectorize(['int64(int64, int64)'], target='cuda')  # output(input,input) as a list of strings
 def add(x, y):
     return x + y
@@ -252,7 +268,7 @@ def add(x, y):
 print(add(a, b))
 ```
 
-You can even specify multiple types (overloading):
+You can specify multiple types (overloading):
 
 ```py
 @vectorize(['int32(int32, int32)', 'int64(int64, int64)',
@@ -260,13 +276,13 @@ You can even specify multiple types (overloading):
 def add(x, y):
     return x + y
 
-a = np.arange(6)               # integer array
+a = np.arange(6)              # integer array
 add(a,a)
 
-a = np.linspace(0, 1, 6)   # floar array
+a = np.linspace(0, 1, 6)      # float array
 add(a,a)
 
-a = np.linspace(0, 1+1j, 6)    # complex array
+a = np.linspace(0, 1+1j, 6)   # complex array
 add(a,a)   # error
 ```
 ```output
@@ -572,13 +588,13 @@ print(A)
 
 
 
-## Benchmarking
+## Benchmarking ...
 
 Unlike in CuPy with its `cupyx.profiler.benchmark`, Numba does not have a single "one-stop" convenience
 function that handles warm-ups and multiple kernel launches (to get an accurate estimate)
 automatically. Having said that, you have several options.
 
-### Timing on the GPU with CUDA events
+### ... on the GPU with CUDA events
 
 The most precise way to time a Numba kernel is using CUDA Events. This method measures time directly on the
 GPU hardware, avoiding the CPU-GPU communication + Python overheads.
@@ -615,7 +631,7 @@ endEvent.wait()   # make sure the GPU has finished the work
 print("Time in ms:", cuda.event_elapsed_time(startEvent, endEvent))   # 80.928ms 80.723ms 80.208ms
 ```
 
-### Timing on the CPU
+### ... on the CPU
 
 To time from the CPU side, you must use `cuda.synchronize()` to ensure the GPU has actually finished its work
 before you stop the clock. In the following example we launch the kernel several times and compute the average
