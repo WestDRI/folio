@@ -698,16 +698,18 @@ threadsPerBlock = (3,3)
 blocksPerGrid = (1,1)
 logs[blocksPerGrid, threadsPerBlock](data)
 
-# benchmark the kernel
+# prepare for benchmarking
 n = 10_000
 data = np.ones((n,n))
 threadsPerBlock = (16,16)
 blocksPerGrid = (math.ceil(data.shape[0] / threadsPerBlock[0]), math.ceil(data.shape[1] / threadsPerBlock[1]))
-startEvent, endEvent = cuda.event(), cuda.event()   # create events
+startEvent, endEvent = cuda.event(), cuda.event()   # create event variables
+
+# benchmark the kernel
 startEvent.record()
 logs[blocksPerGrid, threadsPerBlock](data)
 endEvent.record()
-endEvent.wait()   # make sure the GPU has finished the work
+endEvent.synchronize()   # pause the CPU until endEvent.record() is done
 print("Time in ms:", cuda.event_elapsed_time(startEvent, endEvent))   # 80.928ms 80.723ms 80.208ms
 ```
 
@@ -738,7 +740,7 @@ start = time()
 for _ in range(numIterations):
     logs[blocksPerGrid, threadsPerBlock](data)
 
-cuda.synchronize()
+cuda.synchronize()   # pause the CPU until all currently queued tasks on the GPU are completely finished
 end = time()
 print("Average time per call in seconds:", round((end-start)/numIterations,6))   # 0.079077s
 ```
@@ -939,6 +941,11 @@ portal](https://docs.alliancecan.ca/wiki/Metrix/en){target="_blank"} which is cu
 
 However, you can also monitor running jobs in real time via command line. The two tools useful for this are
 NVIDIA's `nvidia-smi` and `nvtop`.
+
+::: {.callout-note}
+`nvidia-smi` and `nvtop` do not have access to real-time GPU utilization inside a MIG, although they show
+memory usage per slice. They show GPU utilization only if you schedule a full GPU.
+:::
 
 Here is how you would use `nvidia-smi`:
 
