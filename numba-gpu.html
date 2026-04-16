@@ -892,17 +892,19 @@ Note
 <span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>blocksPerGrid <span class="op">=</span> (<span class="dv">1</span>,<span class="dv">1</span>)</span>
 <span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>logs[blocksPerGrid, threadsPerBlock](data)</span>
 <span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co"># benchmark the kernel</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="co"># prepare for benchmarking</span></span>
 <span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">10_000</span></span>
 <span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> np.ones((n,n))</span>
 <span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>threadsPerBlock <span class="op">=</span> (<span class="dv">16</span>,<span class="dv">16</span>)</span>
 <span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>blocksPerGrid <span class="op">=</span> (math.ceil(data.shape[<span class="dv">0</span>] <span class="op">/</span> threadsPerBlock[<span class="dv">0</span>]), math.ceil(data.shape[<span class="dv">1</span>] <span class="op">/</span> threadsPerBlock[<span class="dv">1</span>]))</span>
-<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>startEvent, endEvent <span class="op">=</span> cuda.event(), cuda.event()   <span class="co"># create events</span></span>
-<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a>startEvent.record()</span>
-<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a>logs[blocksPerGrid, threadsPerBlock](data)</span>
-<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>endEvent.record()</span>
-<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>endEvent.wait()   <span class="co"># make sure the GPU has finished the work</span></span>
-<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in ms:"</span>, cuda.event_elapsed_time(startEvent, endEvent))   <span class="co"># 80.928ms 80.723ms 80.208ms</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb29-24"><a href="#cb29-24" aria-hidden="true" tabindex="-1"></a>startEvent, endEvent <span class="op">=</span> cuda.event(), cuda.event()   <span class="co"># create event variables</span></span>
+<span id="cb29-25"><a href="#cb29-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-26"><a href="#cb29-26" aria-hidden="true" tabindex="-1"></a><span class="co"># benchmark the kernel</span></span>
+<span id="cb29-27"><a href="#cb29-27" aria-hidden="true" tabindex="-1"></a>startEvent.record()</span>
+<span id="cb29-28"><a href="#cb29-28" aria-hidden="true" tabindex="-1"></a>logs[blocksPerGrid, threadsPerBlock](data)</span>
+<span id="cb29-29"><a href="#cb29-29" aria-hidden="true" tabindex="-1"></a>endEvent.record()</span>
+<span id="cb29-30"><a href="#cb29-30" aria-hidden="true" tabindex="-1"></a>endEvent.synchronize()   <span class="co"># pause the CPU until endEvent.record() is done</span></span>
+<span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in ms:"</span>, cuda.event_elapsed_time(startEvent, endEvent))   <span class="co"># 80.928ms 80.723ms 80.208ms</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="on-the-cpu" class="level3">
 <h3 class="anchored" data-anchor-id="on-the-cpu">… on the CPU</h3>
@@ -927,7 +929,7 @@ Note
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(numIterations):</span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    logs[blocksPerGrid, threadsPerBlock](data)</span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>cuda.synchronize()</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>cuda.synchronize()   <span class="co"># pause the CPU until all currently queued tasks on the GPU are completely finished</span></span>
 <span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>end <span class="op">=</span> time()</span>
 <span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Average time per call in seconds:"</span>, <span class="bu">round</span>((end<span class="op">-</span>start)<span class="op">/</span>numIterations,<span class="dv">6</span>))   <span class="co"># 0.079077s</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
@@ -1067,6 +1069,19 @@ Note
 <h2 class="anchored" data-anchor-id="gpu-utilization-monitoring">GPU utilization monitoring</h2>
 <p>For your past jobs on production clusters, we encourage you to use our <a href="https://docs.alliancecan.ca/wiki/Metrix/en" target="_blank">Metrix portal</a> which is currently available for <a href="https://metrix.rorqual.alliancecan.ca" target="_blank">Rorqual</a>, <a href="https://portail.narval.calculquebec.ca" target="_blank">Narval</a> and <a href="https://portal.nibi.sharcnet.ca" target="_blank">Nibi</a>. The support for Fir will hopefully come very soon.</p>
 <p>However, you can also monitor running jobs in real time via command line. The two tools useful for this are NVIDIA’s <code>nvidia-smi</code> and <code>nvtop</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>nvidia-smi</code> and <code>nvtop</code> do not have access to real-time GPU utilization inside a MIG, although they show memory usage per slice. They show GPU utilization only if you schedule a full GPU.</p>
+</div>
+</div>
 <p>Here is how you would use <code>nvidia-smi</code>:</p>
 <ol type="1">
 <li>connect to a currently running job with <code>srun --jobid=... --pty bash</code></li>
@@ -1074,7 +1089,7 @@ Note
 <li>press Ctrl-C to go back to the prompt on the login node</li>
 </ol>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1083,14 +1098,14 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Write a bash function <code>job-nvidia-smi()</code> that lists all your currently running jobs, picks the latest (highest jobID) job from that list, connects to that job and automatically runs <code>watch -n 1 nvidia-smi</code>. You can also try running <code>nvidia-smi -l 2</code> for a scrolling output style. Try this command on a long-running GPU code. How’s your GPU compute and memory utilization?</p>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1099,7 +1114,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Next, write a bash function <code>job-nvtop()</code> that runs <code>nvtop</code> instead. This will show a graph of GPU’s compute and memory utilization vs.&nbsp;time inside the terminal.</p>
 </div>
