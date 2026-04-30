@@ -4,7 +4,7 @@ aliases:
   - /chapel-gpu/
 ---
 
-**June 12<sup>th</sup>, 1:30pm-4:30pm Pacific Time**
+**April 30<sup>th</sup>, 10:00am-noon Pacific Time**
 
 Chapel was designed as a parallel-first programming language targeting any hardware that supports parallel
 execution: *multicore processors*, *multiple nodes* in an HPC cluster, and now also *GPUs* on HPC
@@ -26,8 +26,9 @@ the data as needed between all these hardware layers. But let's start with the b
 In general, you need to configure and compile Chapel for your specific GPU type and your specific cluster
 interconnect. For NVIDIA and AMD GPUs (the only ones currently supported), you must use LLVM as the backend
 compiler. With NVIDIA GPUs, you must build LLVM to use LLVM's [NVPTX
-backend](https://llvm.org/docs/NVPTXUsage.html) to support GPU programming, so usually you cannot use the
-system-provided LLVM module -- instead you should set `CHPL_LLVM=bundled` during Chapel compilation.
+backend](https://llvm.org/docs/NVPTXUsage.html){target="_blank"} to support GPU programming, so usually you
+cannot use the system-provided LLVM module -- instead you should set `CHPL_LLVM=bundled` during Chapel
+compilation.
 
 As of this writing, on the Alliance systems, you can use GPUs from Chapel on the following systems:
 
@@ -49,15 +50,23 @@ might take a while.
 
 ## Running GPU Chapel on your computer
 
-If you have an NVIDIA GPU on your computer and run **Linux**, and have all the right GPU drivers and CUDA
-installed, it should be fairly straightforward to compile Chapel with GPU support. Here is [what worked for me
-in AlmaLinux 9.4](https://gist.github.com/razoumov/03cfc54cc388675389bb4343beb8a6b1). Please let me know if
-these steps do not work for you.
+If you run **Linux** and have an NVIDIA GPU on your computer and all the right GPU drivers and CUDA installed,
+it should be fairly straightforward to compile Chapel with GPU support. Here is [what worked for me in
+AlmaLinux 9.4](https://gist.github.com/razoumov/03cfc54cc388675389bb4343beb8a6b1){target="_blank"}. Please let
+me know if these steps do not work for you.
 
 In **Windows**, Chapel with GPU support works under the Windows Subsystem for Linux (WSL) as explained in
-[this post](https://chapel-lang.org/blog/posts/nvidia-gpu-wsl). You *could* also run Chapel inside a [Docker
-container](https://chapel-lang.org/install-docker.html), although you need to find a GPU-enabled Docker image.
+[this post](https://chapel-lang.org/blog/posts/nvidia-gpu-wsl){target="_blank"}. You *could* also run Chapel
+inside a [Docker container](https://chapel-lang.org/install-docker.html){target="_blank"}, although you need
+to find a GPU-enabled Docker image.
 
+**MacOS** on Apple Silicon does not officially support NVIDIA and AMD GPUs, however:
+
+- some limited support on older Intel Macs for PCIe-based acceleration over Thunderbolt
+- some recent exceptions for third-party drivers for NVIDIA cards from TinyCorp for AI/LLM workloads
+- for code development and debugging on MacOS you can emulate GPUs, running any GPU Chapel code in the
+  *CPU-as-device* mode
+    - on instructor's laptop: `source ~/Documents/syncHPC/startSingleLocaleCPUasDevice.sh` 
 
 
 
@@ -69,47 +78,59 @@ container](https://chapel-lang.org/install-docker.html), although you need to fi
 Today's we'll run Chapel on the virtual training cluster. We'll now distribute the usernames and passwords --
 let's try to log in.
 
-There are two Chapel configurations we will use today.
+There are two Chapel configurations we could use today.
 
-1. **Chapel with GPU support compiled for NVIDIA cards**. We have 1 virtual GPU on the training cluster to
-   share among all participants and the instructor, so we won't be able to use it all at the same time. The
-   idea is to try your final production code on this GPU allocating it only for a couple of minutes at a time
-   per user:
-
+1. **Chapel with GPU support compiled for NVIDIA cards**. On the training cluster we have 10 GPU nodes, and on
+   each node one A100 GPU is split into three "2g.10gb" MIGs, for the total of 30 slices that you can schedule
+   with Slurm. To load this version of Chapel, run:
+   
 ```sh
-#!/bin/bash
-#SBATCH --time=00:02:00
-#SBATCH --mem=3600
-#SBATCH --gpus-per-node=1
-nvidia-smi
-chpl --fast test.chpl
-./test
-```
-
-```sh
+source /project/def-sponsor00/shared/fixModules.sh
 source /project/def-sponsor00/shared/syncHPC/startSingleLocaleGPU.sh
-sbatch submit.sh
 ```
 
-2. We will be doing most debugging on CPUs using the so-called **'CPU-as-device' mode** to run a GPU code on a
+<!-- We have 1 virtual GPU on the training cluster to -->
+<!-- share among all participants and the instructor, so we won't be able to use it all at the same time. The -->
+<!-- idea is to try your final production code on this GPU allocating it only for a couple of minutes at a time -->
+<!-- per user: -->
+
+<!-- ```sh -->
+<!-- #!/bin/bash -->
+<!-- #SBATCH --time=00:02:00 -->
+<!-- #SBATCH --mem=3600 -->
+<!-- #SBATCH --gpus-per-node=1 -->
+<!-- nvidia-smi -->
+<!-- chpl --fast test.chpl -->
+<!-- ./test -->
+<!-- ``` -->
+
+<!-- ```sh -->
+<!-- source /project/def-sponsor00/shared/syncHPC/startSingleLocaleGPU.sh -->
+<!-- sbatch submit.sh -->
+<!-- ``` -->
+
+2. We could also run Chapel GPU code in the so-called **'CPU-as-device' mode** that emulates a GPU on a
    CPU. This is very handy for debugging a Chapel GPU code on a computer without a dedicated GPU and/or vendor
    SDK installed. You can find more details on this mode
-   [here](https://chapel-lang.org/docs/technotes/gpu.html#cpu-as-device-mode). To enable this mode, I
-   recompiled Chapel with `export CHPL_GPU=cpu`, but you need to load this version of Chapel separately, and
-   you can use it via an interactive job:
+   [here](https://chapel-lang.org/docs/technotes/gpu.html#cpu-as-device-mode){target="_blank"}. Since we have
+   enough physical GPUs today, I did not enable this mode.
+   
+<!-- To enable this mode, I -->
+<!-- recompiled Chapel with `export CHPL_GPU=cpu`, but you need to load this version of Chapel separately, and -->
+<!-- you can use it via an interactive job: -->
 
-```sh
-source /project/def-sponsor00/shared/syncHPC/startSingleLocaleCPUasDevice.sh
-salloc --time=2:0:0 --mem=3600
-chpl --fast test.chpl
-./test
-```
+<!-- ```sh -->
+<!-- source /project/def-sponsor00/shared/syncHPC/startSingleLocaleCPUasDevice.sh -->
+<!-- salloc --time=2:0:0 --mem=3600 -->
+<!-- chpl --fast test.chpl -->
+<!-- ./test -->
+<!-- ``` -->
 
-In this mode there are some restrictions, e.g. data movement between the device and the host will not be
-captured (as there are no data moved!), some parallel reductions might not be available in this mode (to be
-confirmed), and the GPU kernel breakdown might be different. Still, all GPU kernels will be launched on the
-CPU, and you can even use some of the Chapel's diagnostic features in this mode, e.g. `@assertOnGpu` and
-`@gpu.assertEligible` attributes will fail at compile time for ineligible loops.
+<!-- In this mode there are some restrictions, e.g. data movement between the device and the host will not be -->
+<!-- captured (as there are no data moved!), some parallel reductions might not be available in this mode (to be -->
+<!-- confirmed), and the GPU kernel breakdown might be different. Still, all GPU kernels will be launched on the -->
+<!-- CPU, and you can even use some of the Chapel's diagnostic features in this mode, e.g. `@assertOnGpu` and -->
+<!-- `@gpu.assertEligible` attributes will fail at compile time for ineligible loops. -->
 
 <!-- ```sh -->
 <!-- cedar -->
@@ -121,10 +142,54 @@ CPU, and you can even use some of the Chapel's diagnostic features in this mode,
 <!-- cd $SLURM_TMPDIR/gpu -->
 <!-- ``` -->
 
-::: {.callout-note}
-Please do not start nested Slurm jobs. When switching from one Chapel configuration to the other, please do
-this on the login node.
-:::
+<!-- ::: {.callout-note} -->
+<!-- Please do not start nested Slurm jobs. When switching from one Chapel configuration to the other, please do -->
+<!-- this on the login node. -->
+<!-- ::: -->
+
+So how do you actually run code on GPU nodes? On the training cluster, to keep resources from sitting idle,
+GPU nodes are created on demand: they spin up when a job starts and shut down soon after it finishes. Bringing
+a node online usually takes around 3-4 minutes.
+
+We can adopt one of three workflows:
+
+1. use a long interactive job
+    - <span style="color: green;">**pro**:</span> code starts right away, output goes into the terminal
+    - <span style="color: red;">**con**:</span> you often sit on allocated resources even when you are not actively using them
+
+<!-- --nodelist=nodegpupool2 -->
+
+```sh
+salloc --time=2:0:0 --mem=3600 --gpus-per-node=2g.10gb:1
+chpl --fast test.chpl
+./test
+```
+
+2. submit short batch jobs
+    - <span style="color: green;">**pro**:</span> efficient use of resources
+    - <span style="color: red;">**con**:</span> output goes to a file
+
+```sh
+#!/bin/bash
+#SBATCH --time=00:05:00
+#SBATCH --mem=3600
+#SBATCH --gpus-per-node=2g.10gb:1
+chpl --fast test.chpl
+./test
+```
+```sh
+sbatch submit.sh
+```
+
+3. submit short interactive jobs
+    - <span style="color: green;">**pro**:</span> efficient use of resources, output goes into the terminal
+
+```sh
+srun --mem-per-cpu=3600 --gpus-per-node=2g.10gb:1 bash -c "chpl --fast test.chpl && ./test"
+```
+
+
+
 
 
 
@@ -281,8 +346,8 @@ Let's break down the events:
 ```
 3. no other data transfer
 
-Let's take a look at the example from https://chapel-lang.org/blog/posts/intro-to-gpus. They define a
-function:
+Let's take a look at the example from
+<https://chapel-lang.org/blog/posts/intro-to-gpus>{target="_blank"}. They define a function:
 
 ```chpl
 use GpuDiagnostics;
@@ -322,11 +387,11 @@ on here.gpus[0] {
 ::: {.callout-note}
 On CPU-as-device we have 7 kernel launches in the last block. My initial interpretation: one launch to
 initialize `Square` + one launch to access `Square.indices` + one launch per loop iteration, but it's actually
-not entire correct ...
+not entirely correct ...
 :::
 
 ::: {.callout-caution collapse="true"}
-## Question 1
+##### Question 1
 Let's play with this in the CPU-as-device mode! Make the upper limit of `rows, cols` a **config** variable,
 recompile, and play with the array size. 
 :::
@@ -380,7 +445,8 @@ When running in 'CPU-as-device' mode, `@assertOnGpu` attribute will produce a wa
 
 Alternatively, you can count kernel launches -- it'll be zero for the `for` loop.
 
-More on `@assertOnGpu` and other attributes at https://chapel-lang.org/docs/main/modules/standard/GPU.html.
+More on `@assertOnGpu` and other attributes at
+<https://chapel-lang.org/docs/main/modules/standard/GPU.html>{target="_blank"}.
 
 <!-- @assertOnGpu foreach i in 0..0 { -->
 
@@ -451,20 +517,20 @@ CPU. We will see an example of this later in this workshop.
 ## Timing on the GPU
 
 Obtaining timing from within a running CUDA kernel is tricky as you are running potentially thousands of
-simultaneous threads, so you definitely cannot measure the wallclock time. However, you can measure GPU clock
-cycles spent on a partucular part of the kernel function. The `GPU` module provides a function `gpuClock()`
-that returns the clock cycle counter (per multiprocessor), and it needs to be called to time code blocks
-*within a GPU-enabled loop*.
+simultaneous threads that can finish at different times, so measuring the wallclock time per thread might not
+be very meaningful. However, you can measure GPU clock cycles spent on a partucular part of the kernel
+function per thread. The `GPU` module provides a function `gpuClock()` that returns the clock cycle counter
+(per multiprocessor), and it needs to be called to time code blocks *within a GPU-enabled loop*.
 
 <!-- V100 contains 80 Streaming Multiprocessors (SMs) and 2560 CUDA cores -->
 <!-- A100 contains 108 Streaming Multiprocessors (SMs) and 6912 CUDA cores -->
 <!-- H100 contains 114 Streaming Multiprocessors (SMs) and 14,592 CUDA cores -->
 
-Here is an example (modelled after
-[measureGpuCycles.chpl](https://raw.githubusercontent.com/chapel-lang/chapel/main/test/gpu/native/measureGpuCycles.chpl))
+Here is a simple example (modelled after
+[measureGpuCycles.chpl](https://raw.githubusercontent.com/chapel-lang/chapel/main/test/gpu/native/measureGpuCycles.chpl){target="_blank"})
 to demonstrate its use. This is not the most efficient code, as on the GPU we are parallelizing the loop with
-`n=10` iterations, and then inside each iteration we run a serial loop to keep the (few non-idle) GPU cores
-busy, but it gives you an idea.
+`n=10` iterations, each launching its own thread, and then inside each iteration we run a serial loop to keep
+the GPU cores busy, but it gives you an idea.
 
 ::: {.callout-note}
 Do not run this code in the 'CPU-as-device' mode, as its output will not be particularly meaningful: you need
@@ -654,7 +720,7 @@ Another setting to play with is the number of iterations per thread:
 ```
 
 This setting is probably specific to your computational problem. For these and other per-kernel attributes,
-please see [this page](https://chapel-lang.org/docs/main/modules/standard/GPU.html).
+please see [this page](https://chapel-lang.org/docs/main/modules/standard/GPU.html){target="_blank"}.
 
 
 
@@ -684,16 +750,17 @@ coforall loc in Locales do
 Here we assume that we are running inside a multi-node job on the cluster, e.g.
 
 ```sh
-salloc --time=1:0:0 --nodes=3 --mem-per-cpu=3600 --gpus-per-node=2 --account=...
-chpl --fast test.chpl
-./test -nl 3
+salloc --time=1:0:0 --nodes=3 --mem-per-cpu=3600 --gpus-per-node=2
+chpl --fast multiple.chpl
+./multiple -nl 3
 ```
 
 How would we use this approach in practice? Let's consider our primes factorization problem. Suppose we want
 to collect the results on one node (LOCALE0), maybe for printing or for some additional processing. We need to
 break our array `A` into pieces, each computed on a separate GPU from the total pool of 6 GPUs available to us
 inside this job. Here is our approach, following the ideas outlined in
-https://chapel-lang.org/blog/posts/gpu-data-movement -- let's store this file as `primesGPU-distributed.chpl`:
+<https://chapel-lang.org/blog/posts/gpu-data-movement>{target="_blank"} -- let's store this file as
+`primesGPU-distributed.chpl`:
 
 ```chpl
 import RangeChunk.chunks;
@@ -703,7 +770,7 @@ proc primeFactorizationSum(n: int) {
 }
 
 config const n = 1000;
-var A_on_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
+var A_on_first_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
 
 coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
   on loc {
@@ -715,14 +782,14 @@ coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
         var A_on_device: [gpuChunk] int;
         foreach i in gpuChunk do
           A_on_device[i] = primeFactorizationSum(i);
-        A_on_host[gpuChunk] = A_on_device; // copy the chunk from the GPU via the host to LOCALE0
+        A_on_first_host[gpuChunk] = A_on_device; // copy the chunk from the GPU via the host to LOCALE0
       }
     }
   }
 }
 
 var lastFewDigits = if n > 5 then n-4..n else 2..n;   // last 5 or fewer digits
-writeln("last few A elements: ", A_on_host[lastFewDigits]);
+writeln("last few A elements: ", A_on_first_host[lastFewDigits]);
 
 // let's assume that numLocales = 3, and use default n = 1000
 // loc=LOCALE0, locChunk=2..334
@@ -772,8 +839,8 @@ last few A elements: 4561 1428578 5000001 4894 49
 
 ### Distributed A_on_host array
 
-In the code above, the array `A_on_host` resides entirely in host's memory on one node. With a sufficiently
-large problem, you can distribute `A_on_host` across multiple nodes using block distribution:
+In the code above, the array `A_on_first_host` resides entirely in host's memory on one node. With a
+sufficiently large problem, you can distribute `A_on_host` across multiple nodes using block distribution:
 
 ```chpl
 use BlockDist; // use standard block distribution module to partition the domain into blocks
@@ -831,9 +898,9 @@ This way, when copying from device to host, you will copy only to the locally st
 
 ## Julia set problem
 
-In the [Julia set problem](https://en.wikipedia.org/wiki/Julia_set) we need to compute a set of points on the
-complex plane that remain bound under infinite recursive transformation $f(z)$. We will use the traditional
-form $f(z)=z^2+c$, where $c$ is a complex constant. Here is our algorithm:
+In the [Julia set problem](https://en.wikipedia.org/wiki/Julia_set){target="_blank"} we need to compute a set
+of points on the complex plane that remain bound under infinite recursive transformation $f(z)$. We will use
+the traditional form $f(z)=z^2+c$, where $c$ is a complex constant. Here is our algorithm:
 
 1. pick a point $z_0\in\mathbb{C}$
 1. compute iterations $z_{i+1}=z_i^2+c$ until $|z_i|>4$ (arbitrary fixed radius; here $c$ is a complex
@@ -1050,9 +1117,9 @@ It took 0.017364 seconds on the GPU.
 
 ### Adding plotting to run on a GPU
 
-Chapel's [Image](https://chapel-lang.org/docs/main/modules/packages/Image.html) library lets you write arrays
-of pixels to a PNG file. The following code -- when added to the non-GPU code `juliaSetSerial.chpl` -- writes
-the array `stability` to a file `2000.png` assuming you
+Chapel's [Image](https://chapel-lang.org/docs/main/modules/packages/Image.html){target="_blank"} library lets
+you write arrays of pixels to a PNG file. The following code -- when added to the non-GPU code
+`juliaSetSerial.chpl` -- writes the array `stability` to a file `2000.png` assuming you
 
 1. download the [colour map in CSV](/files/nipy_spectral.csv) and
 2. add the file `sciplot.chpl` (pasted below)
@@ -1118,7 +1185,7 @@ the GPU only. You can move the definition of `stability` to the host, and then t
 CPU will work. However, plotting a large heatmap can really benefit from GPU acceleration.
 
 ::: {.callout-caution collapse="true"}
-## Question Port plotting to a GPU
+##### Question: port plotting to a GPU
 This is a take-home exercise: try porting this plotting block to a GPU. On my side, I am running into an issue
 assigning to a tuple element on a GPU with
 ```chpl
@@ -1192,6 +1259,6 @@ and `gpuMaxLocReduce()`.
 
 ## Links
 
-- [Introduction to GPU Programming in Chapel](https://chapel-lang.org/blog/posts/intro-to-gpus)
-- [Chapel's High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming](https://chapel-lang.org/blog/posts/gpu-data-movement)
-- [GPU module functions and attributes](https://chapel-lang.org/docs/main/modules/standard/GPU.html)
+- [Introduction to GPU Programming in Chapel](https://chapel-lang.org/blog/posts/intro-to-gpus){target="_blank"}
+- [Chapel's High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming](https://chapel-lang.org/blog/posts/gpu-data-movement){target="_blank"}
+- [GPU module functions and attributes](https://chapel-lang.org/docs/main/modules/standard/GPU.html){target="_blank"}
