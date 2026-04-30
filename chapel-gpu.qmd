@@ -6,6 +6,10 @@ aliases:
 
 **April 30<sup>th</sup>, 10:00am-noon Pacific Time**
 
+<!-- **To do**: -->
+<!-- 1. check if complex numbers are now supported on a GPU, for `juliaSetGPU.chpl` -->
+<!-- 2. try plotting on the GPU -->
+
 Chapel was designed as a parallel-first programming language targeting any hardware that supports parallel
 execution: *multicore processors*, *multiple nodes* in an HPC cluster, and now also *GPUs* on HPC
 systems. This is very different from the traditional approach to parallel programming in which you would use a
@@ -1171,16 +1175,15 @@ It took 0.017364 seconds on the GPU.
 | $8000\times 8000$ | 26.1678 | 0.067307 | 389 |
 | $16000\times 16000$ | 104.212 | 0.131301 | 794 |
 
-### Adding plotting to run on a GPU
+### Adding plotting
 
 Chapel's [Image](https://chapel-lang.org/docs/main/modules/packages/Image.html){target="_blank"} library lets
-you write arrays of pixels to a PNG file. The following code -- when added to the non-GPU code
-`juliaSetSerial.chpl` -- writes the array `stability` to a file `2000.png` assuming you
+you write arrays of pixels to a PNG file. Here are the steps to implement this output in our code.
 
-1. download the [colour map in CSV](/files/nipy_spectral.csv) and
-2. add the file `sciplot.chpl` (pasted below)
+1. add the following block to the non-GPU code `juliaSetSerial.chpl`:
 
 ```chpl
+// append to juliaSetSerial.chpl
 writeln("Plotting ...");
 use Image, Math, sciplot;
 watch.clear();
@@ -1200,6 +1203,8 @@ writeImage(n:string+".png", imageType.png, pixels);
 watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');
 ```
+
+2. add the file `sciplot.chpl` (pasted below)
 
 ```chpl
 // save this as sciplot.chpl
@@ -1226,6 +1231,17 @@ proc readColourmap(filename: string) {
   return cmap;
 }
 ```
+
+3. download the [colour map in CSV](/files/nipy_spectral.csv).
+
+When all compiled, this writes the array `stability` to a file `2000.png`, assuming you are using the default
+resolution $2000\times 2000$.
+
+
+
+
+
+
 
 Here are the typical timings on a CPU:
 
