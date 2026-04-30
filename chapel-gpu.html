@@ -337,7 +337,7 @@ window.Quarto = {
   <li><a href="#julia-set-problem" id="toc-julia-set-problem" class="nav-link" data-scroll-target="#julia-set-problem">Julia set problem</a>
   <ul class="collapse">
   <li><a href="#porting-the-julia-set-problem-to-a-gpu" id="toc-porting-the-julia-set-problem-to-a-gpu" class="nav-link" data-scroll-target="#porting-the-julia-set-problem-to-a-gpu">Porting the Julia set problem to a GPU</a></li>
-  <li><a href="#adding-plotting-to-run-on-a-gpu" id="toc-adding-plotting-to-run-on-a-gpu" class="nav-link" data-scroll-target="#adding-plotting-to-run-on-a-gpu">Adding plotting to run on a GPU</a></li>
+  <li><a href="#adding-plotting" id="toc-adding-plotting" class="nav-link" data-scroll-target="#adding-plotting">Adding plotting</a></li>
   </ul></li>
   <li><a href="#reduction-operations" id="toc-reduction-operations" class="nav-link" data-scroll-target="#reduction-operations">Reduction operations</a></li>
   <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
@@ -368,6 +368,9 @@ window.Quarto = {
 
 
 <p><strong>April 30<sup>th</sup>, 10:00am-noon Pacific Time</strong></p>
+<!-- **To do**: -->
+<!-- 1. check if complex numbers are now supported on a GPU, for `juliaSetGPU.chpl` -->
+<!-- 2. try plotting on the GPU -->
 <p>Chapel was designed as a parallel-first programming language targeting any hardware that supports parallel execution: <em>multicore processors</em>, <em>multiple nodes</em> in an HPC cluster, and now also <em>GPUs</em> on HPC systems. This is very different from the traditional approach to parallel programming in which you would use a dedicated tool for each level of hardware parallelism, e.g.&nbsp;MPI, or OpenMP, or CUDA, etc.</p>
 <!-- For example, a compact Chapel code can replace a much longer code that uses any combination of MPI + OpenMP + -->
 <!-- CUDA. -->
@@ -1271,14 +1274,14 @@ writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 </tbody>
 </table>
 </section>
-<section id="adding-plotting-to-run-on-a-gpu" class="level3">
-<h3 class="anchored" data-anchor-id="adding-plotting-to-run-on-a-gpu">Adding plotting to run on a GPU</h3>
-<p>Chapel’s <a href="https://chapel-lang.org/docs/main/modules/packages/Image.html" target="_blank">Image</a> library lets you write arrays of pixels to a PNG file. The following code – when added to the non-GPU code <code>juliaSetSerial.chpl</code> – writes the array <code>stability</code> to a file <code>2000.png</code> assuming you</p>
+<section id="adding-plotting" class="level3">
+<h3 class="anchored" data-anchor-id="adding-plotting">Adding plotting</h3>
+<p>Chapel’s <a href="https://chapel-lang.org/docs/main/modules/packages/Image.html" target="_blank">Image</a> library lets you write arrays of pixels to a PNG file. Here are the steps to implement this output in our code.</p>
 <ol type="1">
-<li>download the <a href="./files/nipy_spectral.csv">colour map in CSV</a> and</li>
-<li>add the file <code>sciplot.chpl</code> (pasted below)</li>
+<li>add the following block to the non-GPU code <code>juliaSetSerial.chpl</code>:</li>
 </ol>
-<pre class="chpl"><code>writeln("Plotting ...");
+<pre class="chpl"><code>// append to juliaSetSerial.chpl
+writeln("Plotting ...");
 use Image, Math, sciplot;
 watch.clear();
 watch.start();
@@ -1296,6 +1299,9 @@ var pixels = colorToPixel(colour);               // array of pixels
 writeImage(n:string+".png", imageType.png, pixels);
 watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<ol start="2" type="1">
+<li>add the file <code>sciplot.chpl</code> (pasted below)</li>
+</ol>
 <pre class="chpl"><code>// save this as sciplot.chpl
 use IO;
 use List;
@@ -1319,6 +1325,10 @@ proc readColourmap(filename: string) {
   reader.close();
   return cmap;
 }</code></pre>
+<ol start="3" type="1">
+<li>download the <a href="./files/nipy_spectral.csv">colour map in CSV</a>.</li>
+</ol>
+<p>When all compiled, this writes the array <code>stability</code> to a file <code>2000.png</code>, assuming you are using the default resolution <span class="math inline">\(2000\times 2000\)</span>.</p>
 <p>Here are the typical timings on a CPU:</p>
 <pre class="output"><code>Computing 2000x2000 Julia set ...
 It took 0.382409 seconds
