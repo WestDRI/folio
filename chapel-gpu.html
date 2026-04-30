@@ -367,14 +367,14 @@ window.Quarto = {
 </header>
 
 
-<p><strong>June 12<sup>th</sup>, 1:30pm-4:30pm Pacific Time</strong></p>
+<p><strong>April 30<sup>th</sup>, 10:00am-noon Pacific Time</strong></p>
 <p>Chapel was designed as a parallel-first programming language targeting any hardware that supports parallel execution: <em>multicore processors</em>, <em>multiple nodes</em> in an HPC cluster, and now also <em>GPUs</em> on HPC systems. This is very different from the traditional approach to parallel programming in which you would use a dedicated tool for each level of hardware parallelism, e.g.&nbsp;MPI, or OpenMP, or CUDA, etc.</p>
 <!-- For example, a compact Chapel code can replace a much longer code that uses any combination of MPI + OpenMP + -->
 <!-- CUDA. -->
 <p>Later in this workshop I will show a compact Chapel code that uses multiple nodes on a cluster, multiple GPUs on each node, and automatically utilizes all available (in our Slum job) CPU cores on each node, while copying the data as needed between all these hardware layers. But let’s start with the basics!</p>
 <section id="running-gpu-chapel-on-the-alliance-systems" class="level2">
 <h2 class="anchored" data-anchor-id="running-gpu-chapel-on-the-alliance-systems">Running GPU Chapel on the Alliance systems</h2>
-<p>In general, you need to configure and compile Chapel for your specific GPU type and your specific cluster interconnect. For NVIDIA and AMD GPUs (the only ones currently supported), you must use LLVM as the backend compiler. With NVIDIA GPUs, you must build LLVM to use LLVM’s <a href="https://llvm.org/docs/NVPTXUsage.html">NVPTX backend</a> to support GPU programming, so usually you cannot use the system-provided LLVM module – instead you should set <code>CHPL_LLVM=bundled</code> during Chapel compilation.</p>
+<p>In general, you need to configure and compile Chapel for your specific GPU type and your specific cluster interconnect. For NVIDIA and AMD GPUs (the only ones currently supported), you must use LLVM as the backend compiler. With NVIDIA GPUs, you must build LLVM to use LLVM’s <a href="https://llvm.org/docs/NVPTXUsage.html" target="_blank">NVPTX backend</a> to support GPU programming, so usually you cannot use the system-provided LLVM module – instead you should set <code>CHPL_LLVM=bundled</code> during Chapel compilation.</p>
 <p>As of this writing, on the Alliance systems, you can use GPUs from Chapel on the following systems:</p>
 <ol type="1">
 <li>native multi-locale on Fir, Rorqual, Narval; the binaries might not be in place everywhere, so please get in touch if you want to run it on a specific system</li>
@@ -386,33 +386,61 @@ window.Quarto = {
 </section>
 <section id="running-gpu-chapel-on-your-computer" class="level2">
 <h2 class="anchored" data-anchor-id="running-gpu-chapel-on-your-computer">Running GPU Chapel on your computer</h2>
-<p>If you have an NVIDIA GPU on your computer and run <strong>Linux</strong>, and have all the right GPU drivers and CUDA installed, it should be fairly straightforward to compile Chapel with GPU support. Here is <a href="https://gist.github.com/razoumov/03cfc54cc388675389bb4343beb8a6b1">what worked for me in AlmaLinux 9.4</a>. Please let me know if these steps do not work for you.</p>
-<p>In <strong>Windows</strong>, Chapel with GPU support works under the Windows Subsystem for Linux (WSL) as explained in <a href="https://chapel-lang.org/blog/posts/nvidia-gpu-wsl">this post</a>. You <em>could</em> also run Chapel inside a <a href="https://chapel-lang.org/install-docker.html">Docker container</a>, although you need to find a GPU-enabled Docker image.</p>
+<p>If you run <strong>Linux</strong> and have an NVIDIA GPU on your computer and all the right GPU drivers and CUDA installed, it should be fairly straightforward to compile Chapel with GPU support. Here is <a href="https://gist.github.com/razoumov/03cfc54cc388675389bb4343beb8a6b1" target="_blank">what worked for me in AlmaLinux 9.4</a>. Please let me know if these steps do not work for you.</p>
+<p>In <strong>Windows</strong>, Chapel with GPU support works under the Windows Subsystem for Linux (WSL) as explained in <a href="https://chapel-lang.org/blog/posts/nvidia-gpu-wsl" target="_blank">this post</a>. You <em>could</em> also run Chapel inside a <a href="https://chapel-lang.org/install-docker.html" target="_blank">Docker container</a>, although you need to find a GPU-enabled Docker image.</p>
+<p><strong>MacOS</strong> on Apple Silicon does not officially support NVIDIA and AMD GPUs, however:</p>
+<ul>
+<li>some limited support on older Intel Macs for PCIe-based acceleration over Thunderbolt</li>
+<li>some recent exceptions for third-party drivers for NVIDIA cards from TinyCorp for AI/LLM workloads</li>
+<li>for code development and debugging on MacOS you can emulate GPUs, running any GPU Chapel code in the <em>CPU-as-device</em> mode
+<ul>
+<li>on instructor’s laptop: <code>source ~/Documents/syncHPC/startSingleLocaleCPUasDevice.sh</code></li>
+</ul></li>
+</ul>
 </section>
 <section id="todays-setup" class="level2">
 <h2 class="anchored" data-anchor-id="todays-setup">Today’s setup</h2>
 <p>Today’s we’ll run Chapel on the virtual training cluster. We’ll now distribute the usernames and passwords – let’s try to log in.</p>
-<p>There are two Chapel configurations we will use today.</p>
+<p>There are two Chapel configurations we could use today.</p>
 <ol type="1">
-<li><strong>Chapel with GPU support compiled for NVIDIA cards</strong>. We have 1 virtual GPU on the training cluster to share among all participants and the instructor, so we won’t be able to use it all at the same time. The idea is to try your final production code on this GPU allocating it only for a couple of minutes at a time per user:</li>
+<li><strong>Chapel with GPU support compiled for NVIDIA cards</strong>. On the training cluster we have 10 GPU nodes, and on each node one A100 GPU is split into three “2g.10gb” MIGs, for the total of 30 slices that you can schedule with Slurm. To load this version of Chapel, run:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:02:00</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=3600</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=1</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">nvidia-smi</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startSingleLocaleGPU.sh</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> submit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/fixModules.sh</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startSingleLocaleGPU.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- We have 1 virtual GPU on the training cluster to -->
+<!-- share among all participants and the instructor, so we won't be able to use it all at the same time. The -->
+<!-- idea is to try your final production code on this GPU allocating it only for a couple of minutes at a time -->
+<!-- per user: -->
+<!-- ```sh -->
+<!-- #!/bin/bash -->
+<!-- #SBATCH --time=00:02:00 -->
+<!-- #SBATCH --mem=3600 -->
+<!-- #SBATCH --gpus-per-node=1 -->
+<!-- nvidia-smi -->
+<!-- chpl --fast test.chpl -->
+<!-- ./test -->
+<!-- ``` -->
+<!-- ```sh -->
+<!-- source /project/def-sponsor00/shared/syncHPC/startSingleLocaleGPU.sh -->
+<!-- sbatch submit.sh -->
+<!-- ``` -->
 <ol start="2" type="1">
-<li>We will be doing most debugging on CPUs using the so-called <strong>‘CPU-as-device’ mode</strong> to run a GPU code on a CPU. This is very handy for debugging a Chapel GPU code on a computer without a dedicated GPU and/or vendor SDK installed. You can find more details on this mode <a href="https://chapel-lang.org/docs/technotes/gpu.html#cpu-as-device-mode">here</a>. To enable this mode, I recompiled Chapel with <code>export CHPL_GPU=cpu</code>, but you need to load this version of Chapel separately, and you can use it via an interactive job:</li>
+<li>We could also run Chapel GPU code in the so-called <strong>‘CPU-as-device’ mode</strong> that emulates a GPU on a CPU. This is very handy for debugging a Chapel GPU code on a computer without a dedicated GPU and/or vendor SDK installed. You can find more details on this mode <a href="https://chapel-lang.org/docs/technotes/gpu.html#cpu-as-device-mode" target="_blank">here</a>. Since we have enough physical GPUs today, I did not enable this mode.</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startSingleLocaleCPUasDevice.sh</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem</span><span class="op">=</span>3600</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>In this mode there are some restrictions, e.g.&nbsp;data movement between the device and the host will not be captured (as there are no data moved!), some parallel reductions might not be available in this mode (to be confirmed), and the GPU kernel breakdown might be different. Still, all GPU kernels will be launched on the CPU, and you can even use some of the Chapel’s diagnostic features in this mode, e.g.&nbsp;<code>@assertOnGpu</code> and <code>@gpu.assertEligible</code> attributes will fail at compile time for ineligible loops.</p>
+<!-- To enable this mode, I -->
+<!-- recompiled Chapel with `export CHPL_GPU=cpu`, but you need to load this version of Chapel separately, and -->
+<!-- you can use it via an interactive job: -->
+<!-- ```sh -->
+<!-- source /project/def-sponsor00/shared/syncHPC/startSingleLocaleCPUasDevice.sh -->
+<!-- salloc --time=2:0:0 --mem=3600 -->
+<!-- chpl --fast test.chpl -->
+<!-- ./test -->
+<!-- ``` -->
+<!-- In this mode there are some restrictions, e.g. data movement between the device and the host will not be -->
+<!-- captured (as there are no data moved!), some parallel reductions might not be available in this mode (to be -->
+<!-- confirmed), and the GPU kernel breakdown might be different. Still, all GPU kernels will be launched on the -->
+<!-- CPU, and you can even use some of the Chapel's diagnostic features in this mode, e.g. `@assertOnGpu` and -->
+<!-- `@gpu.assertEligible` attributes will fail at compile time for ineligible loops. -->
 <!-- ```sh -->
 <!-- cedar -->
 <!-- source /home/razoumov/startMultiLocaleGPU.sh -->
@@ -422,19 +450,44 @@ window.Quarto = {
 <!-- git clone ~/chapelBare/ $SLURM_TMPDIR -->
 <!-- cd $SLURM_TMPDIR/gpu -->
 <!-- ``` -->
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Please do not start nested Slurm jobs. When switching from one Chapel configuration to the other, please do this on the login node.</p>
-</div>
-</div>
+<!-- ::: {.callout-note} -->
+<!-- Please do not start nested Slurm jobs. When switching from one Chapel configuration to the other, please do -->
+<!-- this on the login node. -->
+<!-- ::: -->
+<p>So how do you actually run code on GPU nodes? On the training cluster, to keep resources from sitting idle, GPU nodes are created on demand: they spin up when a job starts and shut down soon after it finishes. Bringing a node online usually takes around 3-4 minutes.</p>
+<p>We can adopt one of three workflows:</p>
+<ol type="1">
+<li>use a long interactive job
+<ul>
+<li><span style="color: green;"><strong>pro</strong>:</span> code starts right away, output goes into the terminal</li>
+<li><span style="color: red;"><strong>con</strong>:</span> you often sit on allocated resources even when you are not actively using them</li>
+</ul></li>
+</ol>
+<!-- --nodelist=nodegpupool2 -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li>submit short batch jobs
+<ul>
+<li><span style="color: green;"><strong>pro</strong>:</span> efficient use of resources</li>
+<li><span style="color: red;"><strong>con</strong>:</span> output goes to a file</li>
+</ul></li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=00:05:00</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem=3600</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=2g.10gb:1</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> submit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="3" type="1">
+<li>submit short interactive jobs
+<ul>
+<li><span style="color: green;"><strong>pro</strong>:</span> efficient use of resources, output goes into the terminal</li>
+</ul></li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1 bash <span class="at">-c</span> <span class="st">"chpl --fast test.chpl &amp;&amp; ./test"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="useful-built-in-variables" class="level2">
 <h2 class="anchored" data-anchor-id="useful-built-in-variables">Useful built-in variables</h2>
@@ -453,8 +506,8 @@ Note
 <pre class="chpl"><code>writeln("Locales: ", Locales);
 writeln("on ", here.name, " I see ", here.gpus.size, " GPUs");
 writeln("and their names are: ", here.gpus);</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- ```sh -->
 <!-- git st -->
 <!-- git commit -am "debugging inside an interactive job" && git push -->
@@ -534,7 +587,7 @@ in 'CPU-as-device' mode: (kernel_launch = 2, host_to_device = 0, device_to_host 
 <ol start="3" type="1">
 <li>no other data transfer</li>
 </ol>
-<p>Let’s take a look at the example from https://chapel-lang.org/blog/posts/intro-to-gpus. They define a function:</p>
+<p>Let’s take a look at the example from <a href="https://chapel-lang.org/blog/posts/intro-to-gpus" target="_blank">https://chapel-lang.org/blog/posts/intro-to-gpus</a>. They define a function:</p>
 <pre class="chpl"><code>use GpuDiagnostics;
 proc numKernelLaunches() {
   stopGpuDiagnostics();   // assuming you were running one before
@@ -573,11 +626,11 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>On CPU-as-device we have 7 kernel launches in the last block. My initial interpretation: one launch to initialize <code>Square</code> + one launch to access <code>Square.indices</code> + one launch per loop iteration, but it’s actually not entire correct …</p>
+<p>On CPU-as-device we have 7 kernel launches in the last block. My initial interpretation: one launch to initialize <code>Square</code> + one launch to access <code>Square.indices</code> + one launch per loop iteration, but it’s actually not entirely correct …</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -586,7 +639,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let’s play with this in the CPU-as-device mode! Make the upper limit of <code>rows, cols</code> a <strong>config</strong> variable, recompile, and play with the array size.</p>
 </div>
@@ -628,7 +681,7 @@ Note
 </div>
 </div>
 <p>Alternatively, you can count kernel launches – it’ll be zero for the <code>for</code> loop.</p>
-<p>More on <code>@assertOnGpu</code> and other attributes at https://chapel-lang.org/docs/main/modules/standard/GPU.html.</p>
+<p>More on <code>@assertOnGpu</code> and other attributes at <a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html" target="_blank">https://chapel-lang.org/docs/main/modules/standard/GPU.html</a>.</p>
 <!-- @assertOnGpu foreach i in 0..0 { -->
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -683,11 +736,11 @@ It took 0.003673 seconds</code></pre>
 </section>
 <section id="timing-on-the-gpu" class="level2">
 <h2 class="anchored" data-anchor-id="timing-on-the-gpu">Timing on the GPU</h2>
-<p>Obtaining timing from within a running CUDA kernel is tricky as you are running potentially thousands of simultaneous threads, so you definitely cannot measure the wallclock time. However, you can measure GPU clock cycles spent on a partucular part of the kernel function. The <code>GPU</code> module provides a function <code>gpuClock()</code> that returns the clock cycle counter (per multiprocessor), and it needs to be called to time code blocks <em>within a GPU-enabled loop</em>.</p>
+<p>Obtaining timing from within a running CUDA kernel is tricky as you are running potentially thousands of simultaneous threads that can finish at different times, so measuring the wallclock time per thread might not be very meaningful. However, you can measure GPU clock cycles spent on a partucular part of the kernel function per thread. The <code>GPU</code> module provides a function <code>gpuClock()</code> that returns the clock cycle counter (per multiprocessor), and it needs to be called to time code blocks <em>within a GPU-enabled loop</em>.</p>
 <!-- V100 contains 80 Streaming Multiprocessors (SMs) and 2560 CUDA cores -->
 <!-- A100 contains 108 Streaming Multiprocessors (SMs) and 6912 CUDA cores -->
 <!-- H100 contains 114 Streaming Multiprocessors (SMs) and 14,592 CUDA cores -->
-<p>Here is an example (modelled after <a href="https://raw.githubusercontent.com/chapel-lang/chapel/main/test/gpu/native/measureGpuCycles.chpl">measureGpuCycles.chpl</a>) to demonstrate its use. This is not the most efficient code, as on the GPU we are parallelizing the loop with <code>n=10</code> iterations, and then inside each iteration we run a serial loop to keep the (few non-idle) GPU cores busy, but it gives you an idea.</p>
+<p>Here is a simple example (modelled after <a href="https://raw.githubusercontent.com/chapel-lang/chapel/main/test/gpu/native/measureGpuCycles.chpl" target="_blank">measureGpuCycles.chpl</a>) to demonstrate its use. This is not the most efficient code, as on the GPU we are parallelizing the loop with <code>n=10</code> iterations, each launching its own thread, and then inside each iteration we run a serial loop to keep the GPU cores busy, but it gives you an idea.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -775,10 +828,10 @@ on here.gpus[0] {
     else 2..n;            // or fewer
   writeln("A = ", A[lastFewDigits]);
 }</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesSerial.chpl</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesSerial</span> <span class="at">--n</span><span class="op">=</span>10_000_000</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesSerial.chpl</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesSerial</span> <span class="at">--n</span><span class="op">=</span>10_000_000</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU.chpl</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU</span> <span class="at">--n</span><span class="op">=</span>10_000_000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In both cases we should see the same output:</p>
 <pre class="output"><code>A = 4561 1428578 5000001 4894 49</code></pre>
 <!-- {{< figure src="/img/pause.png" title="" width="400px" >}} -->
@@ -861,7 +914,7 @@ watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 <p>You can also change the default when compiling Chapel via <code>CHPL_GPU_BLOCK_SIZE</code> variable, or when compiling Chapel codes by passing the flag <code>--gpu-block-size=&lt;block_size&gt;</code> to Chapel compiler</p>
 <p>Another setting to play with is the number of iterations per thread:</p>
 <pre class="chpl"><code>@gpu.itersPerThread(4) foreach i in 1..128 { ... }</code></pre>
-<p>This setting is probably specific to your computational problem. For these and other per-kernel attributes, please see <a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html">this page</a>.</p>
+<p>This setting is probably specific to your computational problem. For these and other per-kernel attributes, please see <a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html" target="_blank">this page</a>.</p>
 </section>
 <section id="multiple-locales-gpus" class="level2">
 <h2 class="anchored" data-anchor-id="multiple-locales-gpus">Multiple locales / GPUs</h2>
@@ -876,10 +929,10 @@ watch.stop(); writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
     }
   }</code></pre>
 <p>Here we assume that we are running inside a multi-node job on the cluster, e.g.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>1:0:0 <span class="at">--nodes</span><span class="op">=</span>3 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2 <span class="at">--account</span><span class="op">=</span>...</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> test.chpl</span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span> <span class="at">-nl</span> 3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>How would we use this approach in practice? Let’s consider our primes factorization problem. Suppose we want to collect the results on one node (LOCALE0), maybe for printing or for some additional processing. We need to break our array <code>A</code> into pieces, each computed on a separate GPU from the total pool of 6 GPUs available to us inside this job. Here is our approach, following the ideas outlined in https://chapel-lang.org/blog/posts/gpu-data-movement – let’s store this file as <code>primesGPU-distributed.chpl</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>1:0:0 <span class="at">--nodes</span><span class="op">=</span>3 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> multiple.chpl</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./multiple</span> <span class="at">-nl</span> 3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>How would we use this approach in practice? Let’s consider our primes factorization problem. Suppose we want to collect the results on one node (LOCALE0), maybe for printing or for some additional processing. We need to break our array <code>A</code> into pieces, each computed on a separate GPU from the total pool of 6 GPUs available to us inside this job. Here is our approach, following the ideas outlined in <a href="https://chapel-lang.org/blog/posts/gpu-data-movement" target="_blank">https://chapel-lang.org/blog/posts/gpu-data-movement</a> – let’s store this file as <code>primesGPU-distributed.chpl</code>:</p>
 <pre class="chpl"><code>import RangeChunk.chunks;
 
 proc primeFactorizationSum(n: int) {
@@ -887,7 +940,7 @@ proc primeFactorizationSum(n: int) {
 }
 
 config const n = 1000;
-var A_on_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
+var A_on_first_host: [2..n] int;   // suppose we want to collect the results on one node (LOCALE0)
 
 coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
   on loc {
@@ -899,14 +952,14 @@ coforall (loc, locChunk) in zip(Locales, chunks(2..n, numLocales)) {
         var A_on_device: [gpuChunk] int;
         foreach i in gpuChunk do
           A_on_device[i] = primeFactorizationSum(i);
-        A_on_host[gpuChunk] = A_on_device; // copy the chunk from the GPU via the host to LOCALE0
+        A_on_first_host[gpuChunk] = A_on_device; // copy the chunk from the GPU via the host to LOCALE0
       }
     }
   }
 }
 
 var lastFewDigits = if n &gt; 5 then n-4..n else 2..n;   // last 5 or fewer digits
-writeln("last few A elements: ", A_on_host[lastFewDigits]);
+writeln("last few A elements: ", A_on_first_host[lastFewDigits]);
 
 // let's assume that numLocales = 3, and use default n = 1000
 // loc=LOCALE0, locChunk=2..334
@@ -917,16 +970,16 @@ writeln("last few A elements: ", A_on_host[lastFewDigits]);
 <section id="running-multi-gpu-code-on-a-production-cluster" class="level3">
 <h3 class="anchored" data-anchor-id="running-multi-gpu-code-on-a-production-cluster">Running multi-GPU code on a production cluster</h3>
 <p>On Fir, let’s use three nodes, with two GPUs per node:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0</span></span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=3</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=h100:2</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=def-some-user</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 3 <span class="at">--n</span><span class="op">=</span>10_000_000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load cuda/12.2 chapel-ucx-cuda/2.4.0</span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> submit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=3</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --gpus-per-node=h100:2</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --account=def-some-user</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./primesGPU-distributed</span> <span class="at">-nl</span> 3 <span class="at">--n</span><span class="op">=</span>10_000_000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load cuda/12.2 chapel-ucx-cuda/2.4.0</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> primesGPU-distributed.chpl</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> submit.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>loc = LOCALE0   chunk = 2..3333334
 loc = LOCALE0   gpu = LOCALE0-GPU0   chunk = 2..1666668
 loc = LOCALE0   gpu = LOCALE0-GPU1   chunk = 1666669..3333334
@@ -940,7 +993,7 @@ last few A elements: 4561 1428578 5000001 4894 49</code></pre>
 </section>
 <section id="distributed-a_on_host-array" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-a_on_host-array">Distributed A_on_host array</h3>
-<p>In the code above, the array <code>A_on_host</code> resides entirely in host’s memory on one node. With a sufficiently large problem, you can distribute <code>A_on_host</code> across multiple nodes using block distribution:</p>
+<p>In the code above, the array <code>A_on_first_host</code> resides entirely in host’s memory on one node. With a sufficiently large problem, you can distribute <code>A_on_host</code> across multiple nodes using block distribution:</p>
 <pre class="chpl"><code>use BlockDist; // use standard block distribution module to partition the domain into blocks
 config const n = 1000;
 const distributedMesh: domain(1) dmapped new blockDist(boundingBox={2..n}) = {2..n};
@@ -969,7 +1022,7 @@ var A_on_host: [distributedMesh] int;</code></pre>
 </section>
 <section id="julia-set-problem" class="level2">
 <h2 class="anchored" data-anchor-id="julia-set-problem">Julia set problem</h2>
-<p>In the <a href="https://en.wikipedia.org/wiki/Julia_set">Julia set problem</a> we need to compute a set of points on the complex plane that remain bound under infinite recursive transformation <span class="math inline">\(f(z)\)</span>. We will use the traditional form <span class="math inline">\(f(z)=z^2+c\)</span>, where <span class="math inline">\(c\)</span> is a complex constant. Here is our algorithm:</p>
+<p>In the <a href="https://en.wikipedia.org/wiki/Julia_set" target="_blank">Julia set problem</a> we need to compute a set of points on the complex plane that remain bound under infinite recursive transformation <span class="math inline">\(f(z)\)</span>. We will use the traditional form <span class="math inline">\(f(z)=z^2+c\)</span>, where <span class="math inline">\(c\)</span> is a complex constant. Here is our algorithm:</p>
 <ol type="1">
 <li>pick a point <span class="math inline">\(z_0\in\mathbb{C}\)</span></li>
 <li>compute iterations <span class="math inline">\(z_{i+1}=z_i^2+c\)</span> until <span class="math inline">\(|z_i|&gt;4\)</span> (arbitrary fixed radius; here <span class="math inline">\(c\)</span> is a complex constant)</li>
@@ -1028,60 +1081,60 @@ for i in 1..n {
 }
 watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span>  <span class="at">--fast</span> juliaSetSerial.chpl</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span>  <span class="at">--fast</span> juliaSetSerial.chpl</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./juliaSetSerial</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>It took me 2.34679 seconds to compute a <span class="math inline">\(2000^2\)</span> fractal.</p>
 <section id="porting-the-julia-set-problem-to-a-gpu" class="level3">
 <h3 class="anchored" data-anchor-id="porting-the-julia-set-problem-to-a-gpu">Porting the Julia set problem to a GPU</h3>
 <p>Let’s port this problem to a GPU! Copy <code>juliaSetSerial.chpl</code> to <code>juliaSetGPU.chpl</code> and make the following changes.</p>
 <p><strong>Step 1</strong> (optional, will work only on a physical GPU):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>&gt; if here.gpus.size == 0 {</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>&gt;   writeln("need a GPU ...");</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>&gt;   exit(1);</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>&gt; if here.gpus.size == 0 {</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>&gt;   writeln("need a GPU ...");</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>&gt;   exit(1);</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>As of this writing, Chapel 2.2 does not support complex arithmetic on a GPU. Independently of the precision, you will get errors at compilation (if marked with <code>@gpu.assertEligible</code>):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>error: Loop is marked with @gpu.assertEligible but is not eligible for execution on a GPU</span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex128), which is not marked as GPU eligible</span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex64), which is not marked as GPU eligible</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>error: Loop is marked with @gpu.assertEligible but is not eligible for execution on a GPU</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex128), which is not marked as GPU eligible</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>... function calls out to extern function (_chpl_complex64), which is not marked as GPU eligible</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If not marked with <code>@gpu.assertEligible</code>, the code compiles with complex arithmetic on a GPU, but it seems to take forever to finish.</p>
 <p>Fortunately, we can implement complex arithmetic manually:</p>
 <p><strong>Step 2</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>&lt; proc pixel(z0) {</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>&gt; proc pixel(x0,y0) {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 3</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>&lt;   var z = z0*1.2;   // zoom out</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>&gt;   var x = x0*1.2;   // zoom out</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>&gt;   var y = y0*1.2;   // zoom out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 4</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>&lt;     z = z*z + c;</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>&lt; proc pixel(z0) {</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>&gt;     var xnew = x**2 - y**2 + c.re;</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>&gt;     var ynew = 2*x*y + c.im;</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>&gt;     x = xnew;</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>&gt;     y = ynew;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 5</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>&lt;     if z.re**2+z.im**2 &gt;= 16 then // abs(z)&gt;=4 does not work with LLVM</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>&gt; proc pixel(x0,y0) {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 3</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>&lt;   var z = z0*1.2;   // zoom out</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>&gt;     if x**2+y**2 &gt;= 16 then</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 6</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>&lt; var stability: [1..n,1..n] int;</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>&gt;   var x = x0*1.2;   // zoom out</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>&gt;   var y = y0*1.2;   // zoom out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 4</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>&lt;     z = z*z + c;</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>&gt; on here.gpus[0] {</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>&gt;   var stability: [1..n,1..n] int;</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>...</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><strong>Step 7</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>&lt; for i in 1..n {</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>&gt;     var xnew = x**2 - y**2 + c.re;</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>&gt;     var ynew = 2*x*y + c.im;</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>&gt;     x = xnew;</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>&gt;     y = ynew;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 5</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>&lt;     if z.re**2+z.im**2 &gt;= 16 then // abs(z)&gt;=4 does not work with LLVM</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>&gt;   @gpu.assertEligible foreach i in 1..n {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>&gt;     if x**2+y**2 &gt;= 16 then</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 6</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>&lt; var stability: [1..n,1..n] int;</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>&gt; on here.gpus[0] {</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>&gt;   var stability: [1..n,1..n] int;</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>&gt; }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Step 7</strong>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb51"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>&lt; for i in 1..n {</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>&gt;   @gpu.assertEligible foreach i in 1..n {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Step 8</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb50"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>&lt;     var point = 2*(j-0.5)/n - 1 + y*1i;</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>&lt;     stability[i,j] = pixel(point);</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>---</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>&gt;       var x = 2*(j-0.5)/n - 1;</span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>&gt;       stability[i,j] = pixel(x,y);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb52"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>&lt;     var point = 2*(j-0.5)/n - 1 + y*1i;</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>&lt;     stability[i,j] = pixel(point);</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>&gt;       var x = 2*(j-0.5)/n - 1;</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>&gt;       stability[i,j] = pixel(x,y);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here is the full GPU version of the code <code>juliaSetGPU.chpl</code>:</p>
 <pre class="chpl"><code>use Time;
 
@@ -1163,7 +1216,7 @@ writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 </section>
 <section id="adding-plotting-to-run-on-a-gpu" class="level3">
 <h3 class="anchored" data-anchor-id="adding-plotting-to-run-on-a-gpu">Adding plotting to run on a GPU</h3>
-<p>Chapel’s <a href="https://chapel-lang.org/docs/main/modules/packages/Image.html">Image</a> library lets you write arrays of pixels to a PNG file. The following code – when added to the non-GPU code <code>juliaSetSerial.chpl</code> – writes the array <code>stability</code> to a file <code>2000.png</code> assuming you</p>
+<p>Chapel’s <a href="https://chapel-lang.org/docs/main/modules/packages/Image.html" target="_blank">Image</a> library lets you write arrays of pixels to a PNG file. The following code – when added to the non-GPU code <code>juliaSetSerial.chpl</code> – writes the array <code>stability</code> to a file <code>2000.png</code> assuming you</p>
 <ol type="1">
 <li>download the <a href="./files/nipy_spectral.csv">colour map in CSV</a> and</li>
 <li>add the file <code>sciplot.chpl</code> (pasted below)</li>
@@ -1216,16 +1269,16 @@ Plotting ...
 It took 0.192508 seconds</code></pre>
 <p>This plotting snippet won’t work with the GPU version, as in that version the array <code>stability</code> is defined on the GPU only. You can move the definition of <code>stability</code> to the host, and then the code with plotting on the CPU will work. However, plotting a large heatmap can really benefit from GPU acceleration.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Question Port plotting to a GPU
+<span class="screen-reader-only">Caution</span>Question: port plotting to a GPU
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>This is a take-home exercise: try porting this plotting block to a GPU. On my side, I am running into an issue assigning to a tuple element on a GPU with</p>
 <pre class="chpl"><code>colour[i,j] = ((cmap[idx,1]*255):int, (cmap[idx,2]*255):int, (cmap[idx,3]*255):int);</code></pre>
@@ -1266,9 +1319,9 @@ on here.gpus[0] {
 <section id="links" class="level2">
 <h2 class="anchored" data-anchor-id="links">Links</h2>
 <ul>
-<li><a href="https://chapel-lang.org/blog/posts/intro-to-gpus">Introduction to GPU Programming in Chapel</a></li>
-<li><a href="https://chapel-lang.org/blog/posts/gpu-data-movement">Chapel’s High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming</a></li>
-<li><a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html">GPU module functions and attributes</a></li>
+<li><a href="https://chapel-lang.org/blog/posts/intro-to-gpus" target="_blank">Introduction to GPU Programming in Chapel</a></li>
+<li><a href="https://chapel-lang.org/blog/posts/gpu-data-movement" target="_blank">Chapel’s High-Level Support for CPU-GPU Data Transfers and Multi-GPU Programming</a></li>
+<li><a href="https://chapel-lang.org/docs/main/modules/standard/GPU.html" target="_blank">GPU module functions and attributes</a></li>
 </ul>
 
 
