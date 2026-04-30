@@ -174,10 +174,10 @@ chpl --fast test.chpl
 #SBATCH --time=00:05:00
 #SBATCH --mem=3600
 #SBATCH --gpus-per-node=2g.10gb:1
-chpl --fast test.chpl
 ./test
 ```
 ```sh
+chpl --fast test.chpl
 sbatch submit.sh
 ```
 
@@ -185,7 +185,8 @@ sbatch submit.sh
     - <span style="color: green;">**pro**:</span> efficient use of resources, output goes into the terminal
 
 ```sh
-srun --mem-per-cpu=3600 --gpus-per-node=2g.10gb:1 bash -c "chpl --fast test.chpl && ./test"
+chpl --fast test.chpl
+srun --mem-per-cpu=3600 --gpus-per-node=2g.10gb:1 ./test
 ```
 
 
@@ -519,8 +520,8 @@ CPU. We will see an example of this later in this workshop.
 Obtaining timing from within a running CUDA kernel is tricky as you are running potentially thousands of
 simultaneous threads that can finish at different times, so measuring the wallclock time per thread might not
 be very meaningful. However, you can measure GPU clock cycles spent on a partucular part of the kernel
-function per thread. The `GPU` module provides a function `gpuClock()` that returns the clock cycle counter
-(per multiprocessor), and it needs to be called to time code blocks *within a GPU-enabled loop*.
+function. The `GPU` module provides a function `gpuClock()` that returns the clock cycle counter (per
+multiprocessor), and it needs to be called to time code blocks *within a GPU-enabled loop*.
 
 <!-- V100 contains 80 Streaming Multiprocessors (SMs) and 2560 CUDA cores -->
 <!-- A100 contains 108 Streaming Multiprocessors (SMs) and 6912 CUDA cores -->
@@ -528,9 +529,13 @@ function per thread. The `GPU` module provides a function `gpuClock()` that retu
 
 Here is a simple example (modelled after
 [measureGpuCycles.chpl](https://raw.githubusercontent.com/chapel-lang/chapel/main/test/gpu/native/measureGpuCycles.chpl){target="_blank"})
-to demonstrate its use. This is not the most efficient code, as on the GPU we are parallelizing the loop with
-`n=10` iterations, each launching its own thread, and then inside each iteration we run a serial loop to keep
-the GPU cores busy, but it gives you an idea.
+to demonstrate its use. In this example, we have a parallel loop with `n=10` iterations, each likely launching
+a large array of threads, all running at the same time. We count the number of GPU clock cycles per each
+iteration.
+
+<!-- This is not the most efficient code, as on the GPU we are parallelizing the loop with -->
+<!-- `n=10` iterations, each launching its own thread, and then inside each iteration we run a serial loop to keep -->
+<!-- the GPU cores busy, but it gives you an idea. -->
 
 ::: {.callout-note}
 Do not run this code in the 'CPU-as-device' mode, as its output will not be particularly meaningful: you need
@@ -538,19 +543,18 @@ a physical GPU to see actual counts.
 :::
 
 ```chpl
-use GPU;
+use GPU, Math;
 
-config const n = 10;
+config const n = 10, size = 100;
 
 on here.gpus[0] {
-  var A: [1..n] int;
+  var A: [1..n] real;
   var clockDiff: [1..n] uint;
   @assertOnGpu foreach i in 1..n {
     var start, stop: uint;
-    A[i] = i**2;
     start = gpuClock();
-    for j in 0..<1000 do
-      A[i] += i*j;
+    for j in 0..<size do
+      A[i] += log10((i+j+1): real);
     stop = gpuClock();
     clockDiff[i] = stop - start;
   }
@@ -559,12 +563,64 @@ on here.gpus[0] {
   writeln("A = ", A);
 }
 ```
-```output
-Cycle count = 227132 227132 227132 227132 227132 227132 227132 227132 227132 227132
-Time = 0.148452 seconds
-A = 49501 49604 49709 49816 49925 50036 50149 50264 50381 50500
+```sh
+$ ./test
+Cycle count = 29216 29216 29216 29216 29216 29216 29216 29216 29216 29216
+Time = 0.0207206 seconds
+A = 159.974 161.682 163.218 164.633 165.955 167.202 168.386 169.517 170.6 171.641
+
+$ ./test --size=1000
+Cycle count = 286633 286633 286633 286633 286633 286633 286633 286633 286633 286633
+Time = 0.203286 seconds
+A = 2570.61 2573.3 2575.83 2578.23 2580.53 2582.76 2584.91 2587.01 2589.06 2591.07
+
+$ ./test --size=10_000
+Cycle count = 2860616 2860616 2860616 2860616 2860616 2860616 2860616 2860616 2860616 2860616
+Time = 2.02881 seconds
+A = 35663.5 35667.2 35670.7 35674.1 35677.4 35680.6 35683.8 35686.9 35689.9 35692.9
 ```
 
+There runtimes are suspiciously large, by ~1000X ...
+
+::: {.callout-note}
+###### Measuring wallclock time on the CPU
+If for the same problem we move the timing to the CPU:
+
+```chpl
+use Time, Math;
+
+config const n = 10, size = 100;
+var watch: stopwatch;
+
+on here.gpus[0] {
+  var A: [1..n] real;
+  watch.start();
+  @assertOnGpu foreach i in 1..n {
+    var start, stop: uint;
+    for j in 0..<size do
+      A[i] += log10((i+j+1): real);
+  }
+  watch.stop();
+  writeln('It took ', watch.elapsed(), ' seconds');
+  writeln("A = ", A);
+}
+```
+```sh
+$ ./test
+It took 0.000149 seconds
+A = 159.974 161.682 163.218 164.633 165.955 167.202 168.386 169.517 170.6 171.641
+
+$ ./test --size=1000
+It took 0.000375 seconds
+A = 2570.61 2573.3 2575.83 2578.23 2580.53 2582.76 2584.91 2587.01 2589.06 2591.07
+
+$ ./test --size=10_000
+It took 0.002747 seconds
+A = 35663.5 35667.2 35670.7 35674.1 35677.4 35680.6 35683.8 35686.9 35689.9 35692.9
+```
+We get the same numerical results, but these runtimes make more sense, so it appears that
+`gpuClocksPerSec(devNumber)` actually measures the number of GPU clock cycles per *millisecond*.
+:::
 
 
 
