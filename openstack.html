@@ -340,7 +340,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><strong>Tuesday, December 9<sup>th</sup>, 2025</strong></p>
+<p><strong>Tuesday, May 5<sup>th</sup>, 2026</strong></p>
 <p><strong>Abstract</strong>: OpenStack provides a powerful cloud platform for managing compute, storage, and networking resources. While its web dashboard offers a user-friendly interface and can be convenient at times, it often involves too many clicks to complete routine tasks such as creating and configuring a virtual machine. The command-line interface (CLI) offers a faster, more streamlined way to create and manage resources. In this webinar, we will discuss <code>python-openstackclient</code>, walk through its setup and authentication, and demonstrate how to efficiently perform common OpenStack operations from the terminal. Whether you are managing a few instances or automating workflows, this session will help you leverage the CLI for speed, simplicity, and productivity.</p>
 <section id="intro" class="level2">
 <h2 class="anchored" data-anchor-id="intro">Intro</h2>
@@ -362,8 +362,8 @@ Note
 </div>
 </div>
 <ul>
-<li>Arbutus v2.0 is being slowly rolled out, currently with a small subset of users for testing</li>
-<li>Cedar Cloud will eventually be replaced by Fir Cloud (next 6 months)</li>
+<li><a href="https://arbutus.alliancecan.ca" target="_blank">Arbutus v2.0</a> is now available, and there is a handy <a href="https://docs.alliancecan.ca/wiki/Arbutus_Migration_Guide" target="_blank">Arbutus Migration Guide</a></li>
+<li><a href="https://cedar.cloud.alliancecan.ca" target="_blank">Cedar Cloud</a> will eventually be replaced by Fir Cloud</li>
 </ul>
 <p>Before you begin creating your instances, you might want to check out our <a href="https://docs.alliancecan.ca/wiki/Cloud_Technical_Glossary" target="_blank">Cloud Technical Glossary</a> for terms like <em>“virtual machine”</em>, <em>“instance”</em>, <em>“image”</em>, <em>“flavour”</em>, <em>“volume”</em>, etc.</p>
 <ul>
@@ -372,12 +372,14 @@ Note
 </section>
 <section id="install-openstack-cli-tools" class="level2">
 <h2 class="anchored" data-anchor-id="install-openstack-cli-tools">Install OpenStack CLI tools</h2>
-<p>On your own computer:</p>
+<p>On your own computer use your favourite Python package manager, e.g.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-openstack <span class="at">--python</span> 3.12   <span class="co"># create a new virtual environment</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-openstack/bin/activate</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install python-openstackclient</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install keystoneauth-websso     <span class="co"># needed for SSO (Single Sign-On) on Arbutus2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># uv pip install python-manilaclient   # optional, to programmatically manage shared file systems</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -398,23 +400,44 @@ Note
 <h3 class="anchored" data-anchor-id="step-1---authenticate">Step 1 - authenticate</h3>
 <p>Our goal is to replace OpenStack web UI operations (lots of mouse clicks) with bash commands. We still need to log in to the web UI to authenticate our CLI client:</p>
 <ol type="1">
-<li>Log into <a href="https://cedar.cloud.alliancecan.ca" target="_blank">Cedar Cloud</a> or <a href="https://arbutus.cloud.alliancecan.ca" target="_blank">old Arbutus</a></li>
+<li>Log into <a href="https://cedar.cloud.alliancecan.ca" target="_blank">Cedar Cloud</a> or <a href="https://arbutus.alliancecan.ca" target="_blank">new Arbutus</a></li>
 <li>In the left-side drop-down menu, select your project <!-- CCInternal-SFU-training --> <!-- CCInternal-WG-Supp or CCInternal-magic-castle-training project --></li>
 <li>In the right-side drop-down menu, click “Download OpenStack RC File”
 <ul>
 <li>bash script with all env variables to access your OpenStack project through the command-line tools</li>
 <li>RC = Run Commands</li>
 </ul></li>
+<li>On the new Arbutus only: edit the RC file following <a href="https://docs.alliancecan.ca/wiki/Arbutus_Migration_Guide#New_Arbutus_RC_File_Modifications" target="_blank">these instructions</a></li>
 <li>Source your OpenStack RC File</li>
 </ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/training/openstack</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-openstack/bin/activate</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> ~/Downloads/CCInternal-<span class="pp">*</span>-openrc.sh .</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> CCInternal-<span class="pp">*</span>-openrc.sh   <span class="co"># at prompt enter your CCDB password</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> CCInternal-<span class="pp">*</span>-openrc.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>and then either enter your CCDB password at the prompt (Cedar Cloud), or authenticate via the web browser (Arbutus).</p>
 </section>
 <section id="step-2---decide-on-vm-flavour-and-image" class="level3">
 <h3 class="anchored" data-anchor-id="step-2---decide-on-vm-flavour-and-image">Step 2 - decide on VM flavour and image</h3>
-<p>In OpenStack, VM <em>flavours</em> define the hardware configurations for virtual machines, specifying vCPUs, RAM, and disk size. There are two types of flavours in our cloud:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>OpenStack command syntax
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You can use one of two formats: either type full bash commands</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> openstack configuration show</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> openstack flavor list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>or enter the OpenStack shell to save keystrokes</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> openstack</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">Cmd</span><span class="kw">)</span> <span class="ex">configuration</span> show</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">Cmd</span><span class="kw">)</span> <span class="ex">flavor</span> list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+<p>In OpenStack, VM <em>flavours</em> define the hardware configurations for virtual machines, specifying vCPUs, RAM, and disk size. There are two types of flavours in our cloud, not counting the GPU flavours:</p>
 <ol type="1">
 <li><em>Compute</em> (<em>‘c’</em>) flavours
 <ul>
@@ -428,11 +451,11 @@ Note
 </ul></li>
 </ol>
 <p>Let’s check the resources available on this system:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> flavor list    <span class="co"># check VM flavours 🡒 use c2-15gb-31</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list     <span class="co"># check OS images 🡒 use Ubuntu-24.04.2-Noble-x64-2025-03</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> flavor show c2-15gb-31 <span class="at">--column</span> disk <span class="at">--column</span> ram   <span class="co"># get more info on this flavour</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> flavor list    <span class="co"># check VM flavours 🡒 use c2-15gb-31</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list     <span class="co"># check OS images 🡒 use Ubuntu-24.04.2-Noble-x64-2025-03</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> flavor show c2-15gb-31 <span class="at">--column</span> disk <span class="at">--column</span> ram   <span class="co"># get more info on this flavour</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Finally, in our cloud setup, each project should have its own dedicated network. This is not something you normally select, but you need to know the value to spin the instance, so let’s find it out:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> network list   <span class="co"># list visible (to us) networks 🡒 use CCInternal-SFU-training-network</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> network list   <span class="co"># list visible (to us) networks 🡒 use CCInternal-SFU-training-network</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div style="width: 80%; margin: auto;">
 <table class="caption-top table">
 <caption>Values in this demo</caption>
@@ -470,15 +493,15 @@ Note
 <section id="step-3---create-an-ssh-key-pair-upload-the-public-key" class="level3">
 <h3 class="anchored" data-anchor-id="step-3---create-an-ssh-key-pair-upload-the-public-key">Step 3 - create an SSH key pair, upload the public key</h3>
 <p>Next, we should create an ssh key pair and upload the public key (do it only once!):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/.ssh</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> ed25519 <span class="at">-f</span> cedarKey       <span class="co"># enter a non-empty passphrase (strongly recommended)</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-add</span> <span class="at">--apple-use-keychain</span> cedarKey   <span class="co"># store the passphrase in the keychain (MacOS)</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair list                  <span class="co"># list currently uploaded keys</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair delete <span class="op">&lt;</span>key<span class="op">&gt;</span>          <span class="co"># if needed</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair create <span class="at">--public-key</span> cedarKey.pub cedarKey   <span class="co"># upload the key</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair list                  <span class="co"># see the newly uploaded key</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/.ssh</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> ed25519 <span class="at">-f</span> cedarKey       <span class="co"># enter a non-empty passphrase (strongly recommended)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-add</span> <span class="at">--apple-use-keychain</span> cedarKey   <span class="co"># store the passphrase in the keychain (MacOS)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair list                  <span class="co"># list currently uploaded keys</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair delete <span class="op">&lt;</span>key<span class="op">&gt;</span>          <span class="co"># if needed</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair create <span class="at">--public-key</span> cedarKey.pub cedarKey   <span class="co"># upload the key</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> keypair list                  <span class="co"># see the newly uploaded key</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><a href="https://docs.alliancecan.ca/wiki/Using_SSH_keys_in_Linux" target="_blank">Using SSH keys in Linux</a></li>
 <li><a href="https://docs.alliancecan.ca/wiki/Generating_SSH_keys_in_Windows" target="_blank">Generating SSH keys in Windows</a></li>
@@ -487,43 +510,43 @@ Note
 <section id="step-4---launch-the-vm-instance" class="level3">
 <h3 class="anchored" data-anchor-id="step-4---launch-the-vm-instance">Step 4 - launch the VM instance</h3>
 <p>Now it is time to launch our virtual machine:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server create <span class="at">--flavor</span> c2-15gb-31 <span class="at">--image</span> Ubuntu-24.04.2-Noble-x64-2025-03 <span class="dt">\</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">--nic</span> net-id=CCInternal-SFU-training-network <span class="at">--key-name</span> cedarKey <span class="dt">\</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">--security-group</span> default alexDemoBox   <span class="co"># launch the VM</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                            <span class="co"># should see our VM in the list</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server create <span class="at">--flavor</span> c2-15gb-31 <span class="at">--image</span> Ubuntu-24.04.2-Noble-x64-2025-03 <span class="dt">\</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">--nic</span> net-id=CCInternal-SFU-training-network <span class="at">--key-name</span> cedarKey <span class="dt">\</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">--security-group</span> default alexDemoBox   <span class="co"># launch the VM</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                            <span class="co"># should see our VM in the list</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="step-5---associate-a-floating-ip" class="level3">
 <h3 class="anchored" data-anchor-id="step-5---associate-a-floating-ip">Step 5 - associate a floating IP</h3>
 <p>Next, we need to get a floating IP on an external-facing network and attach it to our VM:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip create Public-Network          <span class="co"># see "floating_ip_address"</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add floating ip alexDemoBox <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># attach it to my instance</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip create Public-Network          <span class="co"># see "floating_ip_address"</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add floating ip alexDemoBox <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># attach it to my instance</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now our machine is ready for use!</p>
 <p>Optionally, you can display a few items:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox                      <span class="co"># long table of all attributes</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> image       <span class="co"># check the VM's operating system</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> addresses   <span class="co"># check the VM's floating IP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox                      <span class="co"># long table of all attributes</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> image       <span class="co"># check the VM's operating system</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> addresses   <span class="co"># check the VM's floating IP</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="connect-to-the-machine" class="level2">
 <h2 class="anchored" data-anchor-id="connect-to-the-machine">Connect to the machine</h2>
 <p>To connect to the VM, we could run the command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu@<span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span> -i ~/.ssh/cedarKey</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu@<span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span> -i ~/.ssh/cedarKey</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Personally, I prefer to store the configuration in my <code>~/.ssh/config</code> file:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;&gt;</span> ~/.ssh/config <span class="op">&lt;&lt;'EOF'</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="st">Host ubuntu</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="st">    HostName &lt;floating_ip_address&gt;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="st">    User ubuntu</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="st">    IdentityFile ~/.ssh/cedarKey</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;&gt;</span> ~/.ssh/config <span class="op">&lt;&lt;'EOF'</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="st">Host ubuntu</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="st">    HostName &lt;floating_ip_address&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="st">    User ubuntu</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="st">    IdentityFile ~/.ssh/cedarKey</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and then simply connect with:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="install-software" class="level2">
 <h2 class="anchored" data-anchor-id="install-software">Install software</h2>
 <p>It is very easy to install packages from Ubuntu’s standard repositories:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update       <span class="co"># update the list of packages</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> wget bat btop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update       <span class="co"># update the list of packages</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> wget bat btop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -535,27 +558,27 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>At this point you probably should upgrade everything on your machine, including installing the latest security patches:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt upgrade   <span class="co"># upgrade installed software to their latest versions</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> reboot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt upgrade   <span class="co"># upgrade installed software to their latest versions</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> reboot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>but I won’t do it now, as it might take quite a few minutes.</p>
 </div>
 </div>
 <p>You can also install Snap packages – these are self-contained apps with all dependencies included that run in a separate sandbox for each app (more isolation/security), e.g.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install emacs <span class="at">--classic</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/snap/bin/emacs</span> <span class="at">-nw</span>   <span class="co"># check the version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install emacs <span class="at">--classic</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/snap/bin/emacs</span> <span class="at">-nw</span>   <span class="co"># check the version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If you want to use this machine to build Apptainer containers as root, you’ll need to install Apptainer:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> add-apt-repository <span class="at">-y</span> ppa:apptainer/ppa</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> apptainer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> add-apt-repository <span class="at">-y</span> ppa:apptainer/ppa</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> apptainer</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="install-my-configs-optional" class="level2">
 <h2 class="anchored" data-anchor-id="install-my-configs-optional">Install my configs (optional)</h2>
 <p>I will install my own <code>.bashrc</code> and <code>.emacs</code> files:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-A</span> ubuntu          <span class="co"># enable agent forwarding</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">tmux</span>                   <span class="co"># start tmux</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:razoumov/synchpc.git syncHPC   <span class="co"># clone from a private repo</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> ~/syncHPC/bashrc ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="bu">source</span> ~/.bashrc</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.emacs <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> ~/syncHPC/emacs ~/.emacs</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="ex">emacs</span> <span class="at">-nw</span>              <span class="co"># wait for emacs to install its packages from my config</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-A</span> ubuntu          <span class="co"># enable agent forwarding</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">tmux</span>                   <span class="co"># start tmux</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:razoumov/synchpc.git syncHPC   <span class="co"># clone from a private repo</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> ~/syncHPC/bashrc ~/.bashrc <span class="kw">&amp;&amp;</span> <span class="bu">source</span> ~/.bashrc</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/rm</span> <span class="at">-f</span> ~/.emacs <span class="kw">&amp;&amp;</span> <span class="fu">ln</span> <span class="at">-s</span> ~/syncHPC/emacs ~/.emacs</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="ex">emacs</span> <span class="at">-nw</span>              <span class="co"># wait for emacs to install its packages from my config</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="create-and-attach-a-volume-optional" class="level2">
 <h2 class="anchored" data-anchor-id="create-and-attach-a-volume-optional">Create and attach a volume (optional)</h2>
@@ -565,58 +588,58 @@ Note
 <li>31GB ephemeral disk from ‘c2-15gb-31’</li>
 </ul>
 <p>If you need more space, you can create and attach additional volumes.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume create <span class="at">--size</span> 100 demoVolume        <span class="co"># create a 100G volume</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume show demoVolume <span class="at">--column</span> status     <span class="co"># wait for it to become available</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume   <span class="co"># attach the volume to the VM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume create <span class="at">--size</span> 100 demoVolume        <span class="co"># create a 100G volume</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume show demoVolume <span class="at">--column</span> status     <span class="co"># wait for it to become available</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume   <span class="co"># attach the volume to the VM</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In the last command’s output, note the volume’s device, e.g.&nbsp;<code>/dev/vdc</code>, and use it below:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lsblk</span>                       <span class="co"># list block devices; find /dev/vdc</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkfs.ext4 /dev/vdc     <span class="co"># format the volume</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mount /dev/vdc /data   <span class="co"># to make it persistent across reboots, add an entry to /etc/fstab</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span>                          <span class="co"># should show my mounted volume</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data/tmp</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown ubuntu:ubuntu <span class="at">-R</span> /data/tmp</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /data/tmp ~/tmp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lsblk</span>                       <span class="co"># list block devices; find /dev/vdc</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkfs.ext4 /dev/vdc     <span class="co"># format the volume</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mount /dev/vdc /data   <span class="co"># to make it persistent across reboots, add an entry to /etc/fstab</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">df</span>                          <span class="co"># should show my mounted volume</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> mkdir /data/tmp</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> chown ubuntu:ubuntu <span class="at">-R</span> /data/tmp</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ln</span> <span class="at">-s</span> /data/tmp ~/tmp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="allow-inbound-traffic-on-a-given-port" class="level2">
 <h2 class="anchored" data-anchor-id="allow-inbound-traffic-on-a-given-port">Allow inbound traffic on a given port</h2>
 <p>The default security group allows only incoming ssh traffic on port 22:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group list           <span class="co"># show all current networking security groups</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group show default   <span class="co"># show details of the default group: likely just incoming ssh on port 22</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group list           <span class="co"># show all current networking security groups</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group show default   <span class="co"># show details of the default group: likely just incoming ssh on port 22</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s say, we want to run a server that waits for incoming traffic on port 8080 . Here are the three steps to do this:</p>
 <ol type="1">
 <li>It is best to create a new security group (let’s call it <code>rule01</code>):</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group create rule01 <span class="at">--description</span> <span class="st">"Allow incoming trame traffic"</span> <span class="co"># </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group create rule01 <span class="at">--description</span> <span class="st">"Allow incoming trame traffic"</span> <span class="co"># </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="2" type="1">
 <li>In this new group, create a security rule to allow incoming TCP traffic on port 8080:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group rule create <span class="at">--protocol</span> tcp <span class="at">--dst-port</span> 8080 <span class="at">--ingress</span> rule01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group rule create <span class="at">--protocol</span> tcp <span class="at">--dst-port</span> 8080 <span class="at">--ingress</span> rule01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="3" type="1">
 <li>Attach this new security group to our instance:</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add security group alexDemoBox rule01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add security group alexDemoBox rule01</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="set-up-git" class="level2">
 <h2 class="anchored" data-anchor-id="set-up-git">Set up Git</h2>
 <p>If you are planning to use this machine for development, you will want to set up Git:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"..."</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"..."</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.editor <span class="st">"emacs -nw"</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.autocrlf input   <span class="co"># line endings on macOS or Linux</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.ignorecase true</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> diff.colorMoved zebra                        <span class="co"># change from red+green colour coding to purple/turquoise</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.last <span class="st">'diff HEAD~1 HEAD'</span>                <span class="co"># file contents of the last commit</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.all <span class="st">'log -p'</span>                           <span class="co"># file contents of all commits</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.list <span class="st">'ls-tree --full-tree -r HEAD'</span>     <span class="co"># list files inside the repository</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.one <span class="st">"log --graph --date-order --date=short --pretty=format:'%C(cyan)%h %C(yellow)%ar %C(auto)%s%+b %C(green)%ae'"</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.files <span class="st">'show --name-only'</span>               <span class="co"># show only file names in a commit</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.search <span class="st">'grep --break --heading -n -i'</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.st <span class="st">'status'</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.br <span class="st">'branch'</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--get</span> alias.files</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">"..."</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">"..."</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.editor <span class="st">"emacs -nw"</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.autocrlf input   <span class="co"># line endings on macOS or Linux</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> core.ignorecase true</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> diff.colorMoved zebra                        <span class="co"># change from red+green colour coding to purple/turquoise</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.last <span class="st">'diff HEAD~1 HEAD'</span>                <span class="co"># file contents of the last commit</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.all <span class="st">'log -p'</span>                           <span class="co"># file contents of all commits</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.list <span class="st">'ls-tree --full-tree -r HEAD'</span>     <span class="co"># list files inside the repository</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.one <span class="st">"log --graph --date-order --date=short --pretty=format:'%C(cyan)%h %C(yellow)%ar %C(auto)%s%+b %C(green)%ae'"</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.files <span class="st">'show --name-only'</span>               <span class="co"># show only file names in a commit</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.search <span class="st">'grep --break --heading -n -i'</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.st <span class="st">'status'</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> alias.br <span class="st">'branch'</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--get</span> alias.files</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> init.defaultBranch main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="remote-graphical-applications" class="level2">
 <h2 class="anchored" data-anchor-id="remote-graphical-applications">Remote graphical applications</h2>
@@ -642,24 +665,24 @@ Note
 <section id="remote-visualization-demo-with-trame" class="level2">
 <h2 class="anchored" data-anchor-id="remote-visualization-demo-with-trame">Remote visualization demo with trame</h2>
 <p>On my laptop:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/talks/2025/11-trame</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz demoFiles.tgz trame-tutorial/<span class="dt">{04_application/coneMeshContour.py</span><span class="op">,</span><span class="dt">data/disk_out_ref.vtu}</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> demoFiles.tgz ubuntu:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/talks/2025/11-trame</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz demoFiles.tgz trame-tutorial/<span class="dt">{04_application/coneMeshContour.py</span><span class="op">,</span><span class="dt">data/disk_out_ref.vtu}</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> demoFiles.tgz ubuntu:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In the VM:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libxrender1          <span class="co"># X11 Rendering Extension</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libosmesa6           <span class="co"># no GPU 🡒 OSMesa rendering</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span>   <span class="co"># into ~/.local/bin</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-trame <span class="at">--python</span> 3.12        <span class="co"># create a new virtual environment</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install numpy</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame                     <span class="co"># trame core</span></span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vuetify trame-vtk   <span class="co"># widgets</span></span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-components          <span class="co"># needed for trame-tutorial/04_application</span></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install vtk                       <span class="co"># the VTK library</span></span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="ex">unarchive</span> demoFiles.tgz</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> trame-tutorial/04_application/coneMeshContour.py <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 8080 <span class="at">--server</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libxrender1          <span class="co"># X11 Rendering Extension</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libosmesa6           <span class="co"># no GPU 🡒 OSMesa rendering</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span>   <span class="co"># into ~/.local/bin</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-trame <span class="at">--python</span> 3.12        <span class="co"># create a new virtual environment</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install numpy</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame                     <span class="co"># trame core</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vuetify trame-vtk   <span class="co"># widgets</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-components          <span class="co"># needed for trame-tutorial/04_application</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install vtk                       <span class="co"># the VTK library</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="ex">unarchive</span> demoFiles.tgz</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> trame-tutorial/04_application/coneMeshContour.py <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 8080 <span class="at">--server</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now I should point my local browser to <code>&lt;floating_ip_address&gt;:8080</code>.</p>
 </section>
 <section id="create-imagevolume-snapshots" class="level2">
@@ -674,10 +697,10 @@ Note
 <section id="snapshot-a-vm" class="level3">
 <h3 class="anchored" data-anchor-id="snapshot-a-vm">Snapshot a VM</h3>
 <p>While our VM is running, you can store it as an image:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server image create <span class="at">--name</span> alexDemoImage alexDemoBox</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server image create <span class="at">--name</span> alexDemoImage alexDemoBox</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The new image should appear in the list, likely as <em>“queued”</em> first – wait for it to become <em>“active”</em>. Now you can use this image to launch new VM instances!</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image show alexDemoImage <span class="at">--human-readable</span>   <span class="co"># show its details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image show alexDemoImage <span class="at">--human-readable</span>   <span class="co"># show its details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -702,36 +725,34 @@ Note
 <section id="stopresume-the-vm" class="level3">
 <h3 class="anchored" data-anchor-id="stopresume-the-vm">Stop/resume the VM</h3>
 <p>For critical workloads, it is better to stop the VM first:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server stop alexDemoBox</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># make sure it is "stopped"</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> create <span class="ex">an</span> image snapshot as described above</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server start alexDemoBox</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># should be active</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server stop alexDemoBox</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># make sure it is "stopped"</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> create <span class="ex">an</span> image snapshot as described above</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server start alexDemoBox</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># should be active</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="snapshot-an-attached-volume" class="level3">
 <h3 class="anchored" data-anchor-id="snapshot-an-attached-volume">Snapshot an attached volume</h3>
 <p>You will need to detach the volume to create its snapshot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># will likely show Status="in-use"</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> stop <span class="ex">the</span> application using the volume</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># wait until Status="available"</span></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot create <span class="at">--volume</span> demoVolume dataSnapshot</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume      <span class="co"># reattach the volume to the VM</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># will likely show Status="in-use"</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> stop <span class="ex">the</span> application using the volume</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># wait until Status="available"</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot create <span class="at">--volume</span> demoVolume dataSnapshot</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume      <span class="co"># reattach the volume to the VM</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="delete-instance-images-and-volume-snapshots" class="level3">
 <h3 class="anchored" data-anchor-id="delete-instance-images-and-volume-snapshots">Delete instance images and volume snapshots</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- ## Play with Wayland -->
-<!-- abc -->
 <!-- install a Wayland compositor and XWayland on the remote VM -->
 <!-- use a remote desktop protocol like RDP or VNC, potentially with waypipe for forwarding Wayland applications -->
 <!-- connect to the VM using a client application that supports the chosen protocol -->
 <!-- use SSH tunneling for secure connections -->
 <!-- Waypipe: run Wayland applications on a remote machine and display them on your local machine -->
 <!-- ## To do -->
-<!-- abc -->
 <!-- show compute and block storage limits -->
 <!-- ## Useful commands -->
 <!-- ```sh -->
@@ -742,20 +763,20 @@ Note
 <section id="destroy-the-vm-and-its-associated-resources" class="level2">
 <h2 class="anchored" data-anchor-id="destroy-the-vm-and-its-associated-resources">Destroy the VM and its associated resources</h2>
 <p>On the laptop:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume delete demoVolume                      <span class="co"># delete the volume</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list                                   <span class="co"># verify</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip delete <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># dissociate the floating IP</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server delete alexDemoBox                  <span class="co"># delete the instance</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> wait <span class="ex">a</span> minute before running the next command</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                                <span class="co"># verify</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group delete rule01               <span class="co"># delete security group</span></span>
-<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage            <span class="co"># mentioned earlier</span></span>
-<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot   <span class="co"># mentioned earlier</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume delete demoVolume                      <span class="co"># delete the volume</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list                                   <span class="co"># verify</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip delete <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># dissociate the floating IP</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server delete alexDemoBox                  <span class="co"># delete the instance</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> wait <span class="ex">a</span> minute before running the next command</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                                <span class="co"># verify</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group delete rule01               <span class="co"># delete security group</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage            <span class="co"># mentioned earlier</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot   <span class="co"># mentioned earlier</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
