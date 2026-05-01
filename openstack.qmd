@@ -4,7 +4,7 @@ aliases:
   - /openstack
 ---
 
-**Tuesday, December 9<sup>th</sup>, 2025**
+**Tuesday, May 5<sup>th</sup>, 2026**
 
 **Abstract**: OpenStack provides a powerful cloud platform for managing compute, storage, and networking
 resources. While its web dashboard offers a user-friendly interface and can be convenient at times, it often
@@ -28,8 +28,9 @@ requested, and they will use your existing allocation (within your RAS or RAC qu
 - RAC = annual Research Allocation Competition
 :::
 
-- Arbutus v2.0 is being slowly rolled out, currently with a small subset of users for testing
-- Cedar Cloud will eventually be replaced by Fir Cloud (next 6 months)
+- [Arbutus v2.0](https://arbutus.alliancecan.ca){target="_blank"} is now available, and there is a handy
+  [Arbutus Migration Guide](https://docs.alliancecan.ca/wiki/Arbutus_Migration_Guide){target="_blank"}
+- [Cedar Cloud](https://cedar.cloud.alliancecan.ca){target="_blank"} will eventually be replaced by Fir Cloud
 
 Before you begin creating your instances, you might want to check out our [Cloud Technical
 Glossary](https://docs.alliancecan.ca/wiki/Cloud_Technical_Glossary){target="_blank"} for terms like *"virtual
@@ -39,12 +40,14 @@ machine"*, *"instance"*, *"image"*, *"flavour"*, *"volume"*, etc.
 
 ## Install OpenStack CLI tools
 
-On your own computer:
+On your own computer use your favourite Python package manager, e.g.
 
 ```sh
 uv venv ~/env-openstack --python 3.12   # create a new virtual environment
 source ~/env-openstack/bin/activate
 uv pip install python-openstackclient
+uv pip install keystoneauth-websso     # needed for SSO (Single Sign-On) on Arbutus2
+# uv pip install python-manilaclient   # optional, to programmatically manage shared file systems
 ...
 deactivate
 ```
@@ -61,26 +64,46 @@ All `openstack` commands we use today will be run directly on our own local comp
 Our goal is to replace OpenStack web UI operations (lots of mouse clicks) with bash commands. We still need to
 log in to the web UI to authenticate our CLI client:
 
-1. Log into [Cedar Cloud](https://cedar.cloud.alliancecan.ca){target="_blank"} or [old
-	Arbutus](https://arbutus.cloud.alliancecan.ca){target="_blank"}
-2. In the left-side drop-down menu, select your project
+1. Log into [Cedar Cloud](https://cedar.cloud.alliancecan.ca){target="_blank"} or [new
+   Arbutus](https://arbutus.alliancecan.ca){target="_blank"}
+1. In the left-side drop-down menu, select your project
 <!-- CCInternal-SFU-training -->   <!-- CCInternal-WG-Supp or CCInternal-magic-castle-training project -->
-3. In the right-side drop-down menu, click "Download OpenStack RC File"
+1. In the right-side drop-down menu, click "Download OpenStack RC File"
     - bash script with all env variables to access your OpenStack project through the command-line tools
 	- RC = Run Commands
-4. Source your OpenStack RC File
+1. On the new Arbutus only: edit the RC file following [these
+   instructions](https://docs.alliancecan.ca/wiki/Arbutus_Migration_Guide#New_Arbutus_RC_File_Modifications){target="_blank"}
+1. Source your OpenStack RC File
 
 ```sh
 cd ~/training/openstack
 source ~/env-openstack/bin/activate
 mv ~/Downloads/CCInternal-*-openrc.sh .
-source CCInternal-*-openrc.sh   # at prompt enter your CCDB password
+source CCInternal-*-openrc.sh
 ```
+
+and then either enter your CCDB password at the prompt (Cedar Cloud), or authenticate via the web browser
+(Arbutus).
 
 ### Step 2 - decide on VM flavour and image
 
+::: {.callout-note}
+##### OpenStack command syntax
+You can use one of two formats: either type full bash commands
+```sh
+$ openstack configuration show
+$ openstack flavor list
+```
+or enter the OpenStack shell to save keystrokes
+```sh
+$ openstack
+(Cmd) configuration show
+(Cmd) flavor list
+```
+:::
+
 In OpenStack, VM *flavours* define the hardware configurations for virtual machines, specifying vCPUs, RAM,
-and disk size. There are two types of flavours in our cloud:
+and disk size. There are two types of flavours in our cloud, not counting the GPU flavours:
 
 1. *Compute* (*'c'*) flavours
     - intended to run for a limited time, usually with a very high sustained CPU/memory usage
@@ -458,7 +481,6 @@ openstack volume snapshot delete dataSnapshot
 
 <!-- ## Play with Wayland -->
 
-<!-- abc -->
 <!-- install a Wayland compositor and XWayland on the remote VM -->
 <!-- use a remote desktop protocol like RDP or VNC, potentially with waypipe for forwarding Wayland applications -->
 <!-- connect to the VM using a client application that supports the chosen protocol -->
@@ -468,7 +490,6 @@ openstack volume snapshot delete dataSnapshot
 
 <!-- ## To do -->
 
-<!-- abc -->
 <!-- show compute and block storage limits -->
 
 <!-- ## Useful commands -->
