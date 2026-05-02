@@ -59,6 +59,21 @@ All `openstack` commands we use today will be run directly on our own local comp
 
 ## Launch an instance in 5 easy steps
 
+::: {.callout-note}
+##### OpenStack command syntax
+You can use one of two formats: either type full bash commands
+```sh
+$ openstack configuration show
+$ openstack flavor list
+```
+or enter the OpenStack shell to save keystrokes
+```sh
+$ openstack
+(Cmd) configuration show
+(Cmd) flavor list
+```
+:::
+
 ### Step 1 - authenticate
 
 Our goal is to replace OpenStack web UI operations (lots of mouse clicks) with bash commands. We still need to
@@ -85,22 +100,13 @@ source CCInternal-*-openrc.sh
 and then either enter your CCDB password at the prompt (Cedar Cloud), or authenticate via the web browser
 (Arbutus).
 
-### Step 2 - decide on VM flavour and image
+At any point after this, you can check which cloud system you are authenticated against with:
 
-::: {.callout-note}
-##### OpenStack command syntax
-You can use one of two formats: either type full bash commands
 ```sh
-$ openstack configuration show
-$ openstack flavor list
+openstack configuration show | grep -e auth_type -e auth_url -e auth.project_name
 ```
-or enter the OpenStack shell to save keystrokes
-```sh
-$ openstack
-(Cmd) configuration show
-(Cmd) flavor list
-```
-:::
+
+### Step 2 - decide on VM flavour and image
 
 In OpenStack, VM *flavours* define the hardware configurations for virtual machines, specifying vCPUs, RAM,
 and disk size. There are two types of flavours in our cloud, not counting the GPU flavours:
@@ -163,7 +169,7 @@ Now it is time to launch our virtual machine:
 ```sh
 openstack server create --flavor c2-15gb-31 --image Ubuntu-24.04.2-Noble-x64-2025-03 \
           --nic net-id=CCInternal-SFU-training-network --key-name cedarKey \
-		  --security-group default alexDemoBox   # launch the VM
+          --security-group default alexDemoBox   # launch the VM
 
 openstack server list                            # should see our VM in the list
 ```
@@ -517,7 +523,8 @@ openstack server delete alexDemoBox                  # delete the instance
 >>> wait a minute before running the next command
 openstack server list                                # verify
 
-openstack security group delete rule01               # delete security group
+openstack server remove security group alexDemoBox rule01   # detach the security group from our instance
+openstack security group delete rule01                      # delete security group
 
 openstack image delete alexDemoImage            # mentioned earlier
 openstack volume snapshot delete dataSnapshot   # mentioned earlier
