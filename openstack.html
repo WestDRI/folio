@@ -479,14 +479,14 @@ Note
 <tr class="odd">
 <td style="text-align: left;">Cedar</td>
 <td style="text-align: left;">c2-15gb-31</td>
-<td style="text-align: left;">Ubuntu-24.04.2-Noble-x64-2025-03</td>
+<td style="text-align: left;">Ubuntu-24.04-Noble-x64-2026-03</td>
 <td style="text-align: left;">CCInternal-SFU-training-network</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Arbutus</td>
-<td style="text-align: left;">p1-1.5gb</td>
-<td style="text-align: left;">Ubuntu-24.04-Noble-x64-2024-06</td>
-<td style="text-align: left;">CCInternal-WG-Supp-network</td>
+<td style="text-align: left;">p2-3gb</td>
+<td style="text-align: left;">Ubuntu-25.04-x64-2025-08</td>
+<td style="text-align: left;">CCInternal-magic-castle-training-network</td>
 </tr>
 </tbody>
 </table>
@@ -548,7 +548,8 @@ Note
 <h2 class="anchored" data-anchor-id="install-software">Install software</h2>
 <p>It is very easy to install packages from Ubuntu’s standard repositories:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update       <span class="co"># update the list of packages</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> wget bat btop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> wget bat btop</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> emacs-nox   <span class="co"># emacs without X11</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -560,8 +561,9 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>At this point you probably should upgrade everything on your machine, including installing the latest security patches:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt upgrade   <span class="co"># upgrade installed software to their latest versions</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> reboot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> unattended-upgrade <span class="at">-d</span>   <span class="co"># install only security patches; will take a while (~9m)</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> shutdown <span class="at">-r</span> now         <span class="co"># reboot; only if /var/run/reboot-required is present</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt upgrade <span class="at">-y</span>          <span class="co"># upgrade installed software to their latest versions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>but I won’t do it now, as it might take quite a few minutes.</p>
 </div>
 </div>
