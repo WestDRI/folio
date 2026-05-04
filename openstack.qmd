@@ -138,10 +138,9 @@ Table: Values in this demo
 
 | Cloud  | Flavour  | Image | Network |
 |:-------|:-------|:------|:------|
-| Cedar  | c2-15gb-31 | Ubuntu-24.04.2-Noble-x64-2025-03 | CCInternal-SFU-training-network |
-| Arbutus | p1-1.5gb  | Ubuntu-24.04-Noble-x64-2024-06 | CCInternal-WG-Supp-network |
+| Cedar  | c2-15gb-31 | Ubuntu-24.04-Noble-x64-2026-03 | CCInternal-SFU-training-network |
+| Arbutus | p2-3gb | Ubuntu-25.04-x64-2025-08 | CCInternal-magic-castle-training-network |
 :::
-
 
 ### Step 3 - create an SSH key pair, upload the public key
 
@@ -225,6 +224,7 @@ It is very easy to install packages from Ubuntu's standard repositories:
 ```sh
 sudo apt update       # update the list of packages
 sudo apt install -y wget bat btop
+sudo apt install -y emacs-nox   # emacs without X11
 ```
 
 ::: {.callout-note}
@@ -232,8 +232,9 @@ sudo apt install -y wget bat btop
 At this point you probably should upgrade everything on your machine, including installing the latest security
 patches:
 ```sh
-sudo apt upgrade   # upgrade installed software to their latest versions
-sudo reboot
+sudo unattended-upgrade -d   # install only security patches; will take a while (~9m)
+sudo shutdown -r now         # reboot; only if /var/run/reboot-required is present
+sudo apt upgrade -y          # upgrade installed software to their latest versions
 ```
 but I won't do it now, as it might take quite a few minutes.
 :::
