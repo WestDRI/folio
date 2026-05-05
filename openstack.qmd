@@ -375,6 +375,40 @@ machine. Here are some popular options:
 Here, we can try standard X11 forwarding -- just keep in mind that it'll be slow, and we might have to install
 `xterm` for the demo.
 
+### VNC remote desktop
+
+Alternatively, we can run a VNC server on our VM:
+
+```sh
+sudo apt update
+sudo apt install -y xfce4 xfce4-goodies   # lightweight desktop environment; takes ~6m
+sudo apt install -y tigervnc-standalone-server tigervnc-common   # fast
+sudo apt-get install -y libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1
+sudo apt-get install -y libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-shape0
+
+vncpasswd   # create a new VNC password
+mkdir -p ~/.vnc
+cat << EOF > ~/.vnc/xstartup
+#!/bin/sh
+unset SESSION_MANAGER
+unset DBUS_SESSION_BUS_ADDRESS
+exec startxfce4
+EOF
+chmod +x ~/.vnc/xstartup
+
+vncserver :1 -geometry 1920x1080 -depth 24   # start the VNC server on port 5901
+```
+
+For security, port 5901 is closed on the cloud system's firewall, so we'll use SSH port forwarding on our own
+machine:
+
+```sh
+ssh ubuntu -L 5900:localhost:5901
+```
+
+Start TigerVNC client and connect to `localhost:5900` (typing the VNC password you set up few minutes ago) --
+this should open a remote desktop on our VM.
+
 ## Remote visualization demo with trame
 
 On my laptop:
