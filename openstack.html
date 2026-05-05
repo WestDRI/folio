@@ -304,7 +304,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#create-and-attach-a-volume-optional" id="toc-create-and-attach-a-volume-optional" class="nav-link" data-scroll-target="#create-and-attach-a-volume-optional">Create and attach a volume (optional)</a></li>
   <li><a href="#allow-inbound-traffic-on-a-given-port" id="toc-allow-inbound-traffic-on-a-given-port" class="nav-link" data-scroll-target="#allow-inbound-traffic-on-a-given-port">Allow inbound traffic on a given port</a></li>
   <li><a href="#set-up-git" id="toc-set-up-git" class="nav-link" data-scroll-target="#set-up-git">Set up Git</a></li>
-  <li><a href="#remote-graphical-applications" id="toc-remote-graphical-applications" class="nav-link" data-scroll-target="#remote-graphical-applications">Remote graphical applications</a></li>
+  <li><a href="#remote-graphical-applications" id="toc-remote-graphical-applications" class="nav-link" data-scroll-target="#remote-graphical-applications">Remote graphical applications</a>
+  <ul class="collapse">
+  <li><a href="#vnc-remote-desktop" id="toc-vnc-remote-desktop" class="nav-link" data-scroll-target="#vnc-remote-desktop">VNC remote desktop</a></li>
+  </ul></li>
   <li><a href="#remote-visualization-demo-with-trame" id="toc-remote-visualization-demo-with-trame" class="nav-link" data-scroll-target="#remote-visualization-demo-with-trame">Remote visualization demo with trame</a></li>
   <li><a href="#create-imagevolume-snapshots" id="toc-create-imagevolume-snapshots" class="nav-link" data-scroll-target="#create-imagevolume-snapshots">Create image/volume snapshots</a>
   <ul class="collapse">
@@ -665,28 +668,52 @@ Note
 <!--     - on clusters installed in `/cvmfs/soft.computecanada.ca/gentoo/2023/x86-64-v3/usr/bin/xpra` -->
 <!--     - must be installed on the client and the host -->
 <p>Here, we can try standard X11 forwarding – just keep in mind that it’ll be slow, and we might have to install <code>xterm</code> for the demo.</p>
+<section id="vnc-remote-desktop" class="level3">
+<h3 class="anchored" data-anchor-id="vnc-remote-desktop">VNC remote desktop</h3>
+<p>Alternatively, we can run a VNC server on our VM:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> xfce4 xfce4-goodies   <span class="co"># lightweight desktop environment; takes ~6m</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> tigervnc-standalone-server tigervnc-common   <span class="co"># fast</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install <span class="at">-y</span> libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install <span class="at">-y</span> libxcb-render-util0 libxcb-xinerama0 libxcb-xinput0 libxcb-shape0</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="ex">vncpasswd</span>   <span class="co"># create a new VNC password</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/.vnc</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&lt;&lt; EOF</span> <span class="op">&gt;</span> ~/.vnc/xstartup</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="st">#!/bin/sh</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="st">unset SESSION_MANAGER</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="st">unset DBUS_SESSION_BUS_ADDRESS</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="st">exec startxfce4</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x ~/.vnc/xstartup</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="ex">vncserver</span> :1 <span class="at">-geometry</span> 1920x1080 <span class="at">-depth</span> 24   <span class="co"># start the VNC server on port 5901</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For security, port 5901 is closed on the cloud system’s firewall, so we’ll use SSH port forwarding on our own machine:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> ubuntu <span class="at">-L</span> 5900:localhost:5901</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Start TigerVNC client and connect to <code>localhost:5900</code> (typing the VNC password you set up few minutes ago) – this should open a remote desktop on our VM.</p>
+</section>
 </section>
 <section id="remote-visualization-demo-with-trame" class="level2">
 <h2 class="anchored" data-anchor-id="remote-visualization-demo-with-trame">Remote visualization demo with trame</h2>
 <p>On my laptop:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/talks/2025/11-trame</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz demoFiles.tgz trame-tutorial/<span class="dt">{04_application/coneMeshContour.py</span><span class="op">,</span><span class="dt">data/disk_out_ref.vtu}</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> demoFiles.tgz ubuntu:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/talks/2025/11-trame</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cvfz demoFiles.tgz trame-tutorial/<span class="dt">{04_application/coneMeshContour.py</span><span class="op">,</span><span class="dt">data/disk_out_ref.vtu}</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> demoFiles.tgz ubuntu:</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In the VM:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libxrender1          <span class="co"># X11 Rendering Extension</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libosmesa6           <span class="co"># no GPU 🡒 OSMesa rendering</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span>   <span class="co"># into ~/.local/bin</span></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-trame <span class="at">--python</span> 3.12        <span class="co"># create a new virtual environment</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install numpy</span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame                     <span class="co"># trame core</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vuetify trame-vtk   <span class="co"># widgets</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-components          <span class="co"># needed for trame-tutorial/04_application</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install vtk                       <span class="co"># the VTK library</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="ex">unarchive</span> demoFiles.tgz</span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> trame-tutorial/04_application/coneMeshContour.py <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 8080 <span class="at">--server</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libxrender1          <span class="co"># X11 Rendering Extension</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install <span class="at">-y</span> libosmesa6           <span class="co"># no GPU 🡒 OSMesa rendering</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-LsSf</span> https://astral.sh/uv/install.sh <span class="kw">|</span> <span class="fu">sh</span>   <span class="co"># into ~/.local/bin</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-trame <span class="at">--python</span> 3.12        <span class="co"># create a new virtual environment</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-trame/bin/activate</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install numpy</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame                     <span class="co"># trame core</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-vuetify trame-vtk   <span class="co"># widgets</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install trame-components          <span class="co"># needed for trame-tutorial/04_application</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install vtk                       <span class="co"># the VTK library</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="ex">unarchive</span> demoFiles.tgz</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> trame-tutorial/04_application/coneMeshContour.py <span class="at">--host</span> 0.0.0.0 <span class="at">--port</span> 8080 <span class="at">--server</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now I should point my local browser to <code>&lt;floating_ip_address&gt;:8080</code>.</p>
 </section>
 <section id="create-imagevolume-snapshots" class="level2">
@@ -701,10 +728,10 @@ Note
 <section id="snapshot-a-vm" class="level3">
 <h3 class="anchored" data-anchor-id="snapshot-a-vm">Snapshot a VM</h3>
 <p>While our VM is running, you can store it as an image:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server image create <span class="at">--name</span> alexDemoImage alexDemoBox</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server image create <span class="at">--name</span> alexDemoImage alexDemoBox</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The new image should appear in the list, likely as <em>“queued”</em> first – wait for it to become <em>“active”</em>. Now you can use this image to launch new VM instances!</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image show alexDemoImage <span class="at">--human-readable</span>   <span class="co"># show its details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image show alexDemoImage <span class="at">--human-readable</span>   <span class="co"># show its details</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -729,27 +756,27 @@ Note
 <section id="stopresume-the-vm" class="level3">
 <h3 class="anchored" data-anchor-id="stopresume-the-vm">Stop/resume the VM</h3>
 <p>For critical workloads, it is better to stop the VM first:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server stop alexDemoBox</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># make sure it is "stopped"</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> create <span class="ex">an</span> image snapshot as described above</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server start alexDemoBox</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># should be active</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server stop alexDemoBox</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># make sure it is "stopped"</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> create <span class="ex">an</span> image snapshot as described above</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server start alexDemoBox</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server show alexDemoBox <span class="at">--column</span> OS-EXT-STS:vm_state   <span class="co"># should be active</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="snapshot-an-attached-volume" class="level3">
 <h3 class="anchored" data-anchor-id="snapshot-an-attached-volume">Snapshot an attached volume</h3>
 <p>You will need to detach the volume to create its snapshot:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># will likely show Status="in-use"</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> stop <span class="ex">the</span> application using the volume</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># wait until Status="available"</span></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot create <span class="at">--volume</span> demoVolume dataSnapshot</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume      <span class="co"># reattach the volume to the VM</span></span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># will likely show Status="in-use"</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> stop <span class="ex">the</span> application using the volume</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list          <span class="co"># wait until Status="available"</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot create <span class="at">--volume</span> demoVolume dataSnapshot</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server add volume alexDemoBox demoVolume      <span class="co"># reattach the volume to the VM</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot list</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="delete-instance-images-and-volume-snapshots" class="level3">
 <h3 class="anchored" data-anchor-id="delete-instance-images-and-volume-snapshots">Delete instance images and volume snapshots</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- ## Play with Wayland -->
 <!-- install a Wayland compositor and XWayland on the remote VM -->
 <!-- use a remote desktop protocol like RDP or VNC, potentially with waypipe for forwarding Wayland applications -->
@@ -767,21 +794,21 @@ Note
 <section id="destroy-the-vm-and-its-associated-resources" class="level2">
 <h2 class="anchored" data-anchor-id="destroy-the-vm-and-its-associated-resources">Destroy the VM and its associated resources</h2>
 <p>On the laptop:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb34"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume delete demoVolume                      <span class="co"># delete the volume</span></span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list                                   <span class="co"># verify</span></span>
-<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip delete <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># dissociate the floating IP</span></span>
-<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server delete alexDemoBox                  <span class="co"># delete the instance</span></span>
-<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> wait <span class="ex">a</span> minute before running the next command</span>
-<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                                <span class="co"># verify</span></span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove security group alexDemoBox rule01   <span class="co"># detach the security group from our instance</span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group delete rule01                      <span class="co"># delete security group</span></span>
-<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage            <span class="co"># mentioned earlier</span></span>
-<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot   <span class="co"># mentioned earlier</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb36"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove volume alexDemoBox demoVolume   <span class="co"># detach the volume from the VM</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume delete demoVolume                      <span class="co"># delete the volume</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume list                                   <span class="co"># verify</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> floating ip delete <span class="op">&lt;</span>floating_ip_address<span class="op">&gt;</span>   <span class="co"># dissociate the floating IP</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server delete alexDemoBox                  <span class="co"># delete the instance</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> wait <span class="ex">a</span> minute before running the next command</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server list                                <span class="co"># verify</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> server remove security group alexDemoBox rule01   <span class="co"># detach the security group from our instance</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> security group delete rule01                      <span class="co"># delete security group</span></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> image delete alexDemoImage            <span class="co"># mentioned earlier</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="ex">openstack</span> volume snapshot delete dataSnapshot   <span class="co"># mentioned earlier</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
