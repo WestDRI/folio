@@ -965,7 +965,7 @@ UNet-type networks.
 
 A *neural operator* is a mapping between discretized function spaces, e.g.
 
-- in our case: initial condition of a PDE → solution at a fixed later time
+- **in our case**: initial condition of a PDE → solution at a fixed later time
 - could also map initial condition → time-dependent solution
 - easiest: solution at one time step → solution at the next time step
     - this is called an auto-regressive neural net, as we apply an FNO to the output of the previous FNO
@@ -1003,6 +1003,11 @@ In the file `fourier.py`, define a class `SpectralConv2d` for our basic spectral
   channels
 - since we perform a Fourier transform on real-valued data, the output in the frequency domain has some
   redundancies (symmetries) ⇨ we need to consider only two quadrants in the 2D frequency domain
+- the notation "bixy,ioxy->boxy" describes mapping of input/output dimensions for the complex matrix
+  multiplication at every frequency coordinate: `b` = batch size, `i` = number of input channels, `o` = number
+  of output channels, `x` and `y` = 2D frequency coordinates
+- `self.weights1` and `self.weights2` are learnable weights for positive and negative frequencies in both
+  spatial dimensions
 
 ```py
 import jax
@@ -1046,11 +1051,11 @@ class SpectralConv2d(nnx.Module):
         # as for the top/bottom right corners, they are redundant, so no need to store them
         
         # return to physical space
-        x = jnp.fft.irfftn(out_ft, s=(h, w), axes=(-2, -1)) # inverse FFT: filtered coefficients -> 2D image
+        x = jnp.fft.irfftn(out_ft, s=(h, w), axes=(-2, -1)) # inverse FFT: filtered coeffs -> 2D image
         return jnp.transpose(x, (0, 2, 3, 1)) # reorder to (batch, height, width, channel) dimensions
 ```
 
-We stack four of these spectral convolution layers in our network:
+We stack four of these spectral convolution layers in our network, each with a parallel skip connection:
 
 ```py
 class FNO2d(nnx.Module):   # high-level network architecture
@@ -1077,15 +1082,20 @@ class FNO2d(nnx.Module):   # high-level network architecture
         
     def __call__(self, x):   # make FNO2d class a function
         x = self.fc0(x)
+        
         x1 = self.conv0(x) + self.w0(x) # global (Fourier) + local (linear) patterns
         x = jax.nn.gelu(x1)             # non-linear activation function
+        
         x2 = self.conv1(x) + self.w1(x)
         x = jax.nn.gelu(x2)
+        
         x3 = self.conv2(x) + self.w2(x)
         x = jax.nn.gelu(x3)
+        
         x4 = self.conv3(x) + self.w3(x)
         x = self.fc1(x4)                # final projection, first layer
         x = jax.nn.gelu(x)
+        
         x = self.fc2(x)
         return x
 ```
@@ -1109,6 +1119,7 @@ As the model is now larger, set `batchSize = 4` in `train.py` to fit it into mem
 usual:
 
 ```sh
+rm weights???
 srun --time=0:30:0 --mem-per-cpu=3600 --gpus-per-node=2g.10gb:1 python -u train.py
 ```
 
@@ -1125,7 +1136,7 @@ gradients, ensuring that high-frequency and low-frequency modes are updated at a
 Here is an example of a converged solution for a single source:
 
 :::{style="text-align: center;"}
-![Solution after 10 (left), 100 (center), and 490 (right) epochs](/fig/fno1.png)
+![Solution after 10 (left), 100 (center), and 500 (right) epochs](/fig/fno1.png)
 :::
 
 
