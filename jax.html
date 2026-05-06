@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Gen-AI with JAX for simulation data – Various courses</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f7919f14b89ae9a431cba0b331f0b52b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-36dd7d8b62585d533cf42ca23337bbf0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-f7919f14b89ae9a431cba0b331f0b52b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles-ls.css">
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#disclaimer" id="toc-disclaimer" class="nav-link active" data-scroll-target="#disclaimer">Disclaimer</a></li>
+  <li><a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation">Installation</a></li>
+  <li><a href="#numerical-problem" id="toc-numerical-problem" class="nav-link" data-scroll-target="#numerical-problem">Numerical problem</a></li>
+  <li><a href="#some-representative-solutions" id="toc-some-representative-solutions" class="nav-link" data-scroll-target="#some-representative-solutions">Some representative solutions</a></li>
+  <li><a href="#levels-of-difficulty" id="toc-levels-of-difficulty" class="nav-link" data-scroll-target="#levels-of-difficulty">Levels of difficulty</a></li>
+  <li><a href="#training-and-testing-data" id="toc-training-and-testing-data" class="nav-link" data-scroll-target="#training-and-testing-data">Training and testing data</a></li>
+  <li><a href="#neural-net-types" id="toc-neural-net-types" class="nav-link" data-scroll-target="#neural-net-types">Neural net types</a></li>
+  <li><a href="#jax-components" id="toc-jax-components" class="nav-link" data-scroll-target="#jax-components">JAX components</a></li>
+  <li><a href="#convolution-kernels" id="toc-convolution-kernels" class="nav-link" data-scroll-target="#convolution-kernels">Convolution kernels</a></li>
+  <li><a href="#optimizers" id="toc-optimizers" class="nav-link" data-scroll-target="#optimizers">Optimizers</a></li>
+  <li><a href="#running-training" id="toc-running-training" class="nav-link" data-scroll-target="#running-training">Running training</a></li>
+  <li><a href="#first-network-convolutional-autoencoder" id="toc-first-network-convolutional-autoencoder" class="nav-link" data-scroll-target="#first-network-convolutional-autoencoder">First network: convolutional autoencoder</a></li>
+  <li><a href="#second-network-u-nets" id="toc-second-network-u-nets" class="nav-link" data-scroll-target="#second-network-u-nets">Second network: U-Net(s)</a></li>
+  <li><a href="#third-network-fourier-neural-operator-fno" id="toc-third-network-fourier-neural-operator-fno" class="nav-link" data-scroll-target="#third-network-fourier-neural-operator-fno">Third network: Fourier Neural Operator (FNO)</a></li>
+  <li><a href="#convergence" id="toc-convergence" class="nav-link" data-scroll-target="#convergence">Convergence</a></li>
+  <li><a href="#multi-point-source-model" id="toc-multi-point-source-model" class="nav-link" data-scroll-target="#multi-point-source-model">Multi-point-source model</a></li>
+  <li><a href="#multi-shape-model" id="toc-multi-shape-model" class="nav-link" data-scroll-target="#multi-shape-model">Multi-shape model</a></li>
+  <li><a href="#gpu-threadmemory-utilization" id="toc-gpu-threadmemory-utilization" class="nav-link" data-scroll-target="#gpu-threadmemory-utilization">GPU thread/memory utilization</a></li>
+  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Gen-AI with JAX for simulation data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>May 07<sup>th</sup>, 10:00am–12:00pm Pacific Time</strong></p>
+<p><strong>Abstract</strong>: Most machine learning courses focus on standard workflows – such as image classification – where many pre-trained community models are readily available (e.g., via Hugging Face). In this course, we take a different approach by building a model for a custom scientific task: predicting the solution of a partial differential equation (PDE) from a given initial condition. The goal is to train a neural network that acts as a fast surrogate for traditional numerical solvers.</p>
+<p>Using JAX, Flax, and Optax, we will train a surrogate model on 2D simulation data that we generate ourselves. Along the way, we will develop a complete machine learning pipeline from scratch: generating synthetic training data via simulations, selecting the right model architecture, training the model on an HPC cluster, making sure it runs efficiently on cluster’s GPUs, and evaluating the quality of the surrogate solutions.</p>
+<p>We will explore three increasingly challenging types of initial conditions: a single Gaussian peak placed randomly within the domain, multiple random Gaussian peaks, and a combination of Gaussian peaks with 1D linear Gaussian features.</p>
+<p>This course builds on our earlier <a href="https://mint.westdri.ca/ai/top_fl">JAX course</a>, but no prior experience is required, as we will start from the basics.</p>
+<section id="disclaimer" class="level2">
+<h2 class="anchored" data-anchor-id="disclaimer">Disclaimer</h2>
+<p>I am not an AI/ML specialist, but with a background in numerical methods and fluid dynamics, I am interested in building a surrogate model that can generate solutions after being trained on a set of PDE simulations. Most ML courses I’ve come across focus either on theory or on very different applications, such as image classification, so I decided to build a workflow around this specific use case. I hope that demonstrating how to train a neural network on simulation data will be useful to others.</p>
+<p>Since I am relatively new to working directly with ML frameworks, I would really value your feedback. I also want the course to be transparent about the process, showing not only what works, but also what doesn’t when tackling this kind of problem. <!-- Could CNNs or U-Nets solver this problem efficiently? --></p>
+<p>Going forward, we plan to offer a series of hands-on courses covering different types of ML problems, all focused on developing models from scratch.</p>
+</section>
+<section id="installation" class="level2">
+<h2 class="anchored" data-anchor-id="installation">Installation</h2>
+<p>If running on your own computer, you will need a GPU for training. For inference, a CPU is sufficient. In either case, you would install the following libraries:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> venv ~/env-jax <span class="at">--python</span> 3.12   <span class="co"># create a new virtual environment</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-jax/bin/activate</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install jax flax pillow matplotlib</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Here is the installation on a production cluster (e.g.&nbsp;Fir):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> venv ~/env-jax</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-jax/bin/activate</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install <span class="at">--upgrade</span> <span class="at">--no-index</span> pip</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install <span class="at">--no-index</span> jax flax pillow matplotlib</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-m</span> pip install <span class="at">--no-index</span> jax<span class="pp">[</span><span class="ss">cuda</span><span class="pp">]</span>          <span class="co"># installs jax-cuda12-pjrt, jax-cuda12-plugin</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># avail_wheels --name "*pytorch*" --all_versions    # check out the available packages</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># python -m pip install --no-index gpytorch==1.13   # if needed, install a specific version</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">...</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Today we’ll be using our training cluster where we have already installed everything into a dedicated virtual Python environment. To load it:</p>
+<!-- git clone git@github.com:razoumov/simdata.git jax -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/fixModules.sh</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-jax/bin/activate</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When training on our small cluster, for some bigger models we’ll have to reduce the batch size by 2X (<code>batchSize=4</code>) to fit them into the 2g.10gb’s memory.</p>
+</div>
+</div>
+</section>
+<section id="numerical-problem" class="level2">
+<h2 class="anchored" data-anchor-id="numerical-problem">Numerical problem</h2>
+<!-- I am solving numerically a 2D PDE problem. Each solution has two images: an initial condition and an -->
+<!-- associated solution. Give me a JAX code to train a generative AI model to predict solutions based on the -->
+<!-- initial conditions. Use NNX neural network library. In other words, I would like to do GPU-accelerated machine -->
+<!-- learning to train surrogate models from simulation results. Please walk me through the entire process. I am -->
+<!-- reading input data with the following code: -->
+<p>The goal of this 2-hour ML course is to train a generative AI model on an ensemble of solutions from a 2D advection solver, and then use the model to predict solutions based on initial conditions.</p>
+<!-- I am using a Chapel code to generate the solutions for model training. -->
+<p>Consider the following acoustic wave equation with <span class="math inline">\(c=1\)</span> (speed of sound), written as a system separately for velocity and pressure:</p>
+<p><span class="math display">\[
+\begin{cases}
+   \partial\vec{v}/\partial t = -\nabla p\\\
+   \partial p/\partial t = -\nabla\cdot\vec{v}
+\end{cases}
+\]</span></p>
+<p>Writing a full 3D solver is straightforward, but to reduce the model training time, we will implement it in 2D. Here is a multi-threaded implementation of this solver in Chapel <code>acoustic2D.chpl</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode c chpl code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>use Image<span class="op">,</span> Math<span class="op">,</span> IO<span class="op">,</span> sciplot<span class="op">,</span> Time<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>use Random<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>config <span class="dt">const</span> n <span class="op">=</span> <span class="dv">500</span><span class="op">,</span> nt <span class="op">=</span> <span class="dv">250</span><span class="op">,</span> nout <span class="op">=</span> <span class="dv">250</span><span class="op">;</span> <span class="co">// resolution, max time steps, plotting frequency</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">const</span> a <span class="op">=</span> <span class="fl">0.1</span><span class="op">;</span>   <span class="co">// 0.1 - thick front, no post-wave oscillations; 0.5 - narrow front, large oscillations</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>config <span class="dt">const</span> animation <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>config <span class="dt">const</span> model <span class="op">=</span> <span class="dv">8</span><span class="op">,</span> nruns <span class="op">=</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>var h <span class="op">=</span> <span class="fl">1.0</span> <span class="op">/</span> <span class="op">(</span>n<span class="op">-</span><span class="dv">1</span><span class="op">),</span> coef <span class="op">=</span> <span class="op">-(</span>a<span class="op">/</span>h<span class="op">)**</span><span class="dv">2</span><span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>var colour<span class="op">:</span> <span class="op">[</span><span class="fl">1.</span><span class="er">.n</span><span class="op">,</span> <span class="fl">1.</span><span class="er">.n</span><span class="op">]</span> <span class="dv">3</span><span class="op">*</span><span class="dt">int</span><span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>var cmap <span class="op">=</span> readColourmap<span class="op">(</span><span class="ch">'v</span><span class="er">iridis.csv</span><span class="ch">'</span><span class="op">);</span>   <span class="co">// cmap.domain is {1..256, 1..3}</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="dt">const</span> mesh <span class="op">=</span> <span class="op">{</span><span class="fl">1.</span><span class="er">.n</span><span class="op">,</span> <span class="fl">1.</span><span class="er">.n</span><span class="op">};</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="dt">const</span> largerMesh <span class="op">=</span> <span class="op">{</span><span class="fl">0.</span><span class="er">.n</span><span class="op">+</span><span class="dv">1</span><span class="op">,</span> <span class="fl">0.</span><span class="er">.n</span><span class="op">+</span><span class="dv">1</span><span class="op">};</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>var Vx<span class="op">,</span> Vy<span class="op">,</span> P<span class="op">,</span> tmp<span class="op">:</span> <span class="op">[</span>largerMesh<span class="op">]</span> real<span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>var watch<span class="op">:</span> stopwatch<span class="op">;</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>watch<span class="op">.</span>start<span class="op">();</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> run in <span class="fl">1.</span><span class="er">.nruns</span> <span class="op">{</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  P <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  Vx <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  Vy <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  select model <span class="op">{</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    when <span class="dv">8</span> <span class="cf">do</span> <span class="op">{</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      <span class="co">// 1-5 randomly placed points</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      var rint <span class="op">=</span> new randomStream<span class="op">(</span><span class="dt">int</span><span class="op">);</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      var np <span class="op">=</span> rint<span class="op">.</span>next<span class="op">(</span>min<span class="op">=</span><span class="dv">1</span><span class="op">,</span> max<span class="op">=</span><span class="dv">5</span><span class="op">);</span>   <span class="co">// default max=5</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      var rreal <span class="op">=</span> new randomStream<span class="op">(</span>real<span class="op">);</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>      var sources<span class="op">:</span> <span class="op">[</span><span class="fl">1.</span><span class="er">.np</span><span class="op">]</span> <span class="op">(</span>real<span class="op">,</span> real<span class="op">);</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> i in <span class="fl">1.</span><span class="er">.np</span> <span class="cf">do</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        sources<span class="op">[</span>i<span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="fl">0.2</span> <span class="op">+</span> <span class="fl">0.6</span><span class="op">*</span>rreal<span class="op">.</span>next<span class="op">(),</span> <span class="fl">0.2</span> <span class="op">+</span> <span class="fl">0.6</span><span class="op">*</span>rreal<span class="op">.</span>next<span class="op">());</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> in mesh <span class="op">{</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> src in sources <span class="cf">do</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>          P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">+=</span> exp<span class="op">(</span>coef<span class="op">*(</span> <span class="op">((</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h<span class="op">-</span>src<span class="op">[</span><span class="dv">0</span><span class="op">])**</span><span class="dv">2</span> <span class="op">+</span> <span class="op">((</span>j<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h<span class="op">-</span>src<span class="op">[</span><span class="dv">1</span><span class="op">])**</span><span class="dv">2</span> <span class="op">));</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    when <span class="dv">9</span> <span class="cf">do</span> <span class="op">{</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>      <span class="co">// two randomly placed points with a line between them</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>      var rreal <span class="op">=</span> new randomStream<span class="op">(</span>real<span class="op">);</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>      var points <span class="op">=</span> <span class="op">[(</span><span class="fl">0.2</span><span class="op">+</span><span class="fl">0.6</span><span class="op">*</span>rreal<span class="op">.</span>next<span class="op">(),</span> <span class="fl">0.2</span><span class="op">+</span><span class="fl">0.6</span><span class="op">*</span>rreal<span class="op">.</span>next<span class="op">()),</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>                    <span class="op">(</span><span class="fl">0.2</span><span class="op">+</span><span class="fl">0.6</span><span class="op">*</span>rreal<span class="op">.</span>next<span class="op">(),</span> <span class="fl">0.2</span><span class="op">+</span><span class="fl">0.6</span><span class="op">*</span>rreal<span class="op">.</span>next<span class="op">())];</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>      var ax <span class="op">=</span> points<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span> <span class="op">-</span> points<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">0</span><span class="op">],</span> ay <span class="op">=</span> points<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">1</span><span class="op">]</span> <span class="op">-</span> points<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">1</span><span class="op">];</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> in mesh <span class="op">{</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        var wx <span class="op">=</span> <span class="op">(</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h <span class="op">-</span> points<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">0</span><span class="op">],</span> wy <span class="op">=</span> <span class="op">(</span>j<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h <span class="op">-</span> points<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">1</span><span class="op">];</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        var alength <span class="op">=</span> sqrt<span class="op">(</span>ax<span class="op">*</span>ax <span class="op">+</span> ay<span class="op">*</span>ay<span class="op">),</span> wlength <span class="op">=</span> sqrt<span class="op">(</span>wx<span class="op">*</span>wx <span class="op">+</span> wy<span class="op">*</span>wy<span class="op">);</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        var distanceFromTheLine <span class="op">=</span> abs<span class="op">(</span>ax<span class="op">*</span>wy <span class="op">-</span> ay<span class="op">*</span>wx<span class="op">)</span> <span class="op">/</span> alength<span class="op">;</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        var dimensionlessCoordinateAlongTheLine <span class="op">=</span> <span class="op">(</span>ax<span class="op">*</span>wx <span class="op">+</span> ay<span class="op">*</span>wy<span class="op">)</span> <span class="op">/</span> <span class="op">(</span>alength<span class="op">*</span>alength<span class="op">);</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> dimensionlessCoordinateAlongTheLine <span class="op">&gt;</span> <span class="dv">1</span> then</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>          P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">=</span> exp<span class="op">(</span>coef<span class="op">*(((</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h<span class="op">-</span>points<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">])**</span><span class="dv">2</span><span class="op">+((</span>j<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h<span class="op">-</span>points<span class="op">[</span><span class="dv">1</span><span class="op">][</span><span class="dv">1</span><span class="op">])**</span><span class="dv">2</span><span class="op">));</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span> <span class="cf">if</span> dimensionlessCoordinateAlongTheLine <span class="op">&lt;</span> <span class="dv">0</span> then</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>          P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">=</span> exp<span class="op">(</span>coef<span class="op">*(((</span>i<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h<span class="op">-</span>points<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">0</span><span class="op">])**</span><span class="dv">2</span><span class="op">+((</span>j<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>h<span class="op">-</span>points<span class="op">[</span><span class="dv">0</span><span class="op">][</span><span class="dv">1</span><span class="op">])**</span><span class="dv">2</span><span class="op">));</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>          P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">=</span> exp<span class="op">(</span>coef<span class="op">*</span>distanceFromTheLine<span class="op">**</span><span class="dv">2</span><span class="op">);</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> animation then plotPressure<span class="op">(</span><span class="dv">0</span><span class="op">,</span>run<span class="op">);</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>  var dt <span class="op">=</span> h <span class="op">/</span> <span class="fl">1.6</span><span class="op">;</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> step in <span class="fl">1.</span><span class="er">.nt</span> <span class="op">{</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">(</span>P<span class="op">);</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">(</span>Vx<span class="op">);</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">(</span>Vy<span class="op">);</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    forall <span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> in mesh <span class="op">{</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>      Vx<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">-=</span> dt <span class="op">*</span> <span class="op">(</span>P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]-</span>P<span class="op">[</span>i<span class="op">-</span><span class="dv">1</span><span class="op">,</span>j<span class="op">])</span> <span class="op">/</span> h<span class="op">;</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>      Vy<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">-=</span> dt <span class="op">*</span> <span class="op">(</span>P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]-</span>P<span class="op">[</span>i<span class="op">,</span>j<span class="op">-</span><span class="dv">1</span><span class="op">])</span> <span class="op">/</span> h<span class="op">;</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    forall <span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> in mesh <span class="cf">do</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>      P<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">-=</span> dt <span class="op">*</span> <span class="op">(</span>Vx<span class="op">[</span>i<span class="op">+</span><span class="dv">1</span><span class="op">,</span>j<span class="op">]</span> <span class="op">-</span> Vx<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">+</span> Vy<span class="op">[</span>i<span class="op">,</span>j<span class="op">+</span><span class="dv">1</span><span class="op">]</span> <span class="op">-</span> Vy<span class="op">[</span>i<span class="op">,</span>j<span class="op">])</span> <span class="op">/</span> h<span class="op">;</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> step<span class="op">%</span>nout <span class="op">==</span> <span class="dv">0</span> <span class="op">&amp;&amp;</span> animation then plotPressure<span class="op">(</span>step<span class="op">/</span>nout<span class="op">,</span>run<span class="op">);</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>watch<span class="op">.</span>stop<span class="op">();</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>writeln<span class="op">(</span><span class="ch">'S</span><span class="er">imulation took </span><span class="ch">'</span><span class="op">,</span> watch<span class="op">.</span>elapsed<span class="op">(),</span> <span class="ch">' </span><span class="er">seconds</span><span class="ch">'</span><span class="op">);</span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>proc periodic<span class="op">(</span>A<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>  A<span class="op">[</span><span class="dv">0</span><span class="op">,</span><span class="fl">1.</span><span class="er">.n</span><span class="op">]</span> <span class="op">=</span> A<span class="op">[</span>n<span class="op">,</span><span class="fl">1.</span><span class="er">.n</span><span class="op">];</span> A<span class="op">[</span>n<span class="op">+</span><span class="dv">1</span><span class="op">,</span><span class="fl">1.</span><span class="er">.n</span><span class="op">]</span> <span class="op">=</span> A<span class="op">[</span><span class="dv">1</span><span class="op">,</span><span class="fl">1.</span><span class="er">.n</span><span class="op">];</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>  A<span class="op">[</span><span class="fl">1.</span><span class="er">.n</span><span class="op">,</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> A<span class="op">[</span><span class="fl">1.</span><span class="er">.n</span><span class="op">,</span>n<span class="op">];</span> A<span class="op">[</span><span class="fl">1.</span><span class="er">.n</span><span class="op">,</span>n<span class="op">+</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> A<span class="op">[</span><span class="fl">1.</span><span class="er">.n</span><span class="op">,</span><span class="dv">1</span><span class="op">];</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>proc fourDigits<span class="op">(</span>n<span class="op">:</span> <span class="dt">int</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>  var digits<span class="op">:</span> string<span class="op">;</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> n <span class="op">&gt;=</span> <span class="dv">1000</span> then digits <span class="op">=</span> n<span class="op">:</span>string<span class="op">;</span></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> n <span class="op">&gt;=</span> <span class="dv">100</span> then digits <span class="op">=</span> <span class="st">"0"</span><span class="op">+</span>n<span class="op">:</span>string<span class="op">;</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> n <span class="op">&gt;=</span> <span class="dv">10</span> then digits <span class="op">=</span> <span class="st">"00"</span><span class="op">+</span>n<span class="op">:</span>string<span class="op">;</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> digits <span class="op">=</span> <span class="st">"000"</span><span class="op">+</span>n<span class="op">:</span>string<span class="op">;</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> digits<span class="op">;</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>proc plotPressure<span class="op">(</span>step<span class="op">,</span>run<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>  <span class="co">// var output: [largerMesh] real;</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>  var output <span class="op">=</span> P<span class="op">;</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span>i<span class="op">,</span>j<span class="op">)</span> in output<span class="op">.</span>domain <span class="op">{</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> output<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">&lt;</span> <span class="fl">0.0</span> then output<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>    <span class="co">//if output[i,j] &gt; 0.10 then output[i,j] = 1.0;</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>  var smin <span class="op">=</span> min reduce<span class="op">(</span>output<span class="op">);</span></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>  var smax <span class="op">=</span> max reduce<span class="op">(</span>output<span class="op">);</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>  writeln<span class="op">(</span>smin<span class="op">,</span> <span class="st">"  "</span><span class="op">,</span> smax<span class="op">);</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i in <span class="fl">1.</span><span class="er">.n</span> <span class="op">{</span></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j in <span class="fl">1.</span><span class="er">.n</span> <span class="op">{</span></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>      var idx <span class="op">=</span> <span class="op">((</span>output<span class="op">[</span>j<span class="op">,</span>n<span class="op">-</span>i<span class="op">+</span><span class="dv">1</span><span class="op">]-</span>smin<span class="op">)/(</span>smax<span class="op">-</span>smin<span class="op">)*</span><span class="dv">255</span><span class="op">):</span><span class="dt">int</span> <span class="op">+</span> <span class="dv">1</span><span class="op">;</span> <span class="co">//scale to 1..256</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>      colour<span class="op">[</span>i<span class="op">,</span>j<span class="op">]</span> <span class="op">=</span> <span class="op">((</span>cmap<span class="op">[</span>idx<span class="op">,</span><span class="dv">1</span><span class="op">]*</span><span class="dv">255</span><span class="op">):</span><span class="dt">int</span><span class="op">,</span> <span class="op">(</span>cmap<span class="op">[</span>idx<span class="op">,</span><span class="dv">2</span><span class="op">]*</span><span class="dv">255</span><span class="op">):</span><span class="dt">int</span><span class="op">,</span> <span class="op">(</span>cmap<span class="op">[</span>idx<span class="op">,</span><span class="dv">3</span><span class="op">]*</span><span class="dv">255</span><span class="op">):</span><span class="dt">int</span><span class="op">);</span></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>  var pixels <span class="op">=</span> colorToPixel<span class="op">(</span>colour<span class="op">);</span>   <span class="co">// array of pixels</span></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>  var filename <span class="op">=</span> <span class="st">"frame"</span> <span class="op">+</span> model<span class="op">:</span>string <span class="op">+</span> fourDigits<span class="op">(</span>run<span class="op">)</span> <span class="op">+</span> fourDigits<span class="op">(</span>step<span class="op">)+</span><span class="st">".png"</span><span class="op">;</span></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>  writeln<span class="op">(</span><span class="st">"writing "</span><span class="op">,</span> filename<span class="op">);</span></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>  writeImage<span class="op">(</span>filename<span class="op">,</span> imageType<span class="op">.</span>png<span class="op">,</span> pixels<span class="op">);</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You will also need <code>sciplot.chpl</code> (below) that reads a colour map from a CSV file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode c chpl code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>use IO<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>use List<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>proc readColourmap<span class="op">(</span>filename<span class="op">:</span> string<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  var reader <span class="op">=</span> open<span class="op">(</span>filename<span class="op">,</span> ioMode<span class="op">.</span>r<span class="op">).</span>reader<span class="op">();</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  var line<span class="op">:</span> string<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="op">(!</span>reader<span class="op">.</span>readLine<span class="op">(</span>line<span class="op">))</span> then   <span class="co">// skip the header</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    halt<span class="op">(</span><span class="st">"ERROR: file appears to be empty"</span><span class="op">);</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  var dataRows <span class="op">:</span> list<span class="op">(</span>string<span class="op">);</span> <span class="co">// a list of lines from the file</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="op">(</span>reader<span class="op">.</span>readLine<span class="op">(</span>line<span class="op">))</span> <span class="cf">do</span>   <span class="co">// read all lines into the list</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    dataRows<span class="op">.</span>pushBack<span class="op">(</span>line<span class="op">);</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  var cmap<span class="op">:</span> <span class="op">[</span><span class="fl">1.</span><span class="er">.dataRows.size</span><span class="op">,</span> <span class="fl">1.</span><span class="er">.3</span><span class="op">]</span> real<span class="op">;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> <span class="op">(</span>i<span class="op">,</span> row<span class="op">)</span> in zip<span class="op">(</span><span class="fl">1.</span><span class="er">.dataRows.size</span><span class="op">,</span> dataRows<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    var c1 <span class="op">=</span> row<span class="op">.</span>find<span class="op">(</span><span class="ch">','</span><span class="op">):</span><span class="dt">int</span><span class="op">;</span>    <span class="co">// position of the 1st comma in the line</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    var c2 <span class="op">=</span> row<span class="op">.</span>rfind<span class="op">(</span><span class="ch">','</span><span class="op">):</span><span class="dt">int</span><span class="op">;</span>   <span class="co">// position of the 2nd comma in the line</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">[</span>i<span class="op">,</span><span class="dv">1</span><span class="op">]</span> <span class="op">=</span> row<span class="op">[</span><span class="fl">0.</span><span class="er">.c1</span><span class="op">-</span><span class="dv">1</span><span class="op">]:</span>real<span class="op">;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">[</span>i<span class="op">,</span><span class="dv">2</span><span class="op">]</span> <span class="op">=</span> row<span class="op">[</span>c1<span class="op">+</span><span class="fl">1.</span><span class="er">.c2</span><span class="op">-</span><span class="dv">1</span><span class="op">]:</span>real<span class="op">;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    cmap<span class="op">[</span>i<span class="op">,</span><span class="dv">3</span><span class="op">]</span> <span class="op">=</span> row<span class="op">[</span>c2<span class="op">+</span><span class="fl">1.</span><span class="er">.</span><span class="op">]:</span>real<span class="op">;</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  reader<span class="op">.</span>close<span class="op">();</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> cmap<span class="op">;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To compile and run it:</p>
+<!-- ```sh -->
+<!-- git clone https://github.com/razoumov/simdata -->
+<!-- cd simdata -->
+<!-- module load chapel-multicore/2.4.0 -->
+<!-- salloc --time=2:00:0 --mem-per-cpu=3600 -->
+<!-- chpl --fast acoustic2D.chpl -->
+<!-- ``` -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/fixModules.sh</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load chapel-multicore/2.4.0</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> acoustic2D.chpl</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> https://raw.githubusercontent.com/razoumov/simdata/refs/heads/main/viridis.csv</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:10:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./acoustic2D <span class="at">--nt</span><span class="op">=</span>5000</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For a single point source:</p>
+<div class="video" style="text-align: center;">
+<p><video src="files/jax/oneSource.mp4" class="img-fluid" style="width:60.0%" controls=""><a href="files/jax/oneSource.mp4">Video</a></video></p>
+</div>
+<p>For two point sources:</p>
+<div class="video" style="text-align: center;">
+<p><video src="files/jax/twoSources.mp4" class="img-fluid" style="width:60.0%" controls=""><a href="files/jax/twoSources.mp4">Video</a></video></p>
+</div>
+</section>
+<section id="some-representative-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="some-representative-solutions">Some representative solutions</h2>
+<p>Here are several example solutions (models 1-7; omitted from the code for brevity). We begin with solutions for point sources at a fixed time, with initial conditions shown on the left and the corresponding solutions on the right:</p>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/001/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/001/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/002/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/002/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/003/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/003/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<p>Since advection proceeds in the direction of the pressure gradient, a 1D initial pulse produces a flat 1D wave moving horizontally:</p>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/004/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/004/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<p>Here we combine 0D (point-source) and 1D (line) features:</p>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/005/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/005/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/006/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/006/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<div class="columns">
+<div class="column">
+<p><img src="files/jax/007/frame0000.png" class="img-fluid" style="width:99.0%"></p>
+</div><div class="column">
+<p><img src="files/jax/007/frame0001.png" class="img-fluid" style="width:99.0%"></p>
+</div>
+</div>
+<p>The plan is to feed hundreds/thousands of these pairs of images – the initial conditions and the solution at the same fixed time – to a deep neural network, to train it to produce a surrogate solution from an arbitrary initial condition.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Very large 2D solution
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On the instructor’s laptop, demo a <span class="math inline">\(4001^2\)</span> solution clip with 10_000 time steps:<br>
+<code>open $(fd large.mkv ~/training)</code></p>
+</div>
+</div>
+</section>
+<section id="levels-of-difficulty" class="level2">
+<h2 class="anchored" data-anchor-id="levels-of-difficulty">Levels of difficulty</h2>
+<p>We will build our neural networks in order of increasing solution complexity:</p>
+<p>   <span style="color: steelblue;">1<span class="math inline">\(^\text{st}\)</span> level:</span> single point source placed randomly into the 2D domain,<br>
+   <span style="color: steelblue;">2<span class="math inline">\(^\text{nd}\)</span> level:</span> 1-5 randomly placed point sources, and<br>
+   <span style="color: steelblue;">3<span class="math inline">\(^\text{rd}\)</span> level:</span> 1-5 point sources or a single linear source, all randomly placed.</p>
+</section>
+<section id="training-and-testing-data" class="level2">
+<h2 class="anchored" data-anchor-id="training-and-testing-data">Training and testing data</h2>
+<!-- synthetic data generator https://github.com/razoumov/simdata -->
+<!-- ```sh -->
+<!-- laptop -->
+<!-- cd ~/jax -->
+<!-- chpl --fast acoustic2D.chpl -->
+<!-- ./acoustic2D --model=8 --nruns=1 -->
+<!-- ``` -->
+<!-- ```sh -->
+<!-- fir -->
+<!-- cd ~/scratch/jax -->
+<!-- module load chapel-multicore/2.4.0 -->
+<!-- git pull -->
+<!-- chpl --fast acoustic2D.chpl -->
+<!-- salloc --cpus-per-task=8 --mem-per-cpu=7200 --time=1:0:0 --account=def-razoumov-ac --gpus-per-node=h100:1 --reservation=gpu_mig_test -->
+<!-- mkdir -p data/{training,testing} -->
+<!-- ./acoustic2D --model=8 --nruns=2000     # two files per run -->
+<!-- # ./acoustic2D --model=9 --nruns=1000   # another two files per run -->
+<!-- mv frame8????000{0,1}.png data/training -->
+<!-- ./acoustic2D --model=8 --nruns=5 -->
+<!-- mv frame8000{1..5}0000.png data/testing -->
+<!-- ``` -->
+<p>Quick reminder to set our environment with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/fixModules.sh</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-jax/bin/activate</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Models 8–9 are production models we’ll use to generate synthetic data for training a generative AI model. To run, for example, model 8 once and save every frame for movie creation, use the following commands:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> acoustic2D.chpl</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:10:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./acoustic2D <span class="at">--model</span><span class="op">=</span>8 <span class="at">--nout</span><span class="op">=</span>1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>to produce 251 frames that can be merged into a movie.</p>
+<!-- A full production run will include both models 8 and 9: -->
+<p>We will start with model 8 with a single source:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> data/<span class="dt">{training</span><span class="op">,</span><span class="dt">testing}</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> in <span class="ex">acoustic2D.chpl,</span> set the maximum number of sources: max=1</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> acoustic2D.chpl</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:10:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./acoustic2D <span class="at">--model</span><span class="op">=</span>8 <span class="at">--nruns</span><span class="op">=</span>500   <span class="co"># two files per run</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># srun --time=0:10:0 --mem-per-cpu=3600 ./acoustic2D --model=9 --nruns=500   # two files per run</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> frame8<span class="pp">????</span>000<span class="dt">{0</span><span class="op">,</span><span class="dt">1}</span>.png data/training</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each line will run 500 models, with two frames (output images) per model.</p>
+<p>We also need several test images:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:1:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./acoustic2D <span class="at">--model</span><span class="op">=</span>8 <span class="at">--nt</span><span class="op">=</span>0 <span class="at">--nruns</span><span class="op">=</span>5   <span class="co"># just the initial conditions</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mv</span> frame8000<span class="dt">{</span><span class="dv">1</span><span class="dt">..</span><span class="dv">5</span><span class="dt">}</span>0000.png data/testing</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For all the images, our naming scheme is:</p>
+<p><code>frame800010079.png</code> file name includes the following pieces:</p>
+<ul>
+<li>8 is the model number</li>
+<li>0001 is the run number</li>
+<li>0079 is the frame number for this run</li>
+</ul>
+<p>In production runs, you will see only files <code>*0000.png</code> (initial conditions) and <code>*0001.png</code> (simulation result).</p>
+<!-- Building a PDE solver surrogate involves creating a machine learning model (e.g., U-Net, DeepONet, or Physics-Informed Neural Networks - PINNs) that acts as a fast approximation of traditional numerical solvers. The process requires generating high-fidelity training data via methods like FEM or CFD, preprocessing it, training the model (often mapping boundary conditions to solutions), and integrating physical residuals into the loss function to improve accuracy and reduce data requirements. -->
+<!-- • University of Toronto +4 -->
+<!-- Core Approaches -->
+<!-- • Physics-Informed Neural Networks (PINNs): These train a network U(x, t; 0) to directly satisfy the PDE equation by minimizing the residual, effectively solving the PDE without traditional training data. -->
+<!-- • Operator Learning (DeepONet/FNO): These models learn the mapping between functional spaces (e.g., mapping boundary conditions/source terms to the entire solution field) rather than just fitting individual point data. -->
+<!-- • Data-Driven Surrogates (CNNs/GNNs): Using architectures like U-Nets to learn direct mappings from inputs to solutions based on pre-computed simulation data. -->
+<!-- University of Alberta -->
+<!-- ## Loading the training data -->
+<!-- ```py -->
+<!-- dir = "/scratch/razoumov/jax/" -->
+<!-- inputFiles = sorted(glob.glob(dir+"data/training/frame8*0000.png")) -->
+<!-- print(f"Found {len(inputFiles)} initial conditions to process.") -->
+<!-- # create two lists: initial conditions and solutions -->
+<!-- X_list, Y_list = [], [] -->
+<!-- for initial in inputFiles: -->
+<!--     runNumber = initial[-12:-8] -->
+<!--     print(f"Reading run {runNumber}") -->
+<!--     solution = dir + "data/training/" + f"frame8{runNumber}0001.png" -->
+<!--     img_x = Image.open(initial).convert('L')   # open image in grayscale (L) mode -->
+<!--     x_array = np.asarray(img_x, dtype=np.float32) / 255.0   # convert to NumPy array and normalize assuming 8-bit images -->
+<!--     img_y = Image.open(solution).convert('L') -->
+<!--     y_array = np.asarray(img_y, dtype=np.float32) / 255.0 -->
+<!--     X_list.append(x_array) -->
+<!--     Y_list.append(y_array) -->
+<!-- ``` -->
+</section>
+<section id="neural-net-types" class="level2">
+<h2 class="anchored" data-anchor-id="neural-net-types">Neural net types</h2>
+<p>A zeroth-order approximation for our task would be a standard dense (fully connected) network that maps an input image to its corresponding solution image through several hidden layers. However, this architecture tends to perform poorly for this type of problem.</p>
+<p>An improvement is to use a <strong>convolutional neural network</strong> (CNN). In this approach, convolutional filters are applied to local patches of pixels, with the results feeding into neurons in the next layer. Each neuron therefore receives input from a small region of the previous layer, which reduces the number of parameters compared to a fully connected network and enables the model to recognize features even when they are spatially shifted in the input (<em>translation invariance</em>). By stacking layers with different filters, the network can learn increasingly complex features.</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/cnn.png" class="img-fluid figure-img"></p>
+<figcaption>From <a href="https://codetolight.wordpress.com/2017/11/29/getting-started-with-pytorch-for-deep-learning-part-3-neural-network-basics" target="_blank">Programming Journeys by Rensu Theart</a></figcaption>
+</figure>
+</div>
+</div>
+<p>CNNs are great for processing images (these contain a lot of redundant spatial information!) and detecting patterns, and they work ideally for classification tasks. In short, convolutional layers extract high-level features (detecting patterns and objects) while reducing the spatial resolution – we would call this an <em>encoder</em> network.</p>
+<p>To make convolutional layers work for an image-to-image generative neural network, you have to add a <em>decoder</em> part where you reconstruct the spatial information (<em>where</em> these objects are), forming what is formally called a <strong>Convolutional Autoencoder</strong> (CAE) network. As we will see further with a code, a CAE works very slowly to generate a PDE solution, as spatial information gets almost lost in the convolutional layers and, as a result, propagates very slowly into the output layer (reconstructed solution).</p>
+<p>To speed up convergence, a <strong>U-Net</strong> introduces <em>skip connections</em> that pass low-level pixel data from the input image (or encoder) to the decoder. For example, you can convolve one of the encoder layers with one of the decoder layers.</p>
+<p>A further improvement would be a <strong>generative adversarial network</strong> (GAN), where two neural networks – a CNN-based generator and a CNN-based discriminator – compete against each other to create realistic data that mimic the training set.</p>
+<p>Let’s play with some of these networks.</p>
+<!-- Images . Downsampling layers reduce the spatial size of the data -->
+<!-- representation, i.e. reduces the number of parameters the model needs to calculate (preventing overfitting) -->
+<!-- and makes the network "translation invariant", meaning it can  -->
+</section>
+<section id="jax-components" class="level2">
+<h2 class="anchored" data-anchor-id="jax-components">JAX components</h2>
+<p>JAX is a Python package from Google for accelerator-oriented array computation that provides a base for various ML libraries. We teach Deep learning with JAX in a <a href="https://mint.westdri.ca/ai/top_fl" target="_blank">separate course</a>.</p>
+<!-- - using JAX and the new Flax NNX API -->
+<p>In today’s workshop we’ll be using the new <strong>Flax NNX API</strong> for defining neural networks in JAX:</p>
+<ul>
+<li>mutable, object-oriented approach that will feel familiar to PyTorch users</li>
+<li>replaces older Flax Linen API</li>
+<li>you define a model as a Python class that inherits from <code>flax.nnx.Module</code></li>
+<li>models are regular Python objects holding their own state</li>
+</ul>
+<p><strong>Optax</strong> is the de facto gradient processing and optimization library for JAX:</p>
+<ul>
+<li><code>flax.nnx.Optimizer()</code> lets Flax NNX models to seamlessly use Optax optimizers</li>
+<li>built around smaller blocks for gradient transformations that you chain together with <code>optax.chain</code> to create complex gradient processing pipelines</li>
+<li>the optimizer is separate from the model</li>
+</ul>
+<p>The loss function in JAX workflows is implemented as a Python function that takes the model instance, input data, and targets, and returns a scalar loss value. You call this function via <code>nnx.value_and_grad(loss_fn)(model)</code> that computes both the loss and the new gradients w.r.t. the model parameters.</p>
+<ul>
+<li>JAX documentation <a href="https://jaxstack.ai" target="_blank">https://jaxstack.ai</a> and <a href="https://jax.dev" target="_blank">https://jax.dev</a></li>
+<li>Flax documentation <a href="https://flax.readthedocs.io" target="_blank">https://flax.readthedocs.io</a></li>
+<li>High-level videos for learning JAX <a href="https://goo.gle/learn-jax-videos" target="_blank">https://goo.gle/learn-jax-videos</a></li>
+</ul>
+</section>
+<section id="convolution-kernels" class="level2">
+<h2 class="anchored" data-anchor-id="convolution-kernels">Convolution kernels</h2>
+<p>When you apply a convolutional kernel with <code>nnx.Conv()</code>, the model doesn’t know what itls supposed to “see” yet. To start the learning process, JAX/Flax fills the kernel with small random numbers and in such a way that the weights are varied enough that the neurons don’t all learn the same thing, and also small enough that the math doesn’t “explode” during the first pass.</p>
+<p>For a 3x3 convolution, the kernel is a 4D array. If <code>in_features=1</code> and <code>out_features=64</code>, the kernel shape is (3, 3, in_features, out_features). If <code>in_features=1</code> and <code>out_features=64</code>, there are effectively 64 different 3x3 filters, each looking for a different pattern like an edge, a curve, or a dot.</p>
+<p>While initially the kernel is random, an optimizer slightly tweaks those numbers. After training, those values are no longer random: they might represent specific visual features.</p>
+</section>
+<section id="optimizers" class="level2">
+<h2 class="anchored" data-anchor-id="optimizers">Optimizers</h2>
+<p>Optax provides a broad range of optimizers, from standard deep learning workhorses to specialized scientific and memory-efficient algorithms. In Optax, these are essentially “aliases” for pre-packaged chains of gradient transformations.</p>
+<ul>
+<li><code>optax.adam</code> is the industry standard, combines momentum and adaptive scaling</li>
+<li><code>optax.adamw</code> is the Adam optimizer with weight decay decoupled from the learning rate; weight decay is a regularization technique that penalizes large weights, encouraging the model to keep parameters small and thus produce smoother solutions while reducing overfitting</li>
+<li><code>optax.rmsprop</code> is popular for Recurrent Neural Networks (RNNs) and Reinforcement Learning</li>
+<li><code>optax.adagrad</code> is good for sparse data; it scales the learning rate based on how frequently a parameter is updated</li>
+<li><code>optax.sgd</code> is the Canonical Stochastic Gradient Descent; good for ResNets and computer vision tasks</li>
+<li><code>optax.fromage</code> is a “Frobenius Matched Gradient Descent” that helps keep weight norms stable during training</li>
+<li><code>optax.contrib.prodigy</code> is a “learning rate-free” version of AdamW that tries to estimate the optimal step size automatically</li>
+<li><code>optax.contrib.sophia</code> is a second-order optimizer that uses a diagonal Hessian estimate, designed to be faster than Adam for LLMs</li>
+<li><code>optax.contrib.muon</code> is a momentum-based optimizer that uses Newton-Schulz iteration to orthogonalize updates</li>
+</ul>
+</section>
+<section id="running-training" class="level2">
+<h2 class="anchored" data-anchor-id="running-training">Running training</h2>
+<p>On my laptop with 16GB and without an NVIDIA GPU, one of the models below runs on the CPU but very slowly, taking ~2h per epoch. The same model takes few seconds per epoch on Fir’s full H100 GPU. On Fir, my minimum ask was <code>--cpus-per-task=8 --mem-per-cpu=7200 --gpus-per-node=h100:1</code>, otherwise the models run out of memory.</p>
+<!-- - sample scripts (CPUs and GPUs) https://docs.alliancecan.ca/wiki/Flax -->
+<!-- - `--cpus-per-task=4 --mem-per-cpu=7200` => out of memory -->
+<!-- - `--cpus-per-task=8 --mem-per-cpu=7200` runs Ok -->
+<p>On the training cluster we can reduce the batch size by 2X and the fit the model on a GPU slice with the SLURM flags <code>--time=1:0:0 --mem=3600 --gpus-per-node=2g.10gb:1</code>.</p>
+</section>
+<section id="first-network-convolutional-autoencoder" class="level2">
+<h2 class="anchored" data-anchor-id="first-network-convolutional-autoencoder">First network: convolutional autoencoder</h2>
+<p>A convolutional network was my first choice as they are highly effective for image-to-image translation tasks. It is a type of convolutional encoder-decoder that theoretically can capture both global and local features, which is crucial for handling the spatial dependencies in a PDE solution. There are two parts:</p>
+<ol type="1">
+<li>the encoder to reduce the image size while increasing the depth; essentially summarizes the image into high-level features, and</li>
+<li>the decoder to enable precise localization; uses “up-convolutions” (transpose convolutions) to restore the image to its original size.</li>
+</ol>
+<!-- - standard JAX/Flax/Optax setup -->
+<!-- - popular for image segmentation -->
+<!-- - image-to-image mapping -->
+<p>Here we implement a simple convolutional autoencoder network. Let’s define this model in a file <code>cae.py</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flax <span class="im">import</span> nnx</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> CAE(nnx.Module):</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, rngs: nnx.Rngs):   <span class="co"># define the model layers</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c1 <span class="op">=</span> nnx.Conv(<span class="dv">1</span>, <span class="dv">32</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), rngs<span class="op">=</span>rngs)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># convolution layer applying a sliding kernel over input data</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># arguments: number of input channels (1)</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                  <span class="co">#            number of output channels/filters (32),</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                  <span class="co">#            convolution window kernel size (3x3),</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                  <span class="co">#            dictionary of random seeds</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c2 <span class="op">=</span> nnx.Conv(<span class="dv">32</span>, <span class="dv">64</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), strides<span class="op">=</span><span class="dv">2</span>, rngs<span class="op">=</span>rngs)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># downsampling layer to reduce the width/height by 2X;</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># number of channels goes from 32 to 64</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bottleneck <span class="op">=</span> nnx.Conv(<span class="dv">64</span>, <span class="dv">64</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), rngs<span class="op">=</span>rngs)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># bottleneck processing the most compressed data representation</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.up <span class="op">=</span> nnx.ConvTranspose(<span class="dv">64</span>, <span class="dv">32</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), strides<span class="op">=</span><span class="dv">2</span>, rngs<span class="op">=</span>rngs)</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># upsampling layer to double the width/height by 2X;</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># number of channels goes from 64 to 32</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out <span class="op">=</span> nnx.Conv(<span class="dv">32</span>, <span class="dv">1</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), rngs<span class="op">=</span>rngs)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>                  <span class="co"># final layer to map the features back to a single channel</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):                  <span class="co"># define the forward pass</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        x1 <span class="op">=</span> nnx.relu(<span class="va">self</span>.c1(x))           <span class="co"># the encoder</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>        x2 <span class="op">=</span> nnx.relu(<span class="va">self</span>.c2(x1))          <span class="co"># spatial downsampling</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>        x3 <span class="op">=</span> nnx.relu(<span class="va">self</span>.bottleneck(x2))  <span class="co"># the bottleneck</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        x4 <span class="op">=</span> nnx.relu(<span class="va">self</span>.up(x3))          <span class="co"># the decoder with spatial upsampling</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jax.nn.sigmoid(<span class="va">self</span>.out(x4)) <span class="co"># back to 1 channel;</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                                            <span class="co"># sigmoid ensures values ∈ [0,1]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>and then import this model from <code>train.py</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flax <span class="im">import</span> nnx</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> optax</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> glob</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> orbax.checkpoint <span class="im">as</span> ocp</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cae <span class="im">import</span> CAE</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>rngs <span class="op">=</span> nnx.Rngs(<span class="dv">0</span>)   <span class="co"># to provide random keys to initialize the parameters</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> CAE(rngs<span class="op">=</span>rngs)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> nnx.Optimizer(model, optax.adam(<span class="fl">1e-3</span>), wrt<span class="op">=</span>nnx.Param)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The last argument <code>wrt=nnx.Param</code> tells NNX to apply gradients only to objects marked as parameters, like weights and biases.</p>
+<p>We need to load the image pairs for training:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="bu">dir</span> <span class="op">=</span> <span class="st">"/home/instructor2/jax/"</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># find all initial condition files matching frame8****0000.png</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>inputFiles <span class="op">=</span> <span class="bu">sorted</span>(glob.glob(<span class="bu">dir</span><span class="op">+</span><span class="st">"data/training/frame8*0000.png"</span>))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Found </span><span class="sc">{</span><span class="bu">len</span>(inputFiles)<span class="sc">}</span><span class="ss"> initial conditions to process."</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># create two lists: initial conditions and solutions</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>X_list, Y_list <span class="op">=</span> [], []</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, initial <span class="kw">in</span> <span class="bu">enumerate</span>(inputFiles):</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    runNumber <span class="op">=</span> initial[<span class="op">-</span><span class="dv">12</span>:<span class="op">-</span><span class="dv">8</span>]</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i<span class="op">+</span><span class="dv">1</span>)<span class="op">%</span><span class="dv">100</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Reading run </span><span class="sc">{</span>runNumber<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    solution <span class="op">=</span> <span class="bu">dir</span> <span class="op">+</span> <span class="st">"data/training/"</span> <span class="op">+</span> <span class="ss">f"frame8</span><span class="sc">{</span>runNumber<span class="sc">}</span><span class="ss">0001.png"</span>        </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    img_x <span class="op">=</span> Image.<span class="bu">open</span>(initial).convert(<span class="st">'L'</span>)   <span class="co"># open image in grayscale (L) mode</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    x_array <span class="op">=</span> np.asarray(img_x, dtype<span class="op">=</span>np.float32) <span class="op">/</span> <span class="fl">255.0</span>   <span class="co"># convert to NumPy array and normalize assuming 8-bit images</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    img_y <span class="op">=</span> Image.<span class="bu">open</span>(solution).convert(<span class="st">'L'</span>)            </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    y_array <span class="op">=</span> np.asarray(img_y, dtype<span class="op">=</span>np.float32) <span class="op">/</span> <span class="fl">255.0</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    X_list.append(x_array)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    Y_list.append(y_array)</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co"># convert these lists to JAX arrays and add the channel dimension (C=1 for grayscale)</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> jnp.array(X_list)[..., jnp.newaxis]</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> jnp.array(Y_list)[..., jnp.newaxis]</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Data shapes: X=</span><span class="sc">{</span>X<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">, Y=</span><span class="sc">{</span>Y<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We define the training function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="at">@nnx.jit</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_step(model, optimizer, batch_x, batch_y):</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># wrap the loss, gradient calculation and update into a single training step function</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> loss_fn(model):</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> model(batch_x)   <span class="co"># forward pass</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.mean((y_pred <span class="op">-</span> batch_y)<span class="op">**</span><span class="dv">2</span>)   <span class="co"># mean squared error for residuals</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    loss, grads <span class="op">=</span> nnx.value_and_grad(loss_fn)(model)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    optimizer.update(model, grads)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> loss</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Finally, we define the training loop:</p>
+<ol type="1">
+<li>to keep it GPU-efficient, we slice our JAX arrays into mini-batches</li>
+<li>we add check-pointing, writing our weights and biases every 10 epochs – these can be used both to restart iterations from a mid-point and for inference</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>numEpochs <span class="op">=</span> <span class="dv">500</span>  <span class="co"># 500 default for a less noisy solution</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>batchSize <span class="op">=</span> <span class="dv">8</span>    <span class="co"># default 8</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>numSamples <span class="op">=</span> X.shape[<span class="dv">0</span>]</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(numEpochs):</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    perms <span class="op">=</span> jax.random.permutation(jax.random.PRNGKey(epoch), numSamples)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    X_shuffled, Y_shuffled <span class="op">=</span> X[perms], Y[perms] <span class="co"># to be used instead of X,Y below</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    epoch_loss <span class="op">=</span> []</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, numSamples, batchSize):</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        bx <span class="op">=</span> X_shuffled[i : i <span class="op">+</span> batchSize]</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        by <span class="op">=</span> Y_shuffled[i : i <span class="op">+</span> batchSize]</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> train_step(model, optimizer, bx, by)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        epoch_loss.append(loss)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">, loss: </span><span class="sc">{</span>np<span class="sc">.</span>mean(epoch_loss)<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    graph, state <span class="op">=</span> nnx.split(model)   <span class="co"># extract the state from NNX</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    checkpointer <span class="op">=</span> ocp.StandardCheckpointer()</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (epoch<span class="op">+</span><span class="dv">1</span>)<span class="op">%</span><span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="bu">dir</span><span class="op">+</span><span class="st">'weights</span><span class="sc">%03d</span><span class="st">'</span><span class="op">%</span>(epoch))</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        checkpointer.save(<span class="bu">dir</span><span class="op">+</span><span class="st">'weights</span><span class="sc">%03d</span><span class="st">'</span><span class="op">%</span>(epoch), state)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>checkpointer.wait_until_finished()   <span class="co"># wait for the save thread to finish writing to disk</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now we are ready to train the model:</p>
+<!-- salloc --time=0:30:0 --mem-per-cpu=3600 --gpus-per-node=2g.10gb:1 -->
+<!-- nvidia-smi -->
+<!-- python train.py -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> in <span class="ex">train.py:</span> set dir = <span class="st">"/home/instructor2/tmp/"</span>, batchSize=8</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-jax/bin/activate</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1 python <span class="at">-u</span> train.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let it run for a few outputs, so that you see <code>weights009</code>, <code>weights019</code>, … saved. How is your training loss?</p>
+<p>We’ll be running inference from a separate file <code>infer.py</code> that takes both the latest weights and an initial condition as a PNG file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flax <span class="im">import</span> nnx</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> orbax.checkpoint <span class="im">as</span> ocp</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> cae <span class="im">import</span> CAE</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>rngs <span class="op">=</span> nnx.Rngs(<span class="dv">0</span>)   <span class="co"># to provide random keys to initialize the parameters</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> CAE(rngs<span class="op">=</span>rngs)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">len</span>(sys.argv) <span class="op">&lt;</span> <span class="dv">3</span>:</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Usage: python script.py weightsDir initialImage.png"</span>)</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    sys.exit(<span class="dv">1</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>dirname <span class="op">=</span> sys.argv[<span class="dv">1</span>]</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>currentPath <span class="op">=</span> <span class="bu">str</span>(Path(<span class="st">'.'</span>).resolve()) <span class="op">+</span> <span class="st">'/'</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>checkpointer <span class="op">=</span> ocp.StandardCheckpointer()</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>graph, state <span class="op">=</span> nnx.split(model)</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>restored_state <span class="op">=</span> checkpointer.restore(currentPath<span class="op">+</span>dirname, target<span class="op">=</span>state)   <span class="co"># restore the state</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>nnx.update(model, restored_state)   <span class="co"># load back into the model</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="at">@nnx.jit</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> predict(model, x):</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model(x)</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>img_x <span class="op">=</span> Image.<span class="bu">open</span>(sys.argv[<span class="dv">2</span>]).convert(<span class="st">'L'</span>)   <span class="co"># open image in grayscale (L) mode</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>x_array <span class="op">=</span> np.asarray(img_x, dtype<span class="op">=</span>np.float32) <span class="op">/</span> <span class="fl">255.0</span>   <span class="co"># convert to NumPy array and normalize assuming 8-bit images</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>initialState <span class="op">=</span> jnp.array(x_array)[np.newaxis, ..., np.newaxis]</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>predictedSolution <span class="op">=</span> predict(model, initialState).reshape(<span class="dv">500</span>, <span class="dv">500</span>)</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">5</span>), dpi<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_axes([<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>ax.imshow(predictedSolution, interpolation<span class="op">=</span><span class="st">'nearest'</span>, cmap<span class="op">=</span><span class="st">'viridis'</span>)</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>ax.axis(<span class="st">'off'</span>)</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">"prediction.png"</span>, pad_inches<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>plt.close()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:5:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1 python <span class="at">-u</span> infer.py weights019 data/testing/frame800030000.png</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> prediction.png data/testing/frame800030001.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">laptop</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> sfucompute:tmp/<span class="dt">{prediction.png</span><span class="op">,</span><span class="dt">data/testing/frame800030000.png}</span> .</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> frame800030000.png prediction.png</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- job 36940511: caeSimple, extremely slow spatial propagation of the circle, no real convergence -->
+<p>Here is our solution:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/cae.png" class="img-fluid figure-img"></p>
+<figcaption>Initial condition (left), exact solution (center), neural network prediction (right) after 370 epochs</figcaption>
+</figure>
+</div>
+</div>
+<p>While this network can accurately position the circle around the initial dot (easy to verify with other initial conditions), it fails to reproduce the solution. You can also see this in the training loss evolution: it essentially plateaus at a high value.</p>
+</section>
+<section id="second-network-u-nets" class="level2">
+<h2 class="anchored" data-anchor-id="second-network-u-nets">Second network: U-Net(s)</h2>
+<!-- U-Net: convolutional neural network (CNN) architecture, originally designed in 2015 -->
+<p>To speed up convergence, a U-Net introduces <em>skip connections</em> that pass low-level pixel data from the input image (or encoder) to the decoder. For example, you can convolve one of the encoder layers with one of the decoder layers.</p>
+<p>In other words, a traditional convolutional network compresses the image into a very small bottleneck to understand “what” is in the picture. However, this compression destroys spatial information. Skip connections take the high-resolution spatial information from the beginning and “paste” it back into one of the later layers.</p>
+<p>Let’s copy <code>cae.py</code> into <code>unet.py</code> and make the following modifications:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="op">-</span>    <span class="va">self</span>.out <span class="op">=</span> nnx.Conv(<span class="dv">32</span>, <span class="dv">1</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), rngs<span class="op">=</span>rngs) <span class="co"># final layer to map the features back to a single channel</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="op">+</span>    <span class="va">self</span>.out <span class="op">=</span> nnx.Conv(<span class="dv">64</span>, <span class="dv">1</span>, kernel_size<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>), rngs<span class="op">=</span>rngs) <span class="co"># final layer to map the features back to a single channel</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>     x3 <span class="op">=</span> nnx.relu(<span class="va">self</span>.bottleneck(x2))   <span class="co"># the bottleneck</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>     x4 <span class="op">=</span> nnx.relu(<span class="va">self</span>.up(x3))   <span class="co"># the decoder (upsampling)</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="op">+</span>    x4 <span class="op">=</span> jnp.concatenate([x4, x1], axis<span class="op">=-</span><span class="dv">1</span>)   <span class="co"># skip connection to the first layer</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- job 36950511: unetSimple, provide a skip connection between x1 and x4 -->
+<p>It performs almost the same as the convolutional autoencoder:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/simpleUNet.png" class="img-fluid figure-img"></p>
+<figcaption>Initial condition (left), exact solution (center), neural network prediction (right) after 500 epochs</figcaption>
+</figure>
+</div>
+</div>
+<p>Adding more layers to our U-Net helps, for example adding the following:</p>
+<ol type="1">
+<li>add ConvBlock to repeat the “Conv-BN-ReLU” pattern twice at every stage</li>
+<li>add <code>nnx.BatchNorm</code> to make sure that gradients do not vanish or explode</li>
+<li>switch from strided convolutions to max_pool for downsampling, to reflect the classic U-Net</li>
+<li>use a 1x1 kernel for the final output to map the high-dimensional feature map down to a single variable</li>
+<li>filter symmetry 1 -&gt; 64 -&gt; 128 -&gt; 256 -&gt; 128 -&gt; 64 -&gt; 1 to reflect the classic U-Net</li>
+</ol>
+<!-- job 37298514: almost same performance as unetSimple, no real convergence -->
+<p>results in a slightly less awful solution:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/realUNet.png" class="img-fluid figure-img"></p>
+<figcaption>Initial condition (left), exact solution (center), neural network prediction (right) after 390 epochs</figcaption>
+</figure>
+</div>
+</div>
+<p>As it turns out, it is actually very common for a standard U-Net to struggle with PDEs. While U-Nets are great at identifying and locating patterns, and learning low-frequency shapes, they can’t quite capture high-frequency gradients in a PDE solution.</p>
+<p>There are other things you could play with, e.g.&nbsp;try a smoother activation function, increase the depth of the network, play with individual layers, but so far I have not found a good solution for this problem with UNet-type networks.</p>
+</section>
+<section id="third-network-fourier-neural-operator-fno" class="level2">
+<h2 class="anchored" data-anchor-id="third-network-fourier-neural-operator-fno">Third network: Fourier Neural Operator (FNO)</h2>
+<p>A <em>neural operator</em> is a mapping between discretized function spaces, e.g.</p>
+<ul>
+<li>in our case: initial condition of a PDE → solution at a fixed later time</li>
+<li>could also map initial condition → time-dependent solution</li>
+<li>easiest: solution at one time step → solution at the next time step
+<ul>
+<li>this is called an auto-regressive neural net, as we apply an FNO to the output of the previous FNO</li>
+</ul></li>
+</ul>
+<p>Fourier Neural Operator (FNOs) were pioneered by Li et al.&nbsp;in 2020 – see a diagram below copied from their original paper.</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/fnoArch.png" class="img-fluid figure-img"></p>
+<figcaption>From <a href="https://arxiv.org/abs/2010.08895" target="_blank">Zongyi Li et al.&nbsp;2020</a></figcaption>
+</figure>
+</div>
+</div>
+<ul>
+<li>P “lifts” the original initial condition to a higher dimension channel space</li>
+<li>Q projects back to the the target dimension</li>
+<li>multiple stacks of spectral convolution (Fourier layers)</li>
+<li>each Fourier layer:
+<ol type="1">
+<li>the Fourier transform <span class="math inline">\(\cal{F}\)</span></li>
+<li>a linear transform <span class="math inline">\(\cal{R}\)</span> to keep just the lower Fourier modes, i.e.&nbsp;truncate higher-mode oscillations</li>
+<li>the inverse Fourier transform <span class="math inline">\(\cal{F}^{−1}\)</span></li>
+<li>a local linear transform <span class="math inline">\(\cal{W}\)</span> for a local skip connection</li>
+</ol></li>
+</ul>
+<p>In a nutshell, since we apply convolutions in the Fourier (spectral) space, we automatically get multiscale properties, i.e.&nbsp;the ability to reconstruct shapes of different sizes from the training set solutions. This is ideal for physics-informed ML and for solving PDEs.</p>
+<p>Another appealing property of FNOs is their ability to generate solutions at higher spatial resolution than those used during training, effectively enabling super-resolution of numerical solutions.</p>
+<!-- - captures global patterns by filtering Fourier coefficients -->
+<p>In the file <code>fourier.py</code>, define a class <code>SpectralConv2d</code> for our basic spectral convolution layer:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flax <span class="im">import</span> nnx</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SpectralConv2d(nnx.Module):</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, in_channels, out_channels, modes1, modes2, rngs: nnx.Rngs):</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.in_channels <span class="op">=</span> in_channels</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out_channels <span class="op">=</span> out_channels</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.modes1 <span class="op">=</span> modes1 <span class="co"># number of lowest Fourier x-frequencies to keep; higher frequencies are discarded</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.modes2 <span class="op">=</span> modes2 <span class="co"># number of lowest Fourier y-frequencies to keep; higher frequencies are discarded</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        scale <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (in_channels <span class="op">*</span> out_channels) <span class="co"># normalization to keep the signal variance stable during initialization</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># learnable weights are complex-valued in the Fourier domain</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights1 <span class="op">=</span> nnx.Param(</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            scale <span class="op">*</span> jax.random.normal(rngs.params(), (in_channels, out_channels, modes1, modes2), dtype<span class="op">=</span>jnp.complex64)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights2 <span class="op">=</span> nnx.Param(</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>            scale <span class="op">*</span> jax.random.normal(rngs.params(), (in_channels, out_channels, modes1, modes2), dtype<span class="op">=</span>jnp.complex64)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        batch, h, w, c <span class="op">=</span> x.shape <span class="co"># batch, height, width, channels</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># transform to Fourier domain</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)) <span class="co"># reorder to (batch, channel, height, width) dimensions</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        x_ft <span class="op">=</span> jnp.fft.rfftn(x, axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># Real Fast Fourier Transform: image pixels -&gt; frequency coefficients</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Multiply relevant Fourier modes</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> jnp.zeros((batch, <span class="va">self</span>.out_channels, h, w <span class="op">//</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>), dtype<span class="op">=</span>jnp.complex64) <span class="co"># blank frequency domain canvas</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># top left corner of the frequency domain</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        res1 <span class="op">=</span> jnp.einsum(<span class="st">"bixy,ioxy-&gt;boxy"</span>, x_ft[:, :, :<span class="va">self</span>.modes1, :<span class="va">self</span>.modes2], <span class="va">self</span>.weights1) <span class="co"># matrix</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>                                    <span class="co"># multiplication between the input frequencies and the learnable weights</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>                                    <span class="co"># across the input (i) and output (o) channels</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> out_ft.at[:, :, :<span class="va">self</span>.modes1, :<span class="va">self</span>.modes2].<span class="bu">set</span>(res1)</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># bottom left corner of the frequency domain</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        res2 <span class="op">=</span> jnp.einsum(<span class="st">"bixy,ioxy-&gt;boxy"</span>, x_ft[:, :, <span class="op">-</span><span class="va">self</span>.modes1:, :<span class="va">self</span>.modes2], <span class="va">self</span>.weights2)</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> out_ft.at[:, :, <span class="op">-</span><span class="va">self</span>.modes1:, :<span class="va">self</span>.modes2].<span class="bu">set</span>(res2)</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># as for the top/bottom right corners, they are redundant, so no need to store them</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># return to physical space</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.fft.irfftn(out_ft, s<span class="op">=</span>(h, w), axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># the Inverse FFT: filtered coefficients -&gt; 2D image</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>)) <span class="co"># reorder to (batch, height, width, channel) dimensions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We stack four of these spectral layers in our network:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FNO2d(nnx.Module):   <span class="co"># high-level architecture to stack several Spectral Convolutions layers</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, modes, width, rngs: nnx.Rngs):</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># lift the input data into a higher-dim space (width) so the model has more "room" to learn complex features</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc0 <span class="op">=</span> nnx.Linear(<span class="dv">1</span>, width, rngs<span class="op">=</span>rngs)   <span class="co"># first, fully connected layer</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># four spectral convolution layers</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv0 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv1 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv2 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv3 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># skip connections: standard linear (fully connected) layers applied in the spatial domain</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w0 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w1 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w2 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w3 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># projection layers: squeeze high-dim space back down to the desired output size</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc1 <span class="op">=</span> nnx.Linear(width, <span class="dv">128</span>, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc2 <span class="op">=</span> nnx.Linear(<span class="dv">128</span>, <span class="dv">1</span>, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):   <span class="co"># make FNO2d class a function</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc0(x)</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        x1 <span class="op">=</span> <span class="va">self</span>.conv0(x) <span class="op">+</span> <span class="va">self</span>.w0(x) <span class="co"># add global patterns (from Fourier domain) and local patterns (from linear layer)</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x1)             <span class="co"># non-linear activation function</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        x2 <span class="op">=</span> <span class="va">self</span>.conv1(x) <span class="op">+</span> <span class="va">self</span>.w1(x)</span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x2)</span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        x3 <span class="op">=</span> <span class="va">self</span>.conv2(x) <span class="op">+</span> <span class="va">self</span>.w2(x)</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x3)</span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        x4 <span class="op">=</span> <span class="va">self</span>.conv3(x) <span class="op">+</span> <span class="va">self</span>.w3(x)</span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc1(x4)   <span class="co"># final projection</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x)</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc2(x)</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We call this model from the main code <code>train.py</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fourier <span class="im">import</span> SpectralConv2d, FNO2d</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>modes <span class="op">=</span> <span class="dv">12</span>   <span class="co"># default 12, number of Fourier components to keep; bigger =&gt; higher res and larger snapshots</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="dv">32</span>   <span class="co"># default 32, number of features each spatial point has an effect on</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>learning_rate <span class="op">=</span> <span class="fl">1e-3</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>rngs <span class="op">=</span> nnx.Rngs(params<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> FNO2d(modes, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>gradientTransformation <span class="op">=</span> optax.adam(learning_rate)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> nnx.Optimizer(model, gradientTransformation, wrt<span class="op">=</span>nnx.Param)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- For a Fourier Neural Operator (FNO), the "best" optimizer is almost universally Adam (or its variant AdamW). -->
+<p>As the model is now larger, set <code>batchSize = 4</code> in <code>train.py</code> to fit it into memory, then run training as usual:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1 python <span class="at">-u</span> train.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Since FNOs operate in the frequency domain, the gradients for different modes can vary significantly in magnitude. Adaptive optimizers like Adam are particularly effective here because they normalize these gradients, ensuring that high-frequency and low-frequency modes are updated at a compatible scale.</p>
+<!-- ```sh -->
+<!-- mergeImagesHorizontally -o realUNet.png 500 data/testing/frame80001000?.png prediction.png -->
+<!-- compress --replace realUNet.png -->
+<!-- mergeImagesHorizontally -o fno1.png 500 b009.png b099.png b489.png -->
+<!-- ``` -->
+<p>Here is an example of a converged solution for a single source:</p>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/fno1.png" class="img-fluid figure-img"></p>
+<figcaption>Solution after 10 (left), 100 (center), and 490 (right) epochs</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="convergence" class="level2">
+<h2 class="anchored" data-anchor-id="convergence">Convergence</h2>
+<p>Although FNOs can perform well, convergence is not guaranteed. In practice, achieving reliable convergence feels more like an art than a science. In many of my runs, training plateaus after 10-50 iterations, with the loss stabilizing in the range 0.003-0.005. Based on visual assessment, I consider the solution converged only when the loss drops below <span class="math inline">\(10^{-3}\)</span>.</p>
+<p>There are techniques that can help improve the convergence rate, but there is no clear way to guarantee convergence. Here are a few things you could try:</p>
+<ol type="1">
+<li>a smaller learning rate:</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">learning_rate</span> = 5e-4</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gradientTransformation</span> = optax.adam<span class="er">(</span><span class="ex">learning_rate</span><span class="kw">)</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">optimizer</span> = nnx.Optimizer<span class="er">(</span><span class="ex">model,</span> gradientTransformation, wrt=nnx.Param<span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>or even an adaptive learning rate:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>learningRateSchedule <span class="op">=</span> optax.cosine_decay_schedule(init_value<span class="op">=</span><span class="fl">1e-3</span>, decay_steps<span class="op">=</span><span class="dv">1000</span>, alpha<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>gradientTransformation <span class="op">=</span> optax.adam(learning_rate)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> nnx.Optimizer(model, gradientTransformation, wrt<span class="op">=</span>nnx.Param)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li>a different optimizer
+<ul>
+<li>the default <code>optax.adam</code> is already pretty good and is the industry standard</li>
+<li><code>optax.adamw</code> is the Adam optimizer with weight decay decoupled from the learning rate</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a> optax.adamw(learning_rate<span class="op">=</span>learningRateSchedule, weight_decay<span class="op">=</span><span class="fl">2e-4</span>)   <span class="co"># default decay 1e-4</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>add a loop where you propose a step and only accept it if the new loss is smaller; <code>optax.scale_by_backtracking_linesearch</code> wraps your chosen optimizer to check if the loss decreases sufficiently; if not, it takes the step back and then shrinks the step size until a decrease is found</li>
+</ul></li>
+<li>clip gradients with <code>optax.clip_by_global_norm()</code> to some max global norm</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tx <span class="op">=</span> optax.chain(optax.clip_by_global_norm(<span class="fl">1.0</span>), optax.adam(<span class="fl">1e-3</span>))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> nnx.Optimizer(model, tx, wrt<span class="op">=</span>nnx.Param)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You can combine this with an adaptive learning rate:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>learningRateSchedule <span class="op">=</span> optax.cosine_decay_schedule(init_value<span class="op">=</span><span class="fl">1e-3</span>, decay_steps<span class="op">=</span><span class="dv">2000</span>, alpha<span class="op">=</span><span class="fl">0.01</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>tx <span class="op">=</span> optax.chain(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    optax.clip_by_global_norm(<span class="fl">1.0</span>),</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    optax.adam(learningRateSchedule)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> nnx.Optimizer(model, tx, wrt<span class="op">=</span>nnx.Param)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- In JAX, it is absolutely possible to ensure your model only takes steps that lead to a decrease in loss, but -->
+<!-- this requires shifting from "fixed-step" optimizers (like standard Adam) to Line Search or Trust Region -->
+<!-- methods. -->
+<!-- JAXopt library (built on top of JAX) is no longer maintained ... -->
+<!-- In FNO training, your loss is calculated over a batch. A step might decrease the average loss of the batch, -->
+<!-- but increase the loss for specific samples. If you require a decrease on every step, you might "freeze" the -->
+<!-- model early because finding a direction that satisfies all samples in a batch simultaneously becomes harder as -->
+<!-- training progresses. -->
+</section>
+<section id="multi-point-source-model" class="level2">
+<h2 class="anchored" data-anchor-id="multi-point-source-model">Multi-point-source model</h2>
+<!-- ## Applying a single-source model to multiple sources -->
+<p>If we try to apply a single-source model to an initial condition with multiple sources (difficulty level 2), we get nonsense:</p>
+<!-- mergeImagesHorizontally -o r1.png 500 data/testing/frame800010001.png p1.png -->
+<!-- mergeImagesHorizontally -o r2.png 500 data/testing/fiveSources/frame800010001.png p2.png -->
+<!-- mergeImagesVertically -o fno2.png 1020 r1.png r2.png -->
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/fno2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Applying the same model to two initial conditions.<br>
+Top row: single source with exact (left) and FNO solution (right).<br>
+Bottom row: two sources with exact (left) and FNO solution (right).</figcaption>
+</figure>
+</div>
+</div>
+<p>For multiple point sources, we actually need to train a new model.</p>
+</section>
+<section id="multi-shape-model" class="level2">
+<h2 class="anchored" data-anchor-id="multi-shape-model">Multi-shape model</h2>
+<p>Train a new model for a combination of point and line sources (difficulty level 3). I will leave this as a take-home exercise.</p>
+</section>
+<section id="gpu-threadmemory-utilization" class="level2">
+<h2 class="anchored" data-anchor-id="gpu-threadmemory-utilization">GPU thread/memory utilization</h2>
+<p>For your past jobs on production clusters, we encourage you to use our <a href="https://docs.alliancecan.ca/wiki/Metrix/en" target="_blank">Metrix portal</a> which is currently available for <a href="https://metrix.rorqual.alliancecan.ca" target="_blank">Rorqual</a>, <a href="https://portail.narval.calculquebec.ca" target="_blank">Narval</a> and <a href="https://portal.nibi.sharcnet.ca" target="_blank">Nibi</a>. The support for Fir will hopefully come very soon.</p>
+<p>However, you can also monitor running jobs in real time via command line. The two tools useful for this are NVIDIA’s <code>nvidia-smi</code> and <code>nvtop</code>, and you can use them from the login node via these handy shortcuts:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> job-nvidia-smi()</span> <span class="kw">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">srun</span> <span class="at">--jobid</span><span class="op">=</span><span class="va">$(</span><span class="ex">squeue</span> <span class="at">-u</span> <span class="va">$USER</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'NR==2 {print $1}'</span><span class="va">)</span> <span class="at">--pty</span> watch <span class="at">-n</span> 1 nvidia-smi   <span class="co"># replace current output every 1s</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> job-nvtop()</span> <span class="kw">{</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">srun</span> <span class="at">--jobid</span><span class="op">=</span><span class="va">$(</span><span class="ex">squeue</span> <span class="at">-u</span> <span class="va">$USER</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'NR==2 {print $1}'</span><span class="va">)</span> <span class="at">--pty</span> nvtop   <span class="co"># the first job from the list</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>nvidia-smi</code> and <code>nvtop</code> do not have access to real-time GPU utilization inside a MIG, although they show memory usage per slice. They show GPU utilization only if you schedule a full GPU.</p>
+</div>
+</div>
+</section>
+<section id="links" class="level2">
+<h2 class="anchored" data-anchor-id="links">Links</h2>
+<!-- - Welcome to the SDV! | Synthetic Data Vault https://docs.sdv.dev/sdv -->
+<!-- - Train a JAX diffusion model for image generation https://docs.jaxstack.ai/en/latest/digits_diffusion_model.html -->
+<ul>
+<li>Marie’s <a href="https://mint.westdri.ca/ai/pt/pt_nn_content" target="_blank">Introduction to NN</a> notes</li>
+<li><a href="https://codetolight.wordpress.com/2017/11/29/getting-started-with-pytorch-for-deep-learning-part-3-neural-network-basics" target="_blank">Neural Network basics</a> from Programming Journeys by Rensu Theart</li>
+<li>Original <a href="https://arxiv.org/abs/2010.08895" target="_blank">Fourier Neural Operator paper</a> by Li et al.&nbsp;(2020)</li>
+<li>Very good YouTube video intro <a href="https://youtu.be/74uwQsBTIVo" target="_blank">Fourier Neural Operators (FNO) in JAX</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
