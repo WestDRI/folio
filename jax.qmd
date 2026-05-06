@@ -83,6 +83,8 @@ When training on our small cluster, for some bigger models we'll have to reduce 
 (`batchSize=4`) to fit them into the 2g.10gb's memory.
 :::
 
+Now, we'll log in to the training cluster with your username and password.
+
 
 
 
@@ -606,9 +608,9 @@ are no longer random: they might represent specific visual features.
 
 ## Optimizers
 
-Optax provides a broad range of optimizers, from standard deep learning workhorses to specialized scientific
-and memory-efficient algorithms. In Optax, these are essentially "aliases" for pre-packaged chains of gradient
-transformations.
+In Optax, *optimizers* are essentially aliases for pre-packaged chains of gradient transformations. Optax
+provides a broad range of these, from standard deep learning workhorses to specialized scientific and
+memory-efficient algorithms.
 
 - `optax.adam` is the industry standard, combines momentum and adaptive scaling
 - `optax.adamw` is the Adam optimizer with weight decay decoupled from the learning rate; weight decay is a
@@ -650,7 +652,7 @@ flags `--time=1:0:0 --mem=3600 --gpus-per-node=2g.10gb:1`.
 
 
 
-## First network: convolutional autoencoder
+## First network architecture: convolutional autoencoder
 
 A convolutional network was my first choice as they are highly effective for image-to-image translation
 tasks. It is a type of convolutional encoder-decoder that theoretically can capture both global and local
@@ -776,15 +778,17 @@ numSamples = X.shape[0]
 
 for epoch in range(numEpochs):
     perms = jax.random.permutation(jax.random.PRNGKey(epoch), numSamples)
-    X_shuffled, Y_shuffled = X[perms], Y[perms] # to be used instead of X,Y below
+    X_shuffled, Y_shuffled = X[perms], Y[perms]
     epoch_loss = []
-    for i in range(0, numSamples, batchSize):
+    for i in range(0, numSamples, batchSize):   # default 63 loops
         bx = X_shuffled[i : i + batchSize]
         by = Y_shuffled[i : i + batchSize]
         loss = train_step(model, optimizer, bx, by)
         epoch_loss.append(loss)
     print(f"Epoch {epoch}, loss: {np.mean(epoch_loss):.6f}")
-    graph, state = nnx.split(model)   # extract the state from NNX
+    graph, state = nnx.split(model)   # extract the state from NNX;
+             # graph = static model skeleton (layer connections)
+             # state = evolving weights and parameters
     checkpointer = ocp.StandardCheckpointer()
     if (epoch+1)%10 == 0:
         print(dir+'weights%03d'%(epoch))
@@ -876,6 +880,14 @@ While this network can accurately position the circle around the initial dot (ea
 initial conditions), it fails to reproduce the solution. You can also see this in the training loss evolution:
 it essentially plateaus at a high value.
 
+I tested variants with different spatial downsampling, and even removing downsampling entirely, but that did
+not help.
+
+
+
+
+
+<!-- job 38804119: caeSimple.py without downsampling -->
 
 
 
@@ -886,8 +898,7 @@ it essentially plateaus at a high value.
 
 
 
-
-## Second network: U-Net(s)
+## Second network architecture: U-Net
 
 <!-- U-Net: convolutional neural network (CNN) architecture, originally designed in 2015 -->
 
@@ -928,13 +939,13 @@ Adding more layers to our U-Net helps, for example adding the following:
 
 <!-- job 37298514: almost same performance as unetSimple, no real convergence -->
 
-results in a slightly less awful solution:
+results in an equally poor solution:
 
 :::{style="text-align: center;"}
 ![Initial condition (left), exact solution (center), neural network prediction (right) after 390 epochs](/fig/realUNet.png)
 :::
 
-As it turns out, it is actually very common for a standard U-Net to struggle with PDEs. While U-Nets are great
+As it turns out, it is actually very common for standard U-Nets to struggle with PDEs. While U-Nets are great
 at identifying and locating patterns, and learning low-frequency shapes, they can't quite capture
 high-frequency gradients in a PDE solution.
 
@@ -950,7 +961,7 @@ UNet-type networks.
 
 
 
-## Third network: Fourier Neural Operator (FNO)
+## Third network architecture: Fourier Neural Operator (FNO)
 
 A *neural operator* is a mapping between discretized function spaces, e.g.
 
@@ -986,6 +997,13 @@ those used during training, effectively enabling super-resolution of numerical s
 
 In the file `fourier.py`, define a class `SpectralConv2d` for our basic spectral convolution layer:
 
+- the matrix multiplication `jnp.einsum()` inside `SpectralConv2d` performs a frequency-domain linear
+  transformation, which is the mathematical equivalent of a convolution in the spatial domain
+- we matrix-multiply the input frequencies and the learnable weights across the input (i) and output (o)
+  channels
+- since we perform a Fourier transform on real-valued data, the output in the frequency domain has some
+  redundancies (symmetries) ⇨ we need to consider only two quadrants in the 2D frequency domain
+
 ```py
 import jax
 import jax.numpy as jnp
@@ -995,67 +1013,78 @@ class SpectralConv2d(nnx.Module):
     def __init__(self, in_channels, out_channels, modes1, modes2, rngs: nnx.Rngs):
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.modes1 = modes1 # number of lowest Fourier x-frequencies to keep; higher frequencies are discarded
-        self.modes2 = modes2 # number of lowest Fourier y-frequencies to keep; higher frequencies are discarded
-        scale = 1 / (in_channels * out_channels) # normalization to keep the signal variance stable during initialization
+        
+        self.modes1 = modes1   # number of lowest vertical frequencies to keep
+        self.modes2 = modes2   # number of lowest horizontal frequencies to keep;
+                               # higher frequencies are discarded
+        
         # learnable weights are complex-valued in the Fourier domain
-        self.weights1 = nnx.Param(
-            scale * jax.random.normal(rngs.params(), (in_channels, out_channels, modes1, modes2), dtype=jnp.complex64)
-        )
-        self.weights2 = nnx.Param(
-            scale * jax.random.normal(rngs.params(), (in_channels, out_channels, modes1, modes2), dtype=jnp.complex64)
-        )
+        scale = 1 / (in_channels * out_channels)   # normalization
+        self.weights1 = nnx.Param(scale * jax.random.normal(rngs.params(),
+                 (in_channels, out_channels, modes1, modes2), dtype=jnp.complex64))
+        self.weights2 = nnx.Param(scale * jax.random.normal(rngs.params(),
+                 (in_channels, out_channels, modes1, modes2), dtype=jnp.complex64))
+        
     def __call__(self, x):
         batch, h, w, c = x.shape # batch, height, width, channels
         # transform to Fourier domain
         x = jnp.transpose(x, (0, 3, 1, 2)) # reorder to (batch, channel, height, width) dimensions
-        x_ft = jnp.fft.rfftn(x, axes=(-2, -1)) # Real Fast Fourier Transform: image pixels -> frequency coefficients
-        # Multiply relevant Fourier modes
-        out_ft = jnp.zeros((batch, self.out_channels, h, w // 2 + 1), dtype=jnp.complex64) # blank frequency domain canvas
-        # top left corner of the frequency domain
-        res1 = jnp.einsum("bixy,ioxy->boxy", x_ft[:, :, :self.modes1, :self.modes2], self.weights1) # matrix
-                                    # multiplication between the input frequencies and the learnable weights
-                                    # across the input (i) and output (o) channels
+                                           # as jnp.fft.rfftn needs input in a certain layout
+        x_ft = jnp.fft.rfftn(x, axes=(-2, -1)) # real FFT: pixels -> frequency coeffs
+        
+        # blank frequency domain canvas
+        out_ft = jnp.zeros((batch, self.out_channels, h, w // 2 + 1), dtype=jnp.complex64)
+        
+        # frequency-domain linear transformation: top left corner
+        res1 = jnp.einsum("bixy,ioxy->boxy", x_ft[:, :, :self.modes1, :self.modes2], self.weights1)
         out_ft = out_ft.at[:, :, :self.modes1, :self.modes2].set(res1)
-        # bottom left corner of the frequency domain
+        
+        # frequency-domain linear transformation: bottom left corner
         res2 = jnp.einsum("bixy,ioxy->boxy", x_ft[:, :, -self.modes1:, :self.modes2], self.weights2)
         out_ft = out_ft.at[:, :, -self.modes1:, :self.modes2].set(res2)
+        
         # as for the top/bottom right corners, they are redundant, so no need to store them
+        
         # return to physical space
-        x = jnp.fft.irfftn(out_ft, s=(h, w), axes=(-2, -1)) # the Inverse FFT: filtered coefficients -> 2D image
+        x = jnp.fft.irfftn(out_ft, s=(h, w), axes=(-2, -1)) # inverse FFT: filtered coefficients -> 2D image
         return jnp.transpose(x, (0, 2, 3, 1)) # reorder to (batch, height, width, channel) dimensions
 ```
 
-We stack four of these spectral layers in our network:
+We stack four of these spectral convolution layers in our network:
 
 ```py
-class FNO2d(nnx.Module):   # high-level architecture to stack several Spectral Convolutions layers
+class FNO2d(nnx.Module):   # high-level network architecture
     def __init__(self, modes, width, rngs: nnx.Rngs):
-        # lift the input data into a higher-dim space (width) so the model has more "room" to learn complex features
+        # lift the input data into a higher-dim space (width) so the model
+        #       has more room to learn complex features
         self.fc0 = nnx.Linear(1, width, rngs=rngs)   # first, fully connected layer
+        
         # four spectral convolution layers
         self.conv0 = SpectralConv2d(width, width, modes, modes, rngs=rngs)
         self.conv1 = SpectralConv2d(width, width, modes, modes, rngs=rngs)
         self.conv2 = SpectralConv2d(width, width, modes, modes, rngs=rngs)
         self.conv3 = SpectralConv2d(width, width, modes, modes, rngs=rngs)
-        # skip connections: standard linear (fully connected) layers applied in the spatial domain
+        
+        # skip connections: standard linear (fully connected) layers
         self.w0 = nnx.Linear(width, width, rngs=rngs)
         self.w1 = nnx.Linear(width, width, rngs=rngs)
         self.w2 = nnx.Linear(width, width, rngs=rngs)
         self.w3 = nnx.Linear(width, width, rngs=rngs)
-        # projection layers: squeeze high-dim space back down to the desired output size
+        
+        # projection layers: squeeze high-dim space back down to the output size
         self.fc1 = nnx.Linear(width, 128, rngs=rngs)
         self.fc2 = nnx.Linear(128, 1, rngs=rngs)
+        
     def __call__(self, x):   # make FNO2d class a function
         x = self.fc0(x)
-        x1 = self.conv0(x) + self.w0(x) # add global patterns (from Fourier domain) and local patterns (from linear layer)
+        x1 = self.conv0(x) + self.w0(x) # global (Fourier) + local (linear) patterns
         x = jax.nn.gelu(x1)             # non-linear activation function
         x2 = self.conv1(x) + self.w1(x)
         x = jax.nn.gelu(x2)
         x3 = self.conv2(x) + self.w2(x)
         x = jax.nn.gelu(x3)
         x4 = self.conv3(x) + self.w3(x)
-        x = self.fc1(x4)   # final projection
+        x = self.fc1(x4)                # final projection, first layer
         x = jax.nn.gelu(x)
         x = self.fc2(x)
         return x
@@ -1121,12 +1150,8 @@ optax.adamw(3e-4, weight_decay=5e-5)
 second best convergence
 reaches "Epoch 496, loss: 0.000854"
 
-abc
 try
 optax.adamw(3e-4) with a learning rate decay
-
-
-
 :::
 
 
@@ -1260,6 +1285,10 @@ function job-nvtop() {
 ::: {.callout-note}
 `nvidia-smi` and `nvtop` do not have access to real-time GPU utilization inside a MIG, although they show
 memory usage per slice. They show GPU utilization only if you schedule a full GPU.
+:::
+
+:::{style="text-align: center;"}
+![Typical output from `nvtop` on a full GPU](/fig/nvtop.png){width=80%}
 :::
 
 
