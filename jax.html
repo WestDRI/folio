@@ -328,9 +328,9 @@ window.Quarto = {
   <li><a href="#convolution-kernels" id="toc-convolution-kernels" class="nav-link" data-scroll-target="#convolution-kernels">Convolution kernels</a></li>
   <li><a href="#optimizers" id="toc-optimizers" class="nav-link" data-scroll-target="#optimizers">Optimizers</a></li>
   <li><a href="#running-training" id="toc-running-training" class="nav-link" data-scroll-target="#running-training">Running training</a></li>
-  <li><a href="#first-network-convolutional-autoencoder" id="toc-first-network-convolutional-autoencoder" class="nav-link" data-scroll-target="#first-network-convolutional-autoencoder">First network: convolutional autoencoder</a></li>
-  <li><a href="#second-network-u-nets" id="toc-second-network-u-nets" class="nav-link" data-scroll-target="#second-network-u-nets">Second network: U-Net(s)</a></li>
-  <li><a href="#third-network-fourier-neural-operator-fno" id="toc-third-network-fourier-neural-operator-fno" class="nav-link" data-scroll-target="#third-network-fourier-neural-operator-fno">Third network: Fourier Neural Operator (FNO)</a></li>
+  <li><a href="#first-network-architecture-convolutional-autoencoder" id="toc-first-network-architecture-convolutional-autoencoder" class="nav-link" data-scroll-target="#first-network-architecture-convolutional-autoencoder">First network architecture: convolutional autoencoder</a></li>
+  <li><a href="#second-network-architecture-u-net" id="toc-second-network-architecture-u-net" class="nav-link" data-scroll-target="#second-network-architecture-u-net">Second network architecture: U-Net</a></li>
+  <li><a href="#third-network-architecture-fourier-neural-operator-fno" id="toc-third-network-architecture-fourier-neural-operator-fno" class="nav-link" data-scroll-target="#third-network-architecture-fourier-neural-operator-fno">Third network architecture: Fourier Neural Operator (FNO)</a></li>
   <li><a href="#convergence" id="toc-convergence" class="nav-link" data-scroll-target="#convergence">Convergence</a></li>
   <li><a href="#multi-point-source-model" id="toc-multi-point-source-model" class="nav-link" data-scroll-target="#multi-point-source-model">Multi-point-source model</a></li>
   <li><a href="#multi-shape-model" id="toc-multi-shape-model" class="nav-link" data-scroll-target="#multi-shape-model">Multi-shape model</a></li>
@@ -409,6 +409,7 @@ Note
 <p>When training on our small cluster, for some bigger models we’ll have to reduce the batch size by 2X (<code>batchSize=4</code>) to fit them into the 2g.10gb’s memory.</p>
 </div>
 </div>
+<p>Now, we’ll log in to the training cluster with your username and password.</p>
 </section>
 <section id="numerical-problem" class="level2">
 <h2 class="anchored" data-anchor-id="numerical-problem">Numerical problem</h2>
@@ -791,7 +792,7 @@ Note
 </section>
 <section id="optimizers" class="level2">
 <h2 class="anchored" data-anchor-id="optimizers">Optimizers</h2>
-<p>Optax provides a broad range of optimizers, from standard deep learning workhorses to specialized scientific and memory-efficient algorithms. In Optax, these are essentially “aliases” for pre-packaged chains of gradient transformations.</p>
+<p>In Optax, <em>optimizers</em> are essentially aliases for pre-packaged chains of gradient transformations. Optax provides a broad range of these, from standard deep learning workhorses to specialized scientific and memory-efficient algorithms.</p>
 <ul>
 <li><code>optax.adam</code> is the industry standard, combines momentum and adaptive scaling</li>
 <li><code>optax.adamw</code> is the Adam optimizer with weight decay decoupled from the learning rate; weight decay is a regularization technique that penalizes large weights, encouraging the model to keep parameters small and thus produce smoother solutions while reducing overfitting</li>
@@ -812,8 +813,8 @@ Note
 <!-- - `--cpus-per-task=8 --mem-per-cpu=7200` runs Ok -->
 <p>On the training cluster we can reduce the batch size by 2X and the fit the model on a GPU slice with the SLURM flags <code>--time=1:0:0 --mem=3600 --gpus-per-node=2g.10gb:1</code>.</p>
 </section>
-<section id="first-network-convolutional-autoencoder" class="level2">
-<h2 class="anchored" data-anchor-id="first-network-convolutional-autoencoder">First network: convolutional autoencoder</h2>
+<section id="first-network-architecture-convolutional-autoencoder" class="level2">
+<h2 class="anchored" data-anchor-id="first-network-architecture-convolutional-autoencoder">First network architecture: convolutional autoencoder</h2>
 <p>A convolutional network was my first choice as they are highly effective for image-to-image translation tasks. It is a type of convolutional encoder-decoder that theoretically can capture both global and local features, which is crucial for handling the spatial dependencies in a PDE solution. There are two parts:</p>
 <ol type="1">
 <li>the encoder to reduce the image size while increasing the depth; essentially summarizes the image into high-level features, and</li>
@@ -913,21 +914,23 @@ Note
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(numEpochs):</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    perms <span class="op">=</span> jax.random.permutation(jax.random.PRNGKey(epoch), numSamples)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    X_shuffled, Y_shuffled <span class="op">=</span> X[perms], Y[perms] <span class="co"># to be used instead of X,Y below</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    X_shuffled, Y_shuffled <span class="op">=</span> X[perms], Y[perms]</span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    epoch_loss <span class="op">=</span> []</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, numSamples, batchSize):</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, numSamples, batchSize):   <span class="co"># default 63 loops</span></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        bx <span class="op">=</span> X_shuffled[i : i <span class="op">+</span> batchSize]</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        by <span class="op">=</span> Y_shuffled[i : i <span class="op">+</span> batchSize]</span>
 <span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> train_step(model, optimizer, bx, by)</span>
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        epoch_loss.append(loss)</span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">, loss: </span><span class="sc">{</span>np<span class="sc">.</span>mean(epoch_loss)<span class="sc">:.6f}</span><span class="ss">"</span>)</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    graph, state <span class="op">=</span> nnx.split(model)   <span class="co"># extract the state from NNX</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    checkpointer <span class="op">=</span> ocp.StandardCheckpointer()</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (epoch<span class="op">+</span><span class="dv">1</span>)<span class="op">%</span><span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="bu">dir</span><span class="op">+</span><span class="st">'weights</span><span class="sc">%03d</span><span class="st">'</span><span class="op">%</span>(epoch))</span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        checkpointer.save(<span class="bu">dir</span><span class="op">+</span><span class="st">'weights</span><span class="sc">%03d</span><span class="st">'</span><span class="op">%</span>(epoch), state)</span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>checkpointer.wait_until_finished()   <span class="co"># wait for the save thread to finish writing to disk</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    graph, state <span class="op">=</span> nnx.split(model)   <span class="co"># extract the state from NNX;</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>             <span class="co"># graph = static model skeleton (layer connections)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>             <span class="co"># state = evolving weights and parameters</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    checkpointer <span class="op">=</span> ocp.StandardCheckpointer()</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (epoch<span class="op">+</span><span class="dv">1</span>)<span class="op">%</span><span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="bu">dir</span><span class="op">+</span><span class="st">'weights</span><span class="sc">%03d</span><span class="st">'</span><span class="op">%</span>(epoch))</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        checkpointer.save(<span class="bu">dir</span><span class="op">+</span><span class="st">'weights</span><span class="sc">%03d</span><span class="st">'</span><span class="op">%</span>(epoch), state)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>checkpointer.wait_until_finished()   <span class="co"># wait for the save thread to finish writing to disk</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now we are ready to train the model:</p>
 <!-- salloc --time=0:30:0 --mem-per-cpu=3600 --gpus-per-node=2g.10gb:1 -->
 <!-- nvidia-smi -->
@@ -994,9 +997,11 @@ Note
 </div>
 </div>
 <p>While this network can accurately position the circle around the initial dot (easy to verify with other initial conditions), it fails to reproduce the solution. You can also see this in the training loss evolution: it essentially plateaus at a high value.</p>
+<p>I tested variants with different spatial downsampling, and even removing downsampling entirely, but that did not help.</p>
+<!-- job 38804119: caeSimple.py without downsampling -->
 </section>
-<section id="second-network-u-nets" class="level2">
-<h2 class="anchored" data-anchor-id="second-network-u-nets">Second network: U-Net(s)</h2>
+<section id="second-network-architecture-u-net" class="level2">
+<h2 class="anchored" data-anchor-id="second-network-architecture-u-net">Second network architecture: U-Net</h2>
 <!-- U-Net: convolutional neural network (CNN) architecture, originally designed in 2015 -->
 <p>To speed up convergence, a U-Net introduces <em>skip connections</em> that pass low-level pixel data from the input image (or encoder) to the decoder. For example, you can convolve one of the encoder layers with one of the decoder layers.</p>
 <p>In other words, a traditional convolutional network compresses the image into a very small bottleneck to understand “what” is in the picture. However, this compression destroys spatial information. Skip connections take the high-resolution spatial information from the beginning and “paste” it back into one of the later layers.</p>
@@ -1025,7 +1030,7 @@ Note
 <li>filter symmetry 1 -&gt; 64 -&gt; 128 -&gt; 256 -&gt; 128 -&gt; 64 -&gt; 1 to reflect the classic U-Net</li>
 </ol>
 <!-- job 37298514: almost same performance as unetSimple, no real convergence -->
-<p>results in a slightly less awful solution:</p>
+<p>results in an equally poor solution:</p>
 <div style="text-align: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -1034,11 +1039,11 @@ Note
 </figure>
 </div>
 </div>
-<p>As it turns out, it is actually very common for a standard U-Net to struggle with PDEs. While U-Nets are great at identifying and locating patterns, and learning low-frequency shapes, they can’t quite capture high-frequency gradients in a PDE solution.</p>
+<p>As it turns out, it is actually very common for standard U-Nets to struggle with PDEs. While U-Nets are great at identifying and locating patterns, and learning low-frequency shapes, they can’t quite capture high-frequency gradients in a PDE solution.</p>
 <p>There are other things you could play with, e.g.&nbsp;try a smoother activation function, increase the depth of the network, play with individual layers, but so far I have not found a good solution for this problem with UNet-type networks.</p>
 </section>
-<section id="third-network-fourier-neural-operator-fno" class="level2">
-<h2 class="anchored" data-anchor-id="third-network-fourier-neural-operator-fno">Third network: Fourier Neural Operator (FNO)</h2>
+<section id="third-network-architecture-fourier-neural-operator-fno" class="level2">
+<h2 class="anchored" data-anchor-id="third-network-architecture-fourier-neural-operator-fno">Third network architecture: Fourier Neural Operator (FNO)</h2>
 <p>A <em>neural operator</em> is a mapping between discretized function spaces, e.g.</p>
 <ul>
 <li>in our case: initial condition of a PDE → solution at a fixed later time</li>
@@ -1073,6 +1078,11 @@ Note
 <p>Another appealing property of FNOs is their ability to generate solutions at higher spatial resolution than those used during training, effectively enabling super-resolution of numerical solutions.</p>
 <!-- - captures global patterns by filtering Fourier coefficients -->
 <p>In the file <code>fourier.py</code>, define a class <code>SpectralConv2d</code> for our basic spectral convolution layer:</p>
+<ul>
+<li>the matrix multiplication <code>jnp.einsum()</code> inside <code>SpectralConv2d</code> performs a frequency-domain linear transformation, which is the mathematical equivalent of a convolution in the spatial domain</li>
+<li>we matrix-multiply the input frequencies and the learnable weights across the input (i) and output (o) channels</li>
+<li>since we perform a Fourier transform on real-valued data, the output in the frequency domain has some redundancies (symmetries) ⇨ we need to consider only two quadrants in the 2D frequency domain</li>
+</ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> flax <span class="im">import</span> nnx</span>
@@ -1081,66 +1091,77 @@ Note
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, in_channels, out_channels, modes1, modes2, rngs: nnx.Rngs):</span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.in_channels <span class="op">=</span> in_channels</span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.out_channels <span class="op">=</span> out_channels</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.modes1 <span class="op">=</span> modes1 <span class="co"># number of lowest Fourier x-frequencies to keep; higher frequencies are discarded</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.modes2 <span class="op">=</span> modes2 <span class="co"># number of lowest Fourier y-frequencies to keep; higher frequencies are discarded</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        scale <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (in_channels <span class="op">*</span> out_channels) <span class="co"># normalization to keep the signal variance stable during initialization</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>        <span class="co"># learnable weights are complex-valued in the Fourier domain</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights1 <span class="op">=</span> nnx.Param(</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>            scale <span class="op">*</span> jax.random.normal(rngs.params(), (in_channels, out_channels, modes1, modes2), dtype<span class="op">=</span>jnp.complex64)</span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights2 <span class="op">=</span> nnx.Param(</span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>            scale <span class="op">*</span> jax.random.normal(rngs.params(), (in_channels, out_channels, modes1, modes2), dtype<span class="op">=</span>jnp.complex64)</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):</span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        batch, h, w, c <span class="op">=</span> x.shape <span class="co"># batch, height, width, channels</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># transform to Fourier domain</span></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)) <span class="co"># reorder to (batch, channel, height, width) dimensions</span></span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        x_ft <span class="op">=</span> jnp.fft.rfftn(x, axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># Real Fast Fourier Transform: image pixels -&gt; frequency coefficients</span></span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Multiply relevant Fourier modes</span></span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> jnp.zeros((batch, <span class="va">self</span>.out_channels, h, w <span class="op">//</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>), dtype<span class="op">=</span>jnp.complex64) <span class="co"># blank frequency domain canvas</span></span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># top left corner of the frequency domain</span></span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        res1 <span class="op">=</span> jnp.einsum(<span class="st">"bixy,ioxy-&gt;boxy"</span>, x_ft[:, :, :<span class="va">self</span>.modes1, :<span class="va">self</span>.modes2], <span class="va">self</span>.weights1) <span class="co"># matrix</span></span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>                                    <span class="co"># multiplication between the input frequencies and the learnable weights</span></span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>                                    <span class="co"># across the input (i) and output (o) channels</span></span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> out_ft.at[:, :, :<span class="va">self</span>.modes1, :<span class="va">self</span>.modes2].<span class="bu">set</span>(res1)</span>
-<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># bottom left corner of the frequency domain</span></span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        res2 <span class="op">=</span> jnp.einsum(<span class="st">"bixy,ioxy-&gt;boxy"</span>, x_ft[:, :, <span class="op">-</span><span class="va">self</span>.modes1:, :<span class="va">self</span>.modes2], <span class="va">self</span>.weights2)</span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> out_ft.at[:, :, <span class="op">-</span><span class="va">self</span>.modes1:, :<span class="va">self</span>.modes2].<span class="bu">set</span>(res2)</span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># as for the top/bottom right corners, they are redundant, so no need to store them</span></span>
-<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># return to physical space</span></span>
-<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.fft.irfftn(out_ft, s<span class="op">=</span>(h, w), axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># the Inverse FFT: filtered coefficients -&gt; 2D image</span></span>
-<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>)) <span class="co"># reorder to (batch, height, width, channel) dimensions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>We stack four of these spectral layers in our network:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FNO2d(nnx.Module):   <span class="co"># high-level architecture to stack several Spectral Convolutions layers</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.modes1 <span class="op">=</span> modes1   <span class="co"># number of lowest vertical frequencies to keep</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.modes2 <span class="op">=</span> modes2   <span class="co"># number of lowest horizontal frequencies to keep;</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>                               <span class="co"># higher frequencies are discarded</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># learnable weights are complex-valued in the Fourier domain</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>        scale <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (in_channels <span class="op">*</span> out_channels)   <span class="co"># normalization</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights1 <span class="op">=</span> nnx.Param(scale <span class="op">*</span> jax.random.normal(rngs.params(),</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>                 (in_channels, out_channels, modes1, modes2), dtype<span class="op">=</span>jnp.complex64))</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.weights2 <span class="op">=</span> nnx.Param(scale <span class="op">*</span> jax.random.normal(rngs.params(),</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>                 (in_channels, out_channels, modes1, modes2), dtype<span class="op">=</span>jnp.complex64))</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        batch, h, w, c <span class="op">=</span> x.shape <span class="co"># batch, height, width, channels</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># transform to Fourier domain</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>)) <span class="co"># reorder to (batch, channel, height, width) dimensions</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>                                           <span class="co"># as jnp.fft.rfftn needs input in a certain layout</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>        x_ft <span class="op">=</span> jnp.fft.rfftn(x, axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># real FFT: pixels -&gt; frequency coeffs</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># blank frequency domain canvas</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> jnp.zeros((batch, <span class="va">self</span>.out_channels, h, w <span class="op">//</span> <span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>), dtype<span class="op">=</span>jnp.complex64)</span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># frequency-domain linear transformation: top left corner</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>        res1 <span class="op">=</span> jnp.einsum(<span class="st">"bixy,ioxy-&gt;boxy"</span>, x_ft[:, :, :<span class="va">self</span>.modes1, :<span class="va">self</span>.modes2], <span class="va">self</span>.weights1)</span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> out_ft.at[:, :, :<span class="va">self</span>.modes1, :<span class="va">self</span>.modes2].<span class="bu">set</span>(res1)</span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># frequency-domain linear transformation: bottom left corner</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>        res2 <span class="op">=</span> jnp.einsum(<span class="st">"bixy,ioxy-&gt;boxy"</span>, x_ft[:, :, <span class="op">-</span><span class="va">self</span>.modes1:, :<span class="va">self</span>.modes2], <span class="va">self</span>.weights2)</span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>        out_ft <span class="op">=</span> out_ft.at[:, :, <span class="op">-</span><span class="va">self</span>.modes1:, :<span class="va">self</span>.modes2].<span class="bu">set</span>(res2)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># as for the top/bottom right corners, they are redundant, so no need to store them</span></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># return to physical space</span></span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.fft.irfftn(out_ft, s<span class="op">=</span>(h, w), axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># inverse FFT: filtered coefficients -&gt; 2D image</span></span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>)) <span class="co"># reorder to (batch, height, width, channel) dimensions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We stack four of these spectral convolution layers in our network:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FNO2d(nnx.Module):   <span class="co"># high-level network architecture</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, modes, width, rngs: nnx.Rngs):</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># lift the input data into a higher-dim space (width) so the model has more "room" to learn complex features</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc0 <span class="op">=</span> nnx.Linear(<span class="dv">1</span>, width, rngs<span class="op">=</span>rngs)   <span class="co"># first, fully connected layer</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>        <span class="co"># four spectral convolution layers</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv0 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv1 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv2 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv3 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># skip connections: standard linear (fully connected) layers applied in the spatial domain</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w0 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w1 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w2 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w3 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># projection layers: squeeze high-dim space back down to the desired output size</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc1 <span class="op">=</span> nnx.Linear(width, <span class="dv">128</span>, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc2 <span class="op">=</span> nnx.Linear(<span class="dv">128</span>, <span class="dv">1</span>, rngs<span class="op">=</span>rngs)</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):   <span class="co"># make FNO2d class a function</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc0(x)</span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        x1 <span class="op">=</span> <span class="va">self</span>.conv0(x) <span class="op">+</span> <span class="va">self</span>.w0(x) <span class="co"># add global patterns (from Fourier domain) and local patterns (from linear layer)</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x1)             <span class="co"># non-linear activation function</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        x2 <span class="op">=</span> <span class="va">self</span>.conv1(x) <span class="op">+</span> <span class="va">self</span>.w1(x)</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x2)</span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        x3 <span class="op">=</span> <span class="va">self</span>.conv2(x) <span class="op">+</span> <span class="va">self</span>.w2(x)</span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x3)</span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        x4 <span class="op">=</span> <span class="va">self</span>.conv3(x) <span class="op">+</span> <span class="va">self</span>.w3(x)</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc1(x4)   <span class="co"># final projection</span></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x)</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc2(x)</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># lift the input data into a higher-dim space (width) so the model</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">#       has more room to learn complex features</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc0 <span class="op">=</span> nnx.Linear(<span class="dv">1</span>, width, rngs<span class="op">=</span>rngs)   <span class="co"># first, fully connected layer</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>        <span class="co"># four spectral convolution layers</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv0 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv1 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv2 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.conv3 <span class="op">=</span> SpectralConv2d(width, width, modes, modes, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># skip connections: standard linear (fully connected) layers</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w0 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w1 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w2 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.w3 <span class="op">=</span> nnx.Linear(width, width, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># projection layers: squeeze high-dim space back down to the output size</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc1 <span class="op">=</span> nnx.Linear(width, <span class="dv">128</span>, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.fc2 <span class="op">=</span> nnx.Linear(<span class="dv">128</span>, <span class="dv">1</span>, rngs<span class="op">=</span>rngs)</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):   <span class="co"># make FNO2d class a function</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc0(x)</span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        x1 <span class="op">=</span> <span class="va">self</span>.conv0(x) <span class="op">+</span> <span class="va">self</span>.w0(x) <span class="co"># global (Fourier) + local (linear) patterns</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x1)             <span class="co"># non-linear activation function</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        x2 <span class="op">=</span> <span class="va">self</span>.conv1(x) <span class="op">+</span> <span class="va">self</span>.w1(x)</span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x2)</span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        x3 <span class="op">=</span> <span class="va">self</span>.conv2(x) <span class="op">+</span> <span class="va">self</span>.w2(x)</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x3)</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        x4 <span class="op">=</span> <span class="va">self</span>.conv3(x) <span class="op">+</span> <span class="va">self</span>.w3(x)</span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc1(x4)                <span class="co"># final projection, first layer</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc2(x)</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We call this model from the main code <code>train.py</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fourier <span class="im">import</span> SpectralConv2d, FNO2d</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>modes <span class="op">=</span> <span class="dv">12</span>   <span class="co"># default 12, number of Fourier components to keep; bigger =&gt; higher res and larger snapshots</span></span>
@@ -1257,6 +1278,14 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p><code>nvidia-smi</code> and <code>nvtop</code> do not have access to real-time GPU utilization inside a MIG, although they show memory usage per slice. They show GPU utilization only if you schedule a full GPU.</p>
+</div>
+</div>
+<div style="text-align: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./fig/nvtop.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Typical output from <code>nvtop</code> on a full GPU</figcaption>
+</figure>
 </div>
 </div>
 </section>
