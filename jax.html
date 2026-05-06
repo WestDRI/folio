@@ -1046,7 +1046,7 @@ Note
 <h2 class="anchored" data-anchor-id="third-network-architecture-fourier-neural-operator-fno">Third network architecture: Fourier Neural Operator (FNO)</h2>
 <p>A <em>neural operator</em> is a mapping between discretized function spaces, e.g.</p>
 <ul>
-<li>in our case: initial condition of a PDE → solution at a fixed later time</li>
+<li><strong>in our case</strong>: initial condition of a PDE → solution at a fixed later time</li>
 <li>could also map initial condition → time-dependent solution</li>
 <li>easiest: solution at one time step → solution at the next time step
 <ul>
@@ -1082,6 +1082,8 @@ Note
 <li>the matrix multiplication <code>jnp.einsum()</code> inside <code>SpectralConv2d</code> performs a frequency-domain linear transformation, which is the mathematical equivalent of a convolution in the spatial domain</li>
 <li>we matrix-multiply the input frequencies and the learnable weights across the input (i) and output (o) channels</li>
 <li>since we perform a Fourier transform on real-valued data, the output in the frequency domain has some redundancies (symmetries) ⇨ we need to consider only two quadrants in the 2D frequency domain</li>
+<li>the notation “bixy,ioxy-&gt;boxy” describes mapping of input/output dimensions for the complex matrix multiplication at every frequency coordinate: <code>b</code> = batch size, <code>i</code> = number of input channels, <code>o</code> = number of output channels, <code>x</code> and <code>y</code> = 2D frequency coordinates</li>
+<li><code>self.weights1</code> and <code>self.weights2</code> are learnable weights for positive and negative frequencies in both spatial dimensions</li>
 </ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jax.numpy <span class="im">as</span> jnp</span>
@@ -1124,9 +1126,9 @@ Note
 <span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># as for the top/bottom right corners, they are redundant, so no need to store them</span></span>
 <span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>        <span class="co"># return to physical space</span></span>
-<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.fft.irfftn(out_ft, s<span class="op">=</span>(h, w), axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># inverse FFT: filtered coefficients -&gt; 2D image</span></span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jnp.fft.irfftn(out_ft, s<span class="op">=</span>(h, w), axes<span class="op">=</span>(<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>)) <span class="co"># inverse FFT: filtered coeffs -&gt; 2D image</span></span>
 <span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> jnp.transpose(x, (<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>)) <span class="co"># reorder to (batch, height, width, channel) dimensions</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>We stack four of these spectral convolution layers in our network:</p>
+<p>We stack four of these spectral convolution layers in our network, each with a parallel skip connection:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FNO2d(nnx.Module):   <span class="co"># high-level network architecture</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, modes, width, rngs: nnx.Rngs):</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># lift the input data into a higher-dim space (width) so the model</span></span>
@@ -1151,17 +1153,22 @@ Note
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, x):   <span class="co"># make FNO2d class a function</span></span>
 <span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc0(x)</span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        x1 <span class="op">=</span> <span class="va">self</span>.conv0(x) <span class="op">+</span> <span class="va">self</span>.w0(x) <span class="co"># global (Fourier) + local (linear) patterns</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x1)             <span class="co"># non-linear activation function</span></span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        x2 <span class="op">=</span> <span class="va">self</span>.conv1(x) <span class="op">+</span> <span class="va">self</span>.w1(x)</span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x2)</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        x3 <span class="op">=</span> <span class="va">self</span>.conv2(x) <span class="op">+</span> <span class="va">self</span>.w2(x)</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x3)</span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        x4 <span class="op">=</span> <span class="va">self</span>.conv3(x) <span class="op">+</span> <span class="va">self</span>.w3(x)</span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc1(x4)                <span class="co"># final projection, first layer</span></span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x)</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc2(x)</span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>        x1 <span class="op">=</span> <span class="va">self</span>.conv0(x) <span class="op">+</span> <span class="va">self</span>.w0(x) <span class="co"># global (Fourier) + local (linear) patterns</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x1)             <span class="co"># non-linear activation function</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        x2 <span class="op">=</span> <span class="va">self</span>.conv1(x) <span class="op">+</span> <span class="va">self</span>.w1(x)</span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x2)</span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>        x3 <span class="op">=</span> <span class="va">self</span>.conv2(x) <span class="op">+</span> <span class="va">self</span>.w2(x)</span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x3)</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>        x4 <span class="op">=</span> <span class="va">self</span>.conv3(x) <span class="op">+</span> <span class="va">self</span>.w3(x)</span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc1(x4)                <span class="co"># final projection, first layer</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> jax.nn.gelu(x)</span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="va">self</span>.fc2(x)</span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> x</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We call this model from the main code <code>train.py</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fourier <span class="im">import</span> SpectralConv2d, FNO2d</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>modes <span class="op">=</span> <span class="dv">12</span>   <span class="co"># default 12, number of Fourier components to keep; bigger =&gt; higher res and larger snapshots</span></span>
@@ -1173,7 +1180,8 @@ Note
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> nnx.Optimizer(model, gradientTransformation, wrt<span class="op">=</span>nnx.Param)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- For a Fourier Neural Operator (FNO), the "best" optimizer is almost universally Adam (or its variant AdamW). -->
 <p>As the model is now larger, set <code>batchSize = 4</code> in <code>train.py</code> to fit it into memory, then run training as usual:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1 python <span class="at">-u</span> train.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> weights<span class="pp">???</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--time</span><span class="op">=</span>0:30:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--gpus-per-node</span><span class="op">=</span>2g.10gb:1 python <span class="at">-u</span> train.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Since FNOs operate in the frequency domain, the gradients for different modes can vary significantly in magnitude. Adaptive optimizers like Adam are particularly effective here because they normalize these gradients, ensuring that high-frequency and low-frequency modes are updated at a compatible scale.</p>
 <!-- ```sh -->
 <!-- mergeImagesHorizontally -o realUNet.png 500 data/testing/frame80001000?.png prediction.png -->
@@ -1185,7 +1193,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./fig/fno1.png" class="img-fluid figure-img"></p>
-<figcaption>Solution after 10 (left), 100 (center), and 490 (right) epochs</figcaption>
+<figcaption>Solution after 10 (left), 100 (center), and 500 (right) epochs</figcaption>
 </figure>
 </div>
 </div>
