@@ -786,7 +786,7 @@ Note
 </section>
 <section id="convolution-kernels" class="level2">
 <h2 class="anchored" data-anchor-id="convolution-kernels">Convolution kernels</h2>
-<p>When you apply a convolutional kernel with <code>nnx.Conv()</code>, the model doesn’t know what itls supposed to “see” yet. To start the learning process, JAX/Flax fills the kernel with small random numbers and in such a way that the weights are varied enough that the neurons don’t all learn the same thing, and also small enough that the math doesn’t “explode” during the first pass.</p>
+<p>When you apply a convolutional kernel with <code>nnx.Conv()</code>, the model doesn’t know what it’s supposed to “see” yet. To start the learning process, JAX/Flax fills the kernel with small random numbers and in such a way that the weights are varied enough that the neurons don’t all learn the same thing, and also small enough that the math doesn’t “explode” during the first pass.</p>
 <p>For a 3x3 convolution, the kernel is a 4D array. If <code>in_features=1</code> and <code>out_features=64</code>, the kernel shape is (3, 3, in_features, out_features). If <code>in_features=1</code> and <code>out_features=64</code>, there are effectively 64 different 3x3 filters, each looking for a different pattern like an edge, a curve, or a dot.</p>
 <p>While initially the kernel is random, an optimizer slightly tweaks those numbers. After training, those values are no longer random: they might represent specific visual features.</p>
 </section>
@@ -795,7 +795,7 @@ Note
 <p>In Optax, <em>optimizers</em> are essentially aliases for pre-packaged chains of gradient transformations. Optax provides a broad range of these, from standard deep learning workhorses to specialized scientific and memory-efficient algorithms.</p>
 <ul>
 <li><code>optax.adam</code> is the industry standard, combines momentum and adaptive scaling</li>
-<li><code>optax.adamw</code> is the Adam optimizer with weight decay decoupled from the learning rate; weight decay is a regularization technique that penalizes large weights, encouraging the model to keep parameters small and thus produce smoother solutions while reducing overfitting</li>
+<li><code>optax.adamw</code> is the Adam optimizer with weight decay decoupled from the learning rate; weight decay is a regularization technique that penalizes large weights, encouraging the model to keep parameters small and thus producing smoother solutions while reducing overfitting</li>
 <li><code>optax.rmsprop</code> is popular for Recurrent Neural Networks (RNNs) and Reinforcement Learning</li>
 <li><code>optax.adagrad</code> is good for sparse data; it scales the learning rate based on how frequently a parameter is updated</li>
 <li><code>optax.sgd</code> is the Canonical Stochastic Gradient Descent; good for ResNets and computer vision tasks</li>
