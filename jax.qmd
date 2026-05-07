@@ -963,14 +963,17 @@ UNet-type networks.
 
 ## Third network architecture: Fourier Neural Operator (FNO)
 
-A *neural operator* is a mapping between discretized function spaces, e.g.
+| This course | Mapping from | Mapping to | Difficulty | Comment |
+|:-:|:-----:|:-----:|:-----------:|:-----------:|
+| ✓ | initial conditions | solution at a fixed later time | very difficult: large gap between the initial conditions and the solution ||
+|| solution at one time step | solution at the next time step | easiest: small evolution ||
+|| solution at all previous time steps | solution for all remaining time steps | ? | *auto-regressive* neural net: apply an FNO to the output of the previous FNO |
+|| initial conditions | solution for all time steps | very difficult | *auto-regressive* neural net |
+: A *neural operator* is a mapping between discretized function spaces
 
-- **in our case**: initial condition of a PDE → solution at a fixed later time
-- could also map initial condition → time-dependent solution
-- easiest: solution at one time step → solution at the next time step
-    - this is called an auto-regressive neural net, as we apply an FNO to the output of the previous FNO
+<br>
 
-Fourier Neural Operator (FNOs) were pioneered by Li et al. in 2020 -- see a diagram below copied from their
+Fourier Neural Operator (FNOs) were pioneered by Li et al. in 2020 -- see the diagram below copied from their
 original paper.
 
 :::{style="text-align: center;"}
