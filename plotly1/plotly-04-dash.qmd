@@ -613,19 +613,13 @@ app.layout = dbc.Container([
         ], width=1, align="center", className="ms-4"),
         dbc.Col([
             html.Div(
-                style={"width": "900px", "height": "800px"},
-                children=[
-                    dash_vtk.View(
-                        children=[
-                            dash_vtk.GeometryRepresentation(
-                                children=[
-                                    dash_vtk.Mesh(id="vtk-mesh", state={})
-                                ],
-                                colorMapPreset="Viridis (matplotlib)",
-                            )
-                        ],
+                dash_vtk.View(
+                    dash_vtk.GeometryRepresentation(
+                        dash_vtk.Mesh(id="vtk-mesh", state={}),
+                        colorMapPreset="Viridis (matplotlib)",
                     )
-                ]
+                ),
+                style={"width": "900px", "height": "800px"}
             )
         ], width="auto"),
     ], justify="center")
