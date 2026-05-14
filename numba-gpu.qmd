@@ -166,8 +166,9 @@ clusters. If you need more GPU resources, schedule your job on a bigger MIG part
 ```sh
 sinfo -o "%G" | grep gpu | sed 's/gpu://g' | sed 's/),/\n/g' | cut -d: -f1 | sort | uniq
 
+module load cuda/12.6
 source /project/def-sponsor00/shared/env-numba/bin/activate
-salloc --time=2:0:0 --mem=3600 --gpus-per-node=2g.10gb:1
+salloc --time=2:0:0 --mem=3600 --gpus-per-node=1
 
 python
 ```

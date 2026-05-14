@@ -21,8 +21,8 @@ To install the core Dash library, use your favourite installer, ideally inside a
 environment, e.g.
 
 ```sh
-$ pip install dash
 $ uv pip install dash
+$ pip install dash
 $ conda install -c conda-forge dash
 ```
 
@@ -72,6 +72,8 @@ uv pip install dash                        # main Dash library
 uv pip install dash-ag-grid                # to display tabular data components
 uv pip install dash-bootstrap-components   # community-maintained styling library
 uv pip install dash-mantine-components     # community-maintained styling library
+uv pip install dash_vtk                    # for VTK
+uv pip install scikit-image
 ```
 
 ## Our baseline plot without Dash
@@ -156,7 +158,25 @@ reloading*: whenever you change the script file, Dash automatically re-executes 
 
 
 In this code above `html.Div` is a wrapper for standard html5 block-level container (content division
-element). It takes a list of content elements (or a single element) and CSS utility classes for styling.
+element). It takes a list of content elements (or a single element) and CSS utility classes for styling. For
+an example of a list, replace
+
+```py
+app.layout = [
+    html.Div(children='Dash scatter plot with Graph Objects'),   # content container
+    dcc.Graph(figure=fig)
+]
+```
+
+with a list containing a title and a paragraph:
+
+```py
+app.layout = [
+    html.Div(children=[html.H1("Dash scatter plot with Graph Objects"),
+                       html.P("This is a paragraph.")]),
+    dcc.Graph(figure=fig)
+]
+```
 
 Alternatively, you can use Plotly Express functions with Dash:
 
@@ -173,7 +193,7 @@ fig.update_traces(marker=dict(size=30, opacity=0.8))
 
 app = Dash()
 app.layout = [
-    html.Div(children='Dash scatter plot with Plotly Express'),
+    html.Div(children=html.H1("Dash scatter plot with Graph Objects")),
     dcc.Graph(figure=fig)
 ]
 app.run(debug=True)
@@ -210,6 +230,7 @@ app.layout = [
     dcc.Graph(figure={}, id='g1')                      # graph component
 ]
 @callback(
+    # all outputs must be listed first
     Output(component_id='g1', component_property='figure'),
     Input(component_id='slider1', component_property='value')
 )
@@ -229,10 +250,10 @@ Inside the callback function, the argument name `selected` is used only inside t
 
 ## Add some style
 
-At the moment, our application is very minimal in appearance. While we could style it using HTML and CSS, that
-approach assumes some familiarity with CSS. Dash provides higher-level components that make styling much
-easier. A popular option in industry, Dash Enterprise (requires a commercial license starting at $35k per
-year) provides Dash Design Kit, but it's not an option for us.
+At the moment, our application has a very minimal appearance. While we could improve it with HTML and CSS,
+that approach assumes some familiarity with CSS. Dash also provides higher-level components that make styling
+much easier. A popular industry option is Dash Enterprise, which includes the Dash Design Kit, but it requires
+a commercial license starting at about $35k per year and is therefore not a practical option for us.
 
 Fortunately, the Dash community has developed two open-source libraries -- Dash Bootstrap Components and Dash
 Mantine Components -- that make styling Dash apps much easier. They are easy to install:
@@ -347,14 +368,13 @@ app.layout = dbc.Container([
 )
 def update_graph(npoints, scaling, pointSize, opacity):
     print('running the callback function for', npoints, scaling, pointSize, opacity)
+    np.random.seed(5)   # to generate the same sequence every time
     match scaling:
         case "Fixed":
-            np.random.seed(5)   # to generate the same sequence every time
             fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
                              range_x=[0,1], range_y=[0,1], width=800, height=800)
             fig.update_traces(marker=dict(size=pointSize, opacity=opacity))
         case "Scaled":
-            np.random.seed(5)   # to generate the same sequence every time
             fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
                              range_x=[0,1], range_y=[0,1], width=800, height=800,
                              size=np.random.rand(npoints), size_max=30)
@@ -493,6 +513,168 @@ app.run(debug=True)
 
 ![](/fig/dash7.png)
 
+
+
+
+
+## 3D contours
+
+In this section, we demonstrate two approaches to generating iso-contours from a 3D dataset in a unit cube:
+
+1. via Plotly's standard `plotly.graph_objects.Mesh3d` function and
+2. via Dash VTK component library.
+
+We start with a classical Graph Objects plot ported to Dash:
+
+```py
+# save this as contour.py
+from dash import Dash, html, dcc, callback, Output, Input
+import dash_bootstrap_components as dbc
+import plotly.graph_objects as go
+from skimage import measure
+from netCDF4 import Dataset
+from pathlib import Path
+
+filename = str(next((Path.home()/"training").rglob("data/sineEnvelope.nc")))
+rootgrp = Dataset(filename, "r", format="NETCDF4")
+rho = rootgrp.variables['density'][:]
+rootgrp.close()
+
+external_stylesheets = [dbc.themes.CERULEAN]
+app = Dash(__name__, external_stylesheets=external_stylesheets)
+app.layout = dbc.Container([
+    dbc.Row([html.Div('Isosurface', className="text-primary text-center fs-3")]), # colour+centring+size
+    dbc.Row([
+        dbc.Col([
+            dcc.Slider(id='slider1', min=0.05, max=1.95, step=0.05, value=0.5, vertical=True,
+                       marks={i/10: str(i/10) for i in range(0, 21, 2)},
+                       tooltip={"placement": "left", "always_visible": True}
+                       ),
+        ], width=1, align="center", className="ms-4"),   # ms-4 is a left margin of size 4
+        dbc.Col([
+            dcc.Graph(figure={}, id='g1')
+        ], width="auto"),
+    ], justify="center")   # centre both columns in the row
+], fluid=True)   # use full screen width, min margin padding
+
+@callback(
+    Output(component_id='g1', component_property='figure'),
+    Input(component_id='slider1', component_property='value')
+)
+def update_graph(selected):
+    print('running the callback function for', selected)
+    # generate marching cubes
+    vertices, triangles, normals, values = measure.marching_cubes(rho, selected)   # create an isosurface
+    print(format(vertices.shape[0], ","), "vertices and", format(triangles.shape[0], ","), "triangles")
+    fig = go.Figure(data=[
+        go.Mesh3d(
+            x=vertices[:,0], y=vertices[:,1], z=vertices[:,2],
+            i=triangles[:, 0], j=triangles[:, 1], k=triangles[:, 2],
+            intensity=vertices[:, 2], # color by z-height
+            colorscale="Viridis", showscale=True
+        )
+    ])
+    fig.update_layout(width=900, height=800, scene=dict(aspectmode="data"))
+    return fig
+app.run(debug=True)
+```
+
+![](/fig/iso1.png){width=100% fig-align="center"}
+
+Next, we try Dash VTK that -- for faster processing -- runs VTK on the server side and pushes the
+visualization to the client:
+
+```py
+# save this as vtk-contour.py
+from dash import Dash, html, dcc, callback, Output, Input
+import dash_bootstrap_components as dbc
+import dash_vtk
+from skimage import measure
+from netCDF4 import Dataset
+import numpy as np
+from pathlib import Path
+
+filename = str(next((Path.home()/"training").rglob("data/sineEnvelope.nc")))
+rootgrp = Dataset(filename, "r", format="NETCDF4")
+rho = rootgrp.variables['density'][:]
+rootgrp.close()
+
+app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN])
+
+app.layout = dbc.Container([
+    dbc.Row([html.Div('Isosurface with Dash VTK', className="text-primary text-center fs-3")]), # colour+centring+size
+    dbc.Row([
+        dbc.Col([
+            dcc.Slider(
+                id='slider1', min=0.05, max=1.95, step=0.05, value=0.5, vertical=True,
+                marks={i/10: str(i/10) for i in range(0, 21, 2)},
+                tooltip={"placement": "left", "always_visible": True}
+            ),
+        ], width=1, align="center", className="ms-4"),
+        dbc.Col([
+            html.Div(
+                style={"width": "900px", "height": "800px"},
+                children=[
+                    dash_vtk.View(
+                        children=[
+                            dash_vtk.GeometryRepresentation(
+                                children=[
+                                    dash_vtk.Mesh(id="vtk-mesh", state={})
+                                ],
+                                colorMapPreset="Viridis (matplotlib)",
+                            )
+                        ],
+                    )
+                ]
+            )
+        ], width="auto"),
+    ], justify="center")
+], fluid=True)
+
+@callback(
+    Output('vtk-mesh', 'state'),
+    Input('slider1', 'value')
+)
+def update_graph(selected):
+    print(f'Generating isosurface for: {selected}')
+    # generate marching cubes
+    vertices, triangles, normals, values = measure.marching_cubes(rho, selected)
+    print(format(vertices.shape[0], ","), "vertices and", format(triangles.shape[0], ","), "triangles")
+    # Dash VTK expects a specific dictionary format for the mesh; build it manually
+    padding = np.ones((triangles.shape[0], 1), dtype=np.int32) * 3
+    cells = np.hstack((padding, triangles)).ravel()
+    return {
+        "mesh": {
+            "points": vertices.ravel().astype(np.float32),
+            "polys": cells.astype(np.int32),
+        }
+    }
+
+app.run(debug=True)
+```
+
+![](/fig/iso2.png){width=100% fig-align="center"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Other controls
 
 The Dash Core Components (`dcc`) library offers the following interactive controls:
@@ -529,9 +711,10 @@ Few more "hidden" controls:
 A Dash app requires a server -- you can't just save its output to a standalone html5 file. If you want to
 share your Dash app with the world, you have several options:
 
-1. spin up a Dash app on your own VM -- you can build one for free on one of our Clouds systems, or pay to use a
-   commercial cloud,
-1. run a Dash app on your research group's existing web server on an unused port,
+1. spin up a Dash app on your own VM -- you can build one for free on [one of our Clouds
+   systems](https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems){target="_blank"}, or pay to use a commercial
+   cloud,
+1. run a Dash app on your research group's existing web server using an unused port,
 1. use [Plotly Cloud](https://dash.plotly.com/deployment){target="_blank"}: its free tier allows one running
    app at a time, or
 1. use Dash Enterprise paid options which is very expensive, so probably not a real option for us.
