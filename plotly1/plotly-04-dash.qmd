@@ -546,18 +546,17 @@ app.layout = dbc.Container([
     dbc.Row([html.Div('Isosurface', className="text-primary text-center fs-3")]), # colour+centring+size
     dbc.Row([
         dbc.Col([
-            dcc.Slider(id='slider1', min=0.05, max=1.95, step=0.05,
-                       value=0.5, vertical=True,
+            dcc.Slider(id='slider1', min=0.05, max=1.95, step=0.05, value=0.5, vertical=True,
                        marks={i/10: str(i/10) for i in range(0, 21, 2)},
                        tooltip={"placement": "left", "always_visible": True}
                        ),
+            html.Label("Iso-value", className="text-center w-100 fw-bold mt-2")
         ], width=1, align="center", className="ms-4"),   # ms-4 is a left margin of size 4
         dbc.Col([
             dcc.Graph(figure={}, id='g1')
         ], width="auto"),
     ], justify="center")   # centre both columns in the row
 ], fluid=True)   # use full screen width, min margin padding
-
 @callback(
     Output(component_id='g1', component_property='figure'),
     Input(component_id='slider1', component_property='value')
@@ -575,7 +574,10 @@ def update_graph(selected):
             colorscale="Viridis", showscale=True
         )
     ])
-    fig.update_layout(width=900, height=800, scene=dict(aspectmode="data"))
+    fig.update_layout(width=900, height=800,
+                      scene=dict(aspectmode="data",
+                                 uirevision="keep-camera"), # preserve rotation, zoom, pan across graph update
+                      margin=dict(t=20, b=10, l=10, r=10))   # margins around the figure
     return fig
 app.run(debug=True)
 ```
@@ -609,11 +611,11 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Slider(
-                id='slider1', min=0.05, max=1.95, step=0.05,
-                value=0.5, vertical=True,
+                id='slider1', min=0.05, max=1.95, step=0.05, value=0.5, vertical=True,
                 marks={i/10: str(i/10) for i in range(0, 21, 2)},
                 tooltip={"placement": "left", "always_visible": True}
             ),
+            html.Label("Iso-value", className="text-center w-100 fw-bold mt-2")
         ], width=1, align="center", className="ms-4"),
         dbc.Col([
             html.Div(
@@ -701,20 +703,6 @@ app.run(debug=True)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Other controls
 
 The Dash Core Components (`dcc`) library offers the following interactive controls:
@@ -771,6 +759,24 @@ or click Open Settings in Plotly Cloud | General | Delete Dash app, and only the
 I personally find it easiest to use their [web UI](https://cloud.plotly.com) and drag and drop my Dash `*.py`
 script files. Also note that -- when publishing to Plotly Cloud -- it appears it won't run the community
 styling libraries: I tried Dash Bootstrap Components and saw no formatting.
+
+
+
+
+## Comparison to Shiny for Python
+
+| Feature | Plotly Dash | Shiny for Python |
+|:----------|:--------------------------------------|:----------------------------------------|
+| Programming model | functional / declarative | imperative / reactive |
+| Reactivity style | explicit callbacks with specified Input/Output/State | transparent reactivity |
+| State management | client-side via React.js | stateful (server-side session management) |
+| UI definition | static component tree (HTML/Components) | dynamic UI (UI as an output) |
+| Execution flow | event-driven (triggered by specific IDs) | dependency-driven (automatic graph resolution) |
+| Best for | large-scale enterprise apps with custom JS/CSS | rapid prototyping and complex data dependencies |
+
+
+
+
 
 <!-- python scatter3.py -->
 <!-- open in the browser -->
