@@ -546,7 +546,8 @@ app.layout = dbc.Container([
     dbc.Row([html.Div('Isosurface', className="text-primary text-center fs-3")]), # colour+centring+size
     dbc.Row([
         dbc.Col([
-            dcc.Slider(id='slider1', min=0.05, max=1.95, step=0.05, value=0.5, vertical=True,
+            dcc.Slider(id='slider1', min=0.05, max=1.95, step=0.05,
+                       value=0.5, vertical=True,
                        marks={i/10: str(i/10) for i in range(0, 21, 2)},
                        tooltip={"placement": "left", "always_visible": True}
                        ),
@@ -581,8 +582,10 @@ app.run(debug=True)
 
 ![](/fig/iso1.png){width=100% fig-align="center"}
 
-Next, we try [Dash VTK](https://dash.plotly.com/vtk){target="_blank"} that runs a custom VTK pipeline on the
-server side and pushes the visualization to the client:
+Next, we try [Dash VTK](https://dash.plotly.com/vtk){target="_blank"}, which lets you run a custom
+[VTK](https://vtk.org){target="_blank"} pipeline inside a Dash server and then pushes the resulting
+visualization to the client. In this implementation, we compute the polygonal mesh forming the iso-contour
+surface outside VTK, and then use Dash VTK to render this mesh:
 
 ```py
 # save this as vtk-contour.py
@@ -606,7 +609,8 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dcc.Slider(
-                id='slider1', min=0.05, max=1.95, step=0.05, value=0.5, vertical=True,
+                id='slider1', min=0.05, max=1.95, step=0.05,
+                value=0.5, vertical=True,
                 marks={i/10: str(i/10) for i in range(0, 21, 2)},
                 tooltip={"placement": "left", "always_visible": True}
             ),
@@ -615,8 +619,7 @@ app.layout = dbc.Container([
             html.Div(
                 dash_vtk.View(
                     dash_vtk.GeometryRepresentation(
-                        dash_vtk.Mesh(id="vtk-mesh", state={}),
-                        colorMapPreset="Viridis (matplotlib)",
+                        dash_vtk.Mesh(id="vtk-mesh", state={})
                     )
                 ),
                 style={"width": "900px", "height": "800px"}
@@ -647,8 +650,51 @@ def update_graph(selected):
 app.run(debug=True)
 ```
 
+Alternatively, you could write a code to compute the iso-surface with VTK library calls.
+
 ![](/fig/iso2.png){width=100% fig-align="center"}
 
+## 3D volumetric view
+
+For the same NetCDF dataset, we can generate a volumetric view (giving here a much simpler code without
+styling):
+
+```py
+# save this as vtk-volume.py
+from dash import Dash, html
+import dash_vtk
+from netCDF4 import Dataset
+from pathlib import Path
+
+filename = str(next((Path.home()/"training").rglob("data/sineEnvelope.nc")))
+rootgrp = Dataset(filename, "r", format="NETCDF4")
+rho = rootgrp.variables['density'][:]
+rootgrp.close()
+
+app = Dash(__name__)
+app.layout = html.Div(
+    dash_vtk.View([
+        dash_vtk.VolumeRepresentation([
+            dash_vtk.VolumeController(), # UI to adjust opacity/color mapping
+            dash_vtk.ImageData(
+                dash_vtk.PointData([
+                    dash_vtk.DataArray(
+                        registration="setScalars",
+                        values=rho.flatten() # must be a 1D flat array
+                    )
+                ]),
+                dimensions=rho.shape,
+                origin=[0, 0, 0],
+                spacing=[1, 1, 1]
+            )
+        ])
+    ]),
+    style={"height": "100vh", "width": "100%"}
+)
+app.run(debug=True)
+```
+
+![Original (left) and narrow-filter (right) views](/fig/vol.png){width=100% fig-align="center"}
 
 
 
