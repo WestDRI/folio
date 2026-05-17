@@ -145,17 +145,16 @@ You must run a Dash script by passing it to the Python interpreter:
 ```sh
 python scatter1.py
 ```
-Because of how Dash is designed, running this script from a Python shell won't work (nothing will happen if
-you try). One particularly nice feature of Dash -- that would be difficult to replicate in a shell -- is *hot
-reloading*: whenever you change the script file, Dash automatically re-executes it and refreshes the app.
+Because of how Dash is designed, running this script from a Python shell won't work (the code will run, but
+nothing will be displayed on the output port). One particularly nice feature of Dash -- that would be
+difficult to replicate in a shell -- is *hot reloading*: whenever you change the script file, Dash
+automatically re-executes it and refreshes the app.
 :::
-
 
 <!-- 1. can run the app from a script file -->
 <!-- 1. can run the app in a Jupyter Notebook -->
 <!-- 1. does not support running from a Python shell -->
 <!-- - when running Dash app from a script, edits to the script rerun the app immediately -->
-
 
 In this code above `html.Div` is a wrapper for standard html5 block-level container (content division
 element). It takes a list of content elements (or a single element) and CSS utility classes for styling. For
@@ -702,8 +701,42 @@ app.run(debug=True)
 
 
 
+## Dashboard collecting topic requests
 
-## Other controls
+In this example, we show a dashboard for collecting training topic requests. It includes two text input fields
+using `dcc.Input`, and all submissions are stored in the file `courseInterest.parquet`. This file persists
+across dashboard restarts, with new entries appended over time. The dashboard validates both the email and
+topic fields, including checking the email format; if both appear valid, the submission is accepted. On the
+right, it also displays request analytics, which I will demo on my laptop:
+
+```sh
+cd ~/training/dash
+python topicRequest.py
+```
+
+![](/fig/topicRequest.png){width=100% fig-align="center"}
+
+I am not showing the source code, as this dashboard was created with an LLM (*so you create your own!*) in
+about 10 minutes and is around 560 lines of code, most of it consisting of CSS styling for a polished
+appearance.
+
+To read the results, I simply run:
+
+```sh
+uv pip install pandas pyarrow
+```
+```py
+import pandas as pd
+df = pd.read_parquet('courseInterest.parquet')
+print(df)
+```
+
+
+
+
+
+
+## List of controls
 
 The Dash Core Components (`dcc`) library offers the following interactive controls:
 
@@ -736,29 +769,30 @@ Few more "hidden" controls:
 
 ## Publishing / hosting
 
-A Dash app requires a server -- you can't just save its output to a standalone html5 file. If you want to
+A Dash app requires a server -- you can't just save its output to a standalone HTML5 file. If you want to
 share your Dash app with the world, you have several options:
 
-1. spin up a Dash app on your own VM -- you can build one for free on [one of our Clouds
-   systems](https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems){target="_blank"}, or pay to use a commercial
-   cloud,
-1. run a Dash app on your research group's existing web server using an unused port,
+1. spin up a Dash app on a server
+    a. you can use your own VM, e.g. build one for free on [one of our Clouds
+       systems](https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems){target="_blank"},
+	a. you can pay to use a VM in the commercial cloud,
+    a. you can run a Dash app on your research group's existing web server using an unused port,
 1. use [Plotly Cloud](https://dash.plotly.com/deployment){target="_blank"}: its free tier allows one running
    app at a time, or
-1. use Dash Enterprise paid options which is very expensive, so probably not a real option for us.
+1. use Dash Enterprise paid options which are very expensive, so probably not a real option for us.
 
 <!-- spin up your own site, e.g. in a VM on our cloud (free) -->
 <!-- how to include into a website? -->
 
-There are two ways you can work with Plotly Cloud: from your running app or via their portal. For the former
+With Plotly Cloud, there are two possible workflows: from your running app or via their portal. For the former
 you'll need to install Plotly Cloud extension with `uv pip install "dash[cloud]"` (exact command depends on
 your Python setup) and then start the app with `app.run(debug=True)` and use the dev tools UI in the lower
 right corner. To replace your currently running app (there is a limit of 1) you need to open the app settings,
 or click Open Settings in Plotly Cloud | General | Delete Dash app, and only then you can publish a new app.
 
-I personally find it easiest to use their [web UI](https://cloud.plotly.com) and drag and drop my Dash `*.py`
-script files. Also note that -- when publishing to Plotly Cloud -- it appears it won't run the community
-styling libraries: I tried Dash Bootstrap Components and saw no formatting.
+I personally find it easiest to use their [web UI](https://cloud.plotly.com){target="_blank"} and drag and
+drop my Dash `*.py` script files. Also note that -- when publishing to Plotly Cloud -- it appears it won't run
+the community styling libraries: I tried Dash Bootstrap Components and saw no formatting.
 
 
 
@@ -769,10 +803,70 @@ styling libraries: I tried Dash Bootstrap Components and saw no formatting.
 |:----------|:--------------------------------------|:----------------------------------------|
 | Programming model | functional / declarative | imperative / reactive |
 | Reactivity style | explicit callbacks with specified Input/Output/State | transparent reactivity |
-| State management | client-side via React.js | stateful (server-side session management) |
+| State management | stateless Python backend and a stateful React.js frontend that looks for any Python callbacks that have *that component property* listed as an Input or State | stateful (server-side session management) |
 | UI definition | static component tree (HTML/Components) | dynamic UI (UI as an output) |
 | Execution flow | event-driven (triggered by specific IDs) | dependency-driven (automatic graph resolution) |
-| Best for | large-scale enterprise apps with custom JS/CSS | rapid prototyping and complex data dependencies |
+| Server-side Python | always need a backend Dash server | backend Shiny server |
+| Client-side Python (browser) | not possible at the moment; use Plotly Express with standalone HTML5 for basic interactivity | can run Python code via WebAssembly using experimental Shinylive model: the browser becomes the server; some restrictions, including your data size |
+| Best for | large-scale apps | rapid prototyping and complex data dependencies |
+
+
+
+
+::: {.content-visible when-meta="false"}
+
+- can embed the Dash app in a web page but you still need the Dash server
+- for Shiny, you don't need a server if you run it client-side: it uses WebAssembly for that
+- and there is full support in Quarto too
+- that gives users more options to deploy many of them might already have a website
+- so it's free and easy and without having to host your own server or pay to have it hosted somewhere
+
+1. Traditional Model (Server-Side Python) — No WebAssembly
+By default, Shiny for Python works just like other data frameworks (such as Plotly Dash or Streamlit).
+How it works: Your Python code runs on a backend cloud server (like Posit Connect, Shiny Server, Render, or AWS). When a user opens the app in their browser, the browser only handles the HTML, CSS, and user interface.
+The Magic: When a user clicks a button or adjusts a slider, a signal is sent over the internet (via WebSockets) to the backend server. The server runs the Python code, recalculates the graph or data, and sends the updated visual back to the browser.
+Best for: Apps that handle massive datasets, connect to private databases, or need to hide sensitive API keys and code from the user.
+2. Shinylive Model (Client-Side Python) — Uses WebAssembly
+Shinylive is an alternative, experimental deployment option provided by Posit that allows you to bundle Shiny apps so they run entirely inside the user's browser without a backend Python server.  
+How it works: It utilizes Pyodide, which is a full port of the Python runtime compiled into WebAssembly (Wasm).  
+The Magic: When a user visits the URL, their browser downloads the Python interpreter, the Shiny library, and your app's code directly into its local memory. The browser becomes the server. All reactive calculations and data processing happen directly on the user's computer.  
+Best for: Deploying apps for free on static hosts like GitHub Pages, scaling to thousands of concurrent users for zero server cost, and apps that don't mind downloading a larger initialization package (usually around 13MB+) on the first load.
+
+
+
+No, Shinylive cannot do everything that standard Shiny can do.
+While it is an incredible piece of engineering that lets you run full reactive dashboards directly in the browser via WebAssembly (Wasm), the shift from a powerful backend server to the user's local browser introduces major architectural and technical limitations.
+
+
+
+
+The boundaries of what Shinylive can and cannot handle fall into four main categories:
+1. Package Availability (The Pyodide/webR Wall)
+Standard Shiny can use any package or library available in the Python ecosystem. Shinylive, however, relies on Pyodide to run Python in the browser.  
+Pure Python works: If a package is written entirely in Python, it usually works fine in Shinylive.
+C/C++/Fortran extensions are hit-or-miss: Packages that rely on compiled, low-level binaries (like specific database drivers or heavy machine learning frameworks) must be explicitly compiled for WebAssembly. If a package isn't pre-compiled into a Wasm binary by the Pyodide team, you cannot use it.
+No compiling on the fly: You cannot install packages from source or compile them inside the user's browser.  
+2. Security and "Secrets"
+In a traditional Shiny application, your code lives securely on a private server. The user only sees the resulting webpage.
+The Exposure: With Shinylive, your entire application code, logic, data processing steps, and helper scripts are downloaded directly into the user’s browser files.  
+No Private Keys: You cannot use private API keys, database passwords, or proprietary algorithms in a Shinylive app. Anyone with a basic understanding of browser developer tools can inspect the network payloads or application memory and read your source code.  
+3. Sandboxed Network & Database Constraints
+Standard Shiny can freely query a remote PostgreSQL database, read files from a local network share, or scrape arbitrary websites. Browsers, however, operate in a strict security sandbox.  
+No direct database sockets: A Shinylive app cannot open a standard TCP connection to a typical database server.
+CORS Restrictions: If your app makes fetch or API requests to external web servers, those servers must explicitly allow Cross-Origin Resource Sharing (CORS). If they don't, the browser will block the request.
+The Fix: Usually, data must be bundled directly with the application (e.g., as a CSV or Parquet file) or pulled from an open, CORS-enabled public API.
+4. Heavy Compute & Large Data
+Because Shinylive runs on the client's machine, the app is limited by the user's device hardware.  
+Initial Load Times: The first time a user visits your app, they have to download the Python/R runtime, the Shiny framework, and your data files. This initial payload is usually 13MB to 30MB+, making the initial load noticeably slow on weak internet connections.
+Memory Limits: If your app processes massive datasets (e.g., multi-gigabyte data frames) or runs complex parallel simulations, it will quickly crash the user's browser tab. Standard Shiny handles this easily because it runs on enterprise server hardware.
+
+
+:::
+
+
+
+
+
 
 
 
