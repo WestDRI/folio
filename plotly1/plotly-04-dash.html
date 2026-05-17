@@ -368,7 +368,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#connected-plots" id="toc-connected-plots" class="nav-link" data-scroll-target="#connected-plots">Connected plots</a></li>
   <li><a href="#d-contours" id="toc-d-contours" class="nav-link" data-scroll-target="#d-contours">3D contours</a></li>
   <li><a href="#d-volumetric-view" id="toc-d-volumetric-view" class="nav-link" data-scroll-target="#d-volumetric-view">3D volumetric view</a></li>
-  <li><a href="#other-controls" id="toc-other-controls" class="nav-link" data-scroll-target="#other-controls">Other controls</a></li>
+  <li><a href="#dashboard-collecting-topic-requests" id="toc-dashboard-collecting-topic-requests" class="nav-link" data-scroll-target="#dashboard-collecting-topic-requests">Dashboard collecting topic requests</a></li>
+  <li><a href="#list-of-controls" id="toc-list-of-controls" class="nav-link" data-scroll-target="#list-of-controls">List of controls</a></li>
   <li><a href="#publishing-hosting" id="toc-publishing-hosting" class="nav-link" data-scroll-target="#publishing-hosting">Publishing / hosting</a></li>
   <li><a href="#comparison-to-shiny-for-python" id="toc-comparison-to-shiny-for-python" class="nav-link" data-scroll-target="#comparison-to-shiny-for-python">Comparison to Shiny for Python</a></li>
   </ul>
@@ -513,7 +514,7 @@ Note
 <div class="callout-body-container callout-body">
 <p>You must run a Dash script by passing it to the Python interpreter:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> scatter1.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Because of how Dash is designed, running this script from a Python shell won’t work (nothing will happen if you try). One particularly nice feature of Dash – that would be difficult to replicate in a shell – is <em>hot reloading</em>: whenever you change the script file, Dash automatically re-executes it and refreshes the app.</p>
+<p>Because of how Dash is designed, running this script from a Python shell won’t work (the code will run, but nothing will be displayed on the output port). One particularly nice feature of Dash – that would be difficult to replicate in a shell – is <em>hot reloading</em>: whenever you change the script file, Dash automatically re-executes it and refreshes the app.</p>
 </div>
 </div>
 <!-- 1. can run the app from a script file -->
@@ -1014,8 +1015,25 @@ Note
 </figure>
 </div>
 </section>
-<section id="other-controls" class="level2">
-<h2 class="anchored" data-anchor-id="other-controls">Other controls</h2>
+<section id="dashboard-collecting-topic-requests" class="level2">
+<h2 class="anchored" data-anchor-id="dashboard-collecting-topic-requests">Dashboard collecting topic requests</h2>
+<p>In this example, we show a dashboard for collecting training topic requests. It includes two text input fields using <code>dcc.Input</code>, and all submissions are stored in the file <code>courseInterest.parquet</code>. This file persists across dashboard restarts, with new entries appended over time. The dashboard validates both the email and topic fields, including checking the email format; if both appear valid, the submission is accepted. On the right, it also displays request analytics, which I will demo on my laptop:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/training/dash</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> topicRequest.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../fig/topicRequest.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+<p>I am not showing the source code, as this dashboard was created with an LLM (<em>so you create your own!</em>) in about 10 minutes and is around 560 lines of code, most of it consisting of CSS styling for a polished appearance.</p>
+<p>To read the results, I simply run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install pandas pyarrow</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">'courseInterest.parquet'</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="list-of-controls" class="level2">
+<h2 class="anchored" data-anchor-id="list-of-controls">List of controls</h2>
 <p>The Dash Core Components (<code>dcc</code>) library offers the following interactive controls:</p>
 <div class="column" style="width:80%;">
 <table class="caption-top table">
@@ -1106,17 +1124,21 @@ Note
 </section>
 <section id="publishing-hosting" class="level2">
 <h2 class="anchored" data-anchor-id="publishing-hosting">Publishing / hosting</h2>
-<p>A Dash app requires a server – you can’t just save its output to a standalone html5 file. If you want to share your Dash app with the world, you have several options:</p>
+<p>A Dash app requires a server – you can’t just save its output to a standalone HTML5 file. If you want to share your Dash app with the world, you have several options:</p>
 <ol type="1">
-<li>spin up a Dash app on your own VM – you can build one for free on <a href="https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems" target="_blank">one of our Clouds systems</a>, or pay to use a commercial cloud,</li>
-<li>run a Dash app on your research group’s existing web server using an unused port,</li>
+<li>spin up a Dash app on a server
+<ol type="a">
+<li>you can use your own VM, e.g.&nbsp;build one for free on <a href="https://docs.alliancecan.ca/wiki/Cloud#Cloud_systems" target="_blank">one of our Clouds systems</a>,</li>
+<li>you can pay to use a VM in the commercial cloud,</li>
+<li>you can run a Dash app on your research group’s existing web server using an unused port,</li>
+</ol></li>
 <li>use <a href="https://dash.plotly.com/deployment" target="_blank">Plotly Cloud</a>: its free tier allows one running app at a time, or</li>
-<li>use Dash Enterprise paid options which is very expensive, so probably not a real option for us.</li>
+<li>use Dash Enterprise paid options which are very expensive, so probably not a real option for us.</li>
 </ol>
 <!-- spin up your own site, e.g. in a VM on our cloud (free) -->
 <!-- how to include into a website? -->
-<p>There are two ways you can work with Plotly Cloud: from your running app or via their portal. For the former you’ll need to install Plotly Cloud extension with <code>uv pip install "dash[cloud]"</code> (exact command depends on your Python setup) and then start the app with <code>app.run(debug=True)</code> and use the dev tools UI in the lower right corner. To replace your currently running app (there is a limit of 1) you need to open the app settings, or click Open Settings in Plotly Cloud | General | Delete Dash app, and only then you can publish a new app.</p>
-<p>I personally find it easiest to use their <a href="https://cloud.plotly.com">web UI</a> and drag and drop my Dash <code>*.py</code> script files. Also note that – when publishing to Plotly Cloud – it appears it won’t run the community styling libraries: I tried Dash Bootstrap Components and saw no formatting.</p>
+<p>With Plotly Cloud, there are two possible workflows: from your running app or via their portal. For the former you’ll need to install Plotly Cloud extension with <code>uv pip install "dash[cloud]"</code> (exact command depends on your Python setup) and then start the app with <code>app.run(debug=True)</code> and use the dev tools UI in the lower right corner. To replace your currently running app (there is a limit of 1) you need to open the app settings, or click Open Settings in Plotly Cloud | General | Delete Dash app, and only then you can publish a new app.</p>
+<p>I personally find it easiest to use their <a href="https://cloud.plotly.com" target="_blank">web UI</a> and drag and drop my Dash <code>*.py</code> script files. Also note that – when publishing to Plotly Cloud – it appears it won’t run the community styling libraries: I tried Dash Bootstrap Components and saw no formatting.</p>
 </section>
 <section id="comparison-to-shiny-for-python" class="level2">
 <h2 class="anchored" data-anchor-id="comparison-to-shiny-for-python">Comparison to Shiny for Python</h2>
@@ -1146,7 +1168,7 @@ Note
 </tr>
 <tr class="odd">
 <td style="text-align: left;">State management</td>
-<td style="text-align: left;">client-side via React.js</td>
+<td style="text-align: left;">stateless Python backend and a stateful React.js frontend that looks for any Python callbacks that have <em>that component property</em> listed as an Input or State</td>
 <td style="text-align: left;">stateful (server-side session management)</td>
 </tr>
 <tr class="even">
@@ -1160,8 +1182,18 @@ Note
 <td style="text-align: left;">dependency-driven (automatic graph resolution)</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Server-side Python</td>
+<td style="text-align: left;">always need a backend Dash server</td>
+<td style="text-align: left;">backend Shiny server</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Client-side Python (browser)</td>
+<td style="text-align: left;">not possible at the moment; use Plotly Express with standalone HTML5 for basic interactivity</td>
+<td style="text-align: left;">can run Python code via WebAssembly using experimental Shinylive model: the browser becomes the server; some restrictions, including your data size</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Best for</td>
-<td style="text-align: left;">large-scale enterprise apps with custom JS/CSS</td>
+<td style="text-align: left;">large-scale apps</td>
 <td style="text-align: left;">rapid prototyping and complex data dependencies</td>
 </tr>
 </tbody>
