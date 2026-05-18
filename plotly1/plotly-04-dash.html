@@ -359,8 +359,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#our-baseline-plot-without-dash" id="toc-our-baseline-plot-without-dash" class="nav-link active" data-scroll-target="#our-baseline-plot-without-dash">Our baseline plot without Dash</a></li>
-  <li><a href="#our-baseline-plot-in-dash" id="toc-our-baseline-plot-in-dash" class="nav-link" data-scroll-target="#our-baseline-plot-in-dash">Our baseline plot in Dash</a></li>
+  <li><a href="#baseline-plot-without-dash" id="toc-baseline-plot-without-dash" class="nav-link active" data-scroll-target="#baseline-plot-without-dash">Baseline plot without Dash</a></li>
+  <li><a href="#baseline-plot-in-dash" id="toc-baseline-plot-in-dash" class="nav-link" data-scroll-target="#baseline-plot-in-dash">Baseline plot in Dash</a></li>
   <li><a href="#make-it-interactive" id="toc-make-it-interactive" class="nav-link" data-scroll-target="#make-it-interactive">Make it interactive</a></li>
   <li><a href="#add-some-style" id="toc-add-some-style" class="nav-link" data-scroll-target="#add-some-style">Add some style</a></li>
   <li><a href="#multiple-inputs" id="toc-multiple-inputs" class="nav-link" data-scroll-target="#multiple-inputs">Multiple inputs</a></li>
@@ -368,6 +368,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#connected-plots" id="toc-connected-plots" class="nav-link" data-scroll-target="#connected-plots">Connected plots</a></li>
   <li><a href="#d-contours" id="toc-d-contours" class="nav-link" data-scroll-target="#d-contours">3D contours</a></li>
   <li><a href="#d-volumetric-view" id="toc-d-volumetric-view" class="nav-link" data-scroll-target="#d-volumetric-view">3D volumetric view</a></li>
+  <li><a href="#passing-ui-state-to-a-callback-function" id="toc-passing-ui-state-to-a-callback-function" class="nav-link" data-scroll-target="#passing-ui-state-to-a-callback-function">Passing UI state to a callback function</a></li>
   <li><a href="#dashboard-collecting-topic-requests" id="toc-dashboard-collecting-topic-requests" class="nav-link" data-scroll-target="#dashboard-collecting-topic-requests">Dashboard collecting topic requests</a></li>
   <li><a href="#list-of-controls" id="toc-list-of-controls" class="nav-link" data-scroll-target="#list-of-controls">List of controls</a></li>
   <li><a href="#publishing-hosting" id="toc-publishing-hosting" class="nav-link" data-scroll-target="#publishing-hosting">Publishing / hosting</a></li>
@@ -455,34 +456,36 @@ Caution
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install dash-mantine-components     <span class="co"># community-maintained styling library</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install dash_vtk                    <span class="co"># for VTK</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install scikit-image</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="our-baseline-plot-without-dash" class="level2">
-<h2 class="anchored" data-anchor-id="our-baseline-plot-without-dash">Our baseline plot without Dash</h2>
+<section id="baseline-plot-without-dash" class="level2">
+<h2 class="anchored" data-anchor-id="baseline-plot-without-dash">Baseline plot without Dash</h2>
 <p>On my computer I already have a setup that opens every Plotly plot in a new browser tab, using the setup mentioned at the start of this workshop. As a reminder, if you need to redirect your plot, use one of these options:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'notebook'</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'browser'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let’s create a simple scatter plot with Plotly Express:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<p>Let’s create a simple scatter plot with Graph Objects:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>npoints <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.scatter(x<span class="op">=</span>np.random.rand(npoints), y<span class="op">=</span>np.random.rand(npoints),</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                 range_x<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>], range_y<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>])</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>fig.update_traces(marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">30</span>, opacity<span class="op">=</span><span class="fl">0.8</span>))</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Alternatively, we could create the same plot with Graph Objects:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>trace <span class="op">=</span> go.Scatter(x<span class="op">=</span>np.random.rand(npoints),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                   y<span class="op">=</span>np.random.rand(npoints),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                   mode<span class="op">=</span><span class="st">'markers'</span>, marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span>[<span class="dv">30</span>]<span class="op">*</span>npoints))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[trace])</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>fig.update_layout(xaxis<span class="op">=</span><span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>]), yaxis<span class="op">=</span><span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>]))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alternatively, we could create the same plot with Plotly Express:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>npoints <span class="op">=</span> <span class="dv">100</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>trace <span class="op">=</span> go.Scatter(x<span class="op">=</span>np.random.rand(npoints), y<span class="op">=</span>np.random.rand(npoints),</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                   mode<span class="op">=</span><span class="st">'markers'</span>, marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span>[<span class="dv">30</span>]<span class="op">*</span>npoints))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> go.Figure(data<span class="op">=</span>[trace])</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>fig.update_layout(xaxis<span class="op">=</span><span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>]), yaxis<span class="op">=</span><span class="bu">dict</span>(<span class="bu">range</span><span class="op">=</span>[<span class="dv">0</span>, <span class="dv">1</span>]))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.scatter(x<span class="op">=</span>np.random.rand(npoints),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>                 y<span class="op">=</span>np.random.rand(npoints),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>                 range_x<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>], range_y<span class="op">=</span>[<span class="dv">0</span>,<span class="dv">1</span>])</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>fig.update_traces(marker<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">30</span>, opacity<span class="op">=</span><span class="fl">0.8</span>))</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="our-baseline-plot-in-dash" class="level2">
-<h2 class="anchored" data-anchor-id="our-baseline-plot-in-dash">Our baseline plot in Dash</h2>
+<section id="baseline-plot-in-dash" class="level2">
+<h2 class="anchored" data-anchor-id="baseline-plot-in-dash">Baseline plot in Dash</h2>
 <p>To serve our Graph Objects plot inside Dash, we create a script <code>scatter1.py</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save this as scatter1.py</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objs <span class="im">as</span> go</span>
@@ -1015,22 +1018,55 @@ Note
 </figure>
 </div>
 </section>
+<section id="passing-ui-state-to-a-callback-function" class="level2">
+<h2 class="anchored" data-anchor-id="passing-ui-state-to-a-callback-function">Passing UI state to a callback function</h2>
+<p>In certain cases, a callback function at runtime might need a value from the UI, e.g.&nbsp;text pasted into the text box. You can pass these values via a <code>State</code> input. By itself, typing text inside the text box does not trigger the callback function, but clicking the button does.</p>
+<pre><code># save this as state.py
+from dash import Dash, dcc, html
+from dash.dependencies import Input, Output, State
+
+app = Dash(__name__)
+
+app.layout = html.Div([
+    html.H3("Dash Callback State Example"),
+    dcc.Input(id="input-text", type="text", placeholder="Type something...", value=""),
+    html.Button(id="submit-button", n_clicks=0, children="Submit"),
+    html.Hr(),
+    html.Div(id="output-container")
+])
+
+@app.callback(
+    Output("output-container", "children"),
+    Input("submit-button", "n_clicks"),  # n_clicks change triggers the callback
+    State("input-text", "value")         # Passes data without triggering
+)
+def update_output(numClicks, textValue):
+    if numClicks == 0:
+        return "Enter text and click submit."    
+    return f"Button clicked {numClicks} times. The latest text is: '{textValue}'"
+
+app.run(debug=True)</code></pre>
+<ol type="1">
+<li>Every time the button is clicked, its <code>n_clicks</code> value changes, which triggers the callback function.</li>
+<li>When the function runs, Dash looks up the current value (state) of the text box and passes it into <code>textValue</code>. However, typing inside the text box does not trigger the function on its own.</li>
+</ol>
+</section>
 <section id="dashboard-collecting-topic-requests" class="level2">
 <h2 class="anchored" data-anchor-id="dashboard-collecting-topic-requests">Dashboard collecting topic requests</h2>
 <p>In this example, we show a dashboard for collecting training topic requests. It includes two text input fields using <code>dcc.Input</code>, and all submissions are stored in the file <code>courseInterest.parquet</code>. This file persists across dashboard restarts, with new entries appended over time. The dashboard validates both the email and topic fields, including checking the email format; if both appear valid, the submission is accepted. On the right, it also displays request analytics, which I will demo on my laptop:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/training/dash</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> topicRequest.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/training/dash</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> topicRequest.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../fig/topicRequest.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
-<p>I am not showing the source code, as this dashboard was created with an LLM (<em>so you create your own!</em>) in about 10 minutes and is around 560 lines of code, most of it consisting of CSS styling for a polished appearance.</p>
+<p>I am not showing the source code, as this dashboard was created with an LLM (<em>so you can easily create your own!</em>) in about 10 minutes and is around 560 lines of code, most of it consisting of CSS styling for a polished appearance.</p>
 <p>To read the results, I simply run:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install pandas pyarrow</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">'courseInterest.parquet'</span>)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install pandas pyarrow</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">'courseInterest.parquet'</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="list-of-controls" class="level2">
 <h2 class="anchored" data-anchor-id="list-of-controls">List of controls</h2>
@@ -1162,41 +1198,46 @@ Note
 <td style="text-align: left;">imperative / reactive</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Input</td>
+<td style="text-align: left;"><code>dcc.Graph</code> takes Plotly Express and Graph Objects figure, Python dictionaries; there is converter for Matplotlib/Seaborn figures; there are wrappers for VTK, Leaflet</td>
+<td style="text-align: left;"><code>@render.plot</code> Matplotlib/Seaborn figures; <code>@render.widget</code> Plotly figure, PyVista/VTK viewer, Altair chart; <code>@render.data_frame</code> Pandas/Polars dataframes; <code>@render.text</code> Python <code>str</code>; <code>@render.image</code> dictionary with a local image file path</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Reactivity style</td>
 <td style="text-align: left;">explicit callbacks with specified Input/Output/State</td>
 <td style="text-align: left;">transparent reactivity</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">State management</td>
 <td style="text-align: left;">stateless Python backend and a stateful React.js frontend that looks for any Python callbacks that have <em>that component property</em> listed as Input or State</td>
 <td style="text-align: left;">stateful (server-side session management)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">UI definition</td>
 <td style="text-align: left;">static component tree (HTML/Components)</td>
 <td style="text-align: left;">dynamic UI (UI as an output)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Execution flow</td>
 <td style="text-align: left;">event-driven (triggered by specific IDs)</td>
 <td style="text-align: left;">dependency-driven (automatic graph resolution)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Server-side Python</td>
 <td style="text-align: left;">always need a backend Dash server</td>
 <td style="text-align: left;">backend Shiny server</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Client-side Python (browser)</td>
 <td style="text-align: left;">not possible at the moment; use Plotly Express with standalone HTML5 for basic interactivity</td>
 <td style="text-align: left;">can run Python code via WebAssembly using Shinylive model: the browser becomes the server; some restrictions, including your data size</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Deployment options</td>
 <td style="text-align: left;">your own server in a VM or parallel to an existing web server, Plotly Cloud (paid with a free tier)</td>
 <td style="text-align: left;">your own server, Posit Connect Cloud (paid with a free tier), Shinylive on GitHub Pages, Netlify, or your own website, integration with Quarto dashboards</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Best for</td>
 <td style="text-align: left;">large-scale apps</td>
 <td style="text-align: left;">rapid prototyping and complex data dependencies</td>
