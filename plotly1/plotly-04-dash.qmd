@@ -76,7 +76,7 @@ uv pip install dash_vtk                    # for VTK
 uv pip install scikit-image
 ```
 
-## Our baseline plot without Dash
+## Baseline plot without Dash
 
 On my computer I already have a setup that opens every Plotly plot in a new browser tab, using the setup
 mentioned at the start of this workshop. As a reminder, if you need to redirect your plot, use one of these
@@ -88,34 +88,36 @@ pio.renderers.default = 'notebook'
 pio.renderers.default = 'browser'
 ```
 
-Let's create a simple scatter plot with Plotly Express:
-
-```py
-import plotly.express as px
-import numpy as np
-
-npoints = 100
-fig = px.scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
-                 range_x=[0,1], range_y=[0,1])
-fig.update_traces(marker=dict(size=30, opacity=0.8))
-fig.show()
-```
-
-Alternatively, we could create the same plot with Graph Objects:
+Let's create a simple scatter plot with Graph Objects:
 
 ```py
 import plotly.graph_objs as go
 import numpy as np
 
 npoints = 100
-trace = go.Scatter(x=np.random.rand(npoints), y=np.random.rand(npoints),
+trace = go.Scatter(x=np.random.rand(npoints),
+                   y=np.random.rand(npoints),
                    mode='markers', marker=dict(size=[30]*npoints))
 fig = go.Figure(data=[trace])
 fig.update_layout(xaxis=dict(range=[0,1]), yaxis=dict(range=[0, 1]))
 fig.show()
 ```
 
-## Our baseline plot in Dash
+Alternatively, we could create the same plot with Plotly Express:
+
+```py
+import plotly.express as px
+import numpy as np
+
+npoints = 100
+fig = px.scatter(x=np.random.rand(npoints),
+                 y=np.random.rand(npoints),
+                 range_x=[0,1], range_y=[0,1])
+fig.update_traces(marker=dict(size=30, opacity=0.8))
+fig.show()
+```
+
+## Baseline plot in Dash
 
 To serve our Graph Objects plot inside Dash, we create a script `scatter1.py`:
 
@@ -700,6 +702,49 @@ app.run(debug=True)
 
 
 
+## Passing UI state to a callback function
+
+In certain cases, a callback function at runtime might need a value from the UI, e.g. text pasted into the
+text box. You can pass these values via a `State` input. By itself, typing text inside the text box does not
+trigger the callback function, but clicking the button does.
+
+```
+# save this as state.py
+from dash import Dash, dcc, html
+from dash.dependencies import Input, Output, State
+
+app = Dash(__name__)
+
+app.layout = html.Div([
+    html.H3("Dash Callback State Example"),
+    dcc.Input(id="input-text", type="text", placeholder="Type something...", value=""),
+    html.Button(id="submit-button", n_clicks=0, children="Submit"),
+    html.Hr(),
+    html.Div(id="output-container")
+])
+
+@app.callback(
+    Output("output-container", "children"),
+    Input("submit-button", "n_clicks"),  # n_clicks change triggers the callback
+    State("input-text", "value")         # Passes data without triggering
+)
+def update_output(numClicks, textValue):
+    if numClicks == 0:
+        return "Enter text and click submit."    
+    return f"Button clicked {numClicks} times. The latest text is: '{textValue}'"
+
+app.run(debug=True)
+```
+
+1. Every time the button is clicked, its `n_clicks` value changes, which triggers the callback function.
+1. When the function runs, Dash looks up the current value (state) of the text box and passes it into
+   `textValue`. However, typing inside the text box does not trigger the function on its own.
+
+
+
+
+
+
 
 ## Dashboard collecting topic requests
 
@@ -716,9 +761,9 @@ python topicRequest.py
 
 ![](/fig/topicRequest.png){width=100% fig-align="center"}
 
-I am not showing the source code, as this dashboard was created with an LLM (*so you create your own!*) in
-about 10 minutes and is around 560 lines of code, most of it consisting of CSS styling for a polished
-appearance.
+I am not showing the source code, as this dashboard was created with an LLM (*so you can easily create your
+own!*) in about 10 minutes and is around 560 lines of code, most of it consisting of CSS styling for a
+polished appearance.
 
 To read the results, I simply run:
 
@@ -802,6 +847,7 @@ the community styling libraries: I tried Dash Bootstrap Components and saw no fo
 | Feature | Plotly Dash | Shiny for Python |
 |:----------|:--------------------------------------|:----------------------------------------|
 | Programming model | functional / declarative | imperative / reactive |
+| Input | `dcc.Graph` takes Plotly Express and Graph Objects figure, Python dictionaries; there is converter for Matplotlib/Seaborn figures; there are wrappers for VTK, Leaflet | `@render.plot` Matplotlib/Seaborn figures; `@render.widget` Plotly figure, PyVista/VTK viewer, Altair chart; `@render.data_frame` Pandas/Polars dataframes; `@render.text` Python `str`; `@render.image` dictionary with a local image file path |
 | Reactivity style | explicit callbacks with specified Input/Output/State | transparent reactivity |
 | State management | stateless Python backend and a stateful React.js frontend that looks for any Python callbacks that have *that component property* listed as Input or State | stateful (server-side session management) |
 | UI definition | static component tree (HTML/Components) | dynamic UI (UI as an output) |
@@ -818,9 +864,27 @@ the community styling libraries: I tried Dash Bootstrap Components and saw no fo
 
 
 
-
-
 ::: {.content-visible when-meta="false"}
+
+mention Plotly, with Graph Objects and Plotly Express: basic interactivity and animation in a standalone HTML5 file
+Dash for anything more complex: run Python scripts on a backend server
+base plot with Plotly Express
+convert it to Dash plot `scatter2.py`
+make it interactive `scatter3.py`
+add some style `scatter4.py`
+0. multiple inputs `scatter5.py`
+1. connected plots with lasso `scatter7.py`
+2. 3D contour with Plotly and Dash `contour.py`
+3. topic requests dashboard `topicRequest.py`
+
+
+
+```sh
+# uv install shiny shinywidgets
+shiny run --reload --launch-browser shiny-app.py
+```
+
+
 
 - can embed the Dash app in a web page but you still need the Dash server
 - for Shiny, you don't need a server if you run it client-side: it uses WebAssembly for that
