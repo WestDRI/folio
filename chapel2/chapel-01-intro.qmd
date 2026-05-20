@@ -14,19 +14,19 @@ title: "Introduction to Chapel"
 <!-- - library of standard domain maps provided by chapel -->
 <!-- - users can write their own domain maps -->
 
-## Chapel: a language for parallel computing on large-scale systems
+## Language for large-scale parallel computing
 
 - Modern, **open-source parallel programming language** developed at _Cray Inc._ (acquired by Hewlett Packard
   Enterprise in 2019).
-- Offers simplicity and readability of scripting languages such as Python or Matlab: "Python for parallel
+- Offers **simplicity and readability** of scripting languages such as Python or Matlab: "Python for parallel
   programming".
 - Compiled language $\Rightarrow$ provides the **speed and performance** of Fortran and C.
 - Supports high-level abstractions for data distribution and **data parallel processing**, and for **task
   parallelism**.
 - Based on the **PGAS** (Partitioned Global Address space) programming model: can access variables in global
   address space from each node, a lot of behind-the-scenes work to reduce/buffer remote memory access.
-- Supports **three levels** of hardware parallelism.
 - Provides **data-driven placement of computations**.
+- Supports **three levels** of hardware parallelism.
   <!-- - allow users to express parallel computations in a natural, almost intuitive, manner -->
 - Designed around a **multi-resolution** philosophy: users can incrementally add more detail to their original
   code, to bring it as close to the machine as required, at the same time they can achieve anything you can
@@ -59,8 +59,13 @@ libraries. However, you can use functions/libraries written in other languages.
 On Alliance's production clusters Fir / Nibi / Rorqual / Narval we have three versions of Chapel:
 
 1. single-locale (single-node) `chapel-multicore`
-2. multi-locale `chapel-ucx` for InfiniBand clusters (all newer clusters)
-3. multi-locale `chapel-ofi` for older OmniPath clusters (keeping for use on Cedar at SFU)
+1. multi-locale `chapel-ucx` for InfiniBand clusters (all newer clusters)
+1. `chapel-ucx-cuda` for InfiniBand clusters with GPU support
+
+<!-- ::: {.callout-note} -->
+<!-- We also keep an older multi-locale version `chapel-ofi` for OmniPath clusters for internal use on the old -->
+<!-- Cedar hardware at SFU. -->
+<!-- ::: -->
 
 You can find the documentation on running Chapel in
 [our wiki](https://docs.alliancecan.ca/wiki/Chapel){target="_blank"}.
@@ -118,15 +123,6 @@ cluster and do the following:
 <!-- Depending on where our training cluster is deployed, its Chapel setup might (or not) be different from the -->
 <!-- production clusters. -->
 
-
-::: {.callout-note}
-On our current training cluster, for reasons I'll explain during the course, you may want to run the following
-command whenever you open a new shell:
-```sh
-source /project/def-sponsor00/shared/fixModules.sh
-```
-:::
-
 On the training cluster, you can start single-locale Chapel with:
 
 <!-- ```sh -->
@@ -168,10 +164,12 @@ for the given architecture.
 Depending on the code, it might utilize one / several / all cores on the current node. The command above
 implies that you are allowed to utilize all cores. This might not be the case on an HPC cluster, where a login
 node is shared by many people at the same time, and where it might not be a good idea to occupy all cores on a
-login node with CPU-intensive tasks. Therefore, we'll be running test Chapel codes inside submitted jobs on
-compute nodes.
+login node with CPU-intensive tasks. Therefore, we should be running test Chapel codes inside submitted jobs
+on cluster's compute nodes. There are three possible workflows:
 
-Let's write the job script `serial.sh`:
+1. We can write a job script `serial.sh`:  
+- <span style="color: green;">**pro**:</span> efficient use of resources  
+- <span style="color: red;">**con**:</span> output goes to a file
 
 ```sh
 #!/bin/bash
@@ -181,20 +179,37 @@ Let's write the job script `serial.sh`:
 ./test
 ```
 
-and then submit it:
+and then submit it:  
 
 ```sh
-$ chpl test.chpl
-$ sbatch serial.sh
-$ sq                         # same as `squeue -u $USER`
-$ cat slurm-jobID.out
+chpl test.chpl
+sbatch serial.sh
+sq                         # same as `squeue -u $USER`
+cat slurm-jobID.out
 ```
 
-Alternatively, we could work inside a serial interactive job:
+2. Alternatively, we could work inside a long serial interactive job:  
+- <span style="color: green;">**pro**:</span> code starts right away, output goes into the terminal  
+- <span style="color: red;">**con**:</span> most of the time you'll be sitting on allocated resources and not actively using them
+
 
 ```sh
-$ salloc --time=2:0:0 --mem-per-cpu=3600
+salloc --time=2:0:0 --mem-per-cpu=3600
+chpl test.chpl
+./test
 ```
+
+3. Perhaps, the best compromise is to submit short interactive jobs:  
+- <span style="color: green;">**pro**:</span> efficient use of resources, output goes into the terminal
+
+```sh
+chpl test.chpl
+srun --mem-per-cpu=3600 ./test
+```
+
+
+
+
 
 <!-- Note that on the training cluster we have: -->
 
