@@ -25,15 +25,23 @@ than working on that problem, I suggest to use an LLM to find a simple tightly c
 Below are the specific steps. It is more important to complete each step correctly than to move on to the next
 one, so don't rush!
 
-1. select a problem ← I have some ideas, but I would like you to come up with your own suggestions talking to
-   an LLM
-1. serial implementation in Chapel ← would like to finish this today
-1. if there is a temporal axis, plot the solution at each timestep into a PNG file and create a movie using
-   `ffmpeg` command-line tool; use the most efficient codec and container
-1. shared-memory implementation in Chapel ← try doing this without an LLM
-1. distributed-memory implementation in Chapel
-1. study parallel scaling for both implementations
-1. optimize your distributed-memory code with a more efficient decomposition than `BlockDist` (you can use an
-   LLM to explore alternatives)
+<!-- | Problem | Visual Output | Math Style | Communication Pattern | -->
+<!-- | :---- | :--- | :--- | :----- | -->
+<!-- | **Julia set** | Fractal | Complex numbers | None: embarrassingly parallel | -->
+<!-- | **Game of life** | Evolving cellular patterns | Boolean / discrete | Local Stencil (8-neighbour), double-buffering | -->
+<!-- | **2D heat equation** | Smooth thermal gradients | Floating-point PDE | Local stencil (4-neighbour), halo exchange | -->
+<!-- | **Flood fill / Connected-component labeling** | Solid colored regions | Integer / graph | Global propagation, convergence barriers | -->
+
+1. Select a problem. I have some ideas, but I would like you to come up with your own suggestions talking to
+   an LLM.
+1. Serial implementation in Chapel. Try to finish this step today.
+    a. If there is a temporal axis, plot the solution at each timestep into a PNG file and create a movie
+       using `ffmpeg` command-line tool. Figure out the most efficient video codec and container.
+    a. How far can you push this serial solver in terms of spatial resolution?
+1. Shared-memory implementation in Chapel. Try doing this without an LLM, as it is really simple.
+1. Distributed-memory implementation in Chapel.
+1. Study parallel scaling for both implementations.
+1. Optimize your distributed-memory code with a more efficient decomposition than `BlockDist` (you can use an
+   LLM to explore alternatives).
 
 <!-- stencilDist -->
