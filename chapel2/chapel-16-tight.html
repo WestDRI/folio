@@ -470,14 +470,23 @@ ul.task-list li input[type="checkbox"] {
 <!-- The Julia set math problem is embarrassingly parallel, as it there is no communication between pixels that I -->
 <!-- am computing. Can you suggest a problem very close to the Julia set where I have communication. -->
 <p>Below are the specific steps. It is more important to complete each step correctly than to move on to the next one, so don’t rush!</p>
+<!-- | Problem | Visual Output | Math Style | Communication Pattern | -->
+<!-- | :---- | :--- | :--- | :----- | -->
+<!-- | **Julia set** | Fractal | Complex numbers | None: embarrassingly parallel | -->
+<!-- | **Game of life** | Evolving cellular patterns | Boolean / discrete | Local Stencil (8-neighbour), double-buffering | -->
+<!-- | **2D heat equation** | Smooth thermal gradients | Floating-point PDE | Local stencil (4-neighbour), halo exchange | -->
+<!-- | **Flood fill / Connected-component labeling** | Solid colored regions | Integer / graph | Global propagation, convergence barriers | -->
 <ol type="1">
-<li>select a problem ← I have some ideas, but I would like you to come up with your own suggestions talking to an LLM</li>
-<li>serial implementation in Chapel ← would like to finish this today</li>
-<li>if there is a temporal axis, plot the solution at each timestep into a PNG file and create a movie using <code>ffmpeg</code> command-line tool; use the most efficient codec and container</li>
-<li>shared-memory implementation in Chapel ← try doing this without an LLM</li>
-<li>distributed-memory implementation in Chapel</li>
-<li>study parallel scaling for both implementations</li>
-<li>optimize your distributed-memory code with a more efficient decomposition than <code>BlockDist</code> (you can use an LLM to explore alternatives)</li>
+<li>Select a problem. I have some ideas, but I would like you to come up with your own suggestions talking to an LLM.</li>
+<li>Serial implementation in Chapel. Try to finish this step today.
+<ol type="a">
+<li>If there is a temporal axis, plot the solution at each timestep into a PNG file and create a movie using <code>ffmpeg</code> command-line tool. Figure out the most efficient video codec and container.</li>
+<li>How far can you push this serial solver in terms of spatial resolution?</li>
+</ol></li>
+<li>Shared-memory implementation in Chapel. Try doing this without an LLM, as it is really simple.</li>
+<li>Distributed-memory implementation in Chapel.</li>
+<li>Study parallel scaling for both implementations.</li>
+<li>Optimize your distributed-memory code with a more efficient decomposition than <code>BlockDist</code> (you can use an LLM to explore alternatives).</li>
 </ol>
 <!-- stencilDist -->
 
