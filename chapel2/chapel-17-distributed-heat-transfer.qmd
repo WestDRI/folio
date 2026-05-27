@@ -177,8 +177,8 @@ forall (i,j) in mesh do
   Tnew[i,j] = 0.25 * (T[i-1,j] + T[i+1,j] + T[i,j-1] + T[i,j+1]);
 ```
 
-::: {.callout-caution collapse="true"}
-## Question Data.4
+::: {.callout-caution}
+##### Exercise Data.4
 Can anyone spot a mistake in this loop?
 :::
 
@@ -229,9 +229,9 @@ Let's compile both serial and data-parallel versions using the same multi-locale
 need `-nl` flag when running both):
 
 ```sh
-$ source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh
-$ chpl --fast baseSolver.chpl -o baseSolver
-$ chpl --fast parallelSolver.chpl -o parallelSolver
+source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh
+chpl --fast baseSolver.chpl
+chpl --fast parallelSolver.chpl
 ```
 
 First, let's try this on a smaller problem. Let's write a job submission script `distributed.sh`:
@@ -255,7 +255,7 @@ echo Running on $SLURM_NNODES nodes
 Let's run both codes, (un)commenting the relevant lines in `distributed.sh`:
 
 ```sh
-$ sbatch distributed.sh
+sbatch distributed.sh
 ```
 ```output
 Largest temperature difference was 9.9534e-05
@@ -437,9 +437,9 @@ This is the entire multi-locale, data-parallel, hybrid shared-/distributed-memor
 <!-- myWritingChannel.close();   // close the channel -->
 <!-- ``` -->
 <!-- ```sh -->
-<!-- $ chpl --fast parallel.chpl -o parallel -->
-<!-- $ ./parallel -nl 3 --rows=8 --cols=8   # run this from inside distributed.sh -->
-<!-- $ ls -l *dat -->
+<!-- chpl --fast parallel.chpl -o parallel -->
+<!-- ./parallel -nl 3 --rows=8 --cols=8   # run this from inside distributed.sh -->
+<!-- ls -l *dat -->
 <!-- -rw-rw-r-- 1 razoumov razoumov 659 Mar  9 18:04 output.dat -->
 <!-- ``` -->
 

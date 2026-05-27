@@ -3,11 +3,6 @@ title: "Single-locale data parallelism"
 ---
 
 
-
-
-
-
-
 <!-- ## Parallelizing the Julia set problem -->
 
 <!-- Now let's parallelize this code with `forall`. Copy `juliaSetSerial.chpl` into `juliaSetParallel.chpl` and -->
@@ -33,15 +28,7 @@ title: "Single-locale data parallelism"
 
 
 
-
-
-
-
-
-
-
-
-As we mentioned in the previous section, **Data Parallelism** is a style of parallel programming in which
+As we mentioned in the previous section, **data parallelism** is a style of parallel programming in which
 parallelism is driven by *computations over collections of data elements or their indices*. The main tool for
 this in Chapel is a `forall` loop -- it'll create an *appropriate* number of threads to execute a loop,
 dividing the loop's iterations between them.
@@ -66,7 +53,7 @@ forall a in A do
   a += 1;
 ```
 
-In this code we update all elements of the array `A`. The code will run on a single node, lauching as many
+In this code we update all elements of the array `A`. If run on a single node, this code will lauch as many
 threads as the number of available cores. It is thread-safe, meaning that no two threads are writing into the
 same variable at the same time.
 
@@ -88,27 +75,28 @@ forall i in 1..1000 with (+ reduce count) {   // parallel loop
 writeln('count = ', count);
 ```
 
-If we have not done so, let's write a script `shared.sh` for submitting single-locale, two-core Chapel jobs:
+<!-- If we have not done so, let's write a script `shared.sh` for submitting single-locale, two-core Chapel jobs: -->
+
+<!-- ```sh -->
+<!-- #!/bin/bash -->
+<!-- #SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format -->
+<!-- #SBATCH --mem-per-cpu=3600   # in MB -->
+<!-- #SBATCH --ntasks=1 -->
+<!-- #SBATCH --cpus-per-task=4 -->
+<!-- #SBATCH --output=solution.out -->
+<!-- ./forall -->
+<!-- ``` -->
+
+<!-- module load arch/avx2   # not necessary, unless you land on an avx512 node -->
+<!-- module load chapel-multicore/2.4.0 -->
+
+Let's compile and run this code:
 
 ```sh
-#!/bin/bash
-#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format
-#SBATCH --mem-per-cpu=3600   # in MB
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --output=solution.out
-./forall
+make forall
+srun --mem-per-cpu=3600 --cpus-per-task=4 ./forall
 ```
-
-<!-- $ module load arch/avx2   # not necessary, unless you land on an avx512 node -->
-<!-- $ module load chapel-multicore/2.4.0 -->
-
-```sh
-$ chpl forall.chpl -o forall
-$ sbatch shared.sh
-$ cat solution.out
-```
-```
+```output
 count = 500500
 ```
 
@@ -122,9 +110,8 @@ actually check that! Do this:
 1. change the last line to `writeln('actual number of threads = ', count);`
 
 ```sh
-$ chpl forall.chpl -o forall
-$ sbatch shared.sh
-$ cat solution.out
+make forall
+srun --mem-per-cpu=3600 --cpus-per-task=4 ./forall
 ```
 ```output
 actual number of threads = 4
@@ -132,7 +119,7 @@ actual number of threads = 4
 
 If you see one thread, try running this code as a batch multi-core job.
 
-### Alternative syntax
+### Other syntax options
 
 We can also do parallel reduction over a loop in this way:
 
@@ -161,11 +148,8 @@ writeln('count = ', count);
 
 
 
-
-&nbsp;
-
-::: {.callout-caution collapse="true"}
-## Question Parallel $\pi$
+::: {.callout-caution}
+##### Exercise Parallel $\pi$
 Using the first version of `forall.chpl` (where we computed the sum of integers 1..1000) as a template, write
 a Chapel code to compute $\pi$ by calculating the integral numerically via summation using `forall`
 parallelism. Implement the number of intervals as `config` variable.
@@ -181,6 +165,7 @@ for i in 1..n {
 }
 writef('pi is %3.10r\n', total*h);    // C-style formatted write, r stands for real
 ```
+Time your code for $n=10^8$, $10^9$ and $10^{10}$ terms.
 :::
 
 

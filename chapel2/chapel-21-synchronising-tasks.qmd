@@ -31,10 +31,10 @@ begin {
 writeln('This is the main task, I am done ...');
 ```
 ```sh
-$ chpl sync1.chpl -o sync1
-$ sed -i -e 's|gmax|sync1|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl sync1.chpl
+sed -i -e 's|gmax|sync1|' shared.sh
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 This is the main task starting a synchronous task
@@ -63,7 +63,7 @@ task 2: 9
 task 2: 10
 ```
 
-::: {.callout-caution collapse="true"}
+::: {.callout-caution}
 ## Discussion
 What would happen if we swap `sync` and `begin` in the first task:
 ```chpl
@@ -85,8 +85,8 @@ Discuss your observations.
 <!-- > task, until all statements inside sync {} are completed -- but this does not affect the main and the second -->
 <!-- > tasks: they keep on running. -->
 
-::: {.callout-caution collapse="true"}
-## Question Task.3
+::: {.callout-caution}
+##### Exercise Task.3
 Use `begin` and `sync` statements to reproduce the functionality of `cobegin` in cobegin.chpl, i.e., the
 main task should not continue until both tasks 1 and 2 are completed.
 :::
@@ -114,10 +114,10 @@ x.readFE();         // read the value, state changes from Full to Empty
 writeln('and now it is done');
 ```
 ```sh
-$ chpl sync2.chpl -o sync2
-$ sed -i -e 's|sync1|sync2|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl sync2.chpl
+sed -i -e 's|sync1|sync2|' shared.sh
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 this is main task launching a new task
@@ -187,10 +187,10 @@ coforall id in 1..numtasks {
 }
 ```
 ```sh
-$ chpl atomic.chpl -o atomic
-$ sed -i -e 's|sync2|atomic|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl atomic.chpl
+sed -i -e 's|sync2|atomic|' shared.sh
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 greetings form task 4... I am waiting for all tasks to say hello
@@ -215,8 +215,8 @@ synchronization.
 
 
 
-::: {.callout-caution collapse="true"}
-## Question Task.4
+::: {.callout-caution}
+##### Exercise Task.4
 Suppose we want to add another synchronization point right after the last `writeln()` command. What is
 wrong with adding the following at the end of the `coforall` loop?
 ```chpl
@@ -230,8 +230,8 @@ wrong with adding the following at the end of the `coforall` loop?
 
 ![](/fig/raceCondition.png){width=80%}
 
-::: {.callout-caution collapse="true"}
-## Question Task.5
+::: {.callout-caution}
+##### Exercise Task.5
 Ok, then what is the solution if we want two synchronization points?
 :::
 

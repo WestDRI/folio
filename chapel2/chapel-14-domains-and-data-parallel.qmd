@@ -92,9 +92,9 @@ forall t in T do                      // go in parallel through all n^2 elements
   writeln(t, ' ', t.locale.id);
 ```
 ```sh
-$ chpl test.chpl -o test
-$ sbatch distributed.sh
-$ cat solution.out
+chpl test.chpl
+sbatch distributed.sh
+cat solution.out
 ```
 ```output
 0.0 0
@@ -249,16 +249,16 @@ If our `n=8` is sufficiently large, there are probably enough array elements per
 our case) to fully utilize the two available cores on each node, so our output might be:
 
 ```sh
-$ chpl test.chpl -o test
-$ sbatch distributed.sh
-$ cat solution.out
+chpl test.chpl
+sbatch distributed.sh
+cat solution.out
 ```
 ```output
 actual number of threads = 6
 ```
 
-::: {.callout-caution collapse="true"}
-## Question Data.2
+::: {.callout-caution}
+##### Exercise Data.2
 Try reducing the array size `n` to see if that changes the output (fewer threads per locale), e.g.,
 setting n=3. Also try increasing the array size to n=20 and study the output. Does the output make sense?
 :::
@@ -286,9 +286,9 @@ forall a in A2 {
 writeln(A2);
 ```
 ```sh
-$ chpl -o test test.chpl
-$ sbatch distributed.sh
-$ cat solution.out
+chpl -o test test.chpl
+sbatch distributed.sh
+cat solution.out
 ```
 ```txt
 0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2   0-node1-2

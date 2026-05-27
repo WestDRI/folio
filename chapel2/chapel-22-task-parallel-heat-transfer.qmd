@@ -44,10 +44,10 @@ coforall taskid in 0..coltasks*rowtasks-1 {
 }
 ```
 ```sh
-$ chpl test.chpl -o test
-$ sed -i -e 's|atomic|test|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl test.chpl
+sed -i -e 's|atomic|test|' shared.sh
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 task 0: rows 1-33 and columns 1-25
@@ -118,10 +118,12 @@ diff baseSolver.chpl taskParallelSolver.chpl
 Let's compile and run both codes on the same large problem:
 
 ```sh
-$ chpl --fast baseSolver.chpl -o baseSolver
-$ sed -i -e 's|test|baseSolver --rows=650 --iout=200 --niter=10_000 --tolerance=0.002 --nout=1000|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl --fast baseSolver.chpl
+sed -i -e 's|test|baseSolver --rows=650 --iout=200 --niter=10_000 --tolerance=0.002 --nout=1000|' shared.sh
+sbatch shared.sh
+cat solution.out
+```
+```output
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
 Temperature at iteration 0: 25.0
 Temperature at iteration 1000: 25.0
@@ -134,11 +136,15 @@ Temperature at iteration 7000: 24.9819
 Final temperature at the desired position [200,300] after 7750 iterations is: 24.9671
 The largest temperature difference was 0.00199985
 The simulation took 8.96548 seconds
+```
 
-$ chpl --fast taskParallelSolver.chpl
-$ sed -i -e 's|baseSolver|taskParallelSolver|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+```sh
+chpl --fast taskParallelSolver.chpl
+sed -i -e 's|baseSolver|taskParallelSolver|' shared.sh
+sbatch shared.sh
+cat solution.out
+```
+```output
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
 Temperature at iteration 0: 25.0
 Temperature at iteration 1000: 25.0
@@ -270,9 +276,11 @@ Now let's compare the performance of `taskParallelSolver2.chpl` to the benchmark
 `baseSolver.chpl`:
 
 ```sh
-$ sed -i -e 's|taskParallelSolver|baseSolver|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+sed -i -e 's|taskParallelSolver|baseSolver|' shared.sh
+sbatch shared.sh
+cat solution.out
+```
+```output
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
 Temperature at iteration 0: 25.0
 Temperature at iteration 1000: 25.0
@@ -285,11 +293,15 @@ Temperature at iteration 7000: 24.9819
 Final temperature at the desired position [200,300] after 7750 iterations is: 24.9671
 The largest temperature difference was 0.00199985
 The simulation took 9.40637 seconds
+```
 
-$ chpl --fast taskParallelSolver2.chpl
-$ sed -i -e 's|baseSolver|taskParallelSolver2|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+```sh
+chpl --fast taskParallelSolver2.chpl
+sed -i -e 's|baseSolver|taskParallelSolver2|' shared.sh
+sbatch shared.sh
+cat solution.out
+```
+```output
 Working with a matrix 650x650 to 10000 iterations or dT below 0.002
 Temperature at iteration 0: 25.0
 Temperature at iteration 1000: 25.0
@@ -309,15 +321,8 @@ We get a speedup of 2X on two cores, as we should.
 Finally, here is a parallel scaling test on Cedar inside a 32-core interactive job:
 
 ```sh
-$ ./taskParallelSolver2 ... --rowtasks=1 --coltasks=1
-The simulation took 32.2201 seconds
-
-$ ./taskParallelSolver2 ... --rowtasks=2 --coltasks=2
-The simulation took 10.197 seconds
-
-$ ./taskParallelSolver2 ... --rowtasks=4 --coltasks=4
-The simulation took 3.79577 seconds
-
-$ ./taskParallelSolver2 ... --rowtasks=4 --coltasks=8
-The simulation took 2.4874 seconds
+./taskParallelSolver2 ... --rowtasks=1 --coltasks=1   # 32.2201 seconds
+./taskParallelSolver2 ... --rowtasks=2 --coltasks=2   # 10.197 seconds
+./taskParallelSolver2 ... --rowtasks=4 --coltasks=4   # 3.79577 seconds
+./taskParallelSolver2 ... --rowtasks=4 --coltasks=8   # 2.4874 seconds
 ```

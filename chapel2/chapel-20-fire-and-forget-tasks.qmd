@@ -32,9 +32,9 @@ begin {
 writeln('This is the main task, I am done ...');
 ```
 ```sh
-$ chpl begin.chpl -o begin
-$ sbatch shared.sh
-$ cat solution.out
+chpl begin.chpl
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 This is the main task starting first task
@@ -58,7 +58,7 @@ As you can see the order of the output is not what we would expected, and actual
 unpredictable. This is a well known effect of concurrent tasks accessing the same shared resource at the same
 time (in this case the screen); the system decides in which order the tasks could write to the screen.
 
-::: {.callout-caution collapse="true"}
+::: {.callout-caution}
 ## Discussion
 1. What would happen if in the last code we move the definition of `count` into the main task, but try to
    assign it from tasks 1 and 2?
@@ -79,7 +79,7 @@ accessible only by that task. Variables declared in the main task can be read ev
 allow other concurrent tasks to modify them.
 :::
 
-::: {.callout-caution collapse="true"}
+::: {.callout-caution}
 ## Discussion
 Are the concurrent tasks, spawned by the last code, running truly in parallel?
 
@@ -112,10 +112,10 @@ cobegin {
 writeln('This message will not appear until all tasks are done ...');
 ```
 ```sh
-$ chpl cobegin.chpl -o cobegin
-$ sed -i -e 's|begin|cobegin|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl cobegin.chpl
+sed -i -e 's|begin|cobegin|' shared.sh
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 This is the main task, my value of x is 0
@@ -151,10 +151,10 @@ coforall taskid in 1..numtasks {
 writeln('This message will not appear until all tasks are done ...');
 ```
 ```sh
-$ chpl coforall.chpl -o coforall
-$ sed -i -e 's|cobegin|coforall --numtasks=5|' shared.sh
-$ sbatch shared.sh
-$ cat solution.out
+chpl coforall.chpl
+sed -i -e 's|cobegin|coforall --numtasks=5|' shared.sh
+sbatch shared.sh
+cat solution.out
 ```
 ```output
 This is the main task: x = 10
@@ -170,16 +170,16 @@ Notice the random order of the print statements. And notice how, once again, the
 outside the `coforall` can be read by all tasks, while the variables declared inside, are available
 only to the particular task.
 
-::: {.callout-caution collapse="true"}
-## Question Task.1
+::: {.callout-caution}
+##### Exercise Task.1
 Would it be possible to print all the messages in the right order? Modify the code in the last example as
 required and save it as `consecutive.chpl`. Hint: you can use an array of strings declared in the main task,
 into which all the concurrent tasks could write their messages in the right order. Then, at the end, have
 the main task print all elements of the array.
 :::
 
-::: {.callout-caution collapse="true"}
-## Question Task.2
+::: {.callout-caution}
+##### Exercise Task.2
 Consider the following code `gmax.chpl` to find the maximum array element. Complete this code, and also time
 the `coforall` loop.
 ```chpl
@@ -213,12 +213,12 @@ indices of its array elements and cycle through them to find the local maximum. 
 all local maxima to find the global maximum.
 :::
 
-::: {.callout-caution collapse="true"}
+::: {.callout-caution}
 ## Discussion
 Run the code of last Exercise using different number of tasks, and different sizes of the array `x` to
 see how the execution time changes. For example:
 ```sh
-$ ./gmax --nelem=100_000_000 --numtasks=1
+./gmax --nelem=100_000_000 --numtasks=1
 ```
 
 Discuss your observations. Is there a limit on how fast the code could run?
@@ -227,7 +227,7 @@ Discuss your observations. Is there a limit on how fast the code could run?
 <!-- Answer: (1) consider a small problem, increasing the number of tasks => no speedup   -->
 <!--         (2) consider a large problem, increasing the number of tasks => speedup up to the physical number of cores -->
 
-::: {.callout-caution collapse="true"}
+::: {.callout-caution}
 ## Try this...
 Substitute your addition to the code to find _gmax_ in the last exercise with:
 ```chpl

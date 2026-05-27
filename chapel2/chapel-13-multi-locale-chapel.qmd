@@ -17,8 +17,8 @@ simulates a multi-locale cluster, so you would compile and launch multi-locale C
 specifying the number of locales with `-nl` flag:
 
 ```sh
-$ chpl --fast mycode.chpl -o mybinary
-$ ./mybinary -nl 3
+chpl --fast mycode.chpl -o mybinary
+./mybinary -nl 3
 ```
 
 Inside the Docker container on multiple locales your code will not run any faster than on a single
@@ -30,18 +30,18 @@ On an HPC cluster you would need to submit either an interactive or a batch job 
 then run a multi-locale Chapel code inside that job. In practice, the exact commands to run multi-locale
 Chapel codes depend on how Chapel was configured on the cluster.
 
-When you compile a Chapel code with the multi-locale Chapel compiler, two binaries will be produced. One
+When you compile a Chapel code with the multi-locale Chapel compiler, **two binaries** will be produced. One
 is called `mybinary` and is a launcher binary used to submit the real executable `mybinary_real`. If the
-Chapel environment is configured properly with the launcher for the cluster's physical interconnect, then
-you would simply compile the code and use the launcher binary `mybinary` to run a multi-locale code.
+Chapel environment is configured properly with the launcher for the cluster's physical interconnect, then you
+would simply compile the code and use the launcher binary `mybinary` to run a multi-locale code.
 
 For the rest of this class we assume that you have a working multi-locale Chapel environment, whether
 provided by a Docker container or by multi-locale Chapel on a physical HPC cluster. We will run all
 examples on 3 nodes with 2 cores per node.
 
 <!-- ```sh -->
-<!-- $ chpl mycode.chpl -o mybinary -->
-<!-- $ ./mybinary -nl 2 -->
+<!-- chpl mycode.chpl -o mybinary -->
+<!-- ./mybinary -nl 2 -->
 <!-- ``` -->
 <!-- The exact parameters of the job such as the maximum runtime and the requested memory can be specified -->
 <!-- with Chapel environment variables. One drawback of this launching method is that Chapel will have access -->
@@ -50,18 +50,18 @@ examples on 3 nodes with 2 cores per node.
 <!-- The Compute Canada clusters Cedar and Graham employ two different physical interconnects, and since we -->
 <!-- use exactly the same multi-locale Chapel module on both clusters -->
 <!-- ```sh -->
-<!-- $ module load gcc chapel-slurm-gasnetrun_ibv/1.15.0 -->
-<!-- $ export GASNET_PHYSMEM_MAX=1G      # needed for faster job launch -->
-<!-- $ export GASNET_PHYSMEM_NOPROBE=1   # needed for faster job launch -->
+<!-- module load gcc chapel-slurm-gasnetrun_ibv/1.15.0 -->
+<!-- export GASNET_PHYSMEM_MAX=1G      # needed for faster job launch -->
+<!-- export GASNET_PHYSMEM_NOPROBE=1   # needed for faster job launch -->
 <!-- ``` -->
 <!-- we cannot configure the same single launcher for both. Therefore, we launch multi-locale Chapel codes -->
 <!-- using the real executable `mybinary_real`. For example, for an interactive job you would type: -->
 <!-- ```sh -->
-<!-- $ salloc --time=0:30:0 --nodes=4 --cpus-per-task=2 --mem-per-cpu=1000 --account=def-razoumov-ac -->
-<!-- $ echo $SLURM_NODELIST          # print the list of four nodes -->
-<!-- $ echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
-<!-- $ chpl mycode.chpl -o mybinary -->
-<!-- $ srun ./mybinary_real -nl 4   # will run on four locales with max 3 cores per locale -->
+<!-- salloc --time=0:30:0 --nodes=4 --cpus-per-task=2 --mem-per-cpu=1000 --account=def-razoumov-ac -->
+<!-- echo $SLURM_NODELIST          # print the list of four nodes -->
+<!-- echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
+<!-- chpl mycode.chpl -o mybinary -->
+<!-- srun ./mybinary_real -nl 4   # will run on four locales with max 3 cores per locale -->
 <!-- ``` -->
 <!-- Production jobs would be launched with `sbatch` command and a Slurm launch script as usual. -->
 <!-- Alternatively, instead of loading the system-wide module, you can configure multi-locale Chapel in your -->
@@ -72,22 +72,30 @@ examples on 3 nodes with 2 cores per node.
 <!-- with **3 cores per MPI task** (12 cores per job): -->
 
 <!-- ```sh -->
-<!-- $ module unload chapel-single -->
-<!-- $ module load chapel-multi-cedar/1.16.0 -->
-<!-- $ salloc --time=2:00:0 --nodes=4 --cpus-per-task=3 --mem-per-cpu=1000 \ -->
+<!-- module unload chapel-single -->
+<!-- module load chapel-multi-cedar/1.16.0 -->
+<!-- salloc --time=2:00:0 --nodes=4 --cpus-per-task=3 --mem-per-cpu=1000 \ -->
 <!--          --account=def-razoumov-ws_cpu --reservation=arazoumov-may17 -->
-<!-- $ echo $SLURM_NODELIST          # print the list of nodes (should be four) -->
-<!-- $ echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
-<!-- $ export HFI_NO_CPUAFFINITY=1   # to enable parallelism on each locale with OmniPath drivers -->
-<!-- $ export CHPL_RT_NUM_THREADS_PER_LOCALE=$SLURM_CPUS_PER_TASK   # to limit the number of tasks -->
+<!-- echo $SLURM_NODELIST          # print the list of nodes (should be four) -->
+<!-- echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
+<!-- export HFI_NO_CPUAFFINITY=1   # to enable parallelism on each locale with OmniPath drivers -->
+<!-- export CHPL_RT_NUM_THREADS_PER_LOCALE=$SLURM_CPUS_PER_TASK   # to limit the number of tasks -->
 <!-- ``` -->
+
+::: {.callout-note}
+
+Making `srun` work with multi-locale Chapel is a little bit tricky, as both `srun` and multi-locale Chapel
+supply their own parallel launcher. For this reason, here we switch from using `srun` to using `sbatch`, which
+is also a proper way to launch larger parallel jobs on a producton cluster.
+
+:::
 
 Let's write a job submission script `distributed.sh`:
 
 ```sh
 #!/bin/bash
 #SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format
-#SBATCH --mem-per-cpu=1000   # in MB
+#SBATCH --mem-per-cpu=3600   # in MB
 #SBATCH --nodes=3
 #SBATCH --cpus-per-task=2
 #SBATCH --output=solution.out
@@ -101,18 +109,26 @@ Let's write a job submission script `distributed.sh`:
 
 Let us test our multi-locale Chapel environment by launching the following code:
 
-<!-- $ module load arch/avx2   # not necessary, unless you land on an avx512 node -->
-<!-- $ module load gcc/9.3.0 chapel-ofi/1.31.0 -->
+<!-- module load arch/avx2   # not necessary, unless you land on an avx512 node -->
+<!-- module load gcc/9.3.0 chapel-ofi/1.31.0 -->
 
 ```chpl
+// this is test.chpl
 writeln(Locales);
 ```
 ```sh
-$ source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh
-$ chpl test.chpl -o test
-$ sbatch distributed.sh
-$ cat solution.out
+module unload chapel-multicore
+source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh
+
+make test
+# chpl test.chpl -o test   # same
+# chpl test.chpl           # same
+sbatch distributed.sh
 ```
+
+
+
+
 
 This code will print the built-in global array `Locales`. Running it on four locales will produce
 
@@ -174,25 +190,25 @@ for loc in Locales do
   }
 ```
 ```sh
-$ chpl test.chpl -o test
-$ sbatch distributed.sh
-$ cat solution.out
+chpl test.chpl
+sbatch distributed.sh
+cat solution.out
 ```
 ```output
 locale #0...
-  ...is named: node1.int.school.vastcloud.org
+  ...is named: node1.int.cass.vastcloud.org
   ...has 2 processor cores
-  ...has 29.124 GB of memory
+  ...has 14.6278 GB of memory
   ...has 2 maximum parallelism to expect
 locale #1...
-  ...is named: node2.int.school.vastcloud.org
+  ...is named: node2.int.cass.vastcloud.org
   ...has 2 processor cores
-  ...has 29.124 GB of memory
+  ...has 14.6278 GB of memory
   ...has 2 maximum parallelism to expect
 locale #2...
-  ...is named: node3.int.school.vastcloud.org
+  ...is named: node3.int.cass.vastcloud.org
   ...has 2 processor cores
-  ...has 29.124 GB of memory
+  ...has 14.6278 GB of memory
   ...has 2 maximum parallelism to expect
 ```
 

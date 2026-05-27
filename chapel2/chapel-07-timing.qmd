@@ -12,7 +12,8 @@ But first, we need a quantitative way to measure the performance of our code. Pe
 this is to use the Unix command `time`:
 
 ```sh
-$ time ./juliaSetSerial --n=500
+time ls
+srun --mem-per-cpu=3600 bash -c "time ./juliaSetSerial --n=500"
 ```
 ```chpl
 real ...
@@ -46,12 +47,12 @@ watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');
 ```
 ```sh
-$ chpl --fast juliaSetSerial.chpl
-$ ./juliaSetSerial --n=500
+chpl --fast juliaSetSerial.chpl
+srun --mem-per-cpu=3600 ./juliaSetSerial --n=500
 ```
 
-::: {.callout-caution collapse="true"}
-## Question Basic.5
+::: {.callout-caution}
+##### Exercise Basic.5
 Try recompiling without `--fast` and see how it affects the execution time. If it becomes too slow, try
 reducing the problem size. What is the speedup factor with `--fast`?
 :::

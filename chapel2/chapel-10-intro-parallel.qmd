@@ -12,7 +12,7 @@ title: "Intro to parallel computing"
 <!-- - we ran the benchmark solution to convergence after 7750 iterations -->
 
 <!-- ```sh -->
-<!-- $ ./baseSolver --rows=650 --iout=200 --niter=10_000 --tolerance=0.002 --nout=1000 -->
+<!-- ./baseSolver --rows=650 --iout=200 --niter=10_000 --tolerance=0.002 --nout=1000 -->
 <!-- ``` -->
 
 <!-- - we learned how to time individual sections of the code -->
@@ -53,16 +53,15 @@ scenarios, but we can always add more specific detail to gain performance when t
 scenario.
 
 ::: {.callout-note}
-**Task parallelism** is a style of parallel programming in which parallelism is driven by
-*programmer-specified tasks*. This is in contrast with **data parallelism** which is a style of
-parallel programming in which parallelism is driven by *computations over collections of data elements
-or their indices*.
+**Task parallelism** is a style of parallel programming in which parallelism is driven by programmer-defined
+tasks. This contrasts with **data parallelism**, where parallelism is driven by *computations over collections
+of data elements or their indices*.
 :::
 
 Chapel provides functionality for both task- and data-parallel programming. Since task parallelism is lower
-level (*you* tell the computer how to divide your computation into tasks) than data parallelism, it is
-considerably more difficult. In this course we will focus mostly on data parallelism, but we will briefly
-cover task parallelism towards the end of the course.
+level (*you* tell the computer how to divide your computation into tasks with statements such as `begin`,
+`cobegin`, `coforall`) than data parallelism, it is considerably more difficult. In this course we will focus
+mostly on data parallelism, but we will briefly cover task parallelism towards the end of the course.
 
 
 
@@ -72,10 +71,10 @@ cover task parallelism towards the end of the course.
 
 ## Running single-local parallel Chapel
 
-Make sure you have loaded the single-locale Chapel environment:
+Make sure you are running the single-locale Chapel environment:
 
 ```sh
-$ module load chapel-multicore/2.4.0
+module load chapel-multicore/2.4.0
 ```
 
 <!-- ```sh -->
@@ -85,10 +84,16 @@ $ module load chapel-multicore/2.4.0
 In this lesson, we'll be running on several cores on one node with a script `shared.sh`:
 
 ```sh
+chpl test.chpl
+srun --mem-per-cpu=3600 --cpus-per-task=4 ./test
+```
+
+Alternatively, you can create and submit a Slurm script:
+
+```sh
 #!/bin/bash
 #SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format
 #SBATCH --mem-per-cpu=3600   # in MB
-#SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --output=solution.out
 ./test

@@ -54,7 +54,7 @@ libraries. However, you can use functions/libraries written in other languages.
 <!-- {{<note>}} Try to do all exercises in the lessons. The solutions are linked from the course's front page: -->
 <!-- please try not to look at them while working on the problems. {{</note>}} -->
 
-## Running Chapel codes on Fir / Nibi / Rorqual / Narval
+## Running Chapel codes on production clusters
 
 On Alliance's production clusters Fir / Nibi / Rorqual / Narval we have three versions of Chapel:
 
@@ -73,33 +73,35 @@ You can find the documentation on running Chapel in
 If you want to start single-locale Chapel, you will need to load `chapel-multicore` module, e.g.
 
 ```sh
-$ module spider chapel-multicore   # list all versions
-$ module load chapel-multicore/2.4.0
+module spider chapel-multicore   # list all versions
+module load chapel-multicore/2.4.0
 ```
 
 <!-- Since multi-locale Chapel includes a parallel launcher for the right interconnect type, there is no single -->
 <!-- Chapel module for all cluster architectures. -->
 
-## Running Chapel codes inside a Docker container
+## Running Chapel in Windows
 
-If you are familiar with Docker and have it installed, you can run multi-locale Chapel inside a Docker
-container (e.g., on your laptop, or inside an Ubuntu VM on Arbutus):
+In Windows, if you are familiar with [Docker](https://chapel-lang.org/install-docker.html){target="_blank"}
+and have it installed, you can run [multi-locale Chapel inside a Docker
+container](https://hub.docker.com/r/chapel/chapel){target="_blank"}:
 
 ```sh
-$ docker pull chapel/chapel  # will emulate a cluster with 4 cores/node
-$ mkdir -p ~/tmp
-$ docker run -v /home/ubuntu/tmp:/mnt -it -h chapel chapel/chapel  # map host's ~/tmp to container's /mnt
-$ cd /mnt
-$ apt-get update
-$ apt-get install nano  # install nano inside the Docker container
-$ nano test.chpl        # file is /mnt/test.chpl inside the container and ~ubuntu/tmp/test.chpl on the host VM
-$ chpl test.chpl
-$ ./test -nl 8
+docker pull chapel/chapel  # will emulate a cluster with 4 cores/node
+mkdir -p ~/tmp
+docker run -v /home/ubuntu/tmp:/mnt -it -h chapel chapel/chapel  # map host's ~/tmp to container's /mnt
+cd /mnt
+apt-get update
+apt-get install nano  # install nano inside the Docker container
+nano test.chpl        # file is /mnt/test.chpl inside the container and ~ubuntu/tmp/test.chpl on the host VM
+chpl test.chpl
+./test -nl 8
 ```
 
-You can find more information at <https://hub.docker.com/r/chapel/chapel>{target="_blank"}.
+You can also run Chapel under the Windows Subsystem for Linux (WSL) as explained in [this
+post](https://chapel-lang.org/blog/posts/nvidia-gpu-wsl){target="_blank"}.
 
-## Running single-locale Chapel in MacOS
+## Running Chapel in MacOS
 
 You can compile and run Chapel codes in MacOS. Multi-locale codes (e.g. containing distributed arrays) will
 compile but will run only as single-locale.
@@ -126,11 +128,11 @@ cluster and do the following:
 On the training cluster, you can start single-locale Chapel with:
 
 <!-- ```sh -->
-<!-- $ module load arch/avx2 gcc/9.3.0 chapel-multicore -->
+<!-- module load arch/avx2 gcc/9.3.0 chapel-multicore -->
 <!-- ``` -->
 
 ```sh
-$ module load chapel-multicore/2.4.0
+module load chapel-multicore/2.4.0
 ```
 
 <!-- or -->
@@ -141,11 +143,11 @@ $ module load chapel-multicore/2.4.0
 Let's write a simple Chapel code, compile and run it:
 
 ```sh
-$ cd ~/tmp
-$ nano test.chpl
-$     writeln('If you can see this, everything works!');
-$ chpl test.chpl
-$ ./test
+cd ~/tmp
+nano test.chpl
+    writeln('If you can see this, everything works!');
+chpl test.chpl
+./test
 ```
 
 You can optionally pass the flag `--fast` to the compiler to optimize the binary to run as fast as possible
@@ -167,8 +169,9 @@ node is shared by many people at the same time, and where it might not be a good
 login node with CPU-intensive tasks. Therefore, we should be running test Chapel codes inside submitted jobs
 on cluster's compute nodes. There are three possible workflows:
 
-1. We can write a job script `serial.sh`:  
-- <span style="color: green;">**pro**:</span> efficient use of resources  
+#### 1. We can write a job script `serial.sh`
+
+- <span style="color: green;">**pro**:</span> efficient use of resources
 - <span style="color: red;">**con**:</span> output goes to a file
 
 ```sh
@@ -188,10 +191,11 @@ sq                         # same as `squeue -u $USER`
 cat slurm-jobID.out
 ```
 
-2. Alternatively, we could work inside a long serial interactive job:  
-- <span style="color: green;">**pro**:</span> code starts right away, output goes into the terminal  
-- <span style="color: red;">**con**:</span> most of the time you'll be sitting on allocated resources and not actively using them
+#### 2. Alternatively, we could work inside a long serial interactive job
 
+- <span style="color: green;">**pro**:</span> code starts right away, output goes into the terminal
+- <span style="color: red;">**con**:</span> most of the time you'll be sitting on allocated resources and not
+  actively using them
 
 ```sh
 salloc --time=2:0:0 --mem-per-cpu=3600
@@ -199,7 +203,8 @@ chpl test.chpl
 ./test
 ```
 
-3. Perhaps, the best compromise is to submit short interactive jobs:  
+#### 3. Perhaps, the best compromise is to submit short interactive jobs
+
 - <span style="color: green;">**pro**:</span> efficient use of resources, output goes into the terminal
 
 ```sh
@@ -243,7 +248,7 @@ Note that the 2nd and the 4th lines start with TAB and not with multiple spaces 
 With this makefile, to compile any Chapel code, e.g. `test.chpl`, you would type:
 
 ```sh
-$ make test
+make test
 ```
 
 Add `--fast` flag to the makefile to optimize your code. And you can type `make clean` to delete all

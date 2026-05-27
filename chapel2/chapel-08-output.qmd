@@ -42,6 +42,11 @@ watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');
 ```
 
+::: {.callout-note}
+##### C types
+Note the types returned by `pixel(z0)` and the type of `stability`.
+:::
+
 The reason we are using C types (`c_int`) here -- and not Chapel's own int(32) or int(64) -- is that we can
 save the resulting array `stability` into a compressed netCDF file. To the best of my knowledge, this can only
 be done using `NetCDF.C_NetCDF` library that relies on C types. You can add this to your code:
@@ -85,13 +90,11 @@ with ParaView or other visualization tool. Does the size of `test.nc` make sense
 ## Write to a PNG image
 
 Chapel's [Image](https://chapel-lang.org/docs/main/modules/packages/Image.html) library lets you write arrays
-of pixels to a PNG file. The following code -- when added to the non-GPU code `juliaSetSerial.chpl` -- writes
-the array `stability` to a file `2000.png` assuming that in the current directory you
-
-1. have downloaded the [colour map in CSV](/files/nipy_spectral.csv){target="_blank"} and
-2. have added the file `sciplot.chpl` (pasted below)
+of pixels to a PNG file. The following code, when added to `juliaSetSerial.chpl`, writes the array `stability`
+to a file `2000.png`:
 
 ```chpl
+// add this snippet to juliaSetSerial.chpl
 writeln("Plotting ...");
 use Image, Math, sciplot;
 watch.clear();
@@ -111,6 +114,11 @@ writeImage(n:string+".png", imageType.png, pixels);
 watch.stop();
 writeln('It took ', watch.elapsed(), ' seconds');
 ```
+
+To make it work, you also need to:
+
+1. download the [colour map in CSV](/files/nipy_spectral.csv){target="_blank"} and
+2. add the file `sciplot.chpl` (below) to your working directory
 
 ```chpl
 // save this as sciplot.chpl

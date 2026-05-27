@@ -1,5 +1,5 @@
 ---
-title: "Using command-line arguments"
+title: "Command-line arguments"
 ---
 
 If we want to resize our image, we would need to edit the line `const n = 2_000;` in the code and then
@@ -13,19 +13,18 @@ keyword, in addition to `var` or `const`, like this:
 config const n = 2_000;   // vertical and horizontal size of our image
 ```
 
-you can its new value from the command line:
+you can set its new value from the command line:
 
 ```sh
+chpl juliaSetSerial.chpl
+srun --mem-per-cpu=3600 ./juliaSetSerial   # using the default value 2_000
+srun --mem-per-cpu=3600 ./juliaSetSerial --n=500   # passing another value from the command line
 ```
-```sh
-$ chpl juliaSetSerial.chpl   # using the default value 2_000
-$ ./juliaSetSerial --n=500   # passing another value from the command line
-```
 
 
 
-::: {.callout-caution collapse="true"}
-## Question Basic.4
+::: {.callout-caution}
+##### Exercise Basic.4
 Make `c` a config variable, and test passing different values.
 :::
 
