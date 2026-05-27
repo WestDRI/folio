@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,9 +74,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f7333b7c44a7c3d55afcc11699a363c3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -384,7 +384,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-06-command-line-arguments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using command-line arguments</span></a>
+ <span class="menu-text">Command-line arguments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -504,9 +504,9 @@ window.Quarto = {
    
   <ul>
   <li><a href="#language-for-large-scale-parallel-computing" id="toc-language-for-large-scale-parallel-computing" class="nav-link active" data-scroll-target="#language-for-large-scale-parallel-computing">Language for large-scale parallel computing</a></li>
-  <li><a href="#running-chapel-codes-on-fir-nibi-rorqual-narval" id="toc-running-chapel-codes-on-fir-nibi-rorqual-narval" class="nav-link" data-scroll-target="#running-chapel-codes-on-fir-nibi-rorqual-narval">Running Chapel codes on Fir / Nibi / Rorqual / Narval</a></li>
-  <li><a href="#running-chapel-codes-inside-a-docker-container" id="toc-running-chapel-codes-inside-a-docker-container" class="nav-link" data-scroll-target="#running-chapel-codes-inside-a-docker-container">Running Chapel codes inside a Docker container</a></li>
-  <li><a href="#running-single-locale-chapel-in-macos" id="toc-running-single-locale-chapel-in-macos" class="nav-link" data-scroll-target="#running-single-locale-chapel-in-macos">Running single-locale Chapel in MacOS</a></li>
+  <li><a href="#running-chapel-codes-on-production-clusters" id="toc-running-chapel-codes-on-production-clusters" class="nav-link" data-scroll-target="#running-chapel-codes-on-production-clusters">Running Chapel codes on production clusters</a></li>
+  <li><a href="#running-chapel-in-windows" id="toc-running-chapel-in-windows" class="nav-link" data-scroll-target="#running-chapel-in-windows">Running Chapel in Windows</a></li>
+  <li><a href="#running-chapel-in-macos" id="toc-running-chapel-in-macos" class="nav-link" data-scroll-target="#running-chapel-in-macos">Running Chapel in MacOS</a></li>
   <li><a href="#running-chapel-codes-on-the-training-cluster" id="toc-running-chapel-codes-on-the-training-cluster" class="nav-link" data-scroll-target="#running-chapel-codes-on-the-training-cluster">Running Chapel codes on the training cluster</a></li>
   <li><a href="#makefiles" id="toc-makefiles" class="nav-link" data-scroll-target="#makefiles">Makefiles</a></li>
   </ul>
@@ -568,8 +568,8 @@ window.Quarto = {
 <!-- {{<note>}} Try to do all exercises in the lessons. The solutions are linked from the course's front page: -->
 <!-- please try not to look at them while working on the problems. {{</note>}} -->
 </section>
-<section id="running-chapel-codes-on-fir-nibi-rorqual-narval" class="level2">
-<h2 class="anchored" data-anchor-id="running-chapel-codes-on-fir-nibi-rorqual-narval">Running Chapel codes on Fir / Nibi / Rorqual / Narval</h2>
+<section id="running-chapel-codes-on-production-clusters" class="level2">
+<h2 class="anchored" data-anchor-id="running-chapel-codes-on-production-clusters">Running Chapel codes on production clusters</h2>
 <p>On Alliance’s production clusters Fir / Nibi / Rorqual / Narval we have three versions of Chapel:</p>
 <ol type="1">
 <li>single-locale (single-node) <code>chapel-multicore</code></li>
@@ -582,27 +582,27 @@ window.Quarto = {
 <!-- ::: -->
 <p>You can find the documentation on running Chapel in <a href="https://docs.alliancecan.ca/wiki/Chapel" target="_blank">our wiki</a>.</p>
 <p>If you want to start single-locale Chapel, you will need to load <code>chapel-multicore</code> module, e.g.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> module spider chapel-multicore   <span class="co"># list all versions</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> module load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> spider chapel-multicore   <span class="co"># list all versions</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- Since multi-locale Chapel includes a parallel launcher for the right interconnect type, there is no single -->
 <!-- Chapel module for all cluster architectures. -->
 </section>
-<section id="running-chapel-codes-inside-a-docker-container" class="level2">
-<h2 class="anchored" data-anchor-id="running-chapel-codes-inside-a-docker-container">Running Chapel codes inside a Docker container</h2>
-<p>If you are familiar with Docker and have it installed, you can run multi-locale Chapel inside a Docker container (e.g., on your laptop, or inside an Ubuntu VM on Arbutus):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker pull chapel/chapel  <span class="co"># will emulate a cluster with 4 cores/node</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> ~/tmp</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker run <span class="at">-v</span> /home/ubuntu/tmp:/mnt <span class="at">-it</span> <span class="at">-h</span> chapel chapel/chapel  <span class="co"># map host's ~/tmp to container's /mnt</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd /mnt</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> apt-get update</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> apt-get install nano  <span class="co"># install nano inside the Docker container</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano test.chpl        <span class="co"># file is /mnt/test.chpl inside the container and ~ubuntu/tmp/test.chpl on the host VM</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./test <span class="at">-nl</span> 8</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>You can find more information at <a href="https://hub.docker.com/r/chapel/chapel" target="_blank">https://hub.docker.com/r/chapel/chapel</a>.</p>
+<section id="running-chapel-in-windows" class="level2">
+<h2 class="anchored" data-anchor-id="running-chapel-in-windows">Running Chapel in Windows</h2>
+<p>In Windows, if you are familiar with <a href="https://chapel-lang.org/install-docker.html" target="_blank">Docker</a> and have it installed, you can run <a href="https://hub.docker.com/r/chapel/chapel" target="_blank">multi-locale Chapel inside a Docker container</a>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull chapel/chapel  <span class="co"># will emulate a cluster with 4 cores/node</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> ~/tmp</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">-v</span> /home/ubuntu/tmp:/mnt <span class="at">-it</span> <span class="at">-h</span> chapel chapel/chapel  <span class="co"># map host's ~/tmp to container's /mnt</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> /mnt</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> update</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">apt-get</span> install nano  <span class="co"># install nano inside the Docker container</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> test.chpl        <span class="co"># file is /mnt/test.chpl inside the container and ~ubuntu/tmp/test.chpl on the host VM</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> test.chpl</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span> <span class="at">-nl</span> 8</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>You can also run Chapel under the Windows Subsystem for Linux (WSL) as explained in <a href="https://chapel-lang.org/blog/posts/nvidia-gpu-wsl" target="_blank">this post</a>.</p>
 </section>
-<section id="running-single-locale-chapel-in-macos" class="level2">
-<h2 class="anchored" data-anchor-id="running-single-locale-chapel-in-macos">Running single-locale Chapel in MacOS</h2>
+<section id="running-chapel-in-macos" class="level2">
+<h2 class="anchored" data-anchor-id="running-chapel-in-macos">Running Chapel in MacOS</h2>
 <p>You can compile and run Chapel codes in MacOS. Multi-locale codes (e.g.&nbsp;containing distributed arrays) will compile but will run only as single-locale.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install chapel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
@@ -632,19 +632,19 @@ window.Quarto = {
 <!-- production clusters. -->
 <p>On the training cluster, you can start single-locale Chapel with:</p>
 <!-- ```sh -->
-<!-- $ module load arch/avx2 gcc/9.3.0 chapel-multicore -->
+<!-- module load arch/avx2 gcc/9.3.0 chapel-multicore -->
 <!-- ``` -->
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> module load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load chapel-multicore/2.4.0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- or -->
 <!-- ```sh -->
 <!-- source /project/def-sponsor00/shared/syncHPC/startSingleLocale.sh -->
 <!-- ``` -->
 <p>Let’s write a simple Chapel code, compile and run it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/tmp</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano test.chpl</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span>     writeln<span class="er">(</span><span class="st">'If you can see this, everything works!'</span><span class="kw">);</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/tmp</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nano</span> test.chpl</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">writeln</span><span class="er">(</span><span class="st">'If you can see this, everything works!'</span><span class="kw">);</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> test.chpl</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can optionally pass the flag <code>--fast</code> to the compiler to optimize the binary to run as fast as possible for the given architecture.</p>
 <!-- Chapel was designed from scratch as a new programming language. It is an imperative language with its own
 -->
@@ -655,13 +655,10 @@ window.Quarto = {
 <!-- structures and **_data parallelism_**, which is the higher level of abstraction, in parallel programming, -->
 <!-- offered by Chapel. -->
 <p>Depending on the code, it might utilize one / several / all cores on the current node. The command above implies that you are allowed to utilize all cores. This might not be the case on an HPC cluster, where a login node is shared by many people at the same time, and where it might not be a good idea to occupy all cores on a login node with CPU-intensive tasks. Therefore, we should be running test Chapel codes inside submitted jobs on cluster’s compute nodes. There are three possible workflows:</p>
-<ol type="1">
-<li>We can write a job script <code>serial.sh</code>:<br>
-</li>
-</ol>
+<section id="we-can-write-a-job-script-serial.sh" class="level4">
+<h4 class="anchored" data-anchor-id="we-can-write-a-job-script-serial.sh">1. We can write a job script <code>serial.sh</code></h4>
 <ul>
-<li><span style="color: green;"><strong>pro</strong>:</span> efficient use of resources<br>
-</li>
+<li><span style="color: green;"><strong>pro</strong>:</span> efficient use of resources</li>
 <li><span style="color: red;"><strong>con</strong>:</span> output goes to a file</li>
 </ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
@@ -674,22 +671,19 @@ window.Quarto = {
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> serial.sh</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sq</span>                         <span class="co"># same as `squeue -u $USER`</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> slurm-jobID.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="2" type="1">
-<li>Alternatively, we could work inside a long serial interactive job:<br>
-</li>
-</ol>
+</section>
+<section id="alternatively-we-could-work-inside-a-long-serial-interactive-job" class="level4">
+<h4 class="anchored" data-anchor-id="alternatively-we-could-work-inside-a-long-serial-interactive-job">2. Alternatively, we could work inside a long serial interactive job</h4>
 <ul>
-<li><span style="color: green;"><strong>pro</strong>:</span> code starts right away, output goes into the terminal<br>
-</li>
+<li><span style="color: green;"><strong>pro</strong>:</span> code starts right away, output goes into the terminal</li>
 <li><span style="color: red;"><strong>con</strong>:</span> most of the time you’ll be sitting on allocated resources and not actively using them</li>
 </ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--time</span><span class="op">=</span>2:0:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> test.chpl</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./test</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol start="3" type="1">
-<li>Perhaps, the best compromise is to submit short interactive jobs:<br>
-</li>
-</ol>
+</section>
+<section id="perhaps-the-best-compromise-is-to-submit-short-interactive-jobs" class="level4">
+<h4 class="anchored" data-anchor-id="perhaps-the-best-compromise-is-to-submit-short-interactive-jobs">3. Perhaps, the best compromise is to submit short interactive jobs</h4>
 <ul>
 <li><span style="color: green;"><strong>pro</strong>:</span> efficient use of resources, output goes into the terminal</li>
 </ul>
@@ -707,6 +701,7 @@ window.Quarto = {
 <!-- too much memory might leave it unable to run parallel jobs during the workshop. -->
 <!-- {{</note>}} -->
 </section>
+</section>
 <section id="makefiles" class="level2">
 <h2 class="anchored" data-anchor-id="makefiles">Makefiles</h2>
 <p>In the rest of this workshop, we’ll be compiling codes <code>test.chpl</code>, <code>baseSolver.chpl</code>, <code>begin.chpl</code>, <code>cobegin.chpl</code> and many others. To simplify compilation, we suggest writing a file called <code>Makefile</code> in your working directory:</p>
@@ -716,7 +711,7 @@ window.Quarto = {
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="er">    </span><span class="ch">@</span><span class="fu">find . -maxdepth 1 -type f -executable -exec rm {} +</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Note that the 2nd and the 4th lines start with TAB and not with multiple spaces – this is <strong>very important</strong>!</p>
 <p>With this makefile, to compile any Chapel code, e.g.&nbsp;<code>test.chpl</code>, you would type:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> make test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> test</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Add <code>--fast</code> flag to the makefile to optimize your code. And you can type <code>make clean</code> to delete all executables in the current directory.</p>
 
 

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,9 +74,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f7333b7c44a7c3d55afcc11699a363c3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -384,7 +384,7 @@ window.Quarto = {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-06-command-line-arguments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using command-line arguments</span></a>
+ <span class="menu-text">Command-line arguments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -506,7 +506,7 @@ window.Quarto = {
   <li><a href="#reduction" id="toc-reduction" class="nav-link active" data-scroll-target="#reduction">Reduction</a>
   <ul class="collapse">
   <li><a href="#number-of-cores-at-runtime" id="toc-number-of-cores-at-runtime" class="nav-link" data-scroll-target="#number-of-cores-at-runtime">Number of cores at runtime</a></li>
-  <li><a href="#alternative-syntax" id="toc-alternative-syntax" class="nav-link" data-scroll-target="#alternative-syntax">Alternative syntax</a></li>
+  <li><a href="#other-syntax-options" id="toc-other-syntax-options" class="nav-link" data-scroll-target="#other-syntax-options">Other syntax options</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -549,7 +549,7 @@ window.Quarto = {
 <!-- Once you have the working shared-memory parallel code, study its performance. -->
 <!-- > ### Discussion -->
 <!-- > Why do you think the code's speed does not scale linearly with the number of cores? -->
-<p>As we mentioned in the previous section, <strong>Data Parallelism</strong> is a style of parallel programming in which parallelism is driven by <em>computations over collections of data elements or their indices</em>. The main tool for this in Chapel is a <code>forall</code> loop – it’ll create an <em>appropriate</em> number of threads to execute a loop, dividing the loop’s iterations between them.</p>
+<p>As we mentioned in the previous section, <strong>data parallelism</strong> is a style of parallel programming in which parallelism is driven by <em>computations over collections of data elements or their indices</em>. The main tool for this in Chapel is a <code>forall</code> loop – it’ll create an <em>appropriate</em> number of threads to execute a loop, dividing the loop’s iterations between them.</p>
 <pre class="chpl"><code>forall index in iterand   // iterating over all elements of an array or over a range of indices
 {instructions}</code></pre>
 <p>What is the <em>appropriate</em> number of tasks/threads?</p>
@@ -563,7 +563,7 @@ window.Quarto = {
 var A: [1..n] real;
 forall a in A do
   a += 1;</code></pre>
-<p>In this code we update all elements of the array <code>A</code>. The code will run on a single node, lauching as many threads as the number of available cores. It is thread-safe, meaning that no two threads are writing into the same variable at the same time.</p>
+<p>In this code we update all elements of the array <code>A</code>. If run on a single node, this code will lauch as many threads as the number of available cores. It is thread-safe, meaning that no two threads are writing into the same variable at the same time.</p>
 <ul>
 <li>if we replace <code>forall</code> with <code>for</code>, we’ll get a serial loop on a sigle core</li>
 <li>if we replace <code>forall</code> with <code>coforall</code> (we’ll study it later), we’ll create <span class="math inline">\(10^6\)</span> threads – likely an overkill!</li>
@@ -577,20 +577,22 @@ forall i in 1..1000 with (+ reduce count) {   // parallel loop
   count += i;
 }
 writeln('count = ', count);</code></pre>
-<p>If we have not done so, let’s write a script <code>shared.sh</code> for submitting single-locale, two-core Chapel jobs:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --ntasks=1</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=4</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">./forall</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<!-- $ module load arch/avx2   # not necessary, unless you land on an avx512 node -->
-<!-- $ module load chapel-multicore/2.4.0 -->
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl forall.chpl <span class="at">-o</span> forall</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>count = 500500</code></pre>
+<!-- If we have not done so, let's write a script `shared.sh` for submitting single-locale, two-core Chapel jobs: -->
+<!-- ```sh -->
+<!-- #!/bin/bash -->
+<!-- #SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format -->
+<!-- #SBATCH --mem-per-cpu=3600   # in MB -->
+<!-- #SBATCH --ntasks=1 -->
+<!-- #SBATCH --cpus-per-task=4 -->
+<!-- #SBATCH --output=solution.out -->
+<!-- ./forall -->
+<!-- ``` -->
+<!-- module load arch/avx2   # not necessary, unless you land on an avx512 node -->
+<!-- module load chapel-multicore/2.4.0 -->
+<p>Let’s compile and run this code:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> forall</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--cpus-per-task</span><span class="op">=</span>4 ./forall</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<pre class="output"><code>count = 500500</code></pre>
 <section id="number-of-cores-at-runtime" class="level3">
 <h3 class="anchored" data-anchor-id="number-of-cores-at-runtime">Number of cores at runtime</h3>
 <p>We computed the sum of integers from 1 to 1000 in parallel. How many cores did the code run on? Looking at the code or its output, <strong>we don’t know</strong>. Most likely, on all 4 cores available to us inside the job. But we can actually check that! Do this:</p>
@@ -598,14 +600,13 @@ writeln('count = ', count);</code></pre>
 <li>replace <code>count += i;</code> with <code>count = 1;</code></li>
 <li>change the last line to <code>writeln('actual number of threads = ', count);</code></li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl forall.chpl <span class="at">-o</span> forall</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> forall</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 <span class="at">--cpus-per-task</span><span class="op">=</span>4 ./forall</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>actual number of threads = 4</code></pre>
 <p>If you see one thread, try running this code as a batch multi-core job.</p>
 </section>
-<section id="alternative-syntax" class="level3">
-<h3 class="anchored" data-anchor-id="alternative-syntax">Alternative syntax</h3>
+<section id="other-syntax-options" class="level3">
+<h3 class="anchored" data-anchor-id="other-syntax-options">Other syntax options</h3>
 <p>We can also do parallel reduction over a loop in this way:</p>
 <pre class="chpl"><code>var count = (+ reduce forall i in 1..1000 do i**2);
 writeln('count = ', count);</code></pre>
@@ -617,18 +618,15 @@ writeln('count = ', count);</code></pre>
 <pre class="chpl"><code>var A = (for i in 1..1000 do i);
 var count = (+ reduce forall a in A do a**2);
 writeln('count = ', count);</code></pre>
-<p>&nbsp;</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Question Parallel <span class="math inline">\(\pi\)</span>
+<span class="screen-reader-only">Caution</span>Exercise Parallel <span class="math inline">\(\pi\)</span>
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Using the first version of <code>forall.chpl</code> (where we computed the sum of integers 1..1000) as a template, write a Chapel code to compute <span class="math inline">\(\pi\)</span> by calculating the integral numerically via summation using <code>forall</code> parallelism. Implement the number of intervals as <code>config</code> variable.</p>
 <p>To get you started, here is a serial version of this code <code>pi.chpl</code>:</p>
@@ -640,7 +638,7 @@ for i in 1..n {
   total += 4.0 / ( 1.0 + x**2);
 }
 writef('pi is %3.10r\n', total*h);    // C-style formatted write, r stands for real</code></pre>
-</div>
+<p>Time your code for <span class="math inline">\(n=10^8\)</span>, <span class="math inline">\(10^9\)</span> and <span class="math inline">\(10^{10}\)</span> terms.</p>
 </div>
 </div>
 <!-- We finish this section by providing an example of how you can organize a data-parallel, shared-memory -->

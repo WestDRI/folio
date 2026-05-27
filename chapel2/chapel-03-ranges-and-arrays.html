@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,9 +74,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f7333b7c44a7c3d55afcc11699a363c3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -355,7 +355,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-06-command-line-arguments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using command-line arguments</span></a>
+ <span class="menu-text">Command-line arguments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -524,7 +524,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <section id="using-expressions-to-create-arrays" class="level3">
 <h3 class="anchored" data-anchor-id="using-expressions-to-create-arrays">Using expressions to create arrays</h3>
-<p>In Chapel arrays can also be initialized with expressions (similarly to list comprehensions in Python):</p>
+<p>In Chapel arrays can also be initialized with expressions, similarly to list comprehensions in Python:</p>
 <pre class="chpl"><code>writeln([i in 1..10] i**2);   // prints 1 4 9 16 25 36 49 64 81 100
 var x = [i in 1..10] if (i%2 == 0) then i else 0;
 writeln(x);                   // prints 0 2 0 4 0 6 0 8 0 10
@@ -555,9 +555,8 @@ for index in iterand {
   return z0; // to be replaced with an actual calculation
 }</code></pre>
 <p>Now let’s compile and execute our code again:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl juliaSetSerial.chpl</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch serial.sh</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-f</span> solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> juliaSetSerial.chpl</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./juliaSetSerial</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code></code></pre>
 <!-- As we can see, the temperature in the middle of the plate (position 50,50) is slowly decreasing as the -->
 <!-- plate is cooling down. -->
@@ -584,9 +583,9 @@ for index in iterand {
 <!-- ``` -->
 <!-- and compile and execute our final code -->
 <!-- ```sh -->
-<!-- $ chpl baseSolver.chpl -o baseSolver -->
-<!-- $ sbatch serial.sh -->
-<!-- $ tail -f solution.out -->
+<!-- chpl baseSolver.chpl -->
+<!-- sbatch serial.sh -->
+<!-- tail -f solution.out -->
 <!-- ``` -->
 <!-- ```chpl -->
 <!-- Temperature at iteration 0: 25.0 -->

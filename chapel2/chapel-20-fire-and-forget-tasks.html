@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,9 +74,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f7333b7c44a7c3d55afcc11699a363c3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -355,7 +355,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-06-command-line-arguments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using command-line arguments</span></a>
+ <span class="menu-text">Command-line arguments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -515,9 +515,9 @@ begin {
   }
 }
 writeln('This is the main task, I am done ...');</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl begin.chpl <span class="at">-o</span> begin</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> begin.chpl</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>This is the main task starting first task
 This is the main task starting second task
 This is the main task, I am done ...
@@ -535,16 +535,14 @@ task 1: 110
 task 2: 110</code></pre>
 <p>As you can see the order of the output is not what we would expected, and actually it is somewhat unpredictable. This is a well known effect of concurrent tasks accessing the same shared resource at the same time (in this case the screen); the system decides in which order the tasks could write to the screen.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Caution</span>Discussion
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li>What would happen if in the last code we move the definition of <code>count</code> into the main task, but try to assign it from tasks 1 and 2?</li>
@@ -554,7 +552,6 @@ task 2: 110</code></pre>
 <li>What would happen if we try to insert a second definition <code>var x = 10;</code> inside the first <code>begin</code> statement?</li>
 </ol>
 <p>Answer: that will actually work, as we’ll simply create another, local instance of <code>x</code> with its own value.</p>
-</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -571,20 +568,17 @@ task 2: 110</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Caution</span>Discussion
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Are the concurrent tasks, spawned by the last code, running truly in parallel?</p>
 <p>Answer: it depends on the number of cores available to your job. If you have a single core, they’ll run concurrently, with the CPU switching between the tasks. If you have two cores, task1 and task2 will likely run in parallel using the two cores.</p>
-</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-important callout-titled">
@@ -611,10 +605,10 @@ cobegin {
   writeln('This is task 2, my value of x is ', x);
 }
 writeln('This message will not appear until all tasks are done ...');</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl cobegin.chpl <span class="at">-o</span> cobegin</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|begin|cobegin|'</span> shared.sh</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> cobegin.chpl</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|begin|cobegin|'</span> shared.sh</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>This is the main task, my value of x is 0
 This is task 2, my value of x is 0
 This is task 1, my value of x is 5
@@ -632,10 +626,10 @@ coforall taskid in 1..numtasks {
   writeln('this is task ', taskid, ': my value of count is ', count, ' and x is ', x);
 }
 writeln('This message will not appear until all tasks are done ...');</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl coforall.chpl <span class="at">-o</span> coforall</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sed <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|cobegin|coforall --numtasks=5|'</span> shared.sh</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch shared.sh</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> coforall.chpl</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|cobegin|coforall --numtasks=5|'</span> shared.sh</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>This is the main task: x = 10
 this is task 1: my value of c is 1 and x is 10
 this is task 2: my value of c is 4 and x is 10
@@ -645,32 +639,27 @@ this is task 5: my value of c is 25 and x is 10
 This message will not appear until all tasks are done ...</code></pre>
 <p>Notice the random order of the print statements. And notice how, once again, the variables declared outside the <code>coforall</code> can be read by all tasks, while the variables declared inside, are available only to the particular task.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Question Task.1
+<span class="screen-reader-only">Caution</span>Exercise Task.1
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Would it be possible to print all the messages in the right order? Modify the code in the last example as required and save it as <code>consecutive.chpl</code>. Hint: you can use an array of strings declared in the main task, into which all the concurrent tasks could write their messages in the right order. Then, at the end, have the main task print all elements of the array.</p>
 </div>
 </div>
-</div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Question Task.2
+<span class="screen-reader-only">Caution</span>Exercise Task.2
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Consider the following code <code>gmax.chpl</code> to find the maximum array element. Complete this code, and also time the <code>coforall</code> loop.</p>
 <pre class="chpl"><code>use Random, Time;
@@ -699,43 +688,36 @@ writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 <p>Write a parallel code to find the maximum value in the array <code>x</code>. Be careful: the number of tasks should not be excessive. Best to use <code>numtasks</code> to organize parallel loops. For each task compute the <code>start</code> and <code>finish</code> indices of its array elements and cycle through them to find the local maximum. Then in the main task cycle through all local maxima to find the global maximum.</p>
 </div>
 </div>
-</div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Caution</span>Discussion
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Run the code of last Exercise using different number of tasks, and different sizes of the array <code>x</code> to see how the execution time changes. For example:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./gmax <span class="at">--nelem</span><span class="op">=</span>100_000_000 <span class="at">--numtasks</span><span class="op">=</span>1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./gmax</span> <span class="at">--nelem</span><span class="op">=</span>100_000_000 <span class="at">--numtasks</span><span class="op">=</span>1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Discuss your observations. Is there a limit on how fast the code could run?</p>
-</div>
 </div>
 </div>
 <!-- Answer: (1) consider a small problem, increasing the number of tasks => no speedup   -->
 <!--         (2) consider a large problem, increasing the number of tasks => speedup up to the physical number of cores -->
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 <span class="screen-reader-only">Caution</span>Try this…
 </div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Substitute your addition to the code to find <em>gmax</em> in the last exercise with:</p>
 <pre class="chpl"><code>gmax = max reduce x;   // 'max' is one of the reduce operators (data parallelism example)</code></pre>
 <p>Time the execution of the original code and this new one. How do they compare?</p>
-</div>
 </div>
 </div>
 <!-- Answer: the built-in reduction operation runs in parallel utilizing all cores. -->

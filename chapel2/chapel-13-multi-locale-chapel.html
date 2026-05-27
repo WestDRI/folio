@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.9.38">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -74,9 +74,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d0ae9245876894da5ac7e18953ecc5cc.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f7333b7c44a7c3d55afcc11699a363c3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -355,7 +355,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../chapel2/chapel-06-command-line-arguments.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Using command-line arguments</span></a>
+ <span class="menu-text">Command-line arguments</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -516,17 +516,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <p>If you work inside a Chapel Docker container, e.g., <code>chapel/chapel</code>, the container environment simulates a multi-locale cluster, so you would compile and launch multi-locale Chapel codes directly by specifying the number of locales with <code>-nl</code> flag:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl <span class="at">--fast</span> mycode.chpl <span class="at">-o</span> mybinary</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ./mybinary <span class="at">-nl</span> 3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> mycode.chpl <span class="at">-o</span> mybinary</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./mybinary</span> <span class="at">-nl</span> 3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Inside the Docker container on multiple locales your code will not run any faster than on a single locale, since you are emulating a virtual cluster, and all tasks run on the same physical node. To achieve actual speedup, you need to run your parallel multi-locale Chapel code on a real HPC cluster.</p>
 </div>
 </div>
 <p>On an HPC cluster you would need to submit either an interactive or a batch job asking for several nodes and then run a multi-locale Chapel code inside that job. In practice, the exact commands to run multi-locale Chapel codes depend on how Chapel was configured on the cluster.</p>
-<p>When you compile a Chapel code with the multi-locale Chapel compiler, two binaries will be produced. One is called <code>mybinary</code> and is a launcher binary used to submit the real executable <code>mybinary_real</code>. If the Chapel environment is configured properly with the launcher for the cluster’s physical interconnect, then you would simply compile the code and use the launcher binary <code>mybinary</code> to run a multi-locale code.</p>
+<p>When you compile a Chapel code with the multi-locale Chapel compiler, <strong>two binaries</strong> will be produced. One is called <code>mybinary</code> and is a launcher binary used to submit the real executable <code>mybinary_real</code>. If the Chapel environment is configured properly with the launcher for the cluster’s physical interconnect, then you would simply compile the code and use the launcher binary <code>mybinary</code> to run a multi-locale code.</p>
 <p>For the rest of this class we assume that you have a working multi-locale Chapel environment, whether provided by a Docker container or by multi-locale Chapel on a physical HPC cluster. We will run all examples on 3 nodes with 2 cores per node.</p>
 <!-- ```sh -->
-<!-- $ chpl mycode.chpl -o mybinary -->
-<!-- $ ./mybinary -nl 2 -->
+<!-- chpl mycode.chpl -o mybinary -->
+<!-- ./mybinary -nl 2 -->
 <!-- ``` -->
 <!-- The exact parameters of the job such as the maximum runtime and the requested memory can be specified -->
 <!-- with Chapel environment variables. One drawback of this launching method is that Chapel will have access -->
@@ -535,18 +535,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- The Compute Canada clusters Cedar and Graham employ two different physical interconnects, and since we -->
 <!-- use exactly the same multi-locale Chapel module on both clusters -->
 <!-- ```sh -->
-<!-- $ module load gcc chapel-slurm-gasnetrun_ibv/1.15.0 -->
-<!-- $ export GASNET_PHYSMEM_MAX=1G      # needed for faster job launch -->
-<!-- $ export GASNET_PHYSMEM_NOPROBE=1   # needed for faster job launch -->
+<!-- module load gcc chapel-slurm-gasnetrun_ibv/1.15.0 -->
+<!-- export GASNET_PHYSMEM_MAX=1G      # needed for faster job launch -->
+<!-- export GASNET_PHYSMEM_NOPROBE=1   # needed for faster job launch -->
 <!-- ``` -->
 <!-- we cannot configure the same single launcher for both. Therefore, we launch multi-locale Chapel codes -->
 <!-- using the real executable `mybinary_real`. For example, for an interactive job you would type: -->
 <!-- ```sh -->
-<!-- $ salloc --time=0:30:0 --nodes=4 --cpus-per-task=2 --mem-per-cpu=1000 --account=def-razoumov-ac -->
-<!-- $ echo $SLURM_NODELIST          # print the list of four nodes -->
-<!-- $ echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
-<!-- $ chpl mycode.chpl -o mybinary -->
-<!-- $ srun ./mybinary_real -nl 4   # will run on four locales with max 3 cores per locale -->
+<!-- salloc --time=0:30:0 --nodes=4 --cpus-per-task=2 --mem-per-cpu=1000 --account=def-razoumov-ac -->
+<!-- echo $SLURM_NODELIST          # print the list of four nodes -->
+<!-- echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
+<!-- chpl mycode.chpl -o mybinary -->
+<!-- srun ./mybinary_real -nl 4   # will run on four locales with max 3 cores per locale -->
 <!-- ``` -->
 <!-- Production jobs would be launched with `sbatch` command and a Slurm launch script as usual. -->
 <!-- Alternatively, instead of loading the system-wide module, you can configure multi-locale Chapel in your -->
@@ -555,19 +555,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- node unload `chapel-single` and load `chapel-multi-cedar`, and then start a **4-node** interactive job -->
 <!-- with **3 cores per MPI task** (12 cores per job): -->
 <!-- ```sh -->
-<!-- $ module unload chapel-single -->
-<!-- $ module load chapel-multi-cedar/1.16.0 -->
-<!-- $ salloc --time=2:00:0 --nodes=4 --cpus-per-task=3 --mem-per-cpu=1000 \ -->
+<!-- module unload chapel-single -->
+<!-- module load chapel-multi-cedar/1.16.0 -->
+<!-- salloc --time=2:00:0 --nodes=4 --cpus-per-task=3 --mem-per-cpu=1000 \ -->
 <!--          --account=def-razoumov-ws_cpu --reservation=arazoumov-may17 -->
-<!-- $ echo $SLURM_NODELIST          # print the list of nodes (should be four) -->
-<!-- $ echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
-<!-- $ export HFI_NO_CPUAFFINITY=1   # to enable parallelism on each locale with OmniPath drivers -->
-<!-- $ export CHPL_RT_NUM_THREADS_PER_LOCALE=$SLURM_CPUS_PER_TASK   # to limit the number of tasks -->
+<!-- echo $SLURM_NODELIST          # print the list of nodes (should be four) -->
+<!-- echo $SLURM_CPUS_PER_TASK     # print the number of cores per node (3) -->
+<!-- export HFI_NO_CPUAFFINITY=1   # to enable parallelism on each locale with OmniPath drivers -->
+<!-- export CHPL_RT_NUM_THREADS_PER_LOCALE=$SLURM_CPUS_PER_TASK   # to limit the number of tasks -->
 <!-- ``` -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Making <code>srun</code> work with multi-locale Chapel is a little bit tricky, as both <code>srun</code> and multi-locale Chapel supply their own parallel launcher. For this reason, here we switch from using <code>srun</code> to using <code>sbatch</code>, which is also a proper way to launch larger parallel jobs on a producton cluster.</p>
+</div>
+</div>
 <p>Let’s write a job submission script <code>distributed.sh</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --time=0:5:0         # walltime in d-hh:mm or hh:mm:ss format</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=1000   # in MB</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --mem-per-cpu=3600   # in MB</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --nodes=3</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --cpus-per-task=2</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#SBATCH --output=solution.out</span></span>
@@ -578,13 +591,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="simple-multi-locale-codes" class="level2">
 <h2 class="anchored" data-anchor-id="simple-multi-locale-codes">Simple multi-locale codes</h2>
 <p>Let us test our multi-locale Chapel environment by launching the following code:</p>
-<!-- $ module load arch/avx2   # not necessary, unless you land on an avx512 node -->
-<!-- $ module load gcc/9.3.0 chapel-ofi/1.31.0 -->
-<pre class="chpl"><code>writeln(Locales);</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl <span class="at">-o</span> test</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch distributed.sh</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- module load arch/avx2   # not necessary, unless you land on an avx512 node -->
+<!-- module load gcc/9.3.0 chapel-ofi/1.31.0 -->
+<pre class="chpl"><code>// this is test.chpl
+writeln(Locales);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> unload chapel-multicore</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> test</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># chpl test.chpl -o test   # same</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># chpl test.chpl           # same</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> distributed.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This code will print the built-in global array <code>Locales</code>. Running it on four locales will produce</p>
 <pre><code>LOCALE0 LOCALE1 LOCALE2</code></pre>
 <p>We want to run some code on each locale (node). For that, we can cycle through locales:</p>
@@ -614,23 +631,23 @@ for loc in Locales do
     writeln("  ...has ", here.physicalMemory(unit=MemUnits.GB, retType=real), " GB of memory");
     writeln("  ...has ", here.maxTaskPar, " maximum parallelism to expect");
   }</code></pre>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> chpl test.chpl <span class="at">-o</span> test</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sbatch distributed.sh</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> test.chpl</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> distributed.sh</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre class="output"><code>locale #0...
-  ...is named: node1.int.school.vastcloud.org
+  ...is named: node1.int.cass.vastcloud.org
   ...has 2 processor cores
-  ...has 29.124 GB of memory
+  ...has 14.6278 GB of memory
   ...has 2 maximum parallelism to expect
 locale #1...
-  ...is named: node2.int.school.vastcloud.org
+  ...is named: node2.int.cass.vastcloud.org
   ...has 2 processor cores
-  ...has 29.124 GB of memory
+  ...has 14.6278 GB of memory
   ...has 2 maximum parallelism to expect
 locale #2...
-  ...is named: node3.int.school.vastcloud.org
+  ...is named: node3.int.cass.vastcloud.org
   ...has 2 processor cores
-  ...has 29.124 GB of memory
+  ...has 14.6278 GB of memory
   ...has 2 maximum parallelism to expect</code></pre>
 <p>Note that while Chapel correctly determines the number of cores available inside our job on each node (maximum parallelism) but lists the total physical memory on each node available to all running jobs which <em>is not the same</em> as the total memory per node allocated to our job.</p>
 
