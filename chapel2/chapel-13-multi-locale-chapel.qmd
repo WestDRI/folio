@@ -102,10 +102,23 @@ Let's write a job submission script `distributed.sh`:
 ./test -nl 3   # in this case the 'srun' launcher is already configured for our interconnect
 ```
 
+::: {.callout-note}
+##### Discussion
+1. How many Unix processes (MPI ranks) are we launching here?
+1. How many CPU cores we'll be using in this job?
+:::
+
 <!-- Check: without `CHPL_RT_NUM_THREADS_PER_LOCALE`, will 32 threads run on separate 32 cores -->
 <!-- or will they run on the 3 cores inside our Slurm job? -->
 
 ## Simple multi-locale codes
+
+Before compiling codes, we need to switch from single- to multi-locale Chapel:
+
+```sh
+module unload chapel-multicore
+source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh
+```
 
 Let us test our multi-locale Chapel environment by launching the following code:
 
@@ -117,9 +130,6 @@ Let us test our multi-locale Chapel environment by launching the following code:
 writeln(Locales);
 ```
 ```sh
-module unload chapel-multicore
-source /project/def-sponsor00/shared/syncHPC/startMultiLocale.sh
-
 make test
 # chpl test.chpl -o test   # same
 # chpl test.chpl           # same
