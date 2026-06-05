@@ -168,15 +168,17 @@ sinfo -o "%G" | grep gpu | sed 's/gpu://g' | sed 's/),/\n/g' | cut -d: -f1 | sor
 
 module load cuda/12.6
 source /project/def-sponsor00/shared/env-numba/bin/activate
-salloc --time=2:0:0 --mem=3600 --gpus-per-node=1
 
-python
+# salloc --time=2:0:0 --mem=3600 --gpus-per-node=1
+# python
+
+srun --mem=3600 --gpus-per-node=1 python test.py
 ```
 ```py
+# this is test.py
 from numba import cuda
-
 print(cuda.gpus)                # list of numerical IDs
-cuda.select_device(device_id)   # if several GPUs, select which GPU to use
+# cuda.select_device(device_id)   # if several GPUs, select which GPU to use
 ```
 
 
@@ -535,7 +537,7 @@ data = np.ones(1_000)
 threadsPerBlock = 256
 blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock
 
-test[blocksPerGrid, threadsPerBlock](data)
+increment[blocksPerGrid, threadsPerBlock](data)
 ```
 
 ::: {.callout-caution collapse="true"}
@@ -572,8 +574,7 @@ test[blocksPerGrid, threadsPerBlock]()
 ```
 :::
 
-<!-- Answer: the function will compile, but it won't launch the kernel, as launching a kernel requires a data -->
-<!-- argument. No input array => no kernel launch. -->
+<!-- Answer: the function will compile and run and produce the same output. -->
 
 You can simplify the last `increment(data)` to:
 

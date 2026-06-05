@@ -35,6 +35,17 @@ therefore CPU-bound) workflows, both with and without reduction. We will also lo
 
 
 
+## Running on the training cluster
+
+Here is the setup for this part (do this from the **login node**):
+
+```sh
+module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2
+source /project/def-sponsor00/shared/env-hpc/bin/activate
+export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0   # to get rid of a new annoying warning
+salloc --cpus-per-task=4 --time=2:00:0 --mem-per-cpu=3600
+python
+```
 
 ## Initializing Ray
 
