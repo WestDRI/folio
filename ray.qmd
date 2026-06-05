@@ -379,10 +379,10 @@ def square(x):
     return x*x
 
 @ray.remote
-def runCompiled():
-    return square(5)
+def runCompiled(x):
+    return square(x)
 
-r = runCompiled.remote()
+r = runCompiled.remote(5)
 ray.get(r)
 ```
 
@@ -399,11 +399,11 @@ def square(x):
     return x*x
 
 @ray.remote
-def runCompiled():
+def runCompiled(x):
     compiledSquare = jit(square)
-    return compiledSquare(5)
+    return compiledSquare(x)
 
-r = runCompiled.remote()
+r = runCompiled.remote(5)
 ray.get(r)
 ```
 
