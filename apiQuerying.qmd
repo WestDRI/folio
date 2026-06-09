@@ -1,0 +1,544 @@
+---
+title: "Introduction to API querying"
+aliases:
+  - /api
+---
+
+**Wednesday, June 10<sup>th</sup>, 9:00am–noon Eastern Time**
+
+**Disclaimer**: These notes were adapted from the 2025 DHSI notes by Tannia Chevez.
+
+## Learning Objectives
+
+1. **Understand what an API is** and why they are useful in Humanities & Social Sciences research
+1. Differentiate between (1) text mining, (2) web scraping, and (3) API querying
+1. Assess if a website has an API and **where to find it**
+1. Practice how to make a **request** to an API
+1. Execute **query parameters** and **endpoints** to further specify which kind of data you are interested in
+1. Interpret **status codes** and **responses** from APIs
+1. Apply **JSON format** to parse data
+
+## What is an API?
+
+API stands for **application programming interface**. It acts as a communication interface so different
+computers/systems can talk to the application or backend server hosting the API. Essentially, it is a set of
+rules that allow programs to talk to each other: the developer creates the API on the server that allows a
+client to talk to it.
+
+:::{style="text-align: center;"}
+![](/originalSlides/how.png)
+:::
+
+## Why are APIs useful?
+
+Python APIs are useful because they allow Python programs to communicate with external services, applications,
+and databases in a simple and standardized way. They make it possible to:
+
+1. access frequently updated data in real time,
+1. retrieve only the specific information you need from a large dataset,
+1. access a vast ecosystem of online services without having to build everything from scratch, and
+1. automate workflows, e.g. by offloading repeated computations or complex processing to a remote server, or
+   putting multiple server calls into a Python script that you run once.
+
+:::{style="text-align: center;"}
+![](/originalSlides/genre.png){width=65%}
+:::
+
+## Difference between text mining, web scraping, and APIs
+
+**Text mining / analysis** is a broad term for various research methods used to retrieve, describe, interpret
+and understand texts. For researchers interested in internet-based methods, terms such as *"web scraping"* and
+*"data mining"* are often used interchangeably to describe techniques to collect and organise textual data for
+analysis.
+
+**Web scraping** refers to the process of automatically extracting textual data from web pages and other
+digital files.
+
+**APIs** provide data in a digital format that computers can understand and use -- often referred to as
+*machine-readable data*.
+
+## Key concepts of API
+
+- **Endpoint** is the URL where the API can be accessed.
+- **Request** is the action of querying the API.
+- **Response** is the data returned by the API.
+- **HTTP Methods**: common methods include GET (retrieve data), POST (send data), PUT (update data), and DELETE (remove data).
+- **Authentication**: many APIs require a key or token to authenticate requests
+
+## Three main types of web APIs
+
+1. **SOAP (Simple Object Access Protocol)** is typically associated with the enterprise world, has a stricter
+   contract-based usage, and is mostly designed around actions.
+2. **REST (Representational State Transfer)** is typically used for public APIs and is ideal for fetching data
+   from the web. It's much lighter and closer to the HTTP specification than SOAP.
+3. **GraphQL (Graph Query Language)** is a pretty new, flexible query language for APIs that allows the user
+   to decide exactly what they want the API to fetch from the application instead of the reverse.
+
+## Six steps to querying APIs
+
+### 1. Read the API documentation
+
+Pay attention to the key sections in the API documentation:
+
+- **Overview**: General information about the API and its purpose.
+- **Endpoints**: The specific URLs where API requests can be made.
+- **Methods**: The HTTP methods (GET, POST, PUT, DELETE) used to interact with the API.
+- **Parameters**: Required and optional parameters for API requests.
+- **Authentication**: How to authenticate requests, typically using API keys or tokens.
+- **Error Codes**: Information on potential errors and their meanings.
+
+Some good examples:
+
+- gold standard for layout & design <https://docs.stripe.com/api>
+- best for live, interactive learning <https://jsonplaceholder.typicode.com>
+- best for teaching complex structures and formats <https://pokeapi.co>
+- best for open standards and testing <https://petstore.swagger.io>
+- best for advanced concepts (webhooks and pagination) <https://docs.github.com>
+
+### 2. Set up your environment
+
+To interact with an API, you'll need a tool or environment for making HTTP requests. Some popular options
+include:
+
+- **Postman**: a powerful GUI tool for testing and developing APIs.
+- **cURL**: a command-line tool for making HTTP requests.
+- **HTTP libraries in programming languages**: libraries like `requests` in Python, which we will be using
+  today.
+
+### 3. Authentication
+
+Most APIs require authentication to ensure that only authorized users can access the data or services. Common
+authentication methods include:
+
+- **API key**: a unique key provided by the API service, included in the request header or URL.
+- **OAuth (Open Authorization)**: a more secure method that involves token-based authentication.
+- **Basic authorization**: encodes the username and password in the request header.
+
+In our first two examples today, we will use sites that don't require API keys or authentication. In the third
+example, you will need to create an API key.
+
+### 4. Send a request and receive a response
+
+When you call (or query) an API you are making a *request*. When you make a request of an API, it will always
+send you a response.
+
+- **Requests** contain relevant data regarding your API request call, such as the base URL, the endpoint, the
+  method used, the headers, and so on.
+- **Responses** contain relevant data returned by the server, including the data or content, the status code,
+  and the headers.
+
+The API usually returns this data in JavaScript Object Notation (JSON) format.
+
+:::{style="text-align: center;"}
+![](/originalSlides/json.png){width=30%}
+:::
+
+### 5. Error handling: status codes
+
+Web servers return status codes every time they receive an API request. A status code reports what happened
+with a request. Here are some codes that are relevant to GET requests:
+
+- **200** - Everything went okay, and the server returned a result (if any).
+- **301** - The server is redirecting you to a different endpoint. This can happen when a company switches
+  domain names, or when an endpoint's name has changed.
+- **401** - The server thinks you're not authenticated. This happens when you don't send the right credentials
+  to access an API.
+- **400** - The server thinks you made a bad request. This can happen when you don't send the information that
+  the API requires to process your request (among other things).
+- **403** - The resource you're trying to access is forbidden, and you don't have the right permissions to see it.
+- **404** - The server didn't find the resource you tried to access.
+
+### 6. Advanced API requests
+
+After mastering the basics, you can explore more advanced API features such as:
+
+- **Pagination**: handling large datasets by retrieving data in chunks.
+- **Filtering and sorting**: requesting specific subsets of data.
+- **Rate limiting**: managing API usage to avoid hitting limits.
+
+## Let's get started in JupyterLab!
+
+<!-- ```sh -->
+<!-- uv venv ~/env-dhsi --python 3.12        # create a new virtual environment -->
+<!-- source ~/env-dhsi/bin/activate -->
+<!-- uv pip install --upgrade pip -->
+<!-- uv pip install requests -->
+<!-- uv pip list                              # show installed packages -->
+<!-- ... -->
+<!-- deactivate -->
+<!-- ``` -->
+
+```py
+import requests             # need this to interact with the API
+import json                 # need this to help with formatting the response
+from pprint import pprint   # will make things easier for us to read
+import time                 # will allow us to introduce time delays in our program
+```
+
+Let's explore the `requests` and `json` libraries using `help()` function:
+
+```py
+help(requests)
+help(json)
+```
+
+
+
+
+
+<!-- ## First example: Cat Facts API <https://catfact.ninja>{target="_blank"} -->
+
+<!-- Cat Facts API supports the following endpoints: -->
+
+<!-- URL for querying: `https://catfact.ninja/fact` - get one random fact   -->
+<!-- URL for querying: `https://catfact.ninja/facts` - get multiple random facts   -->
+<!-- URL for querying: `https://catfact.ninja/breeds` - get a list of breeds -->
+
+<!-- When you send a request to `https://catfact.ninja/fact` endpoint (try it in the browser), the API sends back a -->
+<!-- JSON object that contains two attributes: `fact` and `length`. Let's do it programmatically! -->
+
+<!-- We start by creating a variable for base URL. Let's do a simple request and see what we get: -->
+
+<!-- ```py -->
+<!-- base_url = "https://catfact.ninja/facts"   # this is the base url for cat facts -->
+<!-- requests.get(base_url)                     # try a request just from the base URL -->
+<!-- ``` -->
+
+<!-- Let's store the response in a variable and explore its various attributes: -->
+
+<!-- ```py -->
+<!-- cat_facts = requests.get(base_url) -->
+<!-- cat_facts.status_code   # integer code -->
+<!-- cat_facts.headers       # dictionary -->
+<!-- cat_facts.text          # string -->
+<!-- ``` -->
+
+<!-- The output for the `.text` attribute is actually JSON (Javascript object notation). If we apply a JSON method, -->
+<!-- we can export this as a dictionary, which will be much easier for us to work with: -->
+
+<!-- ```py -->
+<!-- cat_facts.json()        # dictionary -->
+<!-- ``` -->
+
+<!-- Next, let's add a query parameter: -->
+
+<!-- ```py -->
+<!-- many_cat_facts = requests.get(base_url+"?limit=50") -->
+<!-- many_cat_facts.json() -->
+<!-- ``` -->
+
+<!-- ::: {.callout-caution} -->
+<!-- ##### Exercise -->
+<!-- When you print the JSON strings from `cat_facts` and `many_cat_facts`, they appear to have different lengths -->
+<!-- on screen, but their actual lengths are identical: `len(cat_facts.json()) == len(many_cat_facts.json())` -->
+<!-- returns `True`. Can you identify which variables differ between the two outputs? -->
+<!-- ::: -->
+
+<!-- <\!-- Solution: -\-> -->
+<!-- <\!-- ```py -\-> -->
+<!-- <\!-- len(cat_facts.json()['data'])        # 10 -\-> -->
+<!-- <\!-- len(many_cat_facts.json()['data'])   # 50 -\-> -->
+<!-- <\!-- ``` -\-> -->
+
+<!-- :::{style="text-align: center;"} -->
+<!-- ![](/originalSlides/facts.png){width=60%} -->
+<!-- ::: -->
+
+<!-- ::: {.callout-caution} -->
+<!-- ##### Exercise -->
+<!-- Let's query the `/breeds` attribute and limit our results to 10. -->
+<!-- ::: -->
+
+<!-- <\!-- Solution: -\-> -->
+<!-- <\!-- ```py -\-> -->
+<!-- <\!-- import requests -\-> -->
+<!-- <\!-- breeds = requests.get("https://catfact.ninja/breeds?limit=10") -\-> -->
+<!-- <\!-- breeds.json() -\-> -->
+<!-- <\!-- ``` -\-> -->
+
+
+
+
+## 1st example: Star Wars API
+
+The [Star Wars API site](https://swapi.info){target="_blank"} was created by Paul Hallett in 2014 to give
+developers and students an easy, fun way to practice working with web APIs using familiar data from the Star
+Wars universe. Over time, SWAPI became one of the best-known "toy APIs" used to teach concepts like:
+
+- fetching data from APIs,
+- pagination,
+- relational data,
+- asynchronous programming,
+- API testing.
+
+First, let's take a look at the API documentation <https://swapi.info/documentation>{target="_blank"}.
+
+The *root/base URL* `https://swapi.info/api` is the root URL for all of the API. If you ever make a request to
+SWAPI and get a 404 NOT FOUND response, check the Base URL first. All examples below assume you are prepending
+this Base URL to the endpoints to make requests.
+
+There are several endpoints you can use to search specific resources:
+
+- `/films` is the URL root for Film resources
+- `/people` is the URL root for People resources
+- `/planets` is the URL root for Planet resources
+- `/species` is the URL root for Species resources
+- `/starships` is the URL root for Starships resources
+- `/vehicles` is the URL root for Vehicles resources
+
+We will work with the `/people` endpoint today. Let's create a variable for this endpoint URL and do a simple
+request to it:
+
+```py
+import requests
+people_url = "https://swapi.info/api/people"
+all_people_api = requests.get(people_url)   # create a variable for the people_url request
+all_people_api.json()                       # print in JSON format
+```
+
+Unlike in the previous example where it returned a dictionary, here `.json()` function returns a list:
+
+```py
+p = all_people_api.json()
+type(p)      # <class 'list'>
+len(p)       # 82 records
+type(p[0])   # <class 'dict'>
+p[0]         # show the first record
+```
+
+Each element in this list is a dictionary containing a number of attributes for each Stars Wars character:
+`name`, `height`, `mass`, `hair_color`, and so on.
+
+::: {.callout-note}
+##### JSON format
+JSON data is formatted in **key-value pairs**. If you refer to the JSON data (below), you'll see that it's
+actually a list of keys and their corresponding values. For example, there is a `birth_year` key whose value
+is `19BBY`, as well as an `eye_color` key whose value is `blue`.
+
+We can refer to the JSON data by its **key**. Below is the full list of keys that we can refer to.
+
+- `name` string = The name of this person.
+- `birth_year` string = The birth year of the person, using the in-universe standard of BBY or ABY - Before
+  the Battle of Yavin or After the Battle of Yavin. The Battle of Yavin is a battle that occurs at the end of
+  Star Wars episode IV: A New Hope.
+- `eye_color` string = The eye color of this person. Will be "unknown" if not known or "n/a" if the person
+  does not have an eye.
+- `gender` string = The gender of this person. Either "Male", "Female" or "unknown", or "n/a" if the person
+  does not have a gender.
+- `hair_color` string = The hair color of this person. Will be "unknown" if not known or "n/a" if the person
+  does not have hair.
+- `height` string = The height of the person in centimeters.
+- `mass` string = The mass of the person in kilograms.
+- `skin_color` string = The skin color of this person.
+- `homeworld` string = The URL of a planet resource, a planet that this person was born on or 
+- `films` array = An array of film resource URLs that this person has been in.
+- `species` array = An array of species resource URLs that this person belongs to.
+- `starships` array = An array of starship resource URLs that this person has piloted.
+- `vehicles` array = An array of vehicle resource URLs that this person has piloted.
+- `url` string = the hypermedia URL of this resource.
+- `created` string = the ISO 8601 date format of the time that this resource was created.
+- `edited` string = the ISO 8601 date format of the time that this resource was edited.
+:::
+
+
+Now, if you continue to add to the endpoint, you can get a specific Stars Wars character's record:
+
+::: {.callout-note}
+- `/people/<id>` will return a specific person's record
+- unlike in Python data structures, here numbering starts with 1
+:::
+
+```py
+len(requests.get(people_url+"").json())
+requests.get(people_url+"/1").json()
+```
+
+We can put it all into variables:
+
+```py
+api_url ="https://swapi.info/api/people/1"
+api_url_response = requests.get(api_url)
+api_url_response.json()
+hair = api_url_response.json()['hair_color']   # value of the `hair_color` key
+name = api_url_response.json()['name']         # value of the `name` key
+print(name, "'s hair is:"‚ hair)
+```
+
+::: {.callout-caution}
+##### Your turn
+Can you write some code that uses the API to tell us Luke Skywalker's eye color?
+:::
+
+::: {.callout-caution}
+##### Another endpoint
+Let's try a different endpoint! Choose one from the
+[documentation](https://swapi.info/documentation){target="_blank"} and extract a full JSON object. Which
+attribute(s) do you see for this endpoint?
+:::
+
+
+
+
+
+
+
+## 2nd example: Open-Meteo
+
+The [Open-Meteo project](https://open-meteo.com){target="_blank"} was built to provide a free, open-source,
+production-grade weather API based on publicly available, high-resolution hourly meteorological data from
+national weather services, without requiring an API key for basic or educational use.
+
+- documentation <https://open-meteo.com/en/docs>{target="_blank"}
+- non-commercial use up to 10,000 daily API calls is free
+- attribution is required under the CC BY 4.0 data licence
+
+Unlike the Star Wars toy API example, Open-Meteo serves real-world data as nested JSON structures, with
+coordinates (latitude/longitude parameters) and large arrays of numerical data. It is the perfect dataset to
+feed directly into a Python library like Pandas, NumPy, or Plotly for timeseries analysis, plotting
+temperature trends, or creating interactive wind/rain dashboards.
+
+You can interact with Open-Meteo using standard HTTP requests and Python's popular `requests` or `urllib`
+libraries. In addition, they also created a custom `openmeteo-requests` library as their official SDK uses the
+*Open-Meteo Compact* (OMC) binary format with FlatBuffers (open-source serialization library from Google)
+instead of JSON, resulting in a much more efficient data stream. This becomes beneficial if you are trying to
+download a large historical dataset, e.g. 40 years of hourly data over multiple locations.
+
+However, we will start with a more basic Python workflow: `requests` $\rightarrow$ `pandas` $\rightarrow$
+`matplotlib`.
+
+```py
+import requests
+
+url = "https://api.open-meteo.com/v1/forecast"   # API endpoint
+params = {
+    "latitude": 35.6762, "longitude": 139.6503, # Tokyo
+    "current": ["temperature_2m", "relative_humidity_2m", "weather_code"], # 2m means 2 meters above the ground
+    "hourly": ["temperature_2m", "precipitation_probability"],
+    "timezone": "auto"   # automatically detects timezone based on coordinates
+}
+
+response = requests.get(url, params=params)
+print(response.status_code)   # 200 means success
+data = response.json()
+
+current = data['current']   # current weather
+print("Current time:", current['time'])
+print("Current temperature:", current['temperature_2m'], "°C")
+print("Current humidity:", current['relative_humidity_2m'], "%")
+
+forecast = data['hourly']    # dictionary
+forecast['time']             # forecast times for the next 168 hours
+forecast['temperature_2m']   # forecast temperature for the next 168 hours
+forecast['precipitation_probability']   # forecast precipitation for the next 168 hours
+```
+
+::: {.callout-caution}
+##### Exercise: Montreal forecast for the next 3 days
+Write a script to plot the forecast (temperature and precipitation) for Montreal over the next 72 hours.
+<!-- abc -->
+:::
+
+::: {.callout-caution}
+##### Exercise: switch to `urllib` library
+Use an LLM to translate this code from using `requests` to using Python's built-in `urllib` library.
+:::
+
+Finally, we can try Open-Meteo's own API library. Let's install it with *something like this* (details depend
+on how exactly you installed Python on your computer):
+
+```sh
+source ~/env-dhsi/bin/activate
+uv pip install openmeteo-requests
+uv pip install requests-cache retry-requests numpy pandas
+```
+
+::: {.callout-caution}
+##### Exercise: switch to `openmeteo-requests` library
+Try to run the same request using Open-Meteo's own API library. You can either use an LLM or read [their
+documentation](https://open-meteo.com/en/docs){target="_blank"}.
+:::
+
+
+
+
+
+
+
+## 3rd example: Google Gemini
+
+While Google provides an official `google-genai` SDK as an interface for developers to integrate Google's
+generative models into their Python applications, you can use the standard `requests` library to interact with
+their REST API directly.
+
+- free-tier access to cutting-edge LLMs via standard REST endpoints
+- can easily build a custom AI assistant or text-processing tool in 10-20 lines of Python
+- need to create an API key (details below)
+- pass a JSON payload containing your prompt to the backend and retrieve the LLM's response
+
+How to get your own Gemini API key:
+
+1. log in to [Google AI Studio](https://aistudio.google.com){target="_blank"} using your standard Google account
+2. click on <font style="color:blue">Get API key</font> in the lower left menu
+3. click "Create API key", name your key (I called mine "DHSI26 test key"), select project (I used "Default
+   Gemini Project"), click "Create key"
+4. copy the key to your computer
+
+```py
+import json
+import requests
+
+API_KEY = "..."   # paste your own API key; the instructor will use his password manager
+MODEL = "gemini-2.5-flash"   # also 'gemini-2.5-pro'
+url = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL}:generateContent?key={API_KEY}"   # API endpoint
+headers = {"Content-Type": "application/json"}
+
+# create a JSON payload structure required by the Gemini API
+payload = {
+    "contents": [
+        {"parts": [{"text": "Explain the concept of 'API' in one short paragraph."}]}
+    ]
+}
+
+response = requests.post(url, headers=headers, data=json.dumps(payload))   # make the POST request
+print(response.status_code)   # 200 means success
+
+# extract the text response from the complex JSON structure
+data = response.json()['candidates'][0]['content']['parts'][0]['text']
+print(data)
+```
+
+As you can probably guess, by adding a text prompt and wrapping this mechanism in a Python loop, you can write
+Python code that runs as a Linux shell command and lets you interact with Google Gemini directly from the
+command line in your terminal.
+
+::: {.callout-caution}
+##### Exercise
+Let's do it! First, we need to see how to enter and process text in Python -- ask an LLM.
+:::
+
+
+
+
+
+
+
+## More resources on API querying
+
+- [Python and APIs](https://realpython.com/python-api){target="_blank"} from https://realpython.com
+- [Introduction to APIs and web scraping in Python](https://www.dataquest.io/course/apis-and-scraping){target="_blank"} (free online course, but requires an account)
+- [Understanding and using REST APIs](https://www.smashingmagazine.com/2018/01/understanding-using-rest-api){target="_blank"}
+- [API workbook for querying NYT](https://github.com/rochelleterman/scrape-interwebz/tree/master/1_APIs){target="_blank"} (GitHub repo)
+
+
+
+
+
+
+
+::: {.content-visible when-meta="false"}
+
+## To do
+
+read https://swapi.info/documentation
+
+:::
