@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Introduction to API querying – Various courses</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-0a6b7249c26820e032cb0bd839ff02b1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5a7edf553ce6f37e40c66d907d0f4061.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-02c264eca8910e7b441f47af9d1b12f7.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-5a7edf553ce6f37e40c66d907d0f4061.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles-ls.css">
+</head>
+
+<body class="quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link active" data-scroll-target="#learning-objectives">Learning Objectives</a></li>
+  <li><a href="#what-is-an-api" id="toc-what-is-an-api" class="nav-link" data-scroll-target="#what-is-an-api">What is an API?</a></li>
+  <li><a href="#why-are-apis-useful" id="toc-why-are-apis-useful" class="nav-link" data-scroll-target="#why-are-apis-useful">Why are APIs useful?</a></li>
+  <li><a href="#difference-between-text-mining-web-scraping-and-apis" id="toc-difference-between-text-mining-web-scraping-and-apis" class="nav-link" data-scroll-target="#difference-between-text-mining-web-scraping-and-apis">Difference between text mining, web scraping, and APIs</a></li>
+  <li><a href="#key-concepts-of-api" id="toc-key-concepts-of-api" class="nav-link" data-scroll-target="#key-concepts-of-api">Key concepts of API</a></li>
+  <li><a href="#three-main-types-of-web-apis" id="toc-three-main-types-of-web-apis" class="nav-link" data-scroll-target="#three-main-types-of-web-apis">Three main types of web APIs</a></li>
+  <li><a href="#six-steps-to-querying-apis" id="toc-six-steps-to-querying-apis" class="nav-link" data-scroll-target="#six-steps-to-querying-apis">Six steps to querying APIs</a>
+  <ul class="collapse">
+  <li><a href="#read-the-api-documentation" id="toc-read-the-api-documentation" class="nav-link" data-scroll-target="#read-the-api-documentation">1. Read the API documentation</a></li>
+  <li><a href="#set-up-your-environment" id="toc-set-up-your-environment" class="nav-link" data-scroll-target="#set-up-your-environment">2. Set up your environment</a></li>
+  <li><a href="#authentication" id="toc-authentication" class="nav-link" data-scroll-target="#authentication">3. Authentication</a></li>
+  <li><a href="#send-a-request-and-receive-a-response" id="toc-send-a-request-and-receive-a-response" class="nav-link" data-scroll-target="#send-a-request-and-receive-a-response">4. Send a request and receive a response</a></li>
+  <li><a href="#error-handling-status-codes" id="toc-error-handling-status-codes" class="nav-link" data-scroll-target="#error-handling-status-codes">5. Error handling: status codes</a></li>
+  <li><a href="#advanced-api-requests" id="toc-advanced-api-requests" class="nav-link" data-scroll-target="#advanced-api-requests">6. Advanced API requests</a></li>
+  </ul></li>
+  <li><a href="#lets-get-started-in-jupyterlab" id="toc-lets-get-started-in-jupyterlab" class="nav-link" data-scroll-target="#lets-get-started-in-jupyterlab">Let’s get started in JupyterLab!</a></li>
+  <li><a href="#st-example-star-wars-api" id="toc-st-example-star-wars-api" class="nav-link" data-scroll-target="#st-example-star-wars-api">1st example: Star Wars API</a></li>
+  <li><a href="#nd-example-open-meteo" id="toc-nd-example-open-meteo" class="nav-link" data-scroll-target="#nd-example-open-meteo">2nd example: Open-Meteo</a></li>
+  <li><a href="#rd-example-google-gemini" id="toc-rd-example-google-gemini" class="nav-link" data-scroll-target="#rd-example-google-gemini">3rd example: Google Gemini</a></li>
+  <li><a href="#more-resources-on-api-querying" id="toc-more-resources-on-api-querying" class="nav-link" data-scroll-target="#more-resources-on-api-querying">More resources on API querying</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Introduction to API querying</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><strong>Wednesday, June 10<sup>th</sup>, 9:00am–noon Eastern Time</strong></p>
+<p><strong>Disclaimer</strong>: These notes were adapted from the 2025 DHSI notes by Tannia Chevez.</p>
+<section id="learning-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="learning-objectives">Learning Objectives</h2>
+<ol type="1">
+<li><strong>Understand what an API is</strong> and why they are useful in Humanities &amp; Social Sciences research</li>
+<li>Differentiate between (1) text mining, (2) web scraping, and (3) API querying</li>
+<li>Assess if a website has an API and <strong>where to find it</strong></li>
+<li>Practice how to make a <strong>request</strong> to an API</li>
+<li>Execute <strong>query parameters</strong> and <strong>endpoints</strong> to further specify which kind of data you are interested in</li>
+<li>Interpret <strong>status codes</strong> and <strong>responses</strong> from APIs</li>
+<li>Apply <strong>JSON format</strong> to parse data</li>
+</ol>
+</section>
+<section id="what-is-an-api" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-an-api">What is an API?</h2>
+<p>API stands for <strong>application programming interface</strong>. It acts as a communication interface so different computers/systems can talk to the application or backend server hosting the API. Essentially, it is a set of rules that allow programs to talk to each other: the developer creates the API on the server that allows a client to talk to it.</p>
+<div style="text-align: center;">
+<p><img src="./originalSlides/how.png" class="img-fluid"></p>
+</div>
+</section>
+<section id="why-are-apis-useful" class="level2">
+<h2 class="anchored" data-anchor-id="why-are-apis-useful">Why are APIs useful?</h2>
+<p>Python APIs are useful because they allow Python programs to communicate with external services, applications, and databases in a simple and standardized way. They make it possible to:</p>
+<ol type="1">
+<li>access frequently updated data in real time,</li>
+<li>retrieve only the specific information you need from a large dataset,</li>
+<li>access a vast ecosystem of online services without having to build everything from scratch, and</li>
+<li>automate workflows, e.g.&nbsp;by offloading repeated computations or complex processing to a remote server, or putting multiple server calls into a Python script that you run once.</li>
+</ol>
+<div style="text-align: center;">
+<p><img src="./originalSlides/genre.png" class="img-fluid" style="width:65.0%"></p>
+</div>
+</section>
+<section id="difference-between-text-mining-web-scraping-and-apis" class="level2">
+<h2 class="anchored" data-anchor-id="difference-between-text-mining-web-scraping-and-apis">Difference between text mining, web scraping, and APIs</h2>
+<p><strong>Text mining / analysis</strong> is a broad term for various research methods used to retrieve, describe, interpret and understand texts. For researchers interested in internet-based methods, terms such as <em>“web scraping”</em> and <em>“data mining”</em> are often used interchangeably to describe techniques to collect and organise textual data for analysis.</p>
+<p><strong>Web scraping</strong> refers to the process of automatically extracting textual data from web pages and other digital files.</p>
+<p><strong>APIs</strong> provide data in a digital format that computers can understand and use – often referred to as <em>machine-readable data</em>.</p>
+</section>
+<section id="key-concepts-of-api" class="level2">
+<h2 class="anchored" data-anchor-id="key-concepts-of-api">Key concepts of API</h2>
+<ul>
+<li><strong>Endpoint</strong> is the URL where the API can be accessed.</li>
+<li><strong>Request</strong> is the action of querying the API.</li>
+<li><strong>Response</strong> is the data returned by the API.</li>
+<li><strong>HTTP Methods</strong>: common methods include GET (retrieve data), POST (send data), PUT (update data), and DELETE (remove data).</li>
+<li><strong>Authentication</strong>: many APIs require a key or token to authenticate requests</li>
+</ul>
+</section>
+<section id="three-main-types-of-web-apis" class="level2">
+<h2 class="anchored" data-anchor-id="three-main-types-of-web-apis">Three main types of web APIs</h2>
+<ol type="1">
+<li><strong>SOAP (Simple Object Access Protocol)</strong> is typically associated with the enterprise world, has a stricter contract-based usage, and is mostly designed around actions.</li>
+<li><strong>REST (Representational State Transfer)</strong> is typically used for public APIs and is ideal for fetching data from the web. It’s much lighter and closer to the HTTP specification than SOAP.</li>
+<li><strong>GraphQL (Graph Query Language)</strong> is a pretty new, flexible query language for APIs that allows the user to decide exactly what they want the API to fetch from the application instead of the reverse.</li>
+</ol>
+</section>
+<section id="six-steps-to-querying-apis" class="level2">
+<h2 class="anchored" data-anchor-id="six-steps-to-querying-apis">Six steps to querying APIs</h2>
+<section id="read-the-api-documentation" class="level3">
+<h3 class="anchored" data-anchor-id="read-the-api-documentation">1. Read the API documentation</h3>
+<p>Pay attention to the key sections in the API documentation:</p>
+<ul>
+<li><strong>Overview</strong>: General information about the API and its purpose.</li>
+<li><strong>Endpoints</strong>: The specific URLs where API requests can be made.</li>
+<li><strong>Methods</strong>: The HTTP methods (GET, POST, PUT, DELETE) used to interact with the API.</li>
+<li><strong>Parameters</strong>: Required and optional parameters for API requests.</li>
+<li><strong>Authentication</strong>: How to authenticate requests, typically using API keys or tokens.</li>
+<li><strong>Error Codes</strong>: Information on potential errors and their meanings.</li>
+</ul>
+<p>Some good examples:</p>
+<ul>
+<li>gold standard for layout &amp; design <a href="https://docs.stripe.com/api" class="uri">https://docs.stripe.com/api</a></li>
+<li>best for live, interactive learning <a href="https://jsonplaceholder.typicode.com" class="uri">https://jsonplaceholder.typicode.com</a></li>
+<li>best for teaching complex structures and formats <a href="https://pokeapi.co" class="uri">https://pokeapi.co</a></li>
+<li>best for open standards and testing <a href="https://petstore.swagger.io" class="uri">https://petstore.swagger.io</a></li>
+<li>best for advanced concepts (webhooks and pagination) <a href="https://docs.github.com" class="uri">https://docs.github.com</a></li>
+</ul>
+</section>
+<section id="set-up-your-environment" class="level3">
+<h3 class="anchored" data-anchor-id="set-up-your-environment">2. Set up your environment</h3>
+<p>To interact with an API, you’ll need a tool or environment for making HTTP requests. Some popular options include:</p>
+<ul>
+<li><strong>Postman</strong>: a powerful GUI tool for testing and developing APIs.</li>
+<li><strong>cURL</strong>: a command-line tool for making HTTP requests.</li>
+<li><strong>HTTP libraries in programming languages</strong>: libraries like <code>requests</code> in Python, which we will be using today.</li>
+</ul>
+</section>
+<section id="authentication" class="level3">
+<h3 class="anchored" data-anchor-id="authentication">3. Authentication</h3>
+<p>Most APIs require authentication to ensure that only authorized users can access the data or services. Common authentication methods include:</p>
+<ul>
+<li><strong>API key</strong>: a unique key provided by the API service, included in the request header or URL.</li>
+<li><strong>OAuth (Open Authorization)</strong>: a more secure method that involves token-based authentication.</li>
+<li><strong>Basic authorization</strong>: encodes the username and password in the request header.</li>
+</ul>
+<p>In our first two examples today, we will use sites that don’t require API keys or authentication. In the third example, you will need to create an API key.</p>
+</section>
+<section id="send-a-request-and-receive-a-response" class="level3">
+<h3 class="anchored" data-anchor-id="send-a-request-and-receive-a-response">4. Send a request and receive a response</h3>
+<p>When you call (or query) an API you are making a <em>request</em>. When you make a request of an API, it will always send you a response.</p>
+<ul>
+<li><strong>Requests</strong> contain relevant data regarding your API request call, such as the base URL, the endpoint, the method used, the headers, and so on.</li>
+<li><strong>Responses</strong> contain relevant data returned by the server, including the data or content, the status code, and the headers.</li>
+</ul>
+<p>The API usually returns this data in JavaScript Object Notation (JSON) format.</p>
+<div style="text-align: center;">
+<p><img src="./originalSlides/json.png" class="img-fluid" style="width:30.0%"></p>
+</div>
+</section>
+<section id="error-handling-status-codes" class="level3">
+<h3 class="anchored" data-anchor-id="error-handling-status-codes">5. Error handling: status codes</h3>
+<p>Web servers return status codes every time they receive an API request. A status code reports what happened with a request. Here are some codes that are relevant to GET requests:</p>
+<ul>
+<li><strong>200</strong> - Everything went okay, and the server returned a result (if any).</li>
+<li><strong>301</strong> - The server is redirecting you to a different endpoint. This can happen when a company switches domain names, or when an endpoint’s name has changed.</li>
+<li><strong>401</strong> - The server thinks you’re not authenticated. This happens when you don’t send the right credentials to access an API.</li>
+<li><strong>400</strong> - The server thinks you made a bad request. This can happen when you don’t send the information that the API requires to process your request (among other things).</li>
+<li><strong>403</strong> - The resource you’re trying to access is forbidden, and you don’t have the right permissions to see it.</li>
+<li><strong>404</strong> - The server didn’t find the resource you tried to access.</li>
+</ul>
+</section>
+<section id="advanced-api-requests" class="level3">
+<h3 class="anchored" data-anchor-id="advanced-api-requests">6. Advanced API requests</h3>
+<p>After mastering the basics, you can explore more advanced API features such as:</p>
+<ul>
+<li><strong>Pagination</strong>: handling large datasets by retrieving data in chunks.</li>
+<li><strong>Filtering and sorting</strong>: requesting specific subsets of data.</li>
+<li><strong>Rate limiting</strong>: managing API usage to avoid hitting limits.</li>
+</ul>
+</section>
+</section>
+<section id="lets-get-started-in-jupyterlab" class="level2">
+<h2 class="anchored" data-anchor-id="lets-get-started-in-jupyterlab">Let’s get started in JupyterLab!</h2>
+<!-- ```sh -->
+<!-- uv venv ~/env-dhsi --python 3.12        # create a new virtual environment -->
+<!-- source ~/env-dhsi/bin/activate -->
+<!-- uv pip install --upgrade pip -->
+<!-- uv pip install requests -->
+<!-- uv pip list                              # show installed packages -->
+<!-- ... -->
+<!-- deactivate -->
+<!-- ``` -->
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests             <span class="co"># need this to interact with the API</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json                 <span class="co"># need this to help with formatting the response</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint   <span class="co"># will make things easier for us to read</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time                 <span class="co"># will allow us to introduce time delays in our program</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Let’s explore the <code>requests</code> and <code>json</code> libraries using <code>help()</code> function:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(requests)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(json)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- ## First example: Cat Facts API <https://catfact.ninja>{target="_blank"} -->
+<!-- Cat Facts API supports the following endpoints: -->
+<!-- URL for querying: `https://catfact.ninja/fact` - get one random fact   -->
+<!-- URL for querying: `https://catfact.ninja/facts` - get multiple random facts   -->
+<!-- URL for querying: `https://catfact.ninja/breeds` - get a list of breeds -->
+<!-- When you send a request to `https://catfact.ninja/fact` endpoint (try it in the browser), the API sends back a -->
+<!-- JSON object that contains two attributes: `fact` and `length`. Let's do it programmatically! -->
+<!-- We start by creating a variable for base URL. Let's do a simple request and see what we get: -->
+<!-- ```py -->
+<!-- base_url = "https://catfact.ninja/facts"   # this is the base url for cat facts -->
+<!-- requests.get(base_url)                     # try a request just from the base URL -->
+<!-- ``` -->
+<!-- Let's store the response in a variable and explore its various attributes: -->
+<!-- ```py -->
+<!-- cat_facts = requests.get(base_url) -->
+<!-- cat_facts.status_code   # integer code -->
+<!-- cat_facts.headers       # dictionary -->
+<!-- cat_facts.text          # string -->
+<!-- ``` -->
+<!-- The output for the `.text` attribute is actually JSON (Javascript object notation). If we apply a JSON method, -->
+<!-- we can export this as a dictionary, which will be much easier for us to work with: -->
+<!-- ```py -->
+<!-- cat_facts.json()        # dictionary -->
+<!-- ``` -->
+<!-- Next, let's add a query parameter: -->
+<!-- ```py -->
+<!-- many_cat_facts = requests.get(base_url+"?limit=50") -->
+<!-- many_cat_facts.json() -->
+<!-- ``` -->
+<!-- ::: {.callout-caution} -->
+<!-- ##### Exercise -->
+<!-- When you print the JSON strings from `cat_facts` and `many_cat_facts`, they appear to have different lengths -->
+<!-- on screen, but their actual lengths are identical: `len(cat_facts.json()) == len(many_cat_facts.json())` -->
+<!-- returns `True`. Can you identify which variables differ between the two outputs? -->
+<!-- ::: -->
+<!-- <\!-- Solution: -\-> -->
+<!-- <\!-- ```py -\-> -->
+<!-- <\!-- len(cat_facts.json()['data'])        # 10 -\-> -->
+<!-- <\!-- len(many_cat_facts.json()['data'])   # 50 -\-> -->
+<!-- <\!-- ``` -\-> -->
+<!-- :::{style="text-align: center;"} -->
+<!-- ![](/originalSlides/facts.png){width=60%} -->
+<!-- ::: -->
+<!-- ::: {.callout-caution} -->
+<!-- ##### Exercise -->
+<!-- Let's query the `/breeds` attribute and limit our results to 10. -->
+<!-- ::: -->
+<!-- <\!-- Solution: -\-> -->
+<!-- <\!-- ```py -\-> -->
+<!-- <\!-- import requests -\-> -->
+<!-- <\!-- breeds = requests.get("https://catfact.ninja/breeds?limit=10") -\-> -->
+<!-- <\!-- breeds.json() -\-> -->
+<!-- <\!-- ``` -\-> -->
+</section>
+<section id="st-example-star-wars-api" class="level2">
+<h2 class="anchored" data-anchor-id="st-example-star-wars-api">1st example: Star Wars API</h2>
+<p>The <a href="https://swapi.info" target="_blank">Star Wars API site</a> was created by Paul Hallett in 2014 to give developers and students an easy, fun way to practice working with web APIs using familiar data from the Star Wars universe. Over time, SWAPI became one of the best-known “toy APIs” used to teach concepts like:</p>
+<ul>
+<li>fetching data from APIs,</li>
+<li>pagination,</li>
+<li>relational data,</li>
+<li>asynchronous programming,</li>
+<li>API testing.</li>
+</ul>
+<p>First, let’s take a look at the API documentation <a href="https://swapi.info/documentation" target="_blank">https://swapi.info/documentation</a>.</p>
+<p>The <em>root/base URL</em> <code>https://swapi.info/api</code> is the root URL for all of the API. If you ever make a request to SWAPI and get a 404 NOT FOUND response, check the Base URL first. All examples below assume you are prepending this Base URL to the endpoints to make requests.</p>
+<p>There are several endpoints you can use to search specific resources:</p>
+<ul>
+<li><code>/films</code> is the URL root for Film resources</li>
+<li><code>/people</code> is the URL root for People resources</li>
+<li><code>/planets</code> is the URL root for Planet resources</li>
+<li><code>/species</code> is the URL root for Species resources</li>
+<li><code>/starships</code> is the URL root for Starships resources</li>
+<li><code>/vehicles</code> is the URL root for Vehicles resources</li>
+</ul>
+<p>We will work with the <code>/people</code> endpoint today. Let’s create a variable for this endpoint URL and do a simple request to it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>people_url <span class="op">=</span> <span class="st">"https://swapi.info/api/people"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>all_people_api <span class="op">=</span> requests.get(people_url)   <span class="co"># create a variable for the people_url request</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>all_people_api.json()                       <span class="co"># print in JSON format</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Unlike in the previous example where it returned a dictionary, here <code>.json()</code> function returns a list:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> all_people_api.json()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(p)      <span class="co"># &lt;class 'list'&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(p)       <span class="co"># 82 records</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(p[<span class="dv">0</span>])   <span class="co"># &lt;class 'dict'&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>p[<span class="dv">0</span>]         <span class="co"># show the first record</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each element in this list is a dictionary containing a number of attributes for each Stars Wars character: <code>name</code>, <code>height</code>, <code>mass</code>, <code>hair_color</code>, and so on.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>JSON format
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>JSON data is formatted in <strong>key-value pairs</strong>. If you refer to the JSON data (below), you’ll see that it’s actually a list of keys and their corresponding values. For example, there is a <code>birth_year</code> key whose value is <code>19BBY</code>, as well as an <code>eye_color</code> key whose value is <code>blue</code>.</p>
+<p>We can refer to the JSON data by its <strong>key</strong>. Below is the full list of keys that we can refer to.</p>
+<ul>
+<li><code>name</code> string = The name of this person.</li>
+<li><code>birth_year</code> string = The birth year of the person, using the in-universe standard of BBY or ABY - Before the Battle of Yavin or After the Battle of Yavin. The Battle of Yavin is a battle that occurs at the end of Star Wars episode IV: A New Hope.</li>
+<li><code>eye_color</code> string = The eye color of this person. Will be “unknown” if not known or “n/a” if the person does not have an eye.</li>
+<li><code>gender</code> string = The gender of this person. Either “Male”, “Female” or “unknown”, or “n/a” if the person does not have a gender.</li>
+<li><code>hair_color</code> string = The hair color of this person. Will be “unknown” if not known or “n/a” if the person does not have hair.</li>
+<li><code>height</code> string = The height of the person in centimeters.</li>
+<li><code>mass</code> string = The mass of the person in kilograms.</li>
+<li><code>skin_color</code> string = The skin color of this person.</li>
+<li><code>homeworld</code> string = The URL of a planet resource, a planet that this person was born on or</li>
+<li><code>films</code> array = An array of film resource URLs that this person has been in.</li>
+<li><code>species</code> array = An array of species resource URLs that this person belongs to.</li>
+<li><code>starships</code> array = An array of starship resource URLs that this person has piloted.</li>
+<li><code>vehicles</code> array = An array of vehicle resource URLs that this person has piloted.</li>
+<li><code>url</code> string = the hypermedia URL of this resource.</li>
+<li><code>created</code> string = the ISO 8601 date format of the time that this resource was created.</li>
+<li><code>edited</code> string = the ISO 8601 date format of the time that this resource was edited.</li>
+</ul>
+</div>
+</div>
+<p>Now, if you continue to add to the endpoint, you can get a specific Stars Wars character’s record:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><code>/people/&lt;id&gt;</code> will return a specific person’s record</li>
+<li>unlike in Python data structures, here numbering starts with 1</li>
+</ul>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(requests.get(people_url<span class="op">+</span><span class="st">""</span>).json())</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>requests.get(people_url<span class="op">+</span><span class="st">"/1"</span>).json()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>We can put it all into variables:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>api_url <span class="op">=</span><span class="st">"https://swapi.info/api/people/1"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>api_url_response <span class="op">=</span> requests.get(api_url)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>api_url_response.json()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>hair <span class="op">=</span> api_url_response.json()[<span class="st">'hair_color'</span>]   <span class="co"># value of the `hair_color` key</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>name <span class="op">=</span> api_url_response.json()[<span class="st">'name'</span>]         <span class="co"># value of the `name` key</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(name, <span class="st">"'s hair is:"</span>‚ hair)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Your turn
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Can you write some code that uses the API to tell us Luke Skywalker’s eye color?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Another endpoint
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let’s try a different endpoint! Choose one from the <a href="https://swapi.info/documentation" target="_blank">documentation</a> and extract a full JSON object. Which attribute(s) do you see for this endpoint?</p>
+</div>
+</div>
+</section>
+<section id="nd-example-open-meteo" class="level2">
+<h2 class="anchored" data-anchor-id="nd-example-open-meteo">2nd example: Open-Meteo</h2>
+<p>The <a href="https://open-meteo.com" target="_blank">Open-Meteo project</a> was built to provide a free, open-source, production-grade weather API based on publicly available, high-resolution hourly meteorological data from national weather services, without requiring an API key for basic or educational use.</p>
+<ul>
+<li>documentation <a href="https://open-meteo.com/en/docs" target="_blank">https://open-meteo.com/en/docs</a></li>
+<li>non-commercial use up to 10,000 daily API calls is free</li>
+<li>attribution is required under the CC BY 4.0 data licence</li>
+</ul>
+<p>Unlike the Star Wars toy API example, Open-Meteo serves real-world data as nested JSON structures, with coordinates (latitude/longitude parameters) and large arrays of numerical data. It is the perfect dataset to feed directly into a Python library like Pandas, NumPy, or Plotly for timeseries analysis, plotting temperature trends, or creating interactive wind/rain dashboards.</p>
+<p>You can interact with Open-Meteo using standard HTTP requests and Python’s popular <code>requests</code> or <code>urllib</code> libraries. In addition, they also created a custom <code>openmeteo-requests</code> library as their official SDK uses the <em>Open-Meteo Compact</em> (OMC) binary format with FlatBuffers (open-source serialization library from Google) instead of JSON, resulting in a much more efficient data stream. This becomes beneficial if you are trying to download a large historical dataset, e.g.&nbsp;40 years of hourly data over multiple locations.</p>
+<p>However, we will start with a more basic Python workflow: <code>requests</code> <span class="math inline">\(\rightarrow\)</span> <code>pandas</code> <span class="math inline">\(\rightarrow\)</span> <code>matplotlib</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://api.open-meteo.com/v1/forecast"</span>   <span class="co"># API endpoint</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"latitude"</span>: <span class="fl">35.6762</span>, <span class="st">"longitude"</span>: <span class="fl">139.6503</span>, <span class="co"># Tokyo</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"current"</span>: [<span class="st">"temperature_2m"</span>, <span class="st">"relative_humidity_2m"</span>, <span class="st">"weather_code"</span>], <span class="co"># 2m means 2 meters above the ground</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hourly"</span>: [<span class="st">"temperature_2m"</span>, <span class="st">"precipitation_probability"</span>],</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"timezone"</span>: <span class="st">"auto"</span>   <span class="co"># automatically detects timezone based on coordinates</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, params<span class="op">=</span>params)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.status_code)   <span class="co"># 200 means success</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>current <span class="op">=</span> data[<span class="st">'current'</span>]   <span class="co"># current weather</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current time:"</span>, current[<span class="st">'time'</span>])</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current temperature:"</span>, current[<span class="st">'temperature_2m'</span>], <span class="st">"°C"</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current humidity:"</span>, current[<span class="st">'relative_humidity_2m'</span>], <span class="st">"%"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>forecast <span class="op">=</span> data[<span class="st">'hourly'</span>]    <span class="co"># dictionary</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'time'</span>]             <span class="co"># forecast times for the next 168 hours</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'temperature_2m'</span>]   <span class="co"># forecast temperature for the next 168 hours</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'precipitation_probability'</span>]   <span class="co"># forecast precipitation for the next 168 hours</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise: Montreal forecast for the next 3 days
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Write a script to plot the forecast (temperature and precipitation) for Montreal over the next 72 hours. <!-- abc --></p>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise: switch to <code>urllib</code> library
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Use an LLM to translate this code from using <code>requests</code> to using Python’s built-in <code>urllib</code> library.</p>
+</div>
+</div>
+<p>Finally, we can try Open-Meteo’s own API library. Let’s install it with <em>something like this</em> (details depend on how exactly you installed Python on your computer):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-dhsi/bin/activate</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install openmeteo-requests</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install requests-cache retry-requests numpy pandas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise: switch to <code>openmeteo-requests</code> library
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Try to run the same request using Open-Meteo’s own API library. You can either use an LLM or read <a href="https://open-meteo.com/en/docs" target="_blank">their documentation</a>.</p>
+</div>
+</div>
+</section>
+<section id="rd-example-google-gemini" class="level2">
+<h2 class="anchored" data-anchor-id="rd-example-google-gemini">3rd example: Google Gemini</h2>
+<p>While Google provides an official <code>google-genai</code> SDK as an interface for developers to integrate Google’s generative models into their Python applications, you can use the standard <code>requests</code> library to interact with their REST API directly.</p>
+<ul>
+<li>free-tier access to cutting-edge LLMs via standard REST endpoints</li>
+<li>can easily build a custom AI assistant or text-processing tool in 10-20 lines of Python</li>
+<li>need to create an API key (details below)</li>
+<li>pass a JSON payload containing your prompt to the backend and retrieve the LLM’s response</li>
+</ul>
+<p>How to get your own Gemini API key:</p>
+<ol type="1">
+<li>log in to <a href="https://aistudio.google.com" target="_blank">Google AI Studio</a> using your standard Google account</li>
+<li>click on <font style="color:blue">Get API key</font> in the lower left menu</li>
+<li>click “Create API key”, name your key (I called mine “DHSI26 test key”), select project (I used “Default Gemini Project”), click “Create key”</li>
+<li>copy the key to your computer</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>API_KEY <span class="op">=</span> <span class="st">"..."</span>   <span class="co"># paste your own API key; the instructor will use his password manager</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>MODEL <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>   <span class="co"># also 'gemini-2.5-pro'</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"https://generativelanguage.googleapis.com/v1beta/models/</span><span class="sc">{</span>MODEL<span class="sc">}</span><span class="ss">:generateContent?key=</span><span class="sc">{</span>API_KEY<span class="sc">}</span><span class="ss">"</span>   <span class="co"># API endpoint</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">"Content-Type"</span>: <span class="st">"application/json"</span>}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># create a JSON payload structure required by the Gemini API</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> {</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"contents"</span>: [</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"parts"</span>: [{<span class="st">"text"</span>: <span class="st">"Explain the concept of 'API' in one short paragraph."</span>}]}</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.post(url, headers<span class="op">=</span>headers, data<span class="op">=</span>json.dumps(payload))   <span class="co"># make the POST request</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.status_code)   <span class="co"># 200 means success</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co"># extract the text response from the complex JSON structure</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()[<span class="st">'candidates'</span>][<span class="dv">0</span>][<span class="st">'content'</span>][<span class="st">'parts'</span>][<span class="dv">0</span>][<span class="st">'text'</span>]</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>As you can probably guess, by adding a text prompt and wrapping this mechanism in a Python loop, you can write Python code that runs as a Linux shell command and lets you interact with Google Gemini directly from the command line in your terminal.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Exercise
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let’s do it! First, we need to see how to enter and process text in Python – ask an LLM.</p>
+</div>
+</div>
+</section>
+<section id="more-resources-on-api-querying" class="level2">
+<h2 class="anchored" data-anchor-id="more-resources-on-api-querying">More resources on API querying</h2>
+<ul>
+<li><a href="https://realpython.com/python-api" target="_blank">Python and APIs</a> from https://realpython.com</li>
+<li><a href="https://www.dataquest.io/course/apis-and-scraping" target="_blank">Introduction to APIs and web scraping in Python</a> (free online course, but requires an account)</li>
+<li><a href="https://www.smashingmagazine.com/2018/01/understanding-using-rest-api" target="_blank">Understanding and using REST APIs</a></li>
+<li><a href="https://github.com/rochelleterman/scrape-interwebz/tree/master/1_APIs" target="_blank">API workbook for querying NYT</a> (GitHub repo)</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/folio\.vastcloud\.org");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
