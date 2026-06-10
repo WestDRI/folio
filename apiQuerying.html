@@ -337,6 +337,7 @@ window.Quarto = {
   <li><a href="#nd-example-open-meteo" id="toc-nd-example-open-meteo" class="nav-link" data-scroll-target="#nd-example-open-meteo">2nd example: Open-Meteo</a></li>
   <li><a href="#rd-example-google-gemini" id="toc-rd-example-google-gemini" class="nav-link" data-scroll-target="#rd-example-google-gemini">3rd example: Google Gemini</a></li>
   <li><a href="#more-resources-on-api-querying" id="toc-more-resources-on-api-querying" class="nav-link" data-scroll-target="#more-resources-on-api-querying">More resources on API querying</a></li>
+  <li><a href="#thursday-workflows" id="toc-thursday-workflows" class="nav-link" data-scroll-target="#thursday-workflows">Thursday workflows</a></li>
   </ul>
 </nav>
     </div>
@@ -388,18 +389,18 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="why-are-apis-useful">Why are APIs useful?</h2>
 <p>Python APIs are useful because they allow Python programs to communicate with external services, applications, and databases in a simple and standardized way. They make it possible to:</p>
 <ol type="1">
-<li>access frequently updated data in real time,</li>
+<li>access frequently updated data in real time, e.g.&nbsp;weather or traffic data,</li>
 <li>retrieve only the specific information you need from a large dataset,</li>
 <li>access a vast ecosystem of online services without having to build everything from scratch, and</li>
 <li>automate workflows, e.g.&nbsp;by offloading repeated computations or complex processing to a remote server, or putting multiple server calls into a Python script that you run once.</li>
 </ol>
-<div style="text-align: center;">
-<p><img src="./fig/genre.png" class="img-fluid" style="width:65.0%"></p>
-</div>
+<!-- :::{style="text-align: center;"} -->
+<!-- ![](/fig/genre.png){width=65%} -->
+<!-- ::: -->
 </section>
 <section id="difference-between-text-mining-web-scraping-and-apis" class="level2">
 <h2 class="anchored" data-anchor-id="difference-between-text-mining-web-scraping-and-apis">Difference between text mining, web scraping, and APIs</h2>
-<p><strong>Text mining / analysis</strong> is a broad term for various research methods used to retrieve, describe, interpret and understand texts. For researchers interested in internet-based methods, terms such as <em>“web scraping”</em> and <em>“data mining”</em> are often used interchangeably to describe techniques to collect and organise textual data for analysis.</p>
+<p><strong>Text mining</strong> is the process of transforming raw, unstructured text into structured data to uncover meaningful insights and patterns. With text mining, you typically start with some basic text-processing techniques such as <em>tokenization</em> (breaking down sentences into individual words or tokens), <em>lowercasing</em> (converting all text to lowercase), <em>stop-word removal</em> (filtering out common words that carry little semantic meaning, e.g.&nbsp;“the,” “is,” “at”), and <em>stemming</em> and <em>lemmatization</em> (reducing words to their root form). Once you have nicely formatted text, you would apply algorithms from a variety of fields, such as Natural Language Processing (NLP), Sentiment Analysis, Clustering, etc – all of which fall under the broader umbrella of text mining and analysis.</p>
 <p><strong>Web scraping</strong> refers to the process of automatically extracting textual data from web pages and other digital files.</p>
 <p><strong>APIs</strong> provide data in a digital format that computers can understand and use – often referred to as <em>machine-readable data</em>.</p>
 </section>
@@ -416,9 +417,9 @@ window.Quarto = {
 <section id="three-main-types-of-web-apis" class="level2">
 <h2 class="anchored" data-anchor-id="three-main-types-of-web-apis">Three main types of web APIs</h2>
 <ol type="1">
-<li><strong>SOAP (Simple Object Access Protocol)</strong> is typically associated with the enterprise world, has a stricter contract-based usage, and is mostly designed around actions.</li>
-<li><strong>REST (Representational State Transfer)</strong> is typically used for public APIs and is ideal for fetching data from the web. It’s much lighter and closer to the HTTP specification than SOAP.</li>
-<li><strong>GraphQL (Graph Query Language)</strong> is a pretty new, flexible query language for APIs that allows the user to decide exactly what they want the API to fetch from the application instead of the reverse.</li>
+<li><strong>SOAP (Simple Object Access Protocol)</strong> is typically associated with the enterprise world, has a highly formalized protocol with strict rules defined by a WSDL (Web Services Description Language) file. You can find this API type in financial &amp; payment systems, global logistics and shipping carrier networks, and various government and public sector services – most legacy infrastructure and/or a heavily regulated institutions.</li>
+<li><strong>REST (Representational State Transfer)</strong> is typically used for public APIs and is ideal for fetching data from the web. It’s much lighter and closer to the HTTP specification than SOAP. Different queries use different endpoints.</li>
+<li><strong>GraphQL (Graph Query Language)</strong> is a newish (2012), flexible API query language from Facebook that allows the user to talk to a single endpoint with a query specifying exactly what fields he/she needs. Meta, LinkedIn, Netflix, Airbnb, and (surprisingly) GitHub rely heavily on GraphQL.</li>
 </ol>
 </section>
 <section id="six-steps-to-querying-apis" class="level2">
@@ -434,21 +435,18 @@ window.Quarto = {
 <li><strong>Authentication</strong>: How to authenticate requests, typically using API keys or tokens.</li>
 <li><strong>Error Codes</strong>: Information on potential errors and their meanings.</li>
 </ul>
-<p>Some good examples:</p>
-<ul>
-<li>gold standard for layout &amp; design <a href="https://docs.stripe.com/api" class="uri">https://docs.stripe.com/api</a></li>
-<li>best for live, interactive learning <a href="https://jsonplaceholder.typicode.com" class="uri">https://jsonplaceholder.typicode.com</a></li>
-<li>best for teaching complex structures and formats <a href="https://pokeapi.co" class="uri">https://pokeapi.co</a></li>
-<li>best for open standards and testing <a href="https://petstore.swagger.io" class="uri">https://petstore.swagger.io</a></li>
-<li>best for advanced concepts (webhooks and pagination) <a href="https://docs.github.com" class="uri">https://docs.github.com</a></li>
-</ul>
+<p>An example: <a href="https://docs.github.com" target="_blank">https://docs.github.com</a> | Developers | REST API and GraphQL API</p>
+<!-- - gold standard for layout & design <https://docs.stripe.com/api> -->
+<!-- - best for live, interactive learning <https://jsonplaceholder.typicode.com> -->
+<!-- - best for teaching complex structures and formats <https://pokeapi.co> -->
+<!-- - best for open standards and testing <https://petstore.swagger.io> -->
 </section>
 <section id="set-up-your-environment" class="level3">
 <h3 class="anchored" data-anchor-id="set-up-your-environment">2. Set up your environment</h3>
 <p>To interact with an API, you’ll need a tool or environment for making HTTP requests. Some popular options include:</p>
 <ul>
-<li><strong>Postman</strong>: a powerful GUI tool for testing and developing APIs.</li>
-<li><strong>cURL</strong>: a command-line tool for making HTTP requests.</li>
+<li><strong>Postman</strong>: a powerful GUI tool for testing and developing APIs (commercial).</li>
+<li><strong>cURL</strong>: an open-source command-line tool for making HTTP requests.</li>
 <li><strong>HTTP libraries in programming languages</strong>: libraries like <code>requests</code> in Python, which we will be using today.</li>
 </ul>
 </section>
@@ -464,7 +462,7 @@ window.Quarto = {
 </section>
 <section id="send-a-request-and-receive-a-response" class="level3">
 <h3 class="anchored" data-anchor-id="send-a-request-and-receive-a-response">4. Send a request and receive a response</h3>
-<p>When you call (or query) an API you are making a <em>request</em>. When you make a request of an API, it will always send you a response.</p>
+<p>When you call (or query) an API you are making a <em>request</em>. When an API receives a request, it returns a <em>response</em>, assuming the service is live and functioning properly.</p>
 <ul>
 <li><strong>Requests</strong> contain relevant data regarding your API request call, such as the base URL, the endpoint, the method used, the headers, and so on.</li>
 <li><strong>Responses</strong> contain relevant data returned by the server, including the data or content, the status code, and the headers.</li>
@@ -507,13 +505,15 @@ window.Quarto = {
 <!-- ... -->
 <!-- deactivate -->
 <!-- ``` -->
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests             <span class="co"># need this to interact with the API</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json                 <span class="co"># need this to help with formatting the response</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pprint <span class="im">import</span> pprint   <span class="co"># will make things easier for us to read</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time                 <span class="co"># will allow us to introduce time delays in our program</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">conda</span> activate yourEnvName</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">jupyter</span> lab</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests             <span class="co"># need this to interact with the API</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json                 <span class="co"># need this to help with formatting the response</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- from pprint import pprint   # will make things easier for us to read -->
+<!-- import time                 # will allow us to introduce time delays in our program -->
 <p>Let’s explore the <code>requests</code> and <code>json</code> libraries using <code>help()</code> function:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(requests)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(json)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(requests)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">help</span>(json)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- ## First example: Cat Facts API <https://catfact.ninja>{target="_blank"} -->
 <!-- Cat Facts API supports the following endpoints: -->
 <!-- URL for querying: `https://catfact.ninja/fact` - get one random fact   -->
@@ -563,7 +563,6 @@ window.Quarto = {
 <!-- ::: -->
 <!-- <\!-- Solution: -\-> -->
 <!-- <\!-- ```py -\-> -->
-<!-- <\!-- import requests -\-> -->
 <!-- <\!-- breeds = requests.get("https://catfact.ninja/breeds?limit=10") -\-> -->
 <!-- <\!-- breeds.json() -\-> -->
 <!-- <\!-- ``` -\-> -->
@@ -590,17 +589,18 @@ window.Quarto = {
 <li><code>/vehicles</code> is the URL root for Vehicles resources</li>
 </ul>
 <p>We will work with the <code>/people</code> endpoint today. Let’s create a variable for this endpoint URL and do a simple request to it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>people_url <span class="op">=</span> <span class="st">"https://swapi.info/api/people"</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>all_people_api <span class="op">=</span> requests.get(people_url)   <span class="co"># create a variable for the people_url request</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>all_people_api.json()                       <span class="co"># print in JSON format</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Unlike in the previous example where it returned a dictionary, here <code>.json()</code> function returns a list:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> all_people_api.json()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(p)      <span class="co"># &lt;class 'list'&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(p)       <span class="co"># 82 records</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(p[<span class="dv">0</span>])   <span class="co"># &lt;class 'dict'&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>p[<span class="dv">0</span>]         <span class="co"># show the first record</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Each element in this list is a dictionary containing a number of attributes for each Stars Wars character: <code>name</code>, <code>height</code>, <code>mass</code>, <code>hair_color</code>, and so on.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>people_url <span class="op">=</span> <span class="st">"https://swapi.info/api/people"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>all_people_api <span class="op">=</span> requests.get(people_url)   <span class="co"># create a variable for the people_url request</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>all_people_api.json()                       <span class="co"># print in JSON format</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- Unlike in the previous example where it returned a dictionary -->
+<p>Here <code>.json()</code> function returns a list:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> all_people_api.json()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(p)      <span class="co"># &lt;class 'list'&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(p)       <span class="co"># 82 records</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(p[<span class="dv">0</span>])   <span class="co"># dictionary</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>p[<span class="dv">0</span>]         <span class="co"># show the first record</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each element in this list is a dictionary containing a number of <font style="color:blue"><em>attributes</em></font> for each Stars Wars character: <code>name</code>, <code>height</code>, <code>mass</code>, <code>hair_color</code>, and so on:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p[<span class="dv">0</span>].keys()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -650,15 +650,15 @@ Note
 </ul>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(requests.get(people_url<span class="op">+</span><span class="st">""</span>).json())</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>requests.get(people_url<span class="op">+</span><span class="st">"/1"</span>).json()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(requests.get(people_url).json())   <span class="co"># all 82 Star Wars characters</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>requests.get(people_url<span class="op">+</span><span class="st">"/1"</span>).json()   <span class="co"># first person</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We can put it all into variables:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>api_url <span class="op">=</span><span class="st">"https://swapi.info/api/people/1"</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>api_url_response <span class="op">=</span> requests.get(api_url)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>api_url_response.json()</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>hair <span class="op">=</span> api_url_response.json()[<span class="st">'hair_color'</span>]   <span class="co"># value of the `hair_color` key</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>name <span class="op">=</span> api_url_response.json()[<span class="st">'name'</span>]         <span class="co"># value of the `name` key</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(name, <span class="st">"'s hair is:"</span>‚ hair)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>first_person <span class="op">=</span> <span class="st">"https://swapi.info/api/people/1"</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>first_person_response <span class="op">=</span> requests.get(first_person)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>first_person_response.json()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>hair <span class="op">=</span> first_person_response.json()[<span class="st">'hair_color'</span>]   <span class="co"># value of the `hair_color` key</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>name <span class="op">=</span> first_person_response.json()[<span class="st">'name'</span>]         <span class="co"># value of the `name` key</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(name<span class="op">+</span><span class="st">"'s hair is"</span>, hair)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -694,32 +694,32 @@ Note
 <li>non-commercial use up to 10,000 daily API calls is free</li>
 <li>attribution is required under the CC BY 4.0 data licence</li>
 </ul>
-<p>Unlike the Star Wars toy API example, Open-Meteo serves real-world data as nested JSON structures, with coordinates (latitude/longitude parameters) and large arrays of numerical data. It is the perfect dataset to feed directly into a Python library like Pandas, NumPy, or Plotly for timeseries analysis, plotting temperature trends, or creating interactive wind/rain dashboards.</p>
-<p>You can interact with Open-Meteo using standard HTTP requests and Python’s popular <code>requests</code> or <code>urllib</code> libraries. In addition, they also created a custom <code>openmeteo-requests</code> library as their official SDK uses the <em>Open-Meteo Compact</em> (OMC) binary format with FlatBuffers (open-source serialization library from Google) instead of JSON, resulting in a much more efficient data stream. This becomes beneficial if you are trying to download a large historical dataset, e.g.&nbsp;40 years of hourly data over multiple locations.</p>
-<p>However, we will start with a more basic Python workflow: <code>requests</code> <span class="math inline">\(\rightarrow\)</span> <code>pandas</code> <span class="math inline">\(\rightarrow\)</span> <code>matplotlib</code>.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://api.open-meteo.com/v1/forecast"</span>   <span class="co"># API endpoint</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"latitude"</span>: <span class="fl">35.6762</span>, <span class="st">"longitude"</span>: <span class="fl">139.6503</span>, <span class="co"># Tokyo</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"current"</span>: [<span class="st">"temperature_2m"</span>, <span class="st">"relative_humidity_2m"</span>, <span class="st">"weather_code"</span>], <span class="co"># 2m means 2 meters above the ground</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hourly"</span>: [<span class="st">"temperature_2m"</span>, <span class="st">"precipitation_probability"</span>],</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"timezone"</span>: <span class="st">"auto"</span>   <span class="co"># automatically detects timezone based on coordinates</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, params<span class="op">=</span>params)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.status_code)   <span class="co"># 200 means success</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>current <span class="op">=</span> data[<span class="st">'current'</span>]   <span class="co"># current weather</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current time:"</span>, current[<span class="st">'time'</span>])</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current temperature:"</span>, current[<span class="st">'temperature_2m'</span>], <span class="st">"°C"</span>)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current humidity:"</span>, current[<span class="st">'relative_humidity_2m'</span>], <span class="st">"%"</span>)</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>forecast <span class="op">=</span> data[<span class="st">'hourly'</span>]    <span class="co"># dictionary</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'time'</span>]             <span class="co"># forecast times for the next 168 hours</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'temperature_2m'</span>]   <span class="co"># forecast temperature for the next 168 hours</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'precipitation_probability'</span>]   <span class="co"># forecast precipitation for the next 168 hours</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Unlike the Star Wars toy API example, Open-Meteo serves real-world data as nested JSON structures, with coordinates (latitude/longitude parameters) and large arrays of numerical data. It is a perfect dataset to feed directly into a Python library like Pandas, NumPy, or Plotly for timeseries analysis, plotting temperature trends, or creating interactive wind/rain dashboards.</p>
+<p>You can interact with Open-Meteo using standard HTTP requests and Python’s popular <code>requests</code> or <code>urllib</code> libraries. In addition, the team behind Open-Meteo also created a custom <code>openmeteo-requests</code> library as their official SDK uses the <em>Open-Meteo Compact</em> (OMC) binary format with FlatBuffers (open-source serialization library from Google) instead of JSON, resulting in a much more efficient data stream. This becomes beneficial if you are trying to download a large historical dataset, e.g.&nbsp;40 years of hourly data over multiple locations.</p>
+<p>However, we will start with a more basic Python workflow: <code>requests</code> <span class="math inline">\(\rightarrow\)</span> <code>pandas</code> <span class="math inline">\(\rightarrow\)</span> <code>plotly</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://api.open-meteo.com/v1/forecast"</span>   <span class="co"># API endpoint</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"latitude"</span>: <span class="fl">35.6762</span>, <span class="st">"longitude"</span>: <span class="fl">139.6503</span>, <span class="co"># Tokyo</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"current"</span>: [<span class="st">"temperature_2m"</span>, <span class="st">"relative_humidity_2m"</span>, <span class="st">"weather_code"</span>], <span class="co"># 2m means 2 meters above the ground</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"hourly"</span>: [<span class="st">"temperature_2m"</span>, <span class="st">"precipitation_probability"</span>],</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"timezone"</span>: <span class="st">"auto"</span>   <span class="co"># automatically detects timezone based on coordinates</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.get(url, params<span class="op">=</span>params)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.status_code)   <span class="co"># 200 means success</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>current <span class="op">=</span> data[<span class="st">'current'</span>]   <span class="co"># current weather</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current time:"</span>, current[<span class="st">'time'</span>])</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current temperature:"</span>, current[<span class="st">'temperature_2m'</span>], <span class="st">"°C"</span>)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Current humidity:"</span>, current[<span class="st">'relative_humidity_2m'</span>], <span class="st">"%"</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>forecast <span class="op">=</span> data[<span class="st">'hourly'</span>]    <span class="co"># dictionary</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'time'</span>]             <span class="co"># forecast times for the next 168 hours</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'temperature_2m'</span>]   <span class="co"># forecast temperature for the next 168 hours</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>forecast[<span class="st">'precipitation_probability'</span>]   <span class="co"># forecast precipitation for the next 168 hours</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -730,9 +730,58 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Write a script to plot the forecast (temperature and precipitation) for Montreal over the next 72 hours. <!-- abc --></p>
+<p>Write a script to visualize the forecast (temperature + precipitation) for Montreal over the next 72 hours using Plotly plotting package. Here is some sample Plotly code to get you started:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>pio.renderers.default <span class="op">=</span> <span class="st">'notebook'</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy <span class="im">import</span> linspace, sin</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> linspace(<span class="fl">0.01</span>,<span class="dv">1</span>,<span class="dv">100</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> sin(<span class="dv">1</span><span class="op">/</span>x)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> px.line(x<span class="op">=</span>x, y<span class="op">=</span>y, markers<span class="op">=</span><span class="va">True</span>, title <span class="op">=</span> <span class="st">"My chart title"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>fig.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol type="1">
+<li>first, plot temperature and precipitation separately</li>
+<li>ultimately, you want to merge them into a single plot, each with its own vertical scale <img src="./fig/tokyoForecast.png" class="img-fluid" style="width:100.0%"></li>
+</ol>
 </div>
 </div>
+<!-- Solution: -->
+<!-- ```py -->
+<!-- # separate temperature plot -->
+<!-- fig = px.line(x=forecast['time'], y=forecast['temperature_2m'], markers=True) -->
+<!-- fig.show() -->
+<!-- ``` -->
+<!-- ```py -->
+<!-- # separate precipitation plot -->
+<!-- fig = px.line(x=forecast['time'], y=forecast['precipitation_probability'], markers=True) -->
+<!-- fig.show() -->
+<!-- ``` -->
+<!-- ```py -->
+<!-- # two plots in one, but with a shared y-axis scale -->
+<!-- fig = px.line(forecast, x='time', y=['temperature_2m', 'precipitation_probability'], markers=True) -->
+<!-- fig.show() -->
+<!-- ``` -->
+<!-- ```py -->
+<!-- # two plots in one, each with its own vertical  scale -->
+<!-- fig_temp = px.line(forecast, x='time', y='temperature_2m', markers=True) -->
+<!-- fig_precip = px.line(forecast, x='time', y='precipitation_probability', markers=True) -->
+<!-- precip_trace = fig_precip.data[0] -->
+<!-- precip_trace.yaxis = 'y2' -->
+<!-- precip_trace.name = 'Precipitation Probability' -->
+<!-- precip_trace.showlegend = True -->
+<!-- precip_trace.line.color = '#EF553B'  # Change color so they don't look identical -->
+<!-- fig_temp.data[0].name = 'Temperature' -->
+<!-- fig_temp.data[0].showlegend = True -->
+<!-- fig_temp.add_trace(precip_trace) -->
+<!-- fig_temp.update_layout( -->
+<!--     title=dict(text="Tokyo forecast", x=0.4, font=dict(size=20)), -->
+<!--     yaxis=dict(title='Temperature (°C)'), -->
+<!--     yaxis2=dict(title='Precipitation Probability (%)', overlaying='y', side='right'), -->
+<!--     legend=dict(title="Metrics") -->
+<!-- ) -->
+<!-- fig_temp.show() -->
+<!-- ``` -->
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -746,21 +795,20 @@ Note
 <p>Use an LLM to translate this code from using <code>requests</code> to using Python’s built-in <code>urllib</code> library.</p>
 </div>
 </div>
-<p>Finally, we can try Open-Meteo’s own API library. Let’s install it with <em>something like this</em> (details depend on how exactly you installed Python on your computer):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/env-dhsi/bin/activate</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install openmeteo-requests</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> pip install requests-cache retry-requests numpy pandas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Exercise: switch to <code>openmeteo-requests</code> library
+<span class="screen-reader-only">Caution</span>Take-home exercise
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Try to run the same request using Open-Meteo’s own API library. You can either use an LLM or read <a href="https://open-meteo.com/en/docs" target="_blank">their documentation</a>.</p>
+<p>Finally, as a take-home exercise, you could try to install and use Open-Meteo’s own API library. The installation will go <em>something like this</em>: <!-- ```sh --> <!-- source ~/env-dhsi/bin/activate --> <!-- uv pip install openmeteo-requests --> <!-- uv pip install requests-cache retry-requests numpy pandas --> <!-- ``` --></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install openmeteo-requests   <span class="co"># not available as a conda package ⇨ use pip</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="st">"import openmeteo_requests"</span>   <span class="co"># test the installation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Try to run the same forecast request using Open-Meteo’s own API library. You can either use an LLM or read <a href="https://open-meteo.com/en/docs" target="_blank">their documentation</a>.</p>
 </div>
 </div>
 </section>
@@ -780,39 +828,39 @@ Note
 <li>click “Create API key”, name your key (I called mine “DHSI26 test key”), select project (I used “Default Gemini Project”), click “Create key”</li>
 <li>copy the key to your computer</li>
 </ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>API_KEY <span class="op">=</span> <span class="st">"..."</span>   <span class="co"># paste your own API key; the instructor will use his password manager</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>MODEL <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>   <span class="co"># also 'gemini-2.5-pro'</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"https://generativelanguage.googleapis.com/v1beta/models/</span><span class="sc">{</span>MODEL<span class="sc">}</span><span class="ss">:generateContent?key=</span><span class="sc">{</span>API_KEY<span class="sc">}</span><span class="ss">"</span>   <span class="co"># API endpoint</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">"Content-Type"</span>: <span class="st">"application/json"</span>}</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co"># create a JSON payload structure required by the Gemini API</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> {</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"contents"</span>: [</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"parts"</span>: [{<span class="st">"text"</span>: <span class="st">"Explain the concept of 'API' in one short paragraph."</span>}]}</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.post(url, headers<span class="op">=</span>headers, data<span class="op">=</span>json.dumps(payload))   <span class="co"># make the POST request</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.status_code)   <span class="co"># 200 means success</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co"># extract the text response from the complex JSON structure</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()[<span class="st">'candidates'</span>][<span class="dv">0</span>][<span class="st">'content'</span>][<span class="st">'parts'</span>][<span class="dv">0</span>][<span class="st">'text'</span>]</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>As you can probably guess, by adding a text prompt and wrapping this mechanism in a Python loop, you can write Python code that runs as a Linux shell command and lets you interact with Google Gemini directly from the command line in your terminal.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>API_KEY <span class="op">=</span> <span class="st">"..."</span>   <span class="co"># paste your own API key; the instructor will use his password manager</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>MODEL <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span>   <span class="co"># also 'gemini-2.5-pro'</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="ss">f"https://generativelanguage.googleapis.com/v1beta/models/</span><span class="sc">{</span>MODEL<span class="sc">}</span><span class="ss">:generateContent?key=</span><span class="sc">{</span>API_KEY<span class="sc">}</span><span class="ss">"</span>   <span class="co"># API endpoint</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>headers <span class="op">=</span> {<span class="st">"Content-Type"</span>: <span class="st">"application/json"</span>}</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># create a JSON payload structure required by the Gemini API</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> {</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"contents"</span>: [</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        {<span class="st">"parts"</span>: [{<span class="st">"text"</span>: <span class="st">"Explain the concept of 'API' in one short paragraph."</span>}]}</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>response <span class="op">=</span> requests.post(url, headers<span class="op">=</span>headers, data<span class="op">=</span>json.dumps(payload))   <span class="co"># submit data to be processed</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(response.status_code)   <span class="co"># 200 means success</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># extract the text response from the complex JSON structure</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> response.json()[<span class="st">'candidates'</span>][<span class="dv">0</span>][<span class="st">'content'</span>][<span class="st">'parts'</span>][<span class="dv">0</span>][<span class="st">'text'</span>]</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>As you can probably guess, by adding a text prompt and wrapping this mechanism in a Python loop, you can build a command-line interface to Google Gemini using your own Python code.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Caution</span>Exercise
+<span class="screen-reader-only">Caution</span>Take-home exercise
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let’s do it! First, we need to see how to enter and process text in Python – ask an LLM.</p>
+<p>Write a command-line interface to Google Gemini using your own Python code. First, you need to see how to enter and process text in Python – ask an LLM.</p>
 </div>
 </div>
 </section>
@@ -823,6 +871,21 @@ Note
 <li><a href="https://www.dataquest.io/course/apis-and-scraping" target="_blank">Introduction to APIs and web scraping in Python</a> (free online course, but requires an account)</li>
 <li><a href="https://www.smashingmagazine.com/2018/01/understanding-using-rest-api" target="_blank">Understanding and using REST APIs</a></li>
 <li><a href="https://github.com/rochelleterman/scrape-interwebz/tree/master/1_APIs" target="_blank">API workbook for querying NYT</a> (GitHub repo)</li>
+</ul>
+</section>
+<section id="thursday-workflows" class="level2">
+<h2 class="anchored" data-anchor-id="thursday-workflows">Thursday workflows</h2>
+<p>It would be fantastic if you could chose a website that contains data useful for your research or that is of interest to you. If you don’t have any idea however, here is a list of sites that have well-built APIs:</p>
+<ul>
+<li><a href="https://www.hathitrust.org/member-libraries/resources-for-librarians/data-resources/hathifiles" target="_blank">Hathi Trust Hathifiles</a></li>
+<li><a href="https://www.hathitrust.org/member-libraries/resources-for-librarians/data-resources/bibliographic-api" target="_blank">Hathi Trust bibliographic API</a></li>
+<li><a href="https://developer.nytimes.com/apis" target="_blank">New York Times</a></li>
+<li><a href="https://archive.org/developers/index-apis.html" target="_blank">Internet Archive</a></li>
+<li><a href="https://developer.spotify.com/documentation/web-api" target="_blank">Spotify</a></li>
+<li><a href="https://data.getty.edu" target="_blank">Getty Museum</a></li>
+<li><a href="https://guides.loc.gov/digital-scholarship/accessing-digital-materials#s-lib-ctab-26648178-2" target="_blank">Library of Congress</a></li>
+<li><a href="https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information" target="_blank">World Bank</a></li>
+<li><a href="https://api.nasa.gov" target="_blank">NASA</a></li>
 </ul>
 
 
