@@ -34,22 +34,26 @@ client to talk to it.
 Python APIs are useful because they allow Python programs to communicate with external services, applications,
 and databases in a simple and standardized way. They make it possible to:
 
-1. access frequently updated data in real time,
+1. access frequently updated data in real time, e.g. weather or traffic data,
 1. retrieve only the specific information you need from a large dataset,
 1. access a vast ecosystem of online services without having to build everything from scratch, and
 1. automate workflows, e.g. by offloading repeated computations or complex processing to a remote server, or
    putting multiple server calls into a Python script that you run once.
 
-:::{style="text-align: center;"}
-![](/fig/genre.png){width=65%}
-:::
+<!-- :::{style="text-align: center;"} -->
+<!-- ![](/fig/genre.png){width=65%} -->
+<!-- ::: -->
 
 ## Difference between text mining, web scraping, and APIs
 
-**Text mining / analysis** is a broad term for various research methods used to retrieve, describe, interpret
-and understand texts. For researchers interested in internet-based methods, terms such as *"web scraping"* and
-*"data mining"* are often used interchangeably to describe techniques to collect and organise textual data for
-analysis.
+**Text mining** is the process of transforming raw, unstructured text into structured data to uncover
+meaningful insights and patterns. With text mining, you typically start with some basic text-processing
+techniques such as *tokenization* (breaking down sentences into individual words or tokens), *lowercasing*
+(converting all text to lowercase), *stop-word removal* (filtering out common words that carry little semantic
+meaning, e.g. "the," "is," "at"), and *stemming* and *lemmatization* (reducing words to their root form). Once
+you have nicely formatted text, you would apply algorithms from a variety of fields, such as Natural Language
+Processing (NLP), Sentiment Analysis, Clustering, etc -- all of which fall under the broader umbrella of text
+mining and analysis.
 
 **Web scraping** refers to the process of automatically extracting textual data from web pages and other
 digital files.
@@ -67,12 +71,17 @@ digital files.
 
 ## Three main types of web APIs
 
-1. **SOAP (Simple Object Access Protocol)** is typically associated with the enterprise world, has a stricter
-   contract-based usage, and is mostly designed around actions.
+1. **SOAP (Simple Object Access Protocol)** is typically associated with the enterprise world, has a highly
+   formalized protocol with strict rules defined by a WSDL (Web Services Description Language) file. You can
+   find this API type in financial & payment systems, global logistics and shipping carrier networks, and
+   various government and public sector services -- most legacy infrastructure and/or a heavily regulated
+   institutions.
 2. **REST (Representational State Transfer)** is typically used for public APIs and is ideal for fetching data
-   from the web. It's much lighter and closer to the HTTP specification than SOAP.
-3. **GraphQL (Graph Query Language)** is a pretty new, flexible query language for APIs that allows the user
-   to decide exactly what they want the API to fetch from the application instead of the reverse.
+   from the web. It's much lighter and closer to the HTTP specification than SOAP. Different queries use
+   different endpoints.
+3. **GraphQL (Graph Query Language)** is a newish (2012), flexible API query language from Facebook that
+   allows the user to talk to a single endpoint with a query specifying exactly what fields he/she
+   needs. Meta, LinkedIn, Netflix, Airbnb, and (surprisingly) GitHub rely heavily on GraphQL.
 
 ## Six steps to querying APIs
 
@@ -87,23 +96,21 @@ Pay attention to the key sections in the API documentation:
 - **Authentication**: How to authenticate requests, typically using API keys or tokens.
 - **Error Codes**: Information on potential errors and their meanings.
 
-Some good examples:
+An example: <https://docs.github.com>{target="_blank"} | Developers | REST API and GraphQL API
 
-- gold standard for layout & design <https://docs.stripe.com/api>
-- best for live, interactive learning <https://jsonplaceholder.typicode.com>
-- best for teaching complex structures and formats <https://pokeapi.co>
-- best for open standards and testing <https://petstore.swagger.io>
-- best for advanced concepts (webhooks and pagination) <https://docs.github.com>
+<!-- - gold standard for layout & design <https://docs.stripe.com/api> -->
+<!-- - best for live, interactive learning <https://jsonplaceholder.typicode.com> -->
+<!-- - best for teaching complex structures and formats <https://pokeapi.co> -->
+<!-- - best for open standards and testing <https://petstore.swagger.io> -->
 
 ### 2. Set up your environment
 
 To interact with an API, you'll need a tool or environment for making HTTP requests. Some popular options
 include:
 
-- **Postman**: a powerful GUI tool for testing and developing APIs.
-- **cURL**: a command-line tool for making HTTP requests.
-- **HTTP libraries in programming languages**: libraries like `requests` in Python, which we will be using
-  today.
+- **Postman**: a powerful GUI tool for testing and developing APIs (commercial).
+- **cURL**: an open-source command-line tool for making HTTP requests.
+- **HTTP libraries in programming languages**: libraries like `requests` in Python, which we will be using today.
 
 ### 3. Authentication
 
@@ -119,8 +126,8 @@ example, you will need to create an API key.
 
 ### 4. Send a request and receive a response
 
-When you call (or query) an API you are making a *request*. When you make a request of an API, it will always
-send you a response.
+When you call (or query) an API you are making a *request*. When an API receives a request, it returns a
+*response*, assuming the service is live and functioning properly.
 
 - **Requests** contain relevant data regarding your API request call, such as the base URL, the endpoint, the
   method used, the headers, and so on.
@@ -168,12 +175,17 @@ After mastering the basics, you can explore more advanced API features such as:
 <!-- deactivate -->
 <!-- ``` -->
 
+```sh
+conda activate yourEnvName
+jupyter lab
+```
 ```py
 import requests             # need this to interact with the API
 import json                 # need this to help with formatting the response
-from pprint import pprint   # will make things easier for us to read
-import time                 # will allow us to introduce time delays in our program
 ```
+
+<!-- from pprint import pprint   # will make things easier for us to read -->
+<!-- import time                 # will allow us to introduce time delays in our program -->
 
 Let's explore the `requests` and `json` libraries using `help()` function:
 
@@ -181,6 +193,8 @@ Let's explore the `requests` and `json` libraries using `help()` function:
 help(requests)
 help(json)
 ```
+
+
 
 
 
@@ -251,10 +265,12 @@ help(json)
 
 <!-- <\!-- Solution: -\-> -->
 <!-- <\!-- ```py -\-> -->
-<!-- <\!-- import requests -\-> -->
 <!-- <\!-- breeds = requests.get("https://catfact.ninja/breeds?limit=10") -\-> -->
 <!-- <\!-- breeds.json() -\-> -->
 <!-- <\!-- ``` -\-> -->
+
+
+
 
 
 
@@ -290,24 +306,29 @@ We will work with the `/people` endpoint today. Let's create a variable for this
 request to it:
 
 ```py
-import requests
 people_url = "https://swapi.info/api/people"
 all_people_api = requests.get(people_url)   # create a variable for the people_url request
 all_people_api.json()                       # print in JSON format
 ```
 
-Unlike in the previous example where it returned a dictionary, here `.json()` function returns a list:
+<!-- Unlike in the previous example where it returned a dictionary -->
+
+Here `.json()` function returns a list:
 
 ```py
 p = all_people_api.json()
 type(p)      # <class 'list'>
 len(p)       # 82 records
-type(p[0])   # <class 'dict'>
+type(p[0])   # dictionary
 p[0]         # show the first record
 ```
 
-Each element in this list is a dictionary containing a number of attributes for each Stars Wars character:
-`name`, `height`, `mass`, `hair_color`, and so on.
+Each element in this list is a dictionary containing a number of <font style="color:blue">*attributes*</font>
+for each Stars Wars character: `name`, `height`, `mass`, `hair_color`, and so on:
+
+```py
+p[0].keys()
+```
 
 ::: {.callout-note}
 ##### JSON format
@@ -349,19 +370,19 @@ Now, if you continue to add to the endpoint, you can get a specific Stars Wars c
 :::
 
 ```py
-len(requests.get(people_url+"").json())
-requests.get(people_url+"/1").json()
+len(requests.get(people_url).json())   # all 82 Star Wars characters
+requests.get(people_url+"/1").json()   # first person
 ```
 
 We can put it all into variables:
 
 ```py
-api_url ="https://swapi.info/api/people/1"
-api_url_response = requests.get(api_url)
-api_url_response.json()
-hair = api_url_response.json()['hair_color']   # value of the `hair_color` key
-name = api_url_response.json()['name']         # value of the `name` key
-print(name, "'s hair is:"‚ hair)
+first_person = "https://swapi.info/api/people/1"
+first_person_response = requests.get(first_person)
+first_person_response.json()
+hair = first_person_response.json()['hair_color']   # value of the `hair_color` key
+name = first_person_response.json()['name']         # value of the `name` key
+print(name+"'s hair is", hair)
 ```
 
 ::: {.callout-caution}
@@ -393,18 +414,19 @@ national weather services, without requiring an API key for basic or educational
 - attribution is required under the CC BY 4.0 data licence
 
 Unlike the Star Wars toy API example, Open-Meteo serves real-world data as nested JSON structures, with
-coordinates (latitude/longitude parameters) and large arrays of numerical data. It is the perfect dataset to
+coordinates (latitude/longitude parameters) and large arrays of numerical data. It is a perfect dataset to
 feed directly into a Python library like Pandas, NumPy, or Plotly for timeseries analysis, plotting
 temperature trends, or creating interactive wind/rain dashboards.
 
 You can interact with Open-Meteo using standard HTTP requests and Python's popular `requests` or `urllib`
-libraries. In addition, they also created a custom `openmeteo-requests` library as their official SDK uses the
-*Open-Meteo Compact* (OMC) binary format with FlatBuffers (open-source serialization library from Google)
-instead of JSON, resulting in a much more efficient data stream. This becomes beneficial if you are trying to
-download a large historical dataset, e.g. 40 years of hourly data over multiple locations.
+libraries. In addition, the team behind Open-Meteo also created a custom `openmeteo-requests` library as their
+official SDK uses the *Open-Meteo Compact* (OMC) binary format with FlatBuffers (open-source serialization
+library from Google) instead of JSON, resulting in a much more efficient data stream. This becomes beneficial
+if you are trying to download a large historical dataset, e.g. 40 years of hourly data over multiple
+locations.
 
 However, we will start with a more basic Python workflow: `requests` $\rightarrow$ `pandas` $\rightarrow$
-`matplotlib`.
+`plotly`.
 
 ```py
 import requests
@@ -434,28 +456,81 @@ forecast['precipitation_probability']   # forecast precipitation for the next 16
 
 ::: {.callout-caution}
 ##### Exercise: Montreal forecast for the next 3 days
-Write a script to plot the forecast (temperature and precipitation) for Montreal over the next 72 hours.
-<!-- abc -->
+Write a script to visualize the forecast (temperature + precipitation) for Montreal over the next 72 hours
+using Plotly plotting package. Here is some sample Plotly code to get you started:
+```py
+import plotly.io as pio
+pio.renderers.default = 'notebook'
+
+import plotly.express as px
+from numpy import linspace, sin
+x = linspace(0.01,1,100)
+y = sin(1/x)
+fig = px.line(x=x, y=y, markers=True, title = "My chart title")
+fig.show()
+```
+1. first, plot temperature and precipitation separately
+2. ultimately, you want to merge them into a single plot, each with its own vertical scale
+![](/fig/tokyoForecast.png){width=100%}
 :::
+
+<!-- Solution: -->
+<!-- ```py -->
+<!-- # separate temperature plot -->
+<!-- fig = px.line(x=forecast['time'], y=forecast['temperature_2m'], markers=True) -->
+<!-- fig.show() -->
+<!-- ``` -->
+<!-- ```py -->
+<!-- # separate precipitation plot -->
+<!-- fig = px.line(x=forecast['time'], y=forecast['precipitation_probability'], markers=True) -->
+<!-- fig.show() -->
+<!-- ``` -->
+<!-- ```py -->
+<!-- # two plots in one, but with a shared y-axis scale -->
+<!-- fig = px.line(forecast, x='time', y=['temperature_2m', 'precipitation_probability'], markers=True) -->
+<!-- fig.show() -->
+<!-- ``` -->
+<!-- ```py -->
+<!-- # two plots in one, each with its own vertical  scale -->
+<!-- fig_temp = px.line(forecast, x='time', y='temperature_2m', markers=True) -->
+<!-- fig_precip = px.line(forecast, x='time', y='precipitation_probability', markers=True) -->
+<!-- precip_trace = fig_precip.data[0] -->
+<!-- precip_trace.yaxis = 'y2' -->
+<!-- precip_trace.name = 'Precipitation Probability' -->
+<!-- precip_trace.showlegend = True -->
+<!-- precip_trace.line.color = '#EF553B'  # Change color so they don't look identical -->
+<!-- fig_temp.data[0].name = 'Temperature' -->
+<!-- fig_temp.data[0].showlegend = True -->
+<!-- fig_temp.add_trace(precip_trace) -->
+<!-- fig_temp.update_layout( -->
+<!--     title=dict(text="Tokyo forecast", x=0.4, font=dict(size=20)), -->
+<!--     yaxis=dict(title='Temperature (°C)'), -->
+<!--     yaxis2=dict(title='Precipitation Probability (%)', overlaying='y', side='right'), -->
+<!--     legend=dict(title="Metrics") -->
+<!-- ) -->
+<!-- fig_temp.show() -->
+<!-- ``` -->
 
 ::: {.callout-caution}
 ##### Exercise: switch to `urllib` library
 Use an LLM to translate this code from using `requests` to using Python's built-in `urllib` library.
 :::
 
-Finally, we can try Open-Meteo's own API library. Let's install it with *something like this* (details depend
-on how exactly you installed Python on your computer):
-
-```sh
-source ~/env-dhsi/bin/activate
-uv pip install openmeteo-requests
-uv pip install requests-cache retry-requests numpy pandas
-```
-
 ::: {.callout-caution}
-##### Exercise: switch to `openmeteo-requests` library
-Try to run the same request using Open-Meteo's own API library. You can either use an LLM or read [their
-documentation](https://open-meteo.com/en/docs){target="_blank"}.
+##### Take-home exercise
+Finally, as a take-home exercise, you could try to install and use Open-Meteo's own API library. The
+installation will go *something like this*:
+<!-- ```sh -->
+<!-- source ~/env-dhsi/bin/activate -->
+<!-- uv pip install openmeteo-requests -->
+<!-- uv pip install requests-cache retry-requests numpy pandas -->
+<!-- ``` -->
+```sh
+pip install openmeteo-requests   # not available as a conda package ⇨ use pip
+python -c "import openmeteo_requests"   # test the installation
+```
+Try to run the same forecast request using Open-Meteo's own API library. You can either use an LLM or read
+[their documentation](https://open-meteo.com/en/docs){target="_blank"}.
 :::
 
 
@@ -499,7 +574,7 @@ payload = {
     ]
 }
 
-response = requests.post(url, headers=headers, data=json.dumps(payload))   # make the POST request
+response = requests.post(url, headers=headers, data=json.dumps(payload))   # submit data to be processed
 print(response.status_code)   # 200 means success
 
 # extract the text response from the complex JSON structure
@@ -507,13 +582,13 @@ data = response.json()['candidates'][0]['content']['parts'][0]['text']
 print(data)
 ```
 
-As you can probably guess, by adding a text prompt and wrapping this mechanism in a Python loop, you can write
-Python code that runs as a Linux shell command and lets you interact with Google Gemini directly from the
-command line in your terminal.
+As you can probably guess, by adding a text prompt and wrapping this mechanism in a Python loop, you can build
+a command-line interface to Google Gemini using your own Python code.
 
 ::: {.callout-caution}
-##### Exercise
-Let's do it! First, we need to see how to enter and process text in Python -- ask an LLM.
+##### Take-home exercise
+Write a command-line interface to Google Gemini using your own Python code. First, you need to see how to enter
+and process text in Python -- ask an LLM.
 :::
 
 
@@ -530,6 +605,23 @@ Let's do it! First, we need to see how to enter and process text in Python -- as
 - [API workbook for querying NYT](https://github.com/rochelleterman/scrape-interwebz/tree/master/1_APIs){target="_blank"} (GitHub repo)
 
 
+
+
+
+## Thursday workflows
+
+It would be fantastic if you could chose a website that contains data useful for your research or that is of
+interest to you. If you don't have any idea however, here is a list of sites that have well-built APIs:
+
+- [Hathi Trust Hathifiles](https://www.hathitrust.org/member-libraries/resources-for-librarians/data-resources/hathifiles){target="_blank"}
+- [Hathi Trust bibliographic API](https://www.hathitrust.org/member-libraries/resources-for-librarians/data-resources/bibliographic-api){target="_blank"}
+- [New York Times](https://developer.nytimes.com/apis){target="_blank"}
+- [Internet Archive](https://archive.org/developers/index-apis.html){target="_blank"}
+- [Spotify](https://developer.spotify.com/documentation/web-api){target="_blank"}
+- [Getty Museum](https://data.getty.edu){target="_blank"}
+- [Library of Congress](https://guides.loc.gov/digital-scholarship/accessing-digital-materials#s-lib-ctab-26648178-2){target="_blank"}
+- [World Bank](https://datahelpdesk.worldbank.org/knowledgebase/topics/125589-developer-information){target="_blank"}
+- [NASA](https://api.nasa.gov){target="_blank"}
 
 
 
