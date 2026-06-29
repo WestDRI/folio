@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Introductory scientific visualization with ParaView – Various courses</title>
+<title>Scientific visualization with ParaView – Various courses</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -282,6 +282,14 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#workshop-materials" id="toc-workshop-materials" class="nav-link active" data-scroll-target="#workshop-materials">Workshop materials</a></li>
   <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#other-materials" id="toc-other-materials" class="nav-link" data-scroll-target="#other-materials">Other materials</a></li>
+  <li><a href="#videos" id="toc-videos" class="nav-link" data-scroll-target="#videos">Videos</a>
+  <ul class="collapse">
+  <li><a href="#intro" id="toc-intro" class="nav-link" data-scroll-target="#intro">Intro</a></li>
+  <li><a href="#file-formats-and-workflows" id="toc-file-formats-and-workflows" class="nav-link" data-scroll-target="#file-formats-and-workflows">File formats and workflows</a></li>
+  <li><a href="#animation-and-scripting" id="toc-animation-and-scripting" class="nav-link" data-scroll-target="#animation-and-scripting">Animation and scripting</a></li>
+  <li><a href="#remote-visualization" id="toc-remote-visualization" class="nav-link" data-scroll-target="#remote-visualization">Remote visualization</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -291,7 +299,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Introductory scientific visualization with ParaView</h1>
+<h1 class="title">Scientific visualization with ParaView</h1>
 </div>
 
 
@@ -308,37 +316,103 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<!-- {{<cor>}}October 4-5, 2021{{</cor>}}\ -->
-<!-- {{<cgr>}}Both days 10 am–1 pm Pacific{{</cgr>}} / -->
-<!-- {{<cgr>}}1pm–4 pm Eastern Time{{</cgr>}} / -->
-<!-- {{<cgr>}}2pm–5 pm Atlantic{{</cgr>}} -->
+<p><strong>July 2<sup>nd</sup>, 10:00am</strong></p>
 <p><strong>Abstract</strong>: ParaView is an open source, multi-platform data analysis and visualization tool designed to run on a variety of hardware from individual laptops to large supercomputers. With ParaView, users can interactively visualize 2D and 3D datasets defined on structured, adaptive and unstructured meshes or particles, animate these datasets over time, and manipulate them with a variety of filters. ParaView supports both interactive visualization through a graphical user interface (GUI) and scripted visualization, including offscreen rendering, and is an easy and enjoyable tool to learn.</p>
+<p>In this beginner-friendly workshop, you will learn the fundamentals of ParaView, starting with its interface and the types of data it can import. We will build increasingly sophisticated visualization pipelines using filters, then explore ParaView’s Python capabilities by converting GUI actions into scripts, modifying them, and running them. Next, we will create keyframe animations. Finally, we will cover remote and large-scale visualization on HPC clusters for situations where downloading data to a local computer is impractical or impossible. Along the way, we will discuss strategies for optimizing datasets for parallel I/O and the compute resources needed to process very large datasets.</p>
+<!-- Small-scale remote visualization can be accomplished using JupyterHub or Open OnDemand, running either -->
+<!-- standalone ParaView or a ParaView client within a remote desktop environment. -->
+<!-- For larger-scale interactive visualization, we will run a parallel ParaView server on a cluster for data -->
+<!-- processing and rendering, and connect to it from a ParaView client on your computer. This setup enables -->
+<!-- interactive visualization of very large (multi-GB and potentially TB-scale) datasets without transferring the -->
+<!-- data and without being limited by your local system's memory or CPU/GPU resources. -->
+<!-- We will then save the interactive visualization pipeline as a script and run it remotely as a batch job on the -->
+<!-- cluster, performing all rendering off-screen (without opening any windows) and writing images to files. -->
+<!-- If time permits, we might explore workflows involving time and camera animation. -->
 <p><strong>Instructor</strong>: Alex Razoumov (SFU)</p>
 <!-- **Helpers**: Jarno van der Kolk, Julie Faure-Lacroix, Marie-Hélène Burle, Tyson Whitehead -->
 <section id="workshop-materials" class="level2">
 <h2 class="anchored" data-anchor-id="workshop-materials">Workshop materials</h2>
-<p>The slides for this workshop are included into the <a href="https://raw.githubusercontent.com/razoumov/publish/refs/heads/master/paraview.zip">main ZIP file</a> (~30 MB), along with sample datasets and various scripts. The slide deck has two parts: introductory <code>slides1.pdf</code> and more advanced <code>slides2.pdf</code>. In this workshop we’ll be covering mostly introductory topics.</p>
+<p>The slides for this workshop are included into the <a href="https://raw.githubusercontent.com/razoumov/publish/refs/heads/master/paraview.zip">main ZIP file</a> (~30 MB), along with sample datasets and various scripts. The slide deck has two parts: introductory <code>slides1.pdf</code> and more advanced <code>slides2.pdf</code>.</p>
+<!-- In this workshop we'll be covering mostly introductory topics. -->
 <!-- In case of problems, check this [temporary mirror](https://transfer.sh/I7NwUJ/paraview.zip). -->
 <!-- Here are [the slides](../slides/HPC_and_Making_Scientific_Animations_in_ParaView.pdf) for Day 2. -->
 </section>
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
 <p>Please install ParaView 6.0.x from <a href="https://www.paraview.org/download" target="_blank">https://www.paraview.org/download</a> on your computer before the workshop. No prior ParaView experience required.</p>
-<!-- - [Running ParaView (11 min)](https://youtu.be/FloAMW6niRM) -->
-<!-- - [File formats and reading raw binary (7 min)](https://youtu.be/gcqeOSTXUTQ) -->
-<!-- - [VTK file formats: overview and legacy VTK (13 min)](https://youtu.be/IRuZ4DiiwDs) -->
-<!-- - [VTK file formats: XML VTK (4 min)](https://youtu.be/3iiI7VUrgsM) -->
-<!-- - [Scientific file formats (5 min)](https://youtu.be/_kJZRbPQsBE) -->
-<!-- - [ParaView filters (11 min)](https://youtu.be/u7ui0Y4ysoE) -->
-<!-- - [Store your visualization workflow with a state file (2 min)](https://youtu.be/r7cv1lX0Z4M) -->
-<!-- - [Side-by-side visualization (3 min)](https://youtu.be/YZHSufVi0aA) -->
-<!-- - [Visualizing vectors (6 min)](https://youtu.be/QFlKiCOFHYc) -->
-<!-- - [Creating better streamlines (3 min)](https://youtu.be/C3WS2GajvBg) -->
-<!-- - [Line integral convolution (LIC) (3 min)](https://youtu.be/MqqduE3EnS8) -->
-<!-- - [Reading CSV data (6 min)](https://youtu.be/1yrGH7w0rG4) -->
-<!-- - [Putting your visualization online with ParaView Glance (5 min)](https://youtu.be/TWL2CMKSRaU) -->
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Although ParaView 6.1 is available, there are some issues with it at least in MacOS, so we’ll use 6.0 today.</p>
+</div>
+</div>
+</section>
+<section id="other-materials" class="level2">
+<h2 class="anchored" data-anchor-id="other-materials">Other materials</h2>
+<ul>
+<li>Materials from our <a href="winterseries" target="_blank">2026 Winter Visualization Series</a>: 18 workshops covering Matplotlib, Seaborn, Plotly (with Dash), Vega-Altair, the Grammar of Graphics in R and Python, all ParaView topics, VMD, network visualization with Gephi, in-situ visualization with Catalyst2, modern web visualization with trame</li>
+<li>SFU Research Computing Group’s <a href="https://training.westdri.ca/tools/visualization" target="_blank">sci-vis resources</a>: ~30 recorded webinars</li>
+<li>Digital Research Alliance of Canada’s <a href="https://ccvis.netlify.app" target="_blank">National Visualization Team</a>: check out the <em>gallery</em> and the past visualization <em>contests</em></li>
+</ul>
+</section>
+<section id="videos" class="level2">
+<h2 class="anchored" data-anchor-id="videos">Videos</h2>
+<p>In 2020, we recorded our full-day ParaView workshop and split it into short video clips, which are available below. If anything is unclear after today’s workshop or you would like to revisit the material afterwards, these videos are still an excellent resource. Please keep in mind, however, that some of this content may now be outdated.</p>
+<section id="intro" class="level3">
+<h3 class="anchored" data-anchor-id="intro">Intro</h3>
+<ul>
+<li><a href="https://youtu.be/Zp8XPPtq7VA" target="_blank">Basic concepts (7 min)</a></li>
+<li><a href="https://youtu.be/d5LwPlVwEIQ" target="_blank">1D/2D plotting (8 min)</a></li>
+<li><a href="https://youtu.be/jLwW1HklmVo" target="_blank">Multi-dimensional sci-vis (11 min)</a></li>
+</ul>
+</section>
+<section id="file-formats-and-workflows" class="level3">
+<h3 class="anchored" data-anchor-id="file-formats-and-workflows">File formats and workflows</h3>
+<ul>
+<li><a href="https://youtu.be/FloAMW6niRM" target="_blank">Running ParaView (11 min)</a></li>
+<li><a href="https://youtu.be/gcqeOSTXUTQ" target="_blank">File formats and reading raw binary (7 min)</a></li>
+<li><a href="https://youtu.be/IRuZ4DiiwDs" target="_blank">VTK file formats: overview and legacy VTK (13 min)</a></li>
+<li><a href="https://youtu.be/3iiI7VUrgsM" target="_blank">VTK file formats: XML VTK (4 min)</a></li>
+<li><a href="https://youtu.be/_kJZRbPQsBE" target="_blank">Scientific file formats (5 min)</a></li>
+<li><a href="https://youtu.be/u7ui0Y4ysoE" target="_blank">ParaView filters (11 min)</a></li>
+<li><a href="https://youtu.be/r7cv1lX0Z4M" target="_blank">Store your visualization workflow with a state file (2 min)</a></li>
+<li><a href="https://youtu.be/YZHSufVi0aA" target="_blank">Side-by-side visualization (3 min)</a></li>
+<li><a href="https://youtu.be/QFlKiCOFHYc" target="_blank">Visualizing vectors (6 min)</a></li>
+<li><a href="https://youtu.be/C3WS2GajvBg" target="_blank">Creating better streamlines (3 min)</a></li>
+<li><a href="https://youtu.be/MqqduE3EnS8" target="_blank">Line integral convolution (LIC) (3 min)</a></li>
+<li><a href="https://youtu.be/1yrGH7w0rG4" target="_blank">Reading CSV data (6 min)</a></li>
+<li><a href="https://youtu.be/TWL2CMKSRaU" target="_blank">Putting your visualization online with ParaView Glance (5 min)</a></li>
+</ul>
+</section>
+<section id="animation-and-scripting" class="level3">
+<h3 class="anchored" data-anchor-id="animation-and-scripting">Animation and scripting</h3>
+<ul>
+<li><a href="https://youtu.be/FAuZMhHcPkc" target="_blank">Keyframe animation (11 min)</a></li>
+<li><a href="https://youtu.be/gmatGGBf-08" target="_blank">Other ways to produce animations (3 min)</a></li>
+<li><a href="https://youtu.be/DK-a4sznT5I" target="_blank">Intro to ParaView scripting (16 min)</a></li>
+<li><a href="https://youtu.be/pttcyiNJS2Q" target="_blank">Camera animation with scripting (10 min)</a></li>
+<li><a href="https://youtu.be/UA72FV1x418" target="_blank">Programmable filter (4 min)</a></li>
+</ul>
+</section>
+<section id="remote-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="remote-visualization">Remote visualization</h3>
+<ul>
+<li><a href="https://youtu.be/y1BoQIelm7Q" target="_blank">Intro to remote visualization (11 min)</a></li>
+<li><a href="https://youtu.be/X4hItHL5JDA" target="_blank">Small-scale remote visualization (10 min)</a></li>
+<li><a href="https://youtu.be/-o-r4SS93uU" target="_blank">Large-scale remote visualization (11 min)</a></li>
+<li><a href="https://youtu.be/FjRhoRhnao4" target="_blank">Using cluster GPUs for rendering (5 min)</a></li>
+</ul>
+<!-- - [Where to find more information (4 min)](https://youtu.be/3fEYScpOB-E){target="_blank"} -->
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
