@@ -2,8 +2,14 @@
 title: "Creating and running container images"
 ---
 
+## Running existing containers without modification
 
-
+There are 1000s of ready-to-deploy containers from places such as 
+[DockerHub]{style="color: #0000FF;"},
+[SingularityHub]{style="color: #0000FF;"},
+[BioContainers]{style="color: #0000FF;"},
+[NVIDIA NGC]{style="color: #0000FF;"}, and
+[Red Hat Quay.io]{style="color: #0000FF;"}.
 
 ![](/fig/apptainer.png)
 
@@ -13,37 +19,28 @@ your container and typically require root, although there are non-root workaroun
 </p>
 <br>
 
-
-
-
-
-
-
-
-## Running existing containers without modification
-
 Let's run the "Lolcow" container by Apptainer developers:
 
 ```sh
 mkdir tmp && cd tmp
 module load apptainer
 salloc --time=2:0:0 --mem-per-cpu=3600   # very important!!!
-apptainer pull hello-world.sif shub://vsoch/hello-world   # store it as hello-world.sif
+apptainer pull hello-world.sif shub://vsoch/hello-world   # store it as SIF file
 ls -l
-apptainer run hello-world.sif   # run its default script
+apptainer run hello-world.sif                             # run its default script
 ```
 
 Where is this script? What did running the container actually do to result in the displayed output?
 
 ```sh
-apptainer inspect -r hello-world.sif          # it runs the script /rawr.sh
+apptainer inspect -r hello-world.sif          # show the default run script
 apptainer exec hello-world.sif cat /rawr.sh   # here is what's inside
 ```
 
 ::: {.callout-important}
 ##### Key point
-- `apptainer run image.sif` &nbsp; runs the container's default script
-- `apptainer exec image.sif <command>` &nbsp; runs a single command
+- `apptainer run image.sif` &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;←&nbsp; runs the container's default script
+- `apptainer exec image.sif <command>` &emsp;←&nbsp; executes a single command
 :::
 
 We can also run an image directly off the Singularity Hub without putting it into the current directory:
@@ -81,15 +78,17 @@ apptainer pull ubuntu.sif docker://ubuntu
 
 ::: {.callout-important}
 ##### Key point
-- `apptainer shell image.sif` &nbsp; opens an interactive shell inside the container
+- `apptainer run image.sif` &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;←&nbsp; runs the container's default script
+- `apptainer exec image.sif <command>` &emsp;←&nbsp; executes a single command
+- `apptainer shell image.sif` &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;←&nbsp; starts an interactive shell inside the container
 :::
 
 ::: {.callout-caution collapse="true"}
 ##### Exercise: check Ubuntu version
 On a Linux system the file `/etc/os-release` shows the current Linus distribution and version. Which OS are we
-running on the host, and which Ubuntu version is inside the container? Find the answer in 2 ways:
+running on the host, and which Ubuntu version is inside the container? Find the answer in two ways:
 
-1. with `apptainer run` or `apptainer shell` (which produce the same result without a default script)
+1. with `apptainer shell` (which produce the same result without a default script)
 2. with `apptainer exec`
 :::
 
@@ -100,6 +99,18 @@ an Apptainer image, Apptainer translates some Docker image settings into an equi
 displayed with `apptainer inspect -r image.sif`, but this is not the traditional runscript. As far as
 `apptainer run` is concerned, there is no runscript.
 :::
+
+
+
+### Container runtime properties
+
+1. Container file-system is read-only
+    - you can modify files from inside the container in at least three different ways -- we'll talk about it later
+    - having a filesystem in a single SIF file gives you good performance on parallel filesystems
+1. Same user as on the host
+1. By default, same working directory as on the host
+1. Shell variables inherited from the host
+
 
 
 
@@ -157,13 +168,13 @@ Can you find other inspection flags besides `-r` and `-d`?
 
 ### Build command
 
-The `apptainer build <imagePath> <buildSpec>` command is a versatile tool that lets you:
+The command `apptainer build ...` is a versatile tool that lets you:
 
-1. download and assemble existing containers from external hubs like [Docker Hub](https://hub.docker.com)
-   (`docker://`), [Singularity Hub](https://singularityhub.github.io) (`shub://`), and the [Container
-   Library](https://cloud.sylabs.io) (`library://` - no longer supported by default),
-1. create a container from scratch using an Apptainer definition file customized to your needs,
-1. convert containers between different formats supported by Apptainer, e.g. create a container from a sandbox.
+1. download and [assemble existing containers]{style="color: #0000FF;"} from external hubs like [Docker
+   Hub](https://hub.docker.com) (`docker://`) and [Singularity Hub](https://singularityhub.github.io)
+   (`shub://`)
+1. create a container from scratch using an [Apptainer definition file]{style="color: #0000FF;"} customized to your needs,
+1. convert containers [between different formats]{style="color: #0000FF;"} supported by Apptainer, e.g. create a container from a sandbox.
 
 <!-- You can create an image from: -->
 <!-- - a recipe/definition file (similar to Dockerfile for Docker images) -->
@@ -183,7 +194,8 @@ container from it, without having to modify the image. Or maybe, the image is al
 research collaborator, or the Alliance. For example, in the Alliance Federation there have been some
 discussions to provide a set of Apptainer images with GPU development tools for different GPU architectures,
 such as NVIDIA's CUDA and AMD's ROCm, as it is often difficult to compile these from source. If you would like
-these or other custom pre-configured images, please reach out to the Alliance to request them.
+these or other custom pre-configured images, please reach out to the Alliance (<i>support at tech dot
+alliancecan dot ca</i>) to request them.
 
 <!-- and we are planning to make these images available to all users in the near future. -->
 
@@ -213,15 +225,17 @@ root, either:
 
 If installing packages is not important to you, i.e. you are planning to use the container as is for
 production purposes, you can probably create an image on an HPC cluster. If you run into problems, please ask
-for help at <i>support@tech.alliancecan.ca</i>.
+for help at <i>support at tech dot alliancecan dot ca</i>.
 
 ::: {.callout-note}
+##### Same user in and out
 In Apptainer the user always remains the same inside and outside of the container. In other
 words, if you enter a container without root privileges, you won't be able to obtain root privileges within
 the container.
 :::
 
 ::: {.callout-note}
+##### Finding a Linux machine with root access
 If you have access to your own Linux computer, it is best to build your images there (root access and
 performance from a local drive). Alternatively, you can use a VM where you have root access. In the Alliance,
 we provide free cloud projects to researchers for spinning up VMs.
@@ -246,24 +260,24 @@ clusters, we highly recommend doing this inside a Slurm job in `$SLURM_TMPDIR` (
 
 ### Demo: building a development container in a sandbox as root
 
-::: {.callout-note}
-You need to be root in this section. For this reason, in this section I will run a demo on a machine with root
-access, and you can simply watch.
-:::
+You need to be root in this section. For this reason, here I will run a demo on a machine with root access,
+and you can simply watch. Here is my plan:
 
 1. Pull an existing Docker image from Docker Hub.
-1. Create a modifiable sandbox directory into which you can install packages.
+1. Create a writable sandbox directory into which you can install packages.
 1. Add packages and perhaps your application and data.
 1. Convert the sandbox into a regular SIF image.
 
 ::: {.callout-note}
+##### Why sandbox
 By default, Apptainer containers are read-only, i.e. while you can write into bind-mounted directories,
-normally you cannot modify files inside the container.
+normally you cannot modify files inside the container. Converting a container image into a sandbox presents
+the container filesystem as a regular, writable directory that we'll later convert into a SIF image.
 :::
 
-To build a writable container into which you can install packages, you need `root` access. The `--sandbox`
-flag below builds a sandbox to which changes can be made, and the `--writable` flag launches a read-write
-container. In this example `ubuntu.dir` is a directory on the host filesystem.
+<!-- To build a writable container into which you can install packages, you need `root` access. The `--sandbox` -->
+<!-- flag below builds a sandbox to which changes can be made, and the `--writable` flag launches a read-write -->
+<!-- container. In this example `ubuntu.dir` is a directory on the host filesystem. -->
 
 <!-- Old, two-step method: -->
 <!-- ```sh -->
@@ -296,12 +310,12 @@ full path (as `apptainer` from CVMFS will not be accessible to `sudo`):
 <!-- APPTNR=/cvmfs/soft.computecanada.ca/easybuild/software/2020/Core/apptainer/1.1.8/bin/apptainer -->
 
 ```sh
-ssh centos@apptainer
+ssh centos@sfu-container
 mkdir -p tmp && cd tmp
 alias apptainer=/cvmfs/soft.computecanada.ca/easybuild/software/2023/x86-64-v3/Core/apptainer/1.3.5/bin/apptainer
 alias sudo='sudo '   # so that the command after sudo is checked for alias
 apptainer build --sandbox ubuntu.dir docker://ubuntu   # sudo not yet required
-du -sh ubuntu.dir                              # 82M, before installing packages
+du -sh ubuntu.dir                              # 109M, before installing packages
 sudo apptainer shell --writable ubuntu.dir     # start the sandbox in writable mode;
                                                # sudo needed to install packages as root
 Apptainer> apt-get update            # update the package index files
@@ -309,7 +323,7 @@ Apptainer> wget                      # not available
 Apptainer> whoami                    # I am root, so can install software system-wide
 Apptainer> apt-get -y install wget   # will fail here if Apptainer run without root
 
-sudo du -sh ubuntu.dir               # 139M; sudo necessary to scan root directories
+sudo du -sh ubuntu.dir               # 162M; sudo necessary to scan root directories
 ```
 
 ::: {.callout-note}
@@ -326,13 +340,13 @@ To convert the sandbox to a regular non-writable SIF container image, I will use
 ```sh
 sudo apptainer build ubuntu.sif ubuntu.dir
 sudo rm -rf ubuntu.dir
-ls -lh ubuntu.sif            # 68M (compressed)
+ls -lh ubuntu.sif            # 72M (compressed)
 apptainer shell ubuntu.sif   # can now start it as non-root
 
 Apptainer> wget
 Apptainer> ...
 
-scp ubuntu.sif user01@apptainer.vastcloud.org:/project/def-sponsor00/shared
+scp ubuntu.sif user01@sfu-container.c3.ca:/project/def-sponsor00/shared
 ```
 
 As a regular user on the training cluster, I should be able to use this image now:
@@ -343,6 +357,14 @@ module load apptainer
 apptainer shell /project/def-sponsor00/shared/ubuntu.sif
 ```
 
+::: {.callout-caution collapse="true"}
+##### Exercise: use wget?
+Will I be able to use `wget` inside the container as a regular user? If so, doesn't that contradict what I
+said earlier about the container filesystem being read-only?
+```sh
+wget --no-check-certificate http://bit.ly/bashfile -O bfiles.zip
+```
+:::
 
 
 
@@ -356,7 +378,7 @@ You need an Apptainer 1.1 or later in this section, as well as `fakeroot-sysv` u
 `fakeroot` in the path. Our CVMFS modules have been patched to include this utility inside the
 module's private bindir, and on standalone Linux systems `fakeroot-sysv` is typically installed when you
 install the Apptainer package. This is to say that the approach outlined in this section most likely works
-both on our production clusters and on most standalone Linux systems with Apptainer 1.1 (or higher). However,
+both on our production clusters and on most standalone Linux systems with Apptainer 1.1 or higher. However,
 it is always preferable to modify system files in the containers as root, and with
 `--fakeroot` you might still run into problems with more complex Apptainer images, so always monitor your
 output for errors.
@@ -378,7 +400,7 @@ mkdir -p tmp && cd tmp
 module load apptainer
 salloc --time=2:0:0 --mem-per-cpu=3600
 apptainer build --sandbox ubuntu.dir docker://ubuntu   # create the sandbox in ubuntu.dir/
-du -sh ubuntu.dir                                      # 82M, before installing packages
+du -sh ubuntu.dir                                      # 109M, before installing packages
 apptainer shell --fakeroot --writable ubuntu.dir
 ```
 
@@ -414,7 +436,7 @@ Next, inside the container, we can install the software we need, e.g.
 Apptainer> apt-get update
 Apptainer> apt-get -y install wget
 
-du -sh ubuntu.dir   # 140M
+du -sh ubuntu.dir   # 162M
 ```
 
 To convert the sandbox to a regular non-writable SIF container image, use
@@ -452,10 +474,11 @@ nano python.def
 ```
 ```txt
 Bootstrap: docker
-From: ubuntu:24.04
+From: ubuntu:26.04
 
 %post
-    apt-get -y update && apt-get install -y python3
+    apt-get -y update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y python3
 
 %runscript
     python3 -c 'print("Hello World! Hello from our custom Apptainer image!")'
@@ -470,7 +493,7 @@ apptainer build python.sif python.def   # in Apptainer 1.0 important to run this
                                     # running this as regular user will result in errors;
                                     # in properly configured Apptainer 1.1 and higher can run
                                     # this as regular user
-ls -l python.sif           # 80M
+ls -l python.sif           # 82M
 apptainer run python.sif   # Hello World! Hello from our custom Apptainer image!
 ```
 
@@ -505,7 +528,7 @@ as described in [the user guide](https://apptainer.org/docs/user/latest/definiti
 
 ::: {.callout-important}
 ## Key point
-Apptainer definition files are used to define the build process and configuration for an image.
+An Apptainer definition file completely describes the build process and configuration for an image.
 :::
 
 ::: {.callout-note}
@@ -534,10 +557,11 @@ to use their service, you will need to register for a cloud token via the link o
 
 ```txt
 Bootstrap: docker
-From: ubuntu:24.04
+From: ubuntu:26.04
 
 %post
     apt-get -y update && apt-get install -y python3
+    DEBIAN_FRONTEND=noninteractive apt-get install -y python3
 
 %runscript
     python3 -c 'print("Hello World! Hello from our custom Apptainer image!")'
@@ -565,9 +589,127 @@ You can find more information on remote endpoints in the
 
 
 
-<!-- ## Running more useful Docker images via Apptainer as regular user -->
 
 ## Practical Apptainer workflows
+
+In this hands-on section, we use Apptainer to run Docker images as a regular user.
+
+### Try another Linux distro
+
+::: {.callout-caution collapse="true"}
+##### Exercise: switch to another Linux distribution
+Let's try creating an image with another Linux distribution:
+```sh
+apptainer pull debian.sif docker://debian:latest
+```
+Try running `nano` text editor inside one of these containers. If it is not installed, install it yourself:
+create a writable sandbox directory, enter it with `--fakeroot --writable`, install `nano` (google the
+commands), convert it back to SIF.
+:::
+
+<!-- Solution: -->
+<!-- ```sh -->
+<!-- apptainer shell debian.sif -->
+<!-- Apptainer> nano -->
+
+<!-- apptainer build --sandbox debian.dir docker://debian:latest -->
+<!-- mkdir debian.dir/{project,scratch} -->
+<!-- apptainer shell --fakeroot --writable debian.dir -->
+<!-- Apptainer> apt-get update -->
+<!-- Apptainer> apt install nano -->
+
+<!-- apptainer build debian.sif debian.dir -->
+
+<!-- apptainer shell debian.sif -->
+<!-- Apptainer> nano -->
+<!-- ``` -->
+
+### Latest Python image
+
+We did something similar with a Python container earlier, so you can refer to the notes in this section.
+
+::: {.callout-caution collapse="true"}
+##### Exercise: latest Python image
+Pull the latest Python image from Docker Hub into an Apptainer image. It should take few minutes to build it.
+
+1. How large is the resulting image?
+1. Run container's Python with the `apptainer exec` command. Which version of Python did it install?
+1. Do some math, e.g. print $\pi$.
+1. When you exit Python, you will be back to your host system's shell.
+1. Now try running Python via the `apptainer shell` command.
+1. Which operating system does this container run?
+```sh
+module load apptainer
+salloc --time=2:00:0 --mem-per-cpu=3600
+apptainer pull python.sif docker://???
+```
+:::
+
+<!-- Solution: -->
+<!-- ```sh -->
+<!-- apptainer pull python.sif docker://python -->
+<!-- ls -l python.sif   # 336M -->
+<!-- apptainer exec python.sif python   # Python 3.13.0 -->
+<!-- >>> import math as m -->
+<!-- >>> m.pi -->
+<!-- apptainer shell python.sif -->
+<!-- Apptainer> python -->
+<!-- apptainer exec python.sif cat /etc/os-release   # Debian GNU/Linux -->
+<!-- ``` -->
+
+### CPU-based PyTorch image
+
+::: {.callout-caution collapse="true"}
+##### Exercise: CPU-based PyTorch image
+Pull a recent <b>CPU-based</b> PyTorch image from Docker Hub into an Apptainer image.
+```sh
+module load apptainer
+salloc --time=2:00:0 --mem-per-cpu=3600
+apptainer pull pytorch.sif docker://???
+```
+1. Which operating system does this container run?
+1. Try running some basic PyTorch commands inside this image:
+```py
+import torch
+A = torch.tensor([[2., 3., -1.], [1., -2., 8.], [6., 1., -3.]])
+print(A)
+b = torch.tensor([5., 21., -1.])
+print(b)
+x = torch.linalg.solve(A, b)
+print(x)
+torch.allclose(A @ x, b)   # verify the result
+```
+For more info on working with PyTorch tensors watch
+[our webinar](https://westgrid.github.io/trainingMaterials/tools/ml/#pytorch-tensors).
+:::
+
+<!-- Solution: -->
+<!-- ```sh -->
+<!-- # ----- -->
+<!-- apptainer pull pytorch.sif docker://pytorch/manylinux-cpu -->
+<!-- # 712M, CentOS Linux 7, Python 3.6.8 -->
+<!-- seems like a good match by its name, but can't find PyTorch inside -->
+
+<!-- # ----- -->
+<!-- apptainer pull llvm.sif docker://pytorch/llvm:12.0.0 -->
+<!-- 326M, Alpine Linux 3.17, no sign of either Python or PyTorch inside -->
+<!-- ``` -->
+
+<!-- # ----- -->
+<!-- apptainer pull intel.sif docker://intel/intel-optimized-pytorch:latest -->
+<!-- # 971M, Ubuntu 22.04.5 LTS, Python 3.10.14 -->
+<!-- apptainer shell intel.sif -->
+<!-- Apptainer> python -->
+<!-- >>> import torch -->
+
+::: {.callout-note}
+On our clusters we have PyTorch installed natively, both for CPUs and GPUs, so no need to rely on a container
+for this.
+:::
+
+
+
+
 
 ParaView and VisIt are two scientific applications that are **quite difficult** to compile from source. We
 have both installed on the production clusters -- but let's imagine that we don't, and you need to install
@@ -577,7 +719,7 @@ your own. The two scenarios below show how you can do that.
 2. With VisIt, we start with a bare-bones Ubuntu image and then download a pre-compiled VisIt for Ubuntu,
    unpack it into the sandbox, and install other required libraries.
 
-### Run client-server ParaView from a container
+### Client-server ParaView
 
 ParaView is a very popular open-source scalable 3D scientific visualization tool. To visualize large datasets
 on an HPC cluster, you can run ParaView in a client-server mode, with your local ParaView GUI acting as a
@@ -635,7 +777,7 @@ sh download-frozen-image-v2.sh build ttk:latest   # download an image
                                                   # from Docker Hub into build/
 cd build && tar cvf ../ttk.tar * && cd ..
 module load apptainer
-salloc --cpus-per-task=1 --time=0:30:0 --mem-per-cpu=3600 --account=...
+salloc --time=0:30:0 --mem-per-cpu=3600 --account=...
 apptainer build topologytoolkit.sif docker-archive://ttk.tar   # build the Apptainer image;
                                                                # wait for `Build complete`
 /bin/rm -rf build topologytoolkit.tar
@@ -663,119 +805,7 @@ ssh username@apptainer.vastcloud.org -L 11111:node1:11111
 Next, start ParaView 5.11.x on your computer and connect to `localhost:11111`, and then load the dataset and
 visualize it.
 
-### Exercise: switch to another Linux distribution
-
-::: {.callout-caution collapse="true"}
-##### Exercise: switch to another Linux distribution
-Let's try creating an image with another Linux distribution:
-```sh
-apptainer pull debian.sif docker://debian:latest
-```
-Try running `nano` text editor inside one of these containers. If it is not installed, install it yourself:
-create a writable sandbox directory, enter it with `--fakeroot --writable`, install `nano` (google the
-commands), convert it back to SIF.
-:::
-
-<!-- Solution: -->
-<!-- ```sh -->
-<!-- apptainer shell debian.sif -->
-<!-- Apptainer> nano -->
-
-<!-- apptainer build --sandbox debian.dir docker://debian:latest -->
-<!-- mkdir debian.dir/{project,scratch} -->
-<!-- apptainer shell --fakeroot --writable debian.dir -->
-<!-- Apptainer> apt-get update -->
-<!-- Apptainer> apt install nano -->
-
-<!-- apptainer build debian.sif debian.dir -->
-
-<!-- apptainer shell debian.sif -->
-<!-- Apptainer> nano -->
-<!-- ``` -->
-
-### Exercise: latest Python image
-
-We did something similar with a Python container earlier, so you can refer to the notes in this section.
-
-::: {.callout-caution collapse="true"}
-##### Exercise: latest Python image
-Pull the latest Python image from Docker Hub into an Apptainer image. It should take few minutes to build it.  
-1. How large is the resulting image?  
-1. Run container's Python with the `apptainer exec` command. Which version of Python did it install?  
-1. Do some math, e.g. print $\pi$.  
-1. When you exit Python, you will be back to your host system's shell.  
-1. Now try running Python via the `apptainer shell` command.  
-1. Which operating system does this container run?
-```sh
-module load apptainer
-salloc --cpus-per-task=1 --time=2:00:0 --mem-per-cpu=3600
-apptainer pull python.sif docker://???
-```
-:::
-
-<!-- Solution: -->
-<!-- ```sh -->
-<!-- apptainer pull python.sif docker://python -->
-<!-- ls -l python.sif   # 336M -->
-<!-- apptainer exec python.sif python   # Python 3.13.0 -->
-<!-- >>> import math as m -->
-<!-- >>> m.pi -->
-<!-- apptainer shell python.sif -->
-<!-- Apptainer> python -->
-<!-- apptainer exec python.sif cat /etc/os-release   # Debian GNU/Linux -->
-<!-- ``` -->
-
-### Exercise: CPU-based PyTorch image
-
-::: {.callout-caution collapse="true"}
-##### Exercise: CPU-based PyTorch image
-Pull a recent <b>CPU-based</b> PyTorch image from Docker Hub into an Apptainer image.
-```sh
-module load apptainer
-salloc --cpus-per-task=1 --time=2:00:0 --mem-per-cpu=3600
-apptainer pull pytorch.sif docker://???
-```
-1. Which operating system does this container run?
-1. Try running some basic PyTorch commands inside this image:
-```py
-import torch
-A = torch.tensor([[2., 3., -1.], [1., -2., 8.], [6., 1., -3.]])
-print(A)
-b = torch.tensor([5., 21., -1.])
-print(b)
-x = torch.linalg.solve(A, b)
-print(x)
-torch.allclose(A @ x, b)   # verify the result
-```
-For more info on working with PyTorch tensors watch
-[our webinar](https://westgrid.github.io/trainingMaterials/tools/ml/#pytorch-tensors).
-:::
-
-<!-- Solution: -->
-<!-- ```sh -->
-<!-- # ----- -->
-<!-- apptainer pull pytorch.sif docker://pytorch/manylinux-cpu -->
-<!-- # 712M, CentOS Linux 7, Python 3.6.8 -->
-<!-- seems like a good match by its name, but can't find PyTorch inside -->
-
-<!-- # ----- -->
-<!-- apptainer pull llvm.sif docker://pytorch/llvm:12.0.0 -->
-<!-- 326M, Alpine Linux 3.17, no sign of either Python or PyTorch inside -->
-<!-- ``` -->
-
-<!-- # ----- -->
-<!-- apptainer pull intel.sif docker://intel/intel-optimized-pytorch:latest -->
-<!-- # 971M, Ubuntu 22.04.5 LTS, Python 3.10.14 -->
-<!-- apptainer shell intel.sif -->
-<!-- Apptainer> python -->
-<!-- >>> import torch -->
-
-::: {.callout-note}
-On our clusters we have PyTorch installed natively, both for CPUs and GPUs, so no need to rely on a container
-for this.
-:::
-
-### Run a VisIt visualization script
+### VisIt visualization script
 
 [VisIt](https://visit-dav.github.io/visit-website/index.html){target="_blank"} is an open-source scalable
 visualization package that is notoriously difficult to compile. Fortunately, it is available as a precompiled

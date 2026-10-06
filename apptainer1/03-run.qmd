@@ -1,8 +1,8 @@
 ---
-title: "More on running containers"
+title: "Working with Apptainer containers"
 ---
 
-## Different ways to run a container
+## How to run a container (review)
 
 As a reminder, we continue working in our `~/tmp` directory inside an interactive job with the Apptainer
 module loaded:
@@ -10,7 +10,7 @@ module loaded:
 ```sh
 cd ~/tmp
 module load apptainer
-salloc --cpus-per-task=1 --time=2:00:0 --mem-per-cpu=3600   # only from the login node
+salloc --time=2:00:0 --mem-per-cpu=3600   # only from the login node
 ```
 
 If you have not done so already, let's pull the latest Ubuntu container from Docker:
@@ -57,7 +57,7 @@ At startup Apptainer simply copied the relevant user and group lines from the ho
 modify anything on the host system that you should not have permission to, i.e. you are restricted to the same
 user permissions within the container as you are on the host system.
 
-## Mounting external directories and copying environment
+## Mounting external directories and copying variables
 
 By default, Apptainer containers are read-only, so you cannot write into its directories. However, from
 inside the container you can organize read-write access to your directories on the host filesystem. The
@@ -172,3 +172,223 @@ official
 4. Use `-C` to hide both host's filesystems and environment variables, perhaps while mounting only few specific directories.<br>
 5. Use `-e` to hide only the host's environment variables.
 :::
+
+
+
+
+
+
+## Overlays
+
+In the container world, an overlay image is a file formatted as a filesystem. To the host filesystem it is a
+single file. When you mount it into a container, the container will see a filesystem with many files.
+
+An overlay mounted into an immutable SIF image lets you store files without rebuilding the image. For example,
+you can store your computation results, or compile/install software into an overlay.
+
+An overlay can be:
+
+1. a standalone writable ext3 filesystem image (most useful),
+1. a sandbox directory, or
+1. a writable ext3 image embedded into the SIF file.
+
+::: {.callout-note}
+##### Use an overlay to hide millions of files
+If you write millions of files, do not store them on a cluster filesystem -- instead, use an Apptainer
+overlay file for that. Everything inside the overlay will appear as a single file to the cluster filesystem
+which will help to reduce I/O issues on Lustre.
+:::
+
+<!-- ::: {.callout-note} -->
+<!-- The direct `apptainer overlay` command requires Singularity 3.8 / Apptainer 1.0 or later and a relatively -->
+<!-- recent set of filesystem tools, e.g. it won't work in a CentOS7 VM. It should work on a VM or a cluster -->
+<!-- running Rocky Linux 8.5 or later. -->
+<!-- ::: -->
+
+<!-- Narval's compute nodes don't have Internet access, but we can copy a usable SIF image from elsewhere. -->
+
+```sh
+cd ~/tmp
+apptainer pull ubuntu.sif docker://ubuntu:latest
+module load apptainer
+salloc --time=0:30:0 --mem-per-cpu=3600
+apptainer overlay create --size 512 small.img   # create a 0.5GB overlay image file
+apptainer shell --overlay small.img ubuntu.sif
+```
+
+<!-- Alternatively, we could add a writable overlay partition directly to an existing SIF image: -->
+<!-- ```sh -->
+<!-- apptainer overlay create --size 512 --create-dir /data ubuntu.sif -->
+<!-- apptainer shell -C -B /home,/scratch ubuntu.sif -->
+<!-- ``` -->
+<!-- but this comes with a number of limitations, so we won't use this option. -->
+
+Inside the container any newly-created top-level directory will go into the overlay filesystem:
+
+```sh
+Apptainer> df -kh             # the overlay should be mounted inside the container
+Apptainer> mkdir -p /data     # by default this will go into the overlay image
+Apptainer> cd /data
+Apptainer> df -kh .           # using overlay; check for available space
+Apptainer> for num in $(seq -w 00 19); do
+             echo $num
+             # generate a binary file (1-33)MB in size
+             dd if=/dev/urandom of=test"$num" bs=1024 count=$(( RANDOM + 1024 ))
+           done
+Apptainer> df -kh .     # should take ~300-400 MB
+```
+
+If you exit the container and then mount the overlay again, your files will be there:
+
+```sh
+apptainer shell --overlay small.img ubuntu.sif
+
+Apptainer> ls /data     # here is your data
+```
+
+You can also create a new overlay image with a directory inside with something like:
+
+```sh
+apptainer overlay create --create-dir /data --size 512 overlay.img   # create an overlay with a directory
+```
+
+If you want to mount the overlay in the read-only mode:
+
+```sh
+apptainer shell --overlay small.img:ro ubuntu.sif
+Apptainer>  touch /data/test.txt    # error: read-only file system
+```
+
+::: {.callout-note}
+Into the same container at the same time, you can mount many read-only overlays, but only one writable overlay.
+:::
+
+To see the help page on overlays (these two commands are equivalent):
+
+```sh
+apptainer help overlay create
+apptainer overlay create --help
+```
+
+### Sparse overlay images
+
+Sparse images use disk more efficiently when blocks allocated to them are mostly empty. As you add more data
+to a sparse image, it can grow (*but not shrink!*) in size. Let's create a sparse overlay image:
+
+```sh
+apptainer overlay create --size 512 --sparse sparse.img
+ls -l sparse.img                   # its apparent size is 512MB
+du -h --apparent-size sparse.img   # same
+du -h sparse.img                   # its actual size is much smaller (316K)
+```
+
+Let's mount it and fill with some data, e.g. a few files:
+
+```
+apptainer shell --overlay sparse.img ubuntu.sif
+
+Apptainer> mkdir -p /data && cd /data
+Apptainer> for num in $(seq -w 0 4); do
+             echo $num
+             # generate a binary file (1-33)MB in size
+             dd if=/dev/urandom of=test"$num" bs=1024 count=$(( RANDOM + 1024 ))
+           done
+Apptainer> df -kh .     # should take ~75-100 MB, pay attention to "Used"
+
+du -h sparse.img        # shows actual usage
+```
+
+::: {.callout-note}
+Be careful with sparse images: not all tools (e.g. backup/restore, scp, sftp, gunzip) recognize sparsefiles
+⇒ this can potentially lead to data loss and other bad things ...
+:::
+
+### Example: installing Conda into an overlay
+
+Installing native Anaconda on HPC clusters is a [bad
+idea](https://docs.alliancecan.ca/wiki/Anaconda/en){target="_blank"} for a number of reasons. Instead of
+Conda, we recommend using `virtualenv` together with our pre-compiled Python wheels to install Python packages
+into your own virtual environments.
+
+One of the reasons we do not recommend Conda is that it creates a large number of files in your
+directories. You can alleviate this problem by hiding Conda files inside an overlay image:
+
+- takes a couple of minutes, results in 32k+ files that are hidden from the host
+- no need for root, as you don't modify the container image
+- still might not be the most efficient use of resources (non-optimized binaries)
+
+Here is one way you could install Conda into an overlay image:
+
+```sh
+cd ~/tmp
+apptainer pull ubuntu.sif docker://ubuntu:latest
+apptainer overlay create --size 1200 conda.img   # create a 1200M overlay image
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+
+apptainer shell --overlay conda.img -B /home ubuntu.sif
+
+Apptainer> mkdir /conda && cd /conda
+Apptainer> df -kh .
+Apptainer> bash /home/${USER}/tmp/miniconda.sh
+  agree to the license
+  use /conda/miniconda3 for the installation path
+  no to initialize Miniconda3
+Apptainer> find /conda/miniconda3/ -type f | wc -l   # 32,621 files
+Apptainer> df -kh .   # uses ~840M once finished, but more was used during installation
+```
+
+These 32k+ files appear as a single file to the Lustre metadata server (which is great!).
+
+```sh
+apptainer shell ubuntu.sif
+Apptainer> ls /conda                            # no such file or directory
+
+apptainer shell --overlay conda.img ubuntu.sif
+Apptainer> source /conda/miniconda3/bin/activate
+(base) Apptainer> type python   # /conda/miniconda3/bin/python
+(base) Apptainer> python        # works
+```
+
+If you want to install large Python packages, you probably want to resize the image:
+
+```sh
+e2fsck -f conda.img         # check your overlay's filesystem first (required step)
+resize2fs -p conda.img 2G   # resize your overlay
+ls -l conda.img             # should be 2GB
+```
+
+Next mount the resized overlay into the container, and make sure to pass the `-C` flag to force writing config
+files locally (and not to the host):
+
+```sh
+apptainer shell -C --overlay conda.img ubuntu.sif   # /home/$USER won't be available
+
+Apptainer> cd /conda/miniconda3
+Apptainer> source bin/activate
+(base) Apptainer> conda install numpy
+(base) Apptainer> df -kh .   # so far used 1.8G out of 2.0G
+(base) Apptainer> python
+>>> import numpy as np
+>>> np.pi
+```
+
+
+
+
+
+
+
+
+
+## Container best practices
+
+1. Should I put everything into one container? A [*monolithic container*]{style="color: #0000FF;"} (one SIF
+   file) is easier to build when starting from scratch, but would need to be rebuilt to update one of its
+   components. A [*modular container*]{style="color: #0000FF;"} makes it easier to swap and upgrade individual
+   components as needed.
+```sh
+apptainer run --overlay {layer1,layer2,layer3}.img container.sif
+```
+1. Use overlays to hide many files from the host's filesystem.
+1. Use trusted images, e.g. you should probably pick `python:3.12` over `foobar/python:3.12`.
+1. When building images, only keep what's needed, e.g. don't forget to remove the source code after compiling.
