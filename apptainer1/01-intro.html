@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.10.18">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -77,9 +77,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b626d73c4c936ccc3cb08be7d45d1df6.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-7100700a5d4657facf49b32369185e6d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
@@ -288,7 +288,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../apptainer1/01-intro.html">What is Apptainer / Singularity</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../apptainer1/01-intro.html">What is Apptainer</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -325,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../apptainer1/01-intro.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">What is Apptainer / Singularity</span></a>
+ <span class="menu-text">What is Apptainer</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -337,7 +337,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../apptainer1/03-run.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">More on running containers</span></a>
+ <span class="menu-text">Working with Apptainer containers</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -414,43 +414,74 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li>in other words, distribute software and <strong>its compute environment</strong></li>
 </ul></li>
-<li>Apptainer creates a custom, secure virtual Linux environment (a <em>container</em>) that is different from the host Linux system.
-<ul>
-<li>e.g., on a CentOS/Rocky Linux machine you can create a virtual Ubuntu system where you can install any precompiled packaged software from the Ubuntu repositories</li>
-<li>in a sense, gives you control of your software environment without being <code>root</code> on the host system (with a catch: creating containers from scratch usually requires <code>root</code>) <!-- - you can install any system packages and all dependencies for your software as packages inside the container --></li>
-</ul></li>
-<li>Apptainer is different from Docker, as it does not require <code>root</code> access on the host system to <em>run</em> it
-<ul>
-<li>specifically designed for running containers on multi-user HPC clusters</li>
-</ul></li>
-<li>On a Linux host Apptainer is very lightweight compared to a full <strong>virtual machine</strong> (VM).</li>
-<li>On MacOS or Windows hosts Apptainer can be deployed inside a VM, as you still need a Linux host layer</li>
-<li>Apptainer quickly became a way to package and deploy scientific software and its dependencies to different HPC systems.</li>
 </ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="c1.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Programs rely on shared libraries and dependencies. These may clash with each other in what is often called a “dependency hell”.</figcaption>
+</figure>
+</div>
+<!-- that is different from the host Linux system and -->
+<p>To address this, Apptainer creates a custom, secure virtual Linux environment (a <em>container</em>) that bundles the application and its libraries and dependencies. Applications inside the container run independently from the host machine.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="c2.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Inside each container, you package libraries, dependencies, shell commands and environment variables.</figcaption>
+</figure>
+</div>
+<p>Usually this is done by creating a target Linux system inside the container and then installing applications inside it. For example, on a CentOS/Rocky Linux machine you can create a virtual Ubuntu system where you can install any precompiled packaged software from the Ubuntu repositories.</p>
+<p><!-- - in a sense, gives you control of your software environment without being `root` on the host system (with a --> <!--   catch: creating containers from scratch usually requires `root`) --> <!-- - you can install any system packages and all dependencies for your software as packages inside the container --></p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Apptainer vs.&nbsp;Docker
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Apptainer is different from Docker, as it does not require <code>root</code> access on the host system to run it. Apptainer is specifically designed for running containers on multi-user HPC clusters, and it quickly became a way to package and deploy scientific software and its dependencies to different HPC systems.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Containers vs.&nbsp;VMs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On a Linux host Apptainer is very lightweight compared to a full <strong>virtual machine</strong> (VM). On MacOS or Windows hosts Apptainer can be deployed inside a VM, as you still need a Linux host layer.</p>
+</div>
+</div>
 <section id="technical-details" class="level2">
 <h2 class="anchored" data-anchor-id="technical-details">Technical details</h2>
 <p>From the technical standpoint, Apptainer uses:</p>
-<ul>
-<li><em>kernel namespaces</em> to virtualize and isolate OS resources – CPU, memory access, disk I/O, network access, user/group namespaces – so that processes inside the container see only a specific, virtualized set of resources</li>
-<li>Linux control groups (<em>cgroups</em>) to control and limit the use of these resources</li>
-<li><em>overlay images</em> to enable writable filesystems in otherwise read-only containers</li>
-</ul>
+<ol type="1">
+<li><span style="color: #0000FF;">kernel namespaces</span> to virtualize and isolate OS resources – CPU, memory access, disk I/O, network access, user/group namespaces – so that processes inside the container see only a specific, virtualized set of resources,</li>
+<li>Linux control groups (<span style="color: #0000FF;">cgroups</span>) to control and limit the use of these resources, and</li>
+<li><span style="color: #0000FF;">overlay images</span> to enable writable filesystems in otherwise read-only containers.</li>
+</ol>
 </section>
 <section id="why-use-a-container" class="level2">
 <h2 class="anchored" data-anchor-id="why-use-a-container">Why use a container</h2>
-<p>Idea: package and distribute the software environment along with the application, i.e.&nbsp;create a <strong>portable software environment</strong>.</p>
-<p>Why:</p>
+<p>Idea: package and distribute the software environment along with the application, i.e.&nbsp;create a <strong>portable software environment</strong>. More specifically, with containers you can:</p>
 <ol type="1">
-<li>avoid compiling complex software chains from scratch for the host’s Linux OS and run it instead in the environment where it is available as a package,</li>
+<li>avoid compiling complex software and run it instead in the environment where it is already available, e.g.&nbsp;inside a pre-existing container,</li>
 <li>run older software that is now hard to compile (missing dependencies),</li>
-<li>use a familiar software environment across different HPC centres, independently of the underlying system</li>
-<li>popular, but somewhat dubious reason: data reproducibility (use the same software environment as the authors &nbsp;⮕&nbsp; same result)</li>
+<li>use a familiar software environment across different HPC centres, independently of the underlying system, and</li>
+<li>preserve and share your build with others.</li>
 </ol>
+<!-- 1. popular, but somewhat dubious reason: data reproducibility (use the same software environment as the -->
+<!--    authors &nbsp;⮕&nbsp; same result) -->
 </section>
 <section id="whywhen-not-to-use-a-container" class="level2">
 <h2 class="anchored" data-anchor-id="whywhen-not-to-use-a-container">Why/when not to use a container</h2>
-<p>Do not use Apptainer if your software is <a href="https://docs.alliancecan.ca/wiki/Available_software" target="_blank">already installed</a> on the Alliance clusters. Learning and understanding Apptainer is <em>more difficult</em> than learning how to use our software modules or pre-compiled Python packages.</p>
-<p>In most cases, an off-the-shelf Apptainer image will meet your needs. Only build your own Apptainer images if you have a strong reason to require a custom one. In my experience, most users who believe they need a custom image actually don’t – but when you truly do, it is an excellent solution!</p>
+<p>Do not use Apptainer if your software is <a href="https://docs.alliancecan.ca/wiki/Available_software" target="_blank">already installed</a> on the Alliance clusters. Learning and understanding Apptainer is <span style="color: #0000FF;"><em>more difficult</em></span> than learning how to use our software modules or pre-compiled Python packages.</p>
+<p>In most cases, an <span style="color: #0000FF;"><em>off-the-shelf Apptainer image</em></span> will meet your needs. You should only build a custom image if you have a specific, justifiable requirement. In practice, most users who think they need a custom image actually don’t – though when a custom solution is genuinely necessary, Apptainer handles it exceptionally well.</p>
 </section>
 <section id="installingrunning-apptainer-on-your-own-computer" class="level2">
 <h2 class="anchored" data-anchor-id="installingrunning-apptainer-on-your-own-computer">Installing/running Apptainer on your own computer</h2>
@@ -530,7 +561,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Let’s log in to the training cluster <code>apptainer.vastcloud.org</code> and try loading Apptainer:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer/1.3.5   <span class="co"># the default version at the time of writing</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer/1.4.5   <span class="co"># latest installed at the time of writing</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> <span class="at">--version</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> apptainer</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span>                     <span class="co"># show the list of available commands</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -555,7 +586,7 @@ Note
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p>When running a longer version of this course after a Cloud course, we install Apptainer as a package inside our VM.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>If using Apptainer inside a cloud VM, you will need to install it via <code>sudo add-apt-repository -y ppa:apptainer/ppa &amp;&amp; sudo apt install -y apptainer</code>, and then you can use it as root to build Apptainer images.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
