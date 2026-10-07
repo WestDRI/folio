@@ -382,13 +382,14 @@ Apptainer> source bin/activate
 
 ## Container best practices
 
-1. Should I put everything into one container? A [*monolithic container*]{style="color: #0000FF;"} (one SIF
+1. Should we put everything into one container? A [*monolithic container*]{style="color: #0000FF;"} (one SIF
    file) is easier to build when starting from scratch, but would need to be rebuilt to update one of its
    components. A [*modular container*]{style="color: #0000FF;"} makes it easier to swap and upgrade individual
-   components as needed.
-```sh
-apptainer run --overlay {layer1,layer2,layer3}.img container.sif
-```
+   components as needed. Consider this: `apptainer run --overlay {layer1,layer2,layer3}.img container.sif`
 1. Use overlays to hide many files from the host's filesystem.
 1. Use trusted images, e.g. you should probably pick `python:3.12` over `foobar/python:3.12`.
-1. When building images, only keep what's needed, e.g. don't forget to remove the source code after compiling.
+1. When building images, only keep what's needed, e.g. don't forget to remove source code and other
+   dependencies after compilation, clean package manager caches after installing software, start with a
+   minimal base image appropriate for your task.
+1. For GPU/AI workloads, try building on the base CUDA or HIP/ROCM image, or pull an existing application
+   container from NVIDIA NGC (see next section).

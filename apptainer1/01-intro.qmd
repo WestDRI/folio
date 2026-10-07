@@ -25,14 +25,16 @@ title: "What is Apptainer (formerly Singularity)"
 
 Until November 2021, Apptainer was known as Singularity. In 2021, stewardship of parts of the Singularity
 project was transferred to the [Linux Foundation](https://www.linuxfoundation.org){target="_blank"}, and the
-fully open-source version was renamed *Apptainer*, while the commercial fork continues to be called
-*Singularity*.
+fully open-source version was renamed *Apptainer*.
 
-- Apptainer is an open-source project developed within the research community since 2015, started at the
-  Lawrence Berkeley National Lab.
-- Its goal is to create a **portable system to run Linux applications on HPC clusters *independently of the
-  specific host Linux version and distro***
-  - in other words, distribute software and **its compute environment**
+<!-- while the commercial fork continues to be called *Singularity*. -->
+
+- The Apptainer development began at the Lawrence Berkeley National Lab in 2015 by Gregory Kurtzer to bring
+  safe, unprivileged (non-root) containerization to HPC environments.
+- Its goal was to provide a portable way to run Linux applications on HPC clusters, regardless of the host
+  Linux distribution or version.
+- In other words, it packages the compiled software together with its compute environment, making it portable
+  across different Linux systems.
 
 ![Programs rely on shared libraries and dependencies. These may clash with each other in what is often called
 a "dependency hell".](c1.png){width=80% fig-align="center"}
@@ -54,19 +56,6 @@ install any precompiled packaged software from the Ubuntu repositories.
   <!--   catch: creating containers from scratch usually requires `root`) -->
   <!-- - you can install any system packages and all dependencies for your software as packages inside the container -->
 
-::: {.callout-note}
-##### Apptainer vs. Docker
-Apptainer is different from Docker, as it does not require `root` access on the host system to run
-it. Apptainer is specifically designed for running containers on multi-user HPC clusters, and it quickly
-became a way to package and deploy scientific software and its dependencies to different HPC systems.
-:::
-
-::: {.callout-note}
-##### Containers vs. VMs
-On a Linux host Apptainer is very lightweight compared to a full **virtual machine** (VM). On MacOS or Windows
-hosts Apptainer can be deployed inside a VM, as you still need a Linux host layer.
-:::
-
 ## Technical details
 
 From the technical standpoint, Apptainer uses:
@@ -77,7 +66,7 @@ From the technical standpoint, Apptainer uses:
 1. Linux control groups ([cgroups]{style="color: #0000FF;"}) to control and limit the use of these resources, and
 1. [overlay images]{style="color: #0000FF;"} to enable writable filesystems in otherwise read-only containers.
 
-## Why use a container
+## When to use a container
 
 Idea: package and distribute the software environment along with the application, i.e. create a **portable
 software environment**. More specifically, with containers you can:
@@ -91,7 +80,7 @@ software environment**. More specifically, with containers you can:
 <!-- 1. popular, but somewhat dubious reason: data reproducibility (use the same software environment as the -->
 <!--    authors &nbsp;⮕&nbsp; same result) -->
 
-## Why/when not to use a container
+## When not to use a container
 
 Do not use Apptainer if your software is [already
 installed](https://docs.alliancecan.ca/wiki/Available_software){target="_blank"} on the Alliance
@@ -103,40 +92,7 @@ only build a custom image if you have a specific, justifiable requirement. In pr
 they need a custom image actually don't -- though when a custom solution is genuinely necessary, Apptainer
 handles it exceptionally well.
 
-## Installing/running Apptainer on your own computer
-
-Apptainer was originally developed for use on HPC clusters, but you can also run it on your own computer:
-
-| Host OS | Run Apptainer |
-|:---------|:---------------------------------|
-| Linux | Install and use an Apptainer package[^1] |
-| Any host OS | In a VM running Linux   |
-| Windows or MacOS | Inside Vagrant |
-| Windows or MacOS | Inside Docker (download a Docker image with Apptainer installed) |
-
-[^1]: If using Apptainer inside a cloud VM, you will need to install it via `sudo add-apt-repository -y
-    ppa:apptainer/ppa && sudo apt install -y apptainer`, and then you can use it as root to build Apptainer
-    images.
-
-## Glossary
-
-An **image** is a bundle of files including an operating system, software and potentially data and other
-application-related files. Apptainer uses the Singularity Image Format (SIF), and images are provided as
-single `.sif` files.
-
-A **container** is a virtual environment that is based on an image. You can start multiple container instances
-from an image.
-
-An **operating system** (OS) is all the software that let you interact with a computer, run applications, UI,
-etc, consists of the "kernel" and "userland" parts.
-
-A **kernel** is the central piece of software that manages hardware and provides resources (CPU, I/O, memory,
-devices, filesystems) to the processes it is running.
-
-A **filesystem** is an organized collection of files. Under UNIX/Linux, there is a single hierarchy under `/`,
-and additional filesystems are "mounted" somewhere under that hierarchy.
-
-## Containers vs virtual machines
+## Containers vs. virtual machines
 
 - **Container** = the OS-level mechanism to isolate some parts of the OS along with a given application.
   - virtualizes an operating system
@@ -147,6 +103,14 @@ and additional filesystems are "mounted" somewhere under that hierarchy.
   - maximum flexibility, can mix any combination of host and guest OS's
   - significant performance overhead, as you run on simulated hardware
 
+::: {.callout-note}
+##### Containers vs. VMs
+On a Linux host Apptainer is very lightweight compared to a full **virtual machine** (VM). On a MacOS or Windows
+host Apptainer can be deployed inside a VM, as you still need a Linux host layer.
+:::
+
+## Container engines
+
 **Docker**: container platform for services, runs as root on the host system, uses cgroups for resource
 management between different VMs on a given node, very popular with software developers, can't really use it
 on HPC systems (no `root` or `sudo` possible for users on clusters + cgroups resource management will conflict
@@ -155,7 +119,47 @@ with HPC resource managers).
 **Apptainer**: run containers entirely in user space, as a user, can use existing Docker containers (Apptainer
 will convert them to proper SIF images for you), works seamlessly with the schedulers.
 
+::: {.callout-note}
+##### Apptainer vs. Docker
+Apptainer is different from Docker, as it does not require `root` access on the host system to run
+it. Apptainer is specifically designed for running containers on multi-user HPC clusters, and it quickly
+became a way to package and deploy scientific software and its dependencies to different HPC systems.
+:::
+
 There are few other container engines focusing on specific features.
+
+## Installing/running Apptainer on your own computer
+
+Even though Apptainer was originally developed for use on HPC clusters, you can also run it on your own computer:
+
+| Host OS | Run Apptainer |
+|:---------|:---------------------------------|
+| Linux | Install and use an Apptainer package[^1] |
+| Any host OS | In a VM running Linux   |
+| Windows or MacOS | Inside Docker (download a Docker image with Apptainer installed) or Vagrant |
+
+[^1]: If using Apptainer inside a cloud VM, you will need to install it via `sudo add-apt-repository -y
+    ppa:apptainer/ppa && sudo apt install -y apptainer`, and then you can use it as root to build Apptainer
+    images.
+
+## Glossary
+
+An **container image** is a read-only bundle of files including an operating system, software and potentially
+data and other application-related files. Apptainer uses the Singularity Image Format (SIF), and images are
+typically stored as single `.sif` files.
+
+A **container instance** is a virtual environment based on an image. You can start multiple container
+instances from the same image.
+
+An **operating system** (OS) is all the software that let you interact with a computer, run applications, UI,
+etc, consists of the "kernel" and "userland" parts.
+
+A **kernel** is the central piece of the OS that manages hardware and provides resources (CPU, I/O, memory,
+devices, filesystems) to the processes it is running.
+
+A **filesystem** is an organized collection of files. Under UNIX/Linux, there is a single hierarchy under `/`,
+and additional filesystems are "mounted" somewhere under that hierarchy.
+
 
 
 
@@ -169,7 +173,7 @@ There are few other container engines focusing on specific features.
 We will now distribute usernames and passwords for our training cluster.
 :::
 
-Let's log in to the training cluster `apptainer.vastcloud.org` and try loading Apptainer:
+Let's log in to the training cluster `sfu-container.c3.ca` and try loading Apptainer:
 
 ```sh
 module load apptainer/1.4.5   # latest installed at the time of writing
