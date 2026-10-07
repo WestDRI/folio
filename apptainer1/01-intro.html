@@ -357,11 +357,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#technical-details" id="toc-technical-details" class="nav-link active" data-scroll-target="#technical-details">Technical details</a></li>
-  <li><a href="#why-use-a-container" id="toc-why-use-a-container" class="nav-link" data-scroll-target="#why-use-a-container">Why use a container</a></li>
-  <li><a href="#whywhen-not-to-use-a-container" id="toc-whywhen-not-to-use-a-container" class="nav-link" data-scroll-target="#whywhen-not-to-use-a-container">Why/when not to use a container</a></li>
+  <li><a href="#when-to-use-a-container" id="toc-when-to-use-a-container" class="nav-link" data-scroll-target="#when-to-use-a-container">When to use a container</a></li>
+  <li><a href="#when-not-to-use-a-container" id="toc-when-not-to-use-a-container" class="nav-link" data-scroll-target="#when-not-to-use-a-container">When not to use a container</a></li>
+  <li><a href="#containers-vs.-virtual-machines" id="toc-containers-vs.-virtual-machines" class="nav-link" data-scroll-target="#containers-vs.-virtual-machines">Containers vs.&nbsp;virtual machines</a></li>
+  <li><a href="#container-engines" id="toc-container-engines" class="nav-link" data-scroll-target="#container-engines">Container engines</a></li>
   <li><a href="#installingrunning-apptainer-on-your-own-computer" id="toc-installingrunning-apptainer-on-your-own-computer" class="nav-link" data-scroll-target="#installingrunning-apptainer-on-your-own-computer">Installing/running Apptainer on your own computer</a></li>
   <li><a href="#glossary" id="toc-glossary" class="nav-link" data-scroll-target="#glossary">Glossary</a></li>
-  <li><a href="#containers-vs-virtual-machines" id="toc-containers-vs-virtual-machines" class="nav-link" data-scroll-target="#containers-vs-virtual-machines">Containers vs virtual machines</a></li>
   <li><a href="#apptainer-on-hpc-systems" id="toc-apptainer-on-hpc-systems" class="nav-link" data-scroll-target="#apptainer-on-hpc-systems">Apptainer on HPC systems</a></li>
   </ul>
 </nav>
@@ -407,13 +408,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- least very slow-to-build even if it does work, or, fails after a waiting a long time). Worse users have no -->
 <!-- idea how big the images will be that they are building really. Small images will typically build. Increasingly -->
 <!-- larger images increasingly encounter issues. Sigh. (edited) -->
-<p>Until November 2021, Apptainer was known as Singularity. In 2021, stewardship of parts of the Singularity project was transferred to the <a href="https://www.linuxfoundation.org" target="_blank">Linux Foundation</a>, and the fully open-source version was renamed <em>Apptainer</em>, while the commercial fork continues to be called <em>Singularity</em>.</p>
+<p>Until November 2021, Apptainer was known as Singularity. In 2021, stewardship of parts of the Singularity project was transferred to the <a href="https://www.linuxfoundation.org" target="_blank">Linux Foundation</a>, and the fully open-source version was renamed <em>Apptainer</em>.</p>
+<!-- while the commercial fork continues to be called *Singularity*. -->
 <ul>
-<li>Apptainer is an open-source project developed within the research community since 2015, started at the Lawrence Berkeley National Lab.</li>
-<li>Its goal is to create a <strong>portable system to run Linux applications on HPC clusters <em>independently of the specific host Linux version and distro</em></strong>
-<ul>
-<li>in other words, distribute software and <strong>its compute environment</strong></li>
-</ul></li>
+<li>The Apptainer development began at the Lawrence Berkeley National Lab in 2015 by Gregory Kurtzer to bring safe, unprivileged (non-root) containerization to HPC environments.</li>
+<li>Its goal was to provide a portable way to run Linux applications on HPC clusters, regardless of the host Linux distribution or version.</li>
+<li>In other words, it packages the compiled software together with its compute environment, making it portable across different Linux systems.</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -431,6 +431,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Usually this is done by creating a target Linux system inside the container and then installing applications inside it. For example, on a CentOS/Rocky Linux machine you can create a virtual Ubuntu system where you can install any precompiled packaged software from the Ubuntu repositories.</p>
 <p><!-- - in a sense, gives you control of your software environment without being `root` on the host system (with a --> <!--   catch: creating containers from scratch usually requires `root`) --> <!-- - you can install any system packages and all dependencies for your software as packages inside the container --></p>
+<section id="technical-details" class="level2">
+<h2 class="anchored" data-anchor-id="technical-details">Technical details</h2>
+<p>From the technical standpoint, Apptainer uses:</p>
+<ol type="1">
+<li><span style="color: #0000FF;">kernel namespaces</span> to virtualize and isolate OS resources – CPU, memory access, disk I/O, network access, user/group namespaces – so that processes inside the container see only a specific, virtualized set of resources,</li>
+<li>Linux control groups (<span style="color: #0000FF;">cgroups</span>) to control and limit the use of these resources, and</li>
+<li><span style="color: #0000FF;">overlay images</span> to enable writable filesystems in otherwise read-only containers.</li>
+</ol>
+</section>
+<section id="when-to-use-a-container" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-a-container">When to use a container</h2>
+<p>Idea: package and distribute the software environment along with the application, i.e.&nbsp;create a <strong>portable software environment</strong>. More specifically, with containers you can:</p>
+<ol type="1">
+<li>avoid compiling complex software and run it instead in the environment where it is already available, e.g.&nbsp;inside a pre-existing container,</li>
+<li>run older software that is now hard to compile (missing dependencies),</li>
+<li>use a familiar software environment across different HPC centres, independently of the underlying system, and</li>
+<li>preserve and share your build with others.</li>
+</ol>
+<!-- 1. popular, but somewhat dubious reason: data reproducibility (use the same software environment as the -->
+<!--    authors &nbsp;⮕&nbsp; same result) -->
+</section>
+<section id="when-not-to-use-a-container" class="level2">
+<h2 class="anchored" data-anchor-id="when-not-to-use-a-container">When not to use a container</h2>
+<p>Do not use Apptainer if your software is <a href="https://docs.alliancecan.ca/wiki/Available_software" target="_blank">already installed</a> on the Alliance clusters. Learning and understanding Apptainer is <span style="color: #0000FF;"><em>more difficult</em></span> than learning how to use our software modules or pre-compiled Python packages.</p>
+<p>In most cases, an <span style="color: #0000FF;"><em>off-the-shelf Apptainer image</em></span> will meet your needs. You should only build a custom image if you have a specific, justifiable requirement. In practice, most users who think they need a custom image actually don’t – though when a custom solution is genuinely necessary, Apptainer handles it exceptionally well.</p>
+</section>
+<section id="containers-vs.-virtual-machines" class="level2">
+<h2 class="anchored" data-anchor-id="containers-vs.-virtual-machines">Containers vs.&nbsp;virtual machines</h2>
+<ul>
+<li><strong>Container</strong> = the OS-level mechanism to isolate some parts of the OS along with a given application.
+<ul>
+<li>virtualizes an operating system</li>
+<li>lets you run an application compiled for a specific Linux OS on another Linux OS</li>
+<li>almost no performance overhead</li>
+</ul></li>
+<li><strong>Virtual machine</strong> (VM) = complete isolation from the host OS via virtualized hardware
+<ul>
+<li>virtualizes hardware</li>
+<li>maximum flexibility, can mix any combination of host and guest OS’s</li>
+<li>significant performance overhead, as you run on simulated hardware</li>
+</ul></li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Containers vs.&nbsp;VMs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>On a Linux host Apptainer is very lightweight compared to a full <strong>virtual machine</strong> (VM). On a MacOS or Windows host Apptainer can be deployed inside a VM, as you still need a Linux host layer.</p>
+</div>
+</div>
+</section>
+<section id="container-engines" class="level2">
+<h2 class="anchored" data-anchor-id="container-engines">Container engines</h2>
+<p><strong>Docker</strong>: container platform for services, runs as root on the host system, uses cgroups for resource management between different VMs on a given node, very popular with software developers, can’t really use it on HPC systems (no <code>root</code> or <code>sudo</code> possible for users on clusters + cgroups resource management will conflict with HPC resource managers).</p>
+<p><strong>Apptainer</strong>: run containers entirely in user space, as a user, can use existing Docker containers (Apptainer will convert them to proper SIF images for you), works seamlessly with the schedulers.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -444,48 +504,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Apptainer is different from Docker, as it does not require <code>root</code> access on the host system to run it. Apptainer is specifically designed for running containers on multi-user HPC clusters, and it quickly became a way to package and deploy scientific software and its dependencies to different HPC systems.</p>
 </div>
 </div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Note</span>Containers vs.&nbsp;VMs
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>On a Linux host Apptainer is very lightweight compared to a full <strong>virtual machine</strong> (VM). On MacOS or Windows hosts Apptainer can be deployed inside a VM, as you still need a Linux host layer.</p>
-</div>
-</div>
-<section id="technical-details" class="level2">
-<h2 class="anchored" data-anchor-id="technical-details">Technical details</h2>
-<p>From the technical standpoint, Apptainer uses:</p>
-<ol type="1">
-<li><span style="color: #0000FF;">kernel namespaces</span> to virtualize and isolate OS resources – CPU, memory access, disk I/O, network access, user/group namespaces – so that processes inside the container see only a specific, virtualized set of resources,</li>
-<li>Linux control groups (<span style="color: #0000FF;">cgroups</span>) to control and limit the use of these resources, and</li>
-<li><span style="color: #0000FF;">overlay images</span> to enable writable filesystems in otherwise read-only containers.</li>
-</ol>
-</section>
-<section id="why-use-a-container" class="level2">
-<h2 class="anchored" data-anchor-id="why-use-a-container">Why use a container</h2>
-<p>Idea: package and distribute the software environment along with the application, i.e.&nbsp;create a <strong>portable software environment</strong>. More specifically, with containers you can:</p>
-<ol type="1">
-<li>avoid compiling complex software and run it instead in the environment where it is already available, e.g.&nbsp;inside a pre-existing container,</li>
-<li>run older software that is now hard to compile (missing dependencies),</li>
-<li>use a familiar software environment across different HPC centres, independently of the underlying system, and</li>
-<li>preserve and share your build with others.</li>
-</ol>
-<!-- 1. popular, but somewhat dubious reason: data reproducibility (use the same software environment as the -->
-<!--    authors &nbsp;⮕&nbsp; same result) -->
-</section>
-<section id="whywhen-not-to-use-a-container" class="level2">
-<h2 class="anchored" data-anchor-id="whywhen-not-to-use-a-container">Why/when not to use a container</h2>
-<p>Do not use Apptainer if your software is <a href="https://docs.alliancecan.ca/wiki/Available_software" target="_blank">already installed</a> on the Alliance clusters. Learning and understanding Apptainer is <span style="color: #0000FF;"><em>more difficult</em></span> than learning how to use our software modules or pre-compiled Python packages.</p>
-<p>In most cases, an <span style="color: #0000FF;"><em>off-the-shelf Apptainer image</em></span> will meet your needs. You should only build a custom image if you have a specific, justifiable requirement. In practice, most users who think they need a custom image actually don’t – though when a custom solution is genuinely necessary, Apptainer handles it exceptionally well.</p>
+<p>There are few other container engines focusing on specific features.</p>
 </section>
 <section id="installingrunning-apptainer-on-your-own-computer" class="level2">
 <h2 class="anchored" data-anchor-id="installingrunning-apptainer-on-your-own-computer">Installing/running Apptainer on your own computer</h2>
-<p>Apptainer was originally developed for use on HPC clusters, but you can also run it on your own computer:</p>
+<p>Even though Apptainer was originally developed for use on HPC clusters, you can also run it on your own computer:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 22%">
@@ -508,42 +531,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Windows or MacOS</td>
-<td style="text-align: left;">Inside Vagrant</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Windows or MacOS</td>
-<td style="text-align: left;">Inside Docker (download a Docker image with Apptainer installed)</td>
+<td style="text-align: left;">Inside Docker (download a Docker image with Apptainer installed) or Vagrant</td>
 </tr>
 </tbody>
 </table>
 </section>
 <section id="glossary" class="level2">
 <h2 class="anchored" data-anchor-id="glossary">Glossary</h2>
-<p>An <strong>image</strong> is a bundle of files including an operating system, software and potentially data and other application-related files. Apptainer uses the Singularity Image Format (SIF), and images are provided as single <code>.sif</code> files.</p>
-<p>A <strong>container</strong> is a virtual environment that is based on an image. You can start multiple container instances from an image.</p>
+<p>An <strong>container image</strong> is a read-only bundle of files including an operating system, software and potentially data and other application-related files. Apptainer uses the Singularity Image Format (SIF), and images are typically stored as single <code>.sif</code> files.</p>
+<p>A <strong>container instance</strong> is a virtual environment based on an image. You can start multiple container instances from the same image.</p>
 <p>An <strong>operating system</strong> (OS) is all the software that let you interact with a computer, run applications, UI, etc, consists of the “kernel” and “userland” parts.</p>
-<p>A <strong>kernel</strong> is the central piece of software that manages hardware and provides resources (CPU, I/O, memory, devices, filesystems) to the processes it is running.</p>
+<p>A <strong>kernel</strong> is the central piece of the OS that manages hardware and provides resources (CPU, I/O, memory, devices, filesystems) to the processes it is running.</p>
 <p>A <strong>filesystem</strong> is an organized collection of files. Under UNIX/Linux, there is a single hierarchy under <code>/</code>, and additional filesystems are “mounted” somewhere under that hierarchy.</p>
-</section>
-<section id="containers-vs-virtual-machines" class="level2">
-<h2 class="anchored" data-anchor-id="containers-vs-virtual-machines">Containers vs virtual machines</h2>
-<ul>
-<li><strong>Container</strong> = the OS-level mechanism to isolate some parts of the OS along with a given application.
-<ul>
-<li>virtualizes an operating system</li>
-<li>lets you run an application compiled for a specific Linux OS on another Linux OS</li>
-<li>almost no performance overhead</li>
-</ul></li>
-<li><strong>Virtual machine</strong> (VM) = complete isolation from the host OS via virtualized hardware
-<ul>
-<li>virtualizes hardware</li>
-<li>maximum flexibility, can mix any combination of host and guest OS’s</li>
-<li>significant performance overhead, as you run on simulated hardware</li>
-</ul></li>
-</ul>
-<p><strong>Docker</strong>: container platform for services, runs as root on the host system, uses cgroups for resource management between different VMs on a given node, very popular with software developers, can’t really use it on HPC systems (no <code>root</code> or <code>sudo</code> possible for users on clusters + cgroups resource management will conflict with HPC resource managers).</p>
-<p><strong>Apptainer</strong>: run containers entirely in user space, as a user, can use existing Docker containers (Apptainer will convert them to proper SIF images for you), works seamlessly with the schedulers.</p>
-<p>There are few other container engines focusing on specific features.</p>
 </section>
 <section id="apptainer-on-hpc-systems" class="level2">
 <h2 class="anchored" data-anchor-id="apptainer-on-hpc-systems">Apptainer on HPC systems</h2>
@@ -560,7 +559,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We will now distribute usernames and passwords for our training cluster.</p>
 </div>
 </div>
-<p>Let’s log in to the training cluster <code>apptainer.vastcloud.org</code> and try loading Apptainer:</p>
+<p>Let’s log in to the training cluster <code>sfu-container.c3.ca</code> and try loading Apptainer:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load apptainer/1.4.5   <span class="co"># latest installed at the time of writing</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> <span class="at">--version</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">which</span> apptainer</span>

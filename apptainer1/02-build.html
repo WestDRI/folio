@@ -1183,10 +1183,10 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span> /project/def-sponsor00/shared/paraview.zip <span class="at">-d</span> ~ data/sineEnvelope.nc   <span class="co"># extract sample data into ~/data</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">apptainer</span> exec <span class="at">-B</span> /home paraviewBase.sif pvserver</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If successful, it should say something like:<br>
-<em>“Accepting connection(s): node1.int.apptainer.vastcloud.org:11111”</em><br>
+<em>“Accepting connection(s): node1.int.sfu-container.c3.ca:11111”</em><br>
 – write down the node name and the port number as you will need them in the next step.</p>
 <p>On your laptop, set up SSH port forwarding to this compute node and port:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> username@apptainer.vastcloud.org <span class="at">-L</span> 11111:node1:11111</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> username@sfu-container.c3.ca <span class="at">-L</span> 11111:node1:11111</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next, start ParaView 5.11.x on your computer and connect to <code>localhost:11111</code>, and then load the dataset and visualize it.</p>
 </section>
 <section id="visit-visualization-script" class="level3">
