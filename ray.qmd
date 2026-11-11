@@ -7,7 +7,7 @@ format:
     include-in-header: schemas/ray-schemas.html
 ---
 
-**June 5<sup>th</sup>, 9:30am-4:30pm Pacific Time**
+**November 12<sup>th</sup>, 10:00am-noon Pacific Time**
 
 There is a number of high-level open-source parallel frameworks for Python that are quite popular in data
 science and beyond:
@@ -40,6 +40,8 @@ therefore CPU-bound) workflows, both with and without reduction. We will also lo
 Here is the setup for this part (do this from the **login node**):
 
 ```sh
+(cd ~/tmp)
+(tmux)
 module load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2
 source /project/def-sponsor00/shared/env-hpc/bin/activate
 export RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO=0   # to get rid of a new annoying warning
@@ -81,6 +83,11 @@ How many "ray::IDLE" processes do you see, and why? Recall that you can use `sru
 bash` to open an interactive shell process inside your currently running job, and run `htop --filter
 "ray::IDLE"` there. Inside `htop` press “Shift+H” to show/hide individual threads or group them
 inside their parent processes.
+
+If you are wondering why Ray's runtime has so many threads, it is because this pool of background threads
+keeps the Ray cluster's coordination fabric running. They support high-throughput scheduling and low-latency
+communication across distributed nodes. You can use `htop` to monitor their total memory and CPU usage. As you
+scale up your workload, their overhead should become smaller relative to the computational work.
 :::
 
 ::: {.callout-caution collapse="true"}
@@ -116,9 +123,6 @@ In Ray you can execute any Python function asynchronously on separate workers. S
 remote functions**, and their asynchronous invocations are called **Ray tasks**:
 
 ```py
-import ray
-ray.init(configure_logging=False)   # optional
-
 @ray.remote             # declare that we want to run this function remotely
 def square(x):
     return x * x
@@ -161,8 +165,9 @@ Consider a code in which each Ray task sleeps for 10 seconds, prints a message a
 
 ```py
 import ray
-from time import sleep, time
 ray.init(num_cpus=4, configure_logging=False)
+
+from time import sleep, time
 
 @ray.remote
 def nap():
@@ -186,6 +191,12 @@ printout ("almost done") from only one process and a message "repeated 3x across
 messages from all tasks, you need set the bash shell environment variable `export RAY_DEDUP_LOGS=0`.
 
 Notice that Ray task IDs are not integers but 48-character hexadecimal numbers.
+
+::: {.callout-caution collapse="true"}
+## Question 11a: serial workload
+What timing do you get if run the same workload on 1 CPU core?
+<!-- Time in seconds: 40.967 -->
+:::
 
 ### Distributed progress bars
 
@@ -220,8 +231,8 @@ Implement the same for 10 tasks using a `for` loop.
 
 
 ::: {.callout-note}
-Ray's `tqdm()` is somewhat buggy, so you might want to restart Python and your Ray cluster, if you don't want
-to see artifacts from previous bars sometimes popping up in your session.
+Ray's `tqdm()` is somewhat buggy, so you may want to restart Python and your Ray cluster to prevent artifacts
+from previous bars from occasionally popping up in your session.
 :::
 
 
