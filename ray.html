@@ -419,7 +419,7 @@ window.Quarto = {
 </header>
 
 
-<p><strong>June 5<sup>th</sup>, 9:30am-4:30pm Pacific Time</strong></p>
+<p><strong>November 12<sup>th</sup>, 10:00am-noon Pacific Time</strong></p>
 <p>There is a number of high-level open-source parallel frameworks for Python that are quite popular in data science and beyond:</p>
 <ul>
 <li><a href="https://www.ray.io" target="_blank">Ray</a> is a unified framework for scaling AI and Python applications.</li>
@@ -434,11 +434,13 @@ window.Quarto = {
 <section id="running-on-the-training-cluster" class="level2">
 <h2 class="anchored" data-anchor-id="running-on-the-training-cluster">Running on the training cluster</h2>
 <p>Here is the setup for this part (do this from the <strong>login node</strong>):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-hpc/bin/activate</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO</span><span class="op">=</span>0   <span class="co"># to get rid of a new annoying warning</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--cpus-per-task</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="bu">cd</span> ~/tmp<span class="kw">)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">tmux</span><span class="kw">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">module</span> load python/3.12.4 arrow/19.0.1 scipy-stack/2025a netcdf/4.9.2</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> /project/def-sponsor00/shared/env-hpc/bin/activate</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO</span><span class="op">=</span>0   <span class="co"># to get rid of a new annoying warning</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">salloc</span> <span class="at">--cpus-per-task</span><span class="op">=</span>4 <span class="at">--time</span><span class="op">=</span>2:00:0 <span class="at">--mem-per-cpu</span><span class="op">=</span>3600</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="initializing-ray" class="level2">
 <h2 class="anchored" data-anchor-id="initializing-ray">Initializing Ray</h2>
@@ -462,6 +464,7 @@ window.Quarto = {
 </div>
 <div class="callout-body-container callout-body">
 <p>How many “ray::IDLE” processes do you see, and why? Recall that you can use <code>srun --jobid=&lt;jobID&gt; --pty bash</code> to open an interactive shell process inside your currently running job, and run <code>htop --filter "ray::IDLE"</code> there. Inside <code>htop</code> press “Shift+H” to show/hide individual threads or group them inside their parent processes.</p>
+<p>If you are wondering why Ray’s runtime has so many threads, it is because this pool of background threads keeps the Ray cluster’s coordination fabric running. They support high-throughput scheduling and low-latency communication across distributed nodes. You can use <code>htop</code> to monitor their total memory and CPU usage. As you scale up your workload, their overhead should become smaller relative to the computational work.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -509,16 +512,13 @@ window.Quarto = {
 <section id="ray-tasks" class="level2">
 <h2 class="anchored" data-anchor-id="ray-tasks">Ray tasks</h2>
 <p>In Ray you can execute any Python function asynchronously on separate workers. Such functions are called <strong>Ray remote functions</strong>, and their asynchronous invocations are called <strong>Ray tasks</strong>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>ray.init(configure_logging<span class="op">=</span><span class="va">False</span>)   <span class="co"># optional</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>             <span class="co"># declare that we want to run this function remotely</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> square(x):</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> x</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> square.remote(<span class="dv">10</span>)   <span class="co"># launch/schedule a remote calculation (non-blocking call)</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(r)                 <span class="co"># ray._raylet.ObjectRef (object reference)</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ray.get(r)              <span class="co"># retrieve the result (=100) (blocking call)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span>             <span class="co"># declare that we want to run this function remotely</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> square(x):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">*</span> x</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> square.remote(<span class="dv">10</span>)   <span class="co"># launch/schedule a remote calculation (non-blocking call)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">type</span>(r)                 <span class="co"># ray._raylet.ObjectRef (object reference)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ray.get(r)              <span class="co"># retrieve the result (=100) (blocking call)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The calculation may happen any time between <code>&lt;function&gt;.remote()</code> and <code>ray.get()</code> calls, i.e.&nbsp;it does not necessarily start when you launch it. This is called <strong>lazy execution</strong>: the operation is often executed when you try to access the result.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> square.remote(<span class="dv">10</span>)   <span class="co"># launch a remote calculation</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ray.cancel(a)           <span class="co"># cancel it</span></span>
@@ -532,14 +532,15 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="task-output">Task output</h3>
 <p>Consider a code in which each Ray task sleeps for 10 seconds, prints a message and returns its task ID:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ray</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> sleep, time</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nap():</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    sleep(<span class="dv">10</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"almost done"</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ray.get_runtime_context().get_task_id()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ray.init(num_cpus<span class="op">=</span><span class="dv">4</span>, configure_logging<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> sleep, time</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">@ray.remote</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> nap():</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    sleep(<span class="dv">10</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"almost done"</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ray.get_runtime_context().get_task_id()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Let’s run it with timing on:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> time()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> [nap.remote() <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]</span>
@@ -548,6 +549,22 @@ window.Quarto = {
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in seconds:"</span>, <span class="bu">round</span>(end<span class="op">-</span>start,<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>I get 10.013 seconds since I have enough cores to run all of them in parallel. However, most likely, I see printout (“almost done”) from only one process and a message “repeated 3x across cluster”. To enable print messages from all tasks, you need set the bash shell environment variable <code>export RAY_DEDUP_LOGS=0</code>.</p>
 <p>Notice that Ray task IDs are not integers but 48-character hexadecimal numbers.</p>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Question 11a: serial workload
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>What timing do you get if run the same workload on 1 CPU core? <!-- Time in seconds: 40.967 --></p>
+</div>
+</div>
+</div>
 </section>
 <section id="distributed-progress-bars" class="level3">
 <h3 class="anchored" data-anchor-id="distributed-progress-bars">Distributed progress bars</h3>
@@ -566,7 +583,7 @@ window.Quarto = {
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>[busy.remote(<span class="st">"task 1"</span>), busy.remote(<span class="st">"task 2"</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A side effect of <code>tqdm()</code> is that these tasks start running immediately.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -575,7 +592,7 @@ window.Quarto = {
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Implement the same for 10 tasks using a <code>for</code> loop.</p>
 </div>
@@ -595,7 +612,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Ray’s <code>tqdm()</code> is somewhat buggy, so you might want to restart Python and your Ray cluster, if you don’t want to see artifacts from previous bars sometimes popping up in your session.</p>
+<p>Ray’s <code>tqdm()</code> is somewhat buggy, so you may want to restart Python and your Ray cluster to prevent artifacts from previous bars from occasionally popping up in your session.</p>
 </div>
 </div>
 <!-- ### Task monitoring -->
@@ -669,7 +686,7 @@ Note
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On 8 cores I get the average runtime of 1.282 seconds – not too bad, considering that some of the cores are low-efficiency (slower) cores.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -678,7 +695,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Increase <code>n</code> to 1_000_000_000 and run <code>htop --filter "ray</code> in a separate shell to monitor CPU usage of individual processes.</p>
 </div>
@@ -722,7 +739,7 @@ Note
 <span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>ray.get(r)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In my tests with more CPU-intensive functions, both versions produce very similar runtimes.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -731,7 +748,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Write a slow series solver with Numba-compiled functions executed as Ray tasks.<br>
 1. Numba-compiled <code>combined(k)</code> that returns either 1/x or 0.<br>
@@ -1279,7 +1296,7 @@ Note
 <span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(total)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>On 2 cores I get the average time of 3.765 seconds.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1288,7 +1305,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Parallelize this for 4 CPU cores. <strong>Hint</strong>: programmatically form a list of dictionaries, each containing two key-value pairs (<code>a</code> and <code>b</code>) with the sub-intervals.</p>
 </div>
@@ -1404,7 +1421,7 @@ Note
 <h2 class="anchored" data-anchor-id="running-ray-workflows-on-a-single-node">Running Ray workflows on a single node</h2>
 <!-- Launching a single-node ray cluster -->
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1413,7 +1430,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Let’s try running the slow series without Numba-compiled functions on the training cluster as a batch job.<br>
 1. Save the entire Python code for the slow series problem into <code>rayPartialMap.py</code><br>
