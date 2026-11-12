@@ -88,6 +88,9 @@ If you are wondering why Ray's runtime has so many threads, it is because this p
 keeps the Ray cluster's coordination fabric running. They support high-throughput scheduling and low-latency
 communication across distributed nodes. You can use `htop` to monitor their total memory and CPU usage. As you
 scale up your workload, their overhead should become smaller relative to the computational work.
+
+As you will see soon, even with our small workload, we'll get very good parallel scaling and a serial Ray
+runtime that's not much slower than the original serial runtime.
 :::
 
 ::: {.callout-caution collapse="true"}
@@ -194,7 +197,7 @@ Notice that Ray task IDs are not integers but 48-character hexadecimal numbers.
 
 ::: {.callout-caution collapse="true"}
 ## Question 11a: serial workload
-What timing do you get if run the same workload on 1 CPU core?
+What timing do you get if you run the same workload on 1 CPU core?
 <!-- Time in seconds: 40.967 -->
 :::
 
