@@ -465,6 +465,7 @@ window.Quarto = {
 <div class="callout-body-container callout-body">
 <p>How many “ray::IDLE” processes do you see, and why? Recall that you can use <code>srun --jobid=&lt;jobID&gt; --pty bash</code> to open an interactive shell process inside your currently running job, and run <code>htop --filter "ray::IDLE"</code> there. Inside <code>htop</code> press “Shift+H” to show/hide individual threads or group them inside their parent processes.</p>
 <p>If you are wondering why Ray’s runtime has so many threads, it is because this pool of background threads keeps the Ray cluster’s coordination fabric running. They support high-throughput scheduling and low-latency communication across distributed nodes. You can use <code>htop</code> to monitor their total memory and CPU usage. As you scale up your workload, their overhead should become smaller relative to the computational work.</p>
+<p>As you will see soon, even with our small workload, we’ll get very good parallel scaling and a serial Ray runtime that’s not much slower than the original serial runtime.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -561,7 +562,7 @@ window.Quarto = {
 </div>
 <div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>What timing do you get if run the same workload on 1 CPU core? <!-- Time in seconds: 40.967 --></p>
+<p>What timing do you get if you run the same workload on 1 CPU core? <!-- Time in seconds: 40.967 --></p>
 </div>
 </div>
 </div>
