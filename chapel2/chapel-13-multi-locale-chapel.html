@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -615,8 +615,8 @@ Note
 <p>Let us test our multi-locale Chapel environment by launching the following code:</p>
 <!-- module load arch/avx2   # not necessary, unless you land on an avx512 node -->
 <!-- module load gcc/9.3.0 chapel-ofi/1.31.0 -->
-<pre class="chpl"><code>// this is test.chpl
-writeln(Locales);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>// <span class="kw">this</span> is test.chpl</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>writeln(Locales);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> test</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># chpl test.chpl -o test   # same</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># chpl test.chpl           # same</span></span>
@@ -624,32 +624,32 @@ writeln(Locales);</code></pre>
 <p>This code will print the built-in global array <code>Locales</code>. Running it on four locales will produce</p>
 <pre><code>LOCALE0 LOCALE1 LOCALE2</code></pre>
 <p>We want to run some code on each locale (node). For that, we can cycle through locales:</p>
-<pre class="chpl"><code>for loc in Locales do   // this is still a serial program
-  on loc do             // run the next line on locale `loc`
-    writeln("this locale is named ", here.name[0..4]);   // `here` is the locale on which the code is running</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> loc <span class="kw">in</span> Locales <span class="kw">do</span>   // <span class="kw">this</span> is still a <span class="kw">serial</span> program</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">on</span> loc <span class="kw">do</span>             // run the next line <span class="kw">on</span> <span class="kw">locale</span> `loc`</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"this locale is named "</span>, here.name[<span class="dv">0</span>..<span class="dv">4</span>]);   // `here` is the <span class="kw">locale</span> <span class="kw">on</span> which the code is running</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This will produce</p>
 <pre><code>this locale is named node1
 this locale is named node2
 this locale is named node3</code></pre>
 <p>Here the built-in variable class <code>here</code> refers to the locale on which the code is running, and <code>here.name</code> is its hostname. We started a serial <code>for</code> loop cycling through all locales, and on each locale we printed its name, i.e., the hostname of each node. This program ran in serial starting a task on each locale only after completing the same task on the previous locale. Note the order in which locales were listed.</p>
 <p>To run this code in parallel, starting four simultaneous tasks, one per locale, we simply need to replace <code>for</code> with <code>forall</code>:</p>
-<pre class="chpl"><code>forall loc in Locales do   // now this is a parallel loop
-  on loc do
-    writeln("this locale is named ", here.name[0..4]);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> loc <span class="kw">in</span> Locales <span class="kw">do</span>   // now <span class="kw">this</span> is a parallel loop</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">on</span> loc <span class="kw">do</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"this locale is named "</span>, here.name[<span class="dv">0</span>..<span class="dv">4</span>]);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This starts four tasks in parallel, and the order in which the print statement is executed depends on the runtime conditions and can change from run to run:</p>
 <pre><code>this locale is named node1
 this locale is named node3
 this locale is named node2</code></pre>
 <p>We can print few other attributes of each locale. Here it is actually useful to revert to the serial loop <code>for</code> so that the print statements appear in order:</p>
-<pre class="chpl"><code>use MemDiagnostics;
-for loc in Locales do
-  on loc {
-    writeln("locale #", here.id, "...");
-    writeln("  ...is named: ", here.name);
-    writeln("  ...has ", here.numPUs(), " processor cores");
-    writeln("  ...has ", here.physicalMemory(unit=MemUnits.GB, retType=real), " GB of memory");
-    writeln("  ...has ", here.maxTaskPar, " maximum parallelism to expect");
-  }</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> MemDiagnostics;</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> loc <span class="kw">in</span> Locales <span class="kw">do</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">on</span> loc {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"locale #"</span>, here.id, <span class="st">"..."</span>);</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"  ...is named: "</span>, here.name);</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"  ...has "</span>, here.numPUs(), <span class="st">" processor cores"</span>);</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"  ...has "</span>, here.physicalMemory(unit=MemUnits.GB, retType=<span class="dt">real</span>), <span class="st">" GB of memory"</span>);</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    writeln(<span class="st">"  ...has "</span>, here.maxTaskPar, <span class="st">" maximum parallelism to expect"</span>);</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> test.chpl</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> distributed.sh</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> solution.out</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

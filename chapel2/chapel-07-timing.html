@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -510,23 +510,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>But first, we need a quantitative way to measure the performance of our code. Perhaps the easiest way to do this is to use the Unix command <code>time</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">time</span> ls</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 bash <span class="at">-c</span> <span class="st">"time ./juliaSetSerial --n=500"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre class="chpl"><code>real ...
-user ...
-sys  ...</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">real</span> ...</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>user ...</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sys  ...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The real time is what interest us. Our code is taking … seconds from the moment it is called at the command line until it returns. Sometimes, however, it could be useful to take the execution time of specific parts of the code. This can be achieved by modifying the code to output the information that we need. This process is called <strong><em>instrumentation of the code</em></strong>.</p>
 <p>An easy way to instrument our code with Chapel is by using the module <code>Time</code>. <strong><em>Modules</em></strong> in Chapel are libraries of useful functions and methods that can be used in our code once the module is loaded. To load a module we use the keyword <code>use</code> followed by the name of the module. Once the Time module is loaded we can create a variable of the type <code>stopwatch</code>, and use the methods <code>start</code>, <code>stop</code>and <code>elapsed</code> to instrument our code.</p>
-<pre class="chpl"><code>use Time;
-var watch: stopwatch;
-watch.start();
-for i in 1..n {
-  y = 2*(i-0.5)/n - 1;
-  for j in 1..n {
-    point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}
-watch.stop();
-writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Time;</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> watch: stopwatch;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>watch.start();</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;   // rescale to -<span class="dv">1</span>:<span class="dv">1</span> <span class="kw">in</span> the <span class="dt">complex</span> plane</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    stability[i,j] = pixel(point);</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>watch.stop();</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>writeln('It took ', watch.elapsed(), ' seconds');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> <span class="at">--fast</span> juliaSetSerial.chpl</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./juliaSetSerial <span class="at">--n</span><span class="op">=</span>500</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -543,37 +543,37 @@ writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
 </div>
 </div>
 <p>Here is our complete serial code <code>juliaSetSerial.chpl</code>:</p>
-<pre class="chpl"><code>use Time;
-
-config const c = 0.355 + 0.355i;
-
-proc pixel(z0) {
-  var z = z0*1.2;   // zoom out
-  for i in 1..255 {
-    z = z*z + c;
-    if abs(z) &gt;= 4 then
-      return i;
-  }
-  return 255;
-}
-
-config const n = 2_000;   // vertical and horizontal size of our image
-var y: real;
-var point: complex;
-var watch: stopwatch;
-
-writeln("Computing ", n, "x", n, " Julia set ...");
-var stability: [1..n,1..n] int;
-watch.start();
-for i in 1..n {
-  y = 2*(i-0.5)/n - 1;
-  for j in 1..n {
-    point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}
-watch.stop();
-writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Time;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> c = <span class="fl">0.355</span> + <span class="fl">0.355</span>i;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">proc</span> pixel(z0) {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> z = z0*<span class="fl">1.2</span>;   // zoom <span class="kw">out</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">255</span> {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    z = z*z + c;</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> abs(z) &gt;= <span class="dv">4</span> <span class="kw">then</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">return</span> i;</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">return</span> <span class="dv">255</span>;</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> n = <span class="dv">2</span>_000;   // vertical and horizontal size of our image</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> y: <span class="dt">real</span>;</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> point: <span class="dt">complex</span>;</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> watch: stopwatch;</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>writeln(<span class="st">"Computing "</span>, n, <span class="st">"x"</span>, n, <span class="st">" Julia set ..."</span>);</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> stability: [<span class="dv">1</span>..n,<span class="dv">1</span>..n] <span class="dt">int</span>;</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>watch.start();</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;   // rescale to -<span class="dv">1</span>:<span class="dv">1</span> <span class="kw">in</span> the <span class="dt">complex</span> plane</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    stability[i,j] = pixel(point);</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>watch.stop();</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>writeln('It took ', watch.elapsed(), ' seconds');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>

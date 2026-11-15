@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -507,27 +507,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 <p>For the reduction of the grid we can simply use the <code>max reduce</code> statement, which is already parallelized. Now, let’s divide the grid into <code>rowtasks</code> * <code>coltasks</code> subgrids, and assign each subgrid to a task using the <code>coforall</code> loop (we will have <code>rowtasks * coltasks</code> tasks in total).</p>
 <p>Recall out code <code>gmax.chpl</code> in which we broke the 1D array with 1e8 elements into <code>numtasks=2</code> blocks, and each task was processing elements <code>start..finish</code>. Now we’ll do exactly the same in 2D. First, let’s write a quick serial code <code>test.chpl</code> to test the indices:</p>
-<pre class="chpl"><code>config const rows, cols = 100;               // number of rows and columns in our matrix
-
-config const rowtasks = 3, coltasks = 4; // number of blocks in x- and y-dimensions
-// each block processed by a separate task
-// let's pretend we have 12 cores
-
-const nr = rows / rowtasks;   // number of rows per task
-const rr = rows % rowtasks;   // remainder rows (did not fit into the last row of tasks)
-const nc = cols / coltasks;   // number of columns per task
-const rc = cols % coltasks;   // remainder columns (did not fit into the last column of tasks)
-
-coforall taskid in 0..coltasks*rowtasks-1 {
-  var row1, row2, col1, col2: int;
-  row1 = taskid/coltasks*nr + 1;
-  row2 = taskid/coltasks*nr + nr;
-  if row2 == rowtasks*nr then row2 += rr; // add rr rows to the last row of tasks
-  col1 = taskid%coltasks*nc + 1;
-  col2 = taskid%coltasks*nc + nc;
-  if col2 == coltasks*nc then col2 += rc; // add rc columns to the last column of tasks
-  writeln('task ', taskid, ': rows ', row1, '-', row2, ' and columns ', col1, '-', col2);
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> rows, cols = <span class="dv">100</span>;               // number of rows and columns <span class="kw">in</span> our matrix</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> rowtasks = <span class="dv">3</span>, coltasks = <span class="dv">4</span>; // number of blocks <span class="kw">in</span> x- and y-dimensions</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>// each block processed <span class="kw">by</span> a separate task</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>// let's pretend we have <span class="dv">12</span> cores</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> nr = rows / rowtasks;   // number of rows per task</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rr = rows % rowtasks;   // remainder rows (did not fit into the last row of tasks)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> nc = cols / coltasks;   // number of columns per task</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> rc = cols % coltasks;   // remainder columns (did not fit into the last column of tasks)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">coforall</span> taskid <span class="kw">in</span> <span class="dv">0</span>..coltasks*rowtasks<span class="dv">-1</span> {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> row1, row2, col1, col2: <span class="dt">int</span>;</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  row1 = taskid/coltasks*nr + <span class="dv">1</span>;</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  row2 = taskid/coltasks*nr + nr;</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> row2 == rowtasks*nr <span class="kw">then</span> row2 += rr; // add rr rows to the last row of tasks</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  col1 = taskid%coltasks*nc + <span class="dv">1</span>;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  col2 = taskid%coltasks*nc + nc;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">if</span> col2 == coltasks*nc <span class="kw">then</span> col2 += rc; // add rc columns to the last column of tasks</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  writeln('task ', taskid, ': rows ', row1, '-', row2, ' and columns ', col1, '-', col2);</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> test.chpl</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|atomic|test|'</span> shared.sh</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
@@ -639,19 +639,19 @@ The simulation took 25.106 seconds</code></pre>
 <ol type="1">
 <li>Move the rows</li>
 </ol>
-<pre class="chpl"><code>  coforall taskid in 0..coltasks*rowtasks-1 { // each iteration processed by a separate task
-    var row1, row2, col1, col2: int;
-    row1 = taskid/coltasks*nr + 1;
-    row2 = taskid/coltasks*nr + nr;
-    if row2 == rowtasks*nr then row2 += rr; // add rr rows to the last row of tasks
-    col1 = taskid%coltasks*nc + 1;
-    col2 = taskid%coltasks*nc + nc;
-    if col2 == coltasks*nc then col2 += rc; // add rc columns to the last column of tasks</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>  <span class="kw">coforall</span> taskid <span class="kw">in</span> <span class="dv">0</span>..coltasks*rowtasks<span class="dv">-1</span> { // each iteration processed <span class="kw">by</span> a separate task</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> row1, row2, col1, col2: <span class="dt">int</span>;</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    row1 = taskid/coltasks*nr + <span class="dv">1</span>;</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    row2 = taskid/coltasks*nr + nr;</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> row2 == rowtasks*nr <span class="kw">then</span> row2 += rr; // add rr rows to the last row of tasks</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    col1 = taskid%coltasks*nc + <span class="dv">1</span>;</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    col2 = taskid%coltasks*nc + nc;</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> col2 == coltasks*nc <span class="kw">then</span> col2 += rc; // add rc columns to the last column of tasks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and the corresponding closing bracket <code>}</code> of this <code>coforall</code> loop outside the <code>while</code> loop, so that <code>while</code> is now nested inside <code>coforall</code>.</p>
 <ol start="2" type="1">
 <li>Since now copying Tnew into T is a local operation for each task, i.e.&nbsp;we should replace <code>T = Tnew;</code> with</li>
 </ol>
-<pre class="chpl"><code>T[row1..row2,col1..col2] = Tnew[row1..row2,col1..col2];</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>T[row1..row2,col1..col2] = Tnew[row1..row2,col1..col2];</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>But this is not sufficient! We need to make sure we finish computing all elements of Tnew in all tasks before computing the greatest temperature difference <code>delta</code>. For that we need to synchronize all tasks, right after computing Tnew. We’ll also need to synchronize tasks after computing <code>delta</code> and T from Tnew, as none of the tasks should jump into the new iteration without having <code>delta</code> and T! So, we need two synchronization points inside the <code>coforall</code> loop.</p>
 <!-- The synchronization must happen at two points:  -->
 <!-- 1. We need to be sure that all tasks have finished with the computations of their part of the grid `temp`, before updating `delta` and `past_temp` safely. -->
@@ -659,40 +659,40 @@ The simulation took 25.106 seconds</code></pre>
 <ol start="3" type="1">
 <li>Define two atomic variables that we’ll use for synchronization</li>
 </ol>
-<pre class="chpl"><code>var lock1, lock2: atomic int;</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> lock1, lock2: <span class="kw">atomic</span> <span class="dt">int</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and add after the (i,j)-loops to compute Tnew the following:</p>
-<pre class="chpl"><code>lock1.add(1);   // each task atomically adds 1 to lock
-lock1.waitFor(coltasks*rowtasks*count);   // then it waits for lock to be equal coltasks*rowtasks</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>lock1.add(<span class="dv">1</span>);   // each task atomically adds <span class="dv">1</span> to lock</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>lock1.waitFor(coltasks*rowtasks*count);   // <span class="kw">then</span> it waits <span class="kw">for</span> lock to be equal coltasks*rowtasks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and after <code>T[row1..row2,col1..col2] = Tnew[row1..row2,col1..col2];</code> the following:</p>
-<pre class="chpl"><code>lock2.add(1);   // each task atomically subtracts 1 from lock
-lock2.waitFor(coltasks*rowtasks*count);   // then it waits for lock to be equal 0</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>lock2.add(<span class="dv">1</span>);   // each task atomically subtracts <span class="dv">1</span> from lock</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>lock2.waitFor(coltasks*rowtasks*count);   // <span class="kw">then</span> it waits <span class="kw">for</span> lock to be equal <span class="dv">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Notice that we have a product <code>coltasks*rowtasks*count</code>, since lock1/lock2 will be incremented by all tasks at all iterations.</p>
 <ol start="4" type="1">
 <li><p>Move <code>var count = 0: int;</code> into <code>coforall</code> so that it becomes a local variable for each task. Also, remove <code>count</code> instance (in <code>writeln()</code>) after <code>coforall</code> ends.</p></li>
 <li><p>Make <code>delta</code> atomic:</p></li>
 </ol>
-<pre class="chpl"><code>var delta: atomic real;    // the greatest temperature difference between Tnew and T
-...
-delta.write(tolerance*10); // some safe initial large value
-...
-while (count &lt; niter &amp;&amp; delta.read() &gt;= tolerance) {</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> delta: <span class="kw">atomic</span> <span class="dt">real</span>;    // the greatest temperature difference between Tnew and T</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>delta.write(tolerance*<span class="dv">10</span>); // some safe initial large value</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> (count &lt; niter &amp;&amp; delta.read() &gt;= tolerance) {</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="6" type="1">
 <li>Define an array of local delta’s for each task and use it to compute delta:</li>
 </ol>
-<pre class="chpl"><code>var arrayDelta: [0..coltasks*rowtasks-1] real;
-...
-var tmp: real;  // inside coforall
-...
-tmp = 0;        // inside while
-...
-tmp = max(abs(Tnew[i,j]-T[i,j]),tmp);    // next line after Tnew[i,j] = ...
-...
-arrayDelta[taskid] = tmp;   // right after (i,j)-loop to compute Tnew[i,j]
-...
-if taskid == 0 then {       // compute delta right after lock1.waitFor()
-    delta.write(max reduce arrayDelta);
-    if count%nout == 0 then writeln('Temperature at iteration ', count, ': ', Tnew[iout,jout]);
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> arrayDelta: [<span class="dv">0</span>..coltasks*rowtasks<span class="dv">-1</span>] <span class="dt">real</span>;</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> tmp: <span class="dt">real</span>;  // inside <span class="kw">coforall</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>tmp = <span class="dv">0</span>;        // inside <span class="kw">while</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>tmp = max(abs(Tnew[i,j]-T[i,j]),tmp);    // next line after Tnew[i,j] = ...</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>arrayDelta[taskid] = tmp;   // right after (i,j)-loop to compute Tnew[i,j]</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>...</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> taskid == <span class="dv">0</span> <span class="kw">then</span> {       // compute delta right after lock1.waitFor()</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    delta.write(max <span class="kw">reduce</span> arrayDelta);</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> count%nout == <span class="dv">0</span> <span class="kw">then</span> writeln('Temperature at iteration ', count, ': ', Tnew[iout,jout]);</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="7" type="1">
 <li><p>Remove the original T[iout,jout] output line.</p></li>
 <li><p>Finally, move the boundary conditions (right+bottom edges) before the <code>while</code> loop. Why can we do it now?</p></li>

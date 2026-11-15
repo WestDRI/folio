@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -509,27 +509,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="sync-block" class="level3">
 <h3 class="anchored" data-anchor-id="sync-block"><code>sync</code> block</h3>
 <p>The keyword <code>sync</code> provides all sorts of mechanisms to synchronize tasks in Chapel. We can simply use <code>sync</code> to force the <em>parent task</em> to stop and wait until its <em>spawned child-task</em> ends. Consider this <code>sync1.chpl</code>:</p>
-<pre class="chpl"><code>var x = 0;
-writeln('This is the main task starting a synchronous task');
-sync {
-  begin {
-    var count = 0;
-    while count &lt; 10 {
-      count += 1;
-      writeln('task 1: ', x + count);
-    }
-  }
-}
-writeln('The first task is done ...');
-writeln('This is the main task starting an asynchronous task');
-begin {
-  var count = 0;
-  while count &lt; 10 {
-    count += 1;
-    writeln('task 2: ', x + count);
-  }
-}
-writeln('This is the main task, I am done ...');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> x = <span class="dv">0</span>;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>writeln('This is the main task starting a synchronous task');</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">sync</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">begin</span> {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> count = <span class="dv">0</span>;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> count &lt; <span class="dv">10</span> {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      count += <span class="dv">1</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      writeln('task <span class="dv">1</span>: ', x + count);</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>writeln('The first task is done ...');</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>writeln('This is the main task starting an asynchronous task');</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">begin</span> {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> count = <span class="dv">0</span>;</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">while</span> count &lt; <span class="dv">10</span> {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    count += <span class="dv">1</span>;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    writeln('task <span class="dv">2</span>: ', x + count);</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>writeln('This is the main task, I am done ...');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> sync1.chpl</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|gmax|sync1|'</span> shared.sh</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
@@ -569,16 +569,16 @@ task 2: 10</code></pre>
 </div>
 <div class="callout-body-container callout-body">
 <p>What would happen if we swap <code>sync</code> and <code>begin</code> in the first task:</p>
-<pre class="chpl"><code>begin {
-  sync {
-    var c = 0;
-    while c &lt; 10 {
-      c += 1;
-      writeln('task 1: ', x + c);
-    }
-  }
-}
-writeln('The first task is done ...');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">begin</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">sync</span> {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> c = <span class="dv">0</span>;</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> c &lt; <span class="dv">10</span> {</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      c += <span class="dv">1</span>;</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      writeln('task <span class="dv">1</span>: ', x + c);</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>writeln('The first task is done ...');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Discuss your observations.</p>
 </div>
 </div>
@@ -603,17 +603,17 @@ writeln('The first task is done ...');</code></pre>
 <h3 class="anchored" data-anchor-id="sync-variables"><code>sync</code> variables</h3>
 <p>A more elaborated and powerful use of <code>sync</code> is as a type qualifier for variables. When a variable is declared as <em>sync</em>, a state that can be <strong><em>full</em></strong> or <strong><em>empty</em></strong> is associated with it.</p>
 <p>To assign a new value to a <em>sync</em> variable, its state must be <em>empty</em> (after the assignment operation is completed, the state will be set as <em>full</em>). On the contrary, to read a value from a <em>sync</em> variable, its state must be <em>full</em> (after the read operation is completed, the state will be set as <em>empty</em> again).</p>
-<pre class="chpl"><code>var x: sync int;
-writeln('this is the main task launching a new task');
-begin {
-  for i in 1..10 do
-    writeln('this is the new task working: ', i);
-  x.writeEF(2);   // write the value, state changes from Empty to Full
-  writeln('New task finished');
-}
-writeln('this is the main task after launching new task ... I will wait until x is full');
-x.readFE();         // read the value, state changes from Full to Empty
-writeln('and now it is done');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> x: <span class="kw">sync</span> <span class="dt">int</span>;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>writeln('this is the main task launching a <span class="kw">new</span> task');</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">begin</span> {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">10</span> <span class="kw">do</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    writeln('this is the <span class="kw">new</span> task working: ', i);</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  x.writeEF(<span class="dv">2</span>);   // write the value, state changes from Empty to Full</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  writeln('New task finished');</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>writeln('this is the main task after launching <span class="kw">new</span> task ... I will wait until x is full');</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>x.readFE();         // read the value, state changes from Full to Empty</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>writeln('and now it is done');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> sync2.chpl</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|sync1|sync2|'</span> shared.sh</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
@@ -638,38 +638,38 @@ and now it is done</code></pre>
 <li>Let’s add <code>x.writeEF(5);</code> right before the last <code>x.readFE();</code> – now we set is to full again (and assigned 5), and it can be read again.</li>
 </ul>
 <p>There are a number of methods defined for <em>sync</em> variables. Suppose <em>x</em> is a sync variable of a given type:</p>
-<pre class="chpl"><code>// general methods
-x.reset() - set the state as empty and the value as the default of x's type
-x.isfull() - return true is the state of x is full, false if it is empty
-
-// blocking read and write methods
-x.writeEF(value) - block until the state of x is empty, then assign the value and
-                   set the state to full
-x.writeFF(value) - block until the state of x is full, then assign the value and
-                   leave the state as full
-x.readFE() - block until the state of x is full, then return x's value and set
-             the state to empty
-x.readFF() - block until the state of x is full, then return x's value and
-             leave the state as full
-
-// non-blocking read and write methods
-x.writeXF(value) - assign the value no matter the state of x, then set the state as full
-x.readXX() - return the value of x regardless its state; the state will remain unchanged</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>// general methods</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>x.reset() - set the state <span class="kw">as</span> empty and the value <span class="kw">as</span> the default of x's <span class="kw">type</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>x.isfull() - <span class="kw">return</span> <span class="cn">true</span> is the state of x is full, <span class="cn">false</span> <span class="kw">if</span> it is empty</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>// blocking read and write methods</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>x.writeEF(value) - block until the state of x is empty, <span class="kw">then</span> assign the value and</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                   set the state to full</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>x.writeFF(value) - block until the state of x is full, <span class="kw">then</span> assign the value and</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                   leave the state <span class="kw">as</span> full</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>x.readFE() - block until the state of x is full, <span class="kw">then</span> <span class="kw">return</span> x's value and set</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>             the state to empty</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>x.readFF() - block until the state of x is full, <span class="kw">then</span> <span class="kw">return</span> x's value and</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>             leave the state <span class="kw">as</span> full</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>// non-blocking read and write methods</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>x.writeXF(value) - assign the value no matter the state of x, <span class="kw">then</span> set the state <span class="kw">as</span> full</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>x.readXX() - <span class="kw">return</span> the value of x regardless its state; the state will remain unchanged</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="atomic-variables" class="level3">
 <h3 class="anchored" data-anchor-id="atomic-variables">Atomic variables</h3>
 <p>Chapel also implements <strong><em>atomic</em></strong> operations with variables declared as <code>atomic</code>, and this provides another option to synchronize tasks. Atomic operations run <em>completely independently of any other task or process</em>. This means that when several tasks try to write an atomic variable, only one will succeed at a given moment, providing implicit synchronization between them. There is a number of methods defined for atomic variables, among them <code>sub()</code>, <code>add()</code>, <code>write()</code>, <code>read()</code>, and <code>waitfor()</code> are very useful to establish explicit synchronization between tasks, as shown in the next code <code>atomic.chpl</code>:</p>
-<pre class="chpl"><code>var lock: atomic int;
-const numtasks = 5;
-
-lock.write(0);               // the main task set lock to zero
-
-coforall id in 1..numtasks {
-  writeln('greetings form task ', id, '... I am waiting for all tasks to say hello');
-  lock.add(1);               // task id says hello and atomically adds 1 to lock
-  lock.waitFor(numtasks);  // then it waits for lock to be equal numtasks (which will happen when all tasks say hello)
-  writeln('task ', id, ' is done ...');
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> lock: <span class="kw">atomic</span> <span class="dt">int</span>;</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> numtasks = <span class="dv">5</span>;</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>lock.write(<span class="dv">0</span>);               // the main task set lock to zero</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">coforall</span> id <span class="kw">in</span> <span class="dv">1</span>..numtasks {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  writeln('greetings form task ', id, '... I am waiting <span class="kw">for</span> all tasks to say hello');</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  lock.add(<span class="dv">1</span>);               // task id says hello and atomically adds <span class="dv">1</span> to lock</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  lock.waitFor(numtasks);  // <span class="kw">then</span> it waits <span class="kw">for</span> lock to be equal numtasks (which will happen <span class="kw">when</span> all tasks say hello)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  writeln('task ', id, ' is done ...');</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> atomic.chpl</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sed</span> <span class="at">-i</span> <span class="at">-e</span> <span class="st">'s|sync2|atomic|'</span> shared.sh</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ex">sbatch</span> shared.sh</span>
@@ -708,9 +708,9 @@ Note
 </div>
 <div class="callout-body-container callout-body">
 <p>Suppose we want to add another synchronization point right after the last <code>writeln()</code> command. What is wrong with adding the following at the end of the <code>coforall</code> loop?</p>
-<pre class="chpl"><code>  lock.sub(1);      // task id says hello and atomically subtracts 1 from lock
-  lock.waitFor(0);  // then it waits for lock to be equal 0 (which will happen when all tasks say hello)
-  writeln('task ', id, ' is really done ...');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  lock.sub(<span class="dv">1</span>);      // task id says hello and atomically subtracts <span class="dv">1</span> from lock</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  lock.waitFor(<span class="dv">0</span>);  // <span class="kw">then</span> it waits <span class="kw">for</span> lock to be equal <span class="dv">0</span> (which will happen <span class="kw">when</span> all tasks say hello)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  writeln('task ', id, ' is really done ...');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <p><img src="../fig/raceCondition.png" class="img-fluid" style="width:80.0%"></p>

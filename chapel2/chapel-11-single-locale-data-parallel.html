@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -553,8 +553,8 @@ window.Quarto = {
 <!-- > ### Discussion -->
 <!-- > Why do you think the code's speed does not scale linearly with the number of cores? -->
 <p>As we mentioned in the previous section, <strong>data parallelism</strong> is a style of parallel programming in which parallelism is driven by <em>computations over collections of data elements or their indices</em>. The main tool for this in Chapel is a <code>forall</code> loop – it’ll create an <em>appropriate</em> number of threads to execute a loop, dividing the loop’s iterations between them.</p>
-<pre class="chpl"><code>forall index in iterand   // iterating over all elements of an array or over a range of indices
-{instructions}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> <span class="kw">index</span> <span class="kw">in</span> iterand   // iterating over all elements of an array or over a <span class="dt">range</span> of indices</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>{instructions}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>What is the <em>appropriate</em> number of tasks/threads?</p>
 <ul>
 <li>on a single core: single thread</li>
@@ -562,10 +562,10 @@ window.Quarto = {
 <li>on multiple cores on multiple nodes: all cores, up to the problem size, given the data distribution</li>
 </ul>
 <p>Consider a simple code <code>test.chpl</code>:</p>
-<pre class="chpl"><code>const n = 1e6: int;
-var A: [1..n] real;
-forall a in A do
-  a += 1;</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> n = <span class="fl">1e6</span>: <span class="dt">int</span>;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> A: [<span class="dv">1</span>..n] <span class="dt">real</span>;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> a <span class="kw">in</span> A <span class="kw">do</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  a += <span class="dv">1</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In this code we update all elements of the array <code>A</code>. If run on a single node, this code will lauch as many threads as the number of available cores. It is thread-safe, meaning that no two threads are writing into the same variable at the same time.</p>
 <ul>
 <li>if we replace <code>forall</code> with <code>for</code>, we’ll get a serial loop on a sigle core</li>
@@ -575,11 +575,11 @@ forall a in A do
 <section id="reduction" class="level2">
 <h2 class="anchored" data-anchor-id="reduction">Reduction</h2>
 <p>Consider a simple code <code>forall.chpl</code> that we’ll run inside a 4-core interactive job. We have a range of indices 1..1000, and they get broken into 4 groups that are processed by individual threads:</p>
-<pre class="chpl"><code>var count = 0;
-forall i in 1..1000 with (+ reduce count) {   // parallel loop
-  count += i;
-}
-writeln('count = ', count);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = <span class="dv">0</span>;</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">1000</span> <span class="kw">with</span> (+ <span class="kw">reduce</span> count) {   // parallel loop</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  count += i;</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>writeln('count = ', count);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- If we have not done so, let's write a script `shared.sh` for submitting single-locale, two-core Chapel jobs: -->
 <!-- ```sh -->
 <!-- #!/bin/bash -->
@@ -611,16 +611,16 @@ writeln('count = ', count);</code></pre>
 <section id="other-syntax-options" class="level3">
 <h3 class="anchored" data-anchor-id="other-syntax-options">Other syntax options</h3>
 <p>We can also do parallel reduction over a loop in this way:</p>
-<pre class="chpl"><code>var count = (+ reduce forall i in 1..1000 do i**2);
-writeln('count = ', count);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = (+ <span class="kw">reduce</span> <span class="kw">forall</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">1000</span> <span class="kw">do</span> i**<span class="dv">2</span>);</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>writeln('count = ', count);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>We can also initialize in array and do parallel reduction over all array elements:</p>
-<pre class="chpl"><code>var A = (for i in 1..1000 do i);
-var count = (+ reduce A);   // multiple threads
-writeln('count = ', count);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> A = (<span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">1000</span> <span class="kw">do</span> i);</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = (+ <span class="kw">reduce</span> A);   // multiple threads</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>writeln('count = ', count);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Or we could do it this way if we want to do some processing on individual elements:</p>
-<pre class="chpl"><code>var A = (for i in 1..1000 do i);
-var count = (+ reduce forall a in A do a**2);
-writeln('count = ', count);</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> A = (<span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">1000</span> <span class="kw">do</span> i);</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = (+ <span class="kw">reduce</span> <span class="kw">forall</span> a <span class="kw">in</span> A <span class="kw">do</span> a**<span class="dv">2</span>);</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>writeln('count = ', count);</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -633,14 +633,14 @@ writeln('count = ', count);</code></pre>
 <div class="callout-body-container callout-body">
 <p>Using the first version of <code>forall.chpl</code> (where we computed the sum of integers 1..1000) as a template, write a Chapel code to compute <span class="math inline">\(\pi\)</span> by calculating the integral numerically via summation using <code>forall</code> parallelism. Implement the number of intervals as <code>config</code> variable.</p>
 <p>To get you started, here is a serial version of this code <code>pi.chpl</code>:</p>
-<pre class="chpl"><code>config const n = 1000;
-var h, total: real;
-h = 1.0 / n;                          // interval width
-for i in 1..n {
-  var x = h * ( i - 0.5 );
-  total += 4.0 / ( 1.0 + x**2);
-}
-writef('pi is %3.10r\n', total*h);    // C-style formatted write, r stands for real</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> n = <span class="dv">1000</span>;</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> h, total: <span class="dt">real</span>;</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>h = <span class="fl">1.0</span> / n;                          // interval width</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> x = h * ( i - <span class="fl">0.5</span> );</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  total += <span class="fl">4.0</span> / ( <span class="fl">1.0</span> + x**<span class="dv">2</span>);</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>writef('pi is %<span class="fl">3.10</span>r\n', total*h);    // C-style formatted write, r stands <span class="kw">for</span> <span class="dt">real</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Time your code for <span class="math inline">\(n=10^8\)</span>, <span class="math inline">\(10^9\)</span> and <span class="math inline">\(10^{10}\)</span> terms.</p>
 </div>
 </div>

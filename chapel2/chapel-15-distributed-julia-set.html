@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -532,34 +532,34 @@ window.Quarto = {
 <li>Load <code>BlockDist</code></li>
 <li>Replace</li>
 </ol>
-<pre class="chpl"><code>var stability: [1..n,1..n] int;</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> stability: [<span class="dv">1</span>..n,<span class="dv">1</span>..n] <span class="dt">int</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>with</p>
-<pre class="chpl"><code>const mesh: domain(2) = {1..n, 1..n};
-const distributedMesh: domain(2) dmapped new blockDist(boundingBox=mesh) = mesh;
-var stability: [distributedMesh] int;</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> mesh: <span class="kw">domain</span>(<span class="dv">2</span>) = {<span class="dv">1</span>..n, <span class="dv">1</span>..n};</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> distributedMesh: <span class="kw">domain</span>(<span class="dv">2</span>) <span class="kw">dmapped</span> <span class="kw">new</span> blockDist(boundingBox=mesh) = mesh;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> stability: [distributedMesh] <span class="dt">int</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ol start="3" type="1">
 <li>Look into the loop variables: currently we have</li>
 </ol>
-<pre class="chpl"><code>forall i in 1..n {
-  var y = 2*(i-0.5)/n - 1;
-  for j in 1..n {
-    var point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> i <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;   // rescale to -<span class="dv">1</span>:<span class="dv">1</span> <span class="kw">in</span> the <span class="dt">complex</span> plane</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    stability[i,j] = pixel(point);</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>– in the previous, shared-memory version of the code this fragment gave you a parallel loop running on multiple cores on the same node. If you run this loop now, it’ll run entirely on the first node!</p>
 <p>In the distributed version of the code you want to loop in parallel over all elements of the distributed mesh <code>distributedMesh</code> (or, equivalently, over all elements of the distributed array <code>stability</code>) – this will send the computation to the locales holding these blocks:</p>
-<pre class="chpl"><code>forall (i,j) in distributedMesh {
-  var y = 2*(i-0.5)/n - 1;
-  var point = 2*(j-0.5)/n - 1 + y*1i;
-  stability[i,j] = pixel(point);
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> (i,j) <span class="kw">in</span> distributedMesh {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  stability[i,j] = pixel(point);</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>or (equivalent):</p>
-<pre class="chpl"><code>forall (i,j) in stability.domain {
-  var y = 2*(i-0.5)/n - 1;
-  var point = 2*(j-0.5)/n - 1 + y*1i;
-  stability[i,j] = pixel(point);
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">forall</span> (i,j) <span class="kw">in</span> stability.<span class="kw">domain</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  stability[i,j] = pixel(point);</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Compile and run a larger problem (<span class="math inline">\(8000^2\)</span>) across several nodes:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># this is distributed.sh</span></span>

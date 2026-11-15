@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -529,32 +529,32 @@ window.Quarto = {
 
 <p>Chapel, as most <em>high-level programming languages</em>, has different staments to control the flow of the program or code. The conditional statements are the <code>if</code> statement and the <code>while</code> statement.</p>
 <p>The general syntax of a <code>while</code> statement is one of the two:</p>
-<pre class="chpl"><code>while condition do 
-  instruction;
-  
-while condition {
-  instruction1;
-  ...
-  instructionN;
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> condition <span class="kw">do</span> </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  instruction;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> condition {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  instruction1;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  instructionN;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>With multiple instructions inside the curly brackets, all of them are executed one by one if the condition evaluates to <code>True</code>. This block will be repeated over and over again until the condition does not hold anymore.</p>
 <p>In our Julia set code we don’t use the <code>while</code> construct, however, we need to check if our iteration goes beyond the <span class="math inline">\(|z|=4\)</span> circle – this is the type of control that an <strong><em>if statement</em></strong> gives us. The general syntax is:</p>
-<pre class="chpl"><code>if condition then
-  instruction1;
-else
-  instruction2;</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> condition <span class="kw">then</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  instruction1;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  instruction2;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and you can group multiple instructions into a block by using the curly brackets <code>{}</code>.</p>
 <p>Let’s package our calculation into a function: for each complex number we want to iterate until either we reach the maximum number of iterations, or we cross the <span class="math inline">\(|z|=4\)</span> circle:</p>
-<pre class="chpl"><code>proc pixel(z0) {
-  const c: complex = 0.355 + 0.355i;   // Julia set constant
-  var z = z0*1.2;   // zoom out
-  for i in 1..255 {
-    z = z*z + c;
-    if abs(z) &gt;= 4 then
-      return i;
-  }
-  return 255;
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">proc</span> pixel(z0) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> c: <span class="dt">complex</span> = <span class="fl">0.355</span> + <span class="fl">0.355</span>i;   // Julia set constant</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> z = z0*<span class="fl">1.2</span>;   // zoom <span class="kw">out</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">255</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    z = z*z + c;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> abs(z) &gt;= <span class="dv">4</span> <span class="kw">then</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">return</span> i;</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">return</span> <span class="dv">255</span>;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- The main loop in our simulation can be programmed using a while statement like this -->
 <!-- ```chpl -->
 <!-- delta = tolerance;   // safe initial bet; could also be a large number -->

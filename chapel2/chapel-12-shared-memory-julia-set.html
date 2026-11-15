@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -499,37 +499,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>Recall the serial code <code>juliaSetSerial.chpl</code> (without output):</p>
-<pre class="chpl"><code>use Time;
-
-config const c = 0.355 + 0.355i;
-
-proc pixel(z0) {
-  var z = z0*1.2;   // zoom out
-  for i in 1..255 {
-    z = z*z + c;
-    if abs(z) &gt;= 4 then
-      return i;
-  }
-  return 255;
-}
-
-config const n = 2_000;   // vertical and horizontal size of our image
-var y: real;
-var point: complex;
-var watch: stopwatch;
-
-writeln("Computing ", n, "x", n, " Julia set ...");
-var stability: [1..n,1..n] int;
-watch.start();
-for i in 1..n {
-  y = 2*(i-0.5)/n - 1;
-  for j in 1..n {
-    point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}
-watch.stop();
-writeln('It took ', watch.elapsed(), ' seconds');</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Time;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> c = <span class="fl">0.355</span> + <span class="fl">0.355</span>i;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">proc</span> pixel(z0) {</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> z = z0*<span class="fl">1.2</span>;   // zoom <span class="kw">out</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">255</span> {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    z = z*z + c;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> abs(z) &gt;= <span class="dv">4</span> <span class="kw">then</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">return</span> i;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">return</span> <span class="dv">255</span>;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">config</span> <span class="kw">const</span> n = <span class="dv">2</span>_000;   // vertical and horizontal size of our image</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> y: <span class="dt">real</span>;</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> point: <span class="dt">complex</span>;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> watch: stopwatch;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>writeln(<span class="st">"Computing "</span>, n, <span class="st">"x"</span>, n, <span class="st">" Julia set ..."</span>);</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> stability: [<span class="dv">1</span>..n,<span class="dv">1</span>..n] <span class="dt">int</span>;</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>watch.start();</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..n {</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;   // rescale to -<span class="dv">1</span>:<span class="dv">1</span> <span class="kw">in</span> the <span class="dt">complex</span> plane</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    stability[i,j] = pixel(point);</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>watch.stop();</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>writeln('It took ', watch.elapsed(), ' seconds');</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now let’s parallelize this code with <code>forall</code> in shared memory (single locale). Copy <code>juliaSetSerial.chpl</code> into <code>juliaSetParallel.chpl</code> and start modifying it:</p>
 <ol type="1">
 <li>For the outer loop, replace <code>for</code> with <code>forall</code>. This will produce an error about the scope of variables <code>y</code> and <code>point</code>:</li>

@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-98f2a814ba9952338aa59e6fd4633fe3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../site_libs/bootstrap/bootstrap-3c9acb114ee04208792e58c900d659a5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -506,7 +506,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>A series of integers (1,2,3,4,5, for example), is called a <strong><em>range</em></strong> in Chapel. Ranges are generated with the <code>..</code> operator, and are useful, among other things, to declare <strong><em>arrays</em></strong> of variables. For example, the following variable</p>
-<pre class="chpl"><code>var stability: [1..n,1..n] int;   // our target array to compute</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> stability: [<span class="dv">1</span>..n,<span class="dv">1</span>..n] <span class="dt">int</span>;   // our target array to compute</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>is a 2D array (matrix) with <code>n</code> rows and <code>n</code> columns of integer numbers, all initialized as <code>0</code>. The two ranges <code>1..n</code> not only define the size and shape of the array, they stand for the indices with which we could access particular elements of the array using the <code>[X,X]</code> notation. For example, <code>stability[1,1]</code> is the integer variable located at the first row and first column of the array <code>stability</code>, while <code>stability[3,7]</code> sits at the 3rd row and 7th column; <code>stability[2,3..15]</code> access columns 3 to 15 of the 2nd row, and <code>stability[1..4,4]</code> corresponds to the first 4 rows on the 4th column of <code>stability</code>.</p>
 <!-- Similarly, with -->
 <!-- ```chpl -->
@@ -528,35 +528,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="using-expressions-to-create-arrays" class="level3">
 <h3 class="anchored" data-anchor-id="using-expressions-to-create-arrays">Using expressions to create arrays</h3>
 <p>In Chapel arrays can also be initialized with expressions, similarly to list comprehensions in Python:</p>
-<pre class="chpl"><code>writeln([i in 1..10] i**2);   // prints 1 4 9 16 25 36 49 64 81 100
-var x = [i in 1..10] if (i%2 == 0) then i else 0;
-writeln(x);                   // prints 0 2 0 4 0 6 0 8 0 10
-writeln(x.type:string);       // 1D array of type int(64)</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>writeln([i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">10</span>] i**<span class="dv">2</span>);   // prints <span class="dv">1</span> <span class="dv">4</span> <span class="dv">9</span> <span class="dv">16</span> <span class="dv">25</span> <span class="dv">36</span> <span class="dv">49</span> <span class="dv">64</span> <span class="dv">81</span> <span class="dv">100</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> x = [i <span class="kw">in</span> <span class="dv">1</span>..<span class="dv">10</span>] <span class="kw">if</span> (i%<span class="dv">2</span> == <span class="dv">0</span>) <span class="kw">then</span> i <span class="kw">else</span> <span class="dv">0</span>;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>writeln(x);                   // prints <span class="dv">0</span> <span class="dv">2</span> <span class="dv">0</span> <span class="dv">4</span> <span class="dv">0</span> <span class="dv">6</span> <span class="dv">0</span> <span class="dv">8</span> <span class="dv">0</span> <span class="dv">10</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>writeln(x.<span class="kw">type</span>:<span class="dt">string</span>);       // <span class="dv">1</span>D array of <span class="kw">type</span> <span class="dt">int</span>(<span class="dv">64</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="structured-iterations-with-for-loops" class="level2">
 <h2 class="anchored" data-anchor-id="structured-iterations-with-for-loops">Structured iterations with for-loops</h2>
 <p>We want to iterate over all points in our image. When it comes to iterating over a given number of elements, the <strong><em>for-loop</em></strong> is what we want to use. The for-loop has the following general syntax:</p>
-<pre class="chpl"><code>for index in iterand do
-  instruction;
-  
-for index in iterand {
-  instruction1;
-  instruction2;
-  ...
-  }</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="kw">index</span> <span class="kw">in</span> iterand <span class="kw">do</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  instruction;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="kw">index</span> <span class="kw">in</span> iterand {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  instruction1;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  instruction2;</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  ...</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The <code>iterand</code> is a statement that expresses an iteration, e.g.&nbsp;it could be a range <code>1..15</code>. <code>index</code> is a variable that exists only in the context of the for-loop, and that will be taking the different values yielded by the iterand. The code flows as follows: index takes the first value yielded by the iterand, and keeps it until all the instructions inside the curly brackets are executed one by one; then, index takes the second value yielded by the iterand, and keeps it until all the instructions are executed again. This pattern is repeated until index takes all the different values exressed by the iterand.</p>
 <p>In our case we iterate both over all rows and all columns in the image to compute every pixel. This can be done with nested <em>for</em> loops like this:</p>
-<pre class="chpl"><code>for i in 1..n { // process row i
-  y = 2*(i-0.5)/n - 1;
-  for j in 1..n { // process column j, row i
-    point = 2*(j-0.5)/n - 1 + y*1i;   // rescale to -1:1 in the complex plane
-    stability[i,j] = pixel(point);
-  }
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> <span class="dv">1</span>..n { // process row i</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  y = <span class="dv">2</span>*(i<span class="fl">-0.5</span>)/n - <span class="dv">1</span>;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">for</span> j <span class="kw">in</span> <span class="dv">1</span>..n { // process column j, row i</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    point = <span class="dv">2</span>*(j<span class="fl">-0.5</span>)/n - <span class="dv">1</span> + y*<span class="dv">1</span>i;   // rescale to -<span class="dv">1</span>:<span class="dv">1</span> <span class="kw">in</span> the <span class="dt">complex</span> plane</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    stability[i,j] = pixel(point);</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To be able to compile the code, we also need a prototype <code>pixel()</code> function:</p>
-<pre class="chpl"><code>proc pixel(z0) {
-  return z0; // to be replaced with an actual calculation
-}</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode chpl code-with-copy"><code class="sourceCode chapel"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">proc</span> pixel(z0) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">return</span> z0; // to be replaced <span class="kw">with</span> an actual calculation</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now let’s compile and execute our code again:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">chpl</span> juliaSetSerial.chpl</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">srun</span> <span class="at">--mem-per-cpu</span><span class="op">=</span>3600 ./juliaSetSerial</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
