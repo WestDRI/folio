@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<language name="Chapel" section="Sources" extensions="*.chpl" version="1" kateversion="5.0" author="Custom" license="MIT">
+  <highlighting>
+    <list name="keywords">
+      <item>align</item><item>as</item><item>atomic</item><item>begin</item>
+      <item>break</item><item>by</item><item>catch</item><item>class</item>
+      <item>cobegin</item><item>coforall</item><item>config</item><item>const</item>
+      <item>continue</item><item>defer</item><item>delete</item><item>dmapped</item>
+      <item>do</item><item>domain</item><item>else</item><item>enum</item>
+      <item>export</item><item>extern</item><item>for</item><item>forall</item>
+      <item>foreach</item><item>forwarding</item><item>if</item><item>implements</item>
+      <item>import</item><item>in</item><item>index</item><item>init</item>
+      <item>inline</item><item>inout</item><item>interface</item><item>iter</item>
+      <item>label</item><item>lambda</item><item>let</item><item>lifetime</item>
+      <item>local</item><item>locale</item><item>manage</item><item>module</item>
+      <item>new</item><item>nil</item><item>noinit</item><item>on</item>
+      <item>only</item><item>operator</item><item>out</item><item>override</item>
+      <item>owned</item><item>param</item><item>private</item><item>proc</item>
+      <item>prototype</item><item>public</item><item>record</item><item>reduce</item>
+      <item>ref</item><item>require</item><item>return</item><item>scan</item>
+      <item>select</item><item>serial</item><item>shared</item><item>single</item>
+      <item>sparse</item><item>subdomain</item><item>sync</item><item>then</item>
+      <item>this</item><item>throw</item><item>throws</item><item>try</item>
+      <item>type</item><item>union</item><item>unmanaged</item><item>use</item>
+      <item>var</item><item>when</item><item>where</item><item>while</item>
+      <item>with</item><item>yield</item><item>zip</item>
+    </list>
+    <list name="types">
+      <item>bool</item><item>bytes</item><item>complex</item><item>imag</item>
+      <item>int</item><item>nothing</item><item>opaque</item><item>range</item>
+      <item>real</item><item>string</item><item>uint</item><item>void</item>
+    </list>
+    <list name="literals">
+      <item>true</item><item>false</item>
+    </list>
+    <contexts>
+      <context name="Normal" attribute="Normal Text" lineEndContext="#stay">
+        <keyword attribute="Keyword" context="#stay" String="keywords"/>
+        <keyword attribute="Data Type" context="#stay" String="types"/>
+        <keyword attribute="Constant" context="#stay" String="literals"/>
+        <Detect2Chars attribute="Comment" context="Comment1" char="/" char="/"/>
+        <Detect2Chars attribute="Comment" context="Comment2" char="/" char="*"/>
+        <DetectChar attribute="String" context="String" char="&quot;"/>
+        <Float attribute="Float" context="#stay"/>
+        <Int attribute="Decimal" context="#stay"/>
+      </context>
+      <context name="Comment1" attribute="Comment" lineEndContext="#pop"/>
+      <context name="Comment2" attribute="Comment" lineEndContext="#stay">
+        <Detect2Chars attribute="Comment" context="#pop" char="*" char="/"/>
+      </context>
+      <context name="String" attribute="String" lineEndContext="#pop">
+        <DetectChar attribute="String" context="#pop" char="&quot;"/>
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal"/>
+      <itemData name="Keyword" defStyleNum="dsKeyword"/>
+      <itemData name="Data Type" defStyleNum="dsDataType"/>
+      <itemData name="Constant" defStyleNum="dsConstant"/>
+      <itemData name="Comment" defStyleNum="dsComment"/>
+      <itemData name="String" defStyleNum="dsString"/>
+      <itemData name="Decimal" defStyleNum="dsDecVal"/>
+      <itemData name="Float" defStyleNum="dsFloat"/>
+    </itemDatas>
+  </highlighting>
+</language>
