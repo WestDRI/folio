@@ -7,13 +7,13 @@ format:
     include-in-header: schemas/numba-gpu-schemas.html
 ---
 
-**June 5<sup>th</sup>, 9:30am-4:30pm Pacific Time**
+**November 19<sup>th</sup>, 10:00am-noon Pacific Time**
 
-**Abstract**: In our second GPU Python course this month, participants learn how to use the Numba compiler to
-harness the full power of NVIDIA GPUs without leaving the Python ecosystem. We cover high-level array
-acceleration, writing CUDA kernels, managing data transfer and on-device memory, and basic performance tuning
-techniques. As a capstone exercise, we implement prime factorization on a GPU, with a focus on monitoring and
-optimizing GPU utilization on a cluster.
+**Abstract**: In this GPU Python course, participants learn how to use the Numba compiler to harness the full
+power of NVIDIA GPUs without leaving the Python ecosystem. We cover high-level array acceleration, writing
+CUDA kernels, managing data transfer and on-device memory, and basic performance tuning techniques. As a
+capstone exercise, we implement prime factorization on a GPU, with a focus on monitoring and optimizing GPU
+utilization on a cluster.
 
 
 
@@ -26,8 +26,11 @@ optimizing GPU utilization on a cluster.
 <!-- CPU vs. GPU Execution: SIMT (Single Instruction, Multiple Threads) architecture. -->
 <!-- Environment Setup: Verifying CUDA drivers and toolkits within a Python environment. -->
 
-In the CuPy course last week, Marie-Hélène Burle gave an introduction to the GPU architecture, the available
-GPU programming frameworks, and using GPUs on our clusters. For more details, see these sections:
+<!-- In the CuPy course last week, Marie-Hélène Burle gave an introduction to the GPU architecture, the available -->
+<!-- GPU programming frameworks, and using GPUs on our clusters. For more details, see these sections: -->
+
+For a high-level introduction to GPU architecture and the available GPU programming frameworks, we refer you
+to the following sections:
 
 - [Using GPUs on the Alliance clusters](https://mint.westdri.ca/python/gpu_clusters){target="_blank"}
 - [A brief introduction to CUDA](https://mint.westdri.ca/python/gpu_cuda){target="_blank"}
@@ -208,13 +211,14 @@ print(cuda.gpus)   # will return the list of GPUs
 ::: {.callout-caution}
 ##### Warning
 The CUDA simulator runs your Numba-compiled code much slower than the same Numba code compiled for a CPU, and
-~4-5 orders of magnitude slower than on a physical GPU.
+~4-5 orders of magnitude slower than a physical GPU. It may be fine for testing and development, but it would
+be painfully slow for any real computing.
+
+Furthermore, the simulator does *not* support CPU multithreading. Since it was designed for testing, not
+performance, it runs on a single thread. With a bit of extra code, you can wrap it in a multithreaded function
+call, to speed up testing without access to a physical GPU.
 :::
 
-You cannot use CPU multithreading in this mode, as the simulator was designed for testing and debugging, not
-for performance, so it runs on a single thread. With a bit of extra code, you can wrap the simulator into a
-multi-threaded function call, but this is only useful if you really want to speed up testing and don't have
-access to a physical GPU.
 
 
 
@@ -307,6 +311,10 @@ TypeError: ufunc 'add' not supported for the input types, and the inputs could n
 
 
 
+
+
+
+
 ::: {.callout-caution}
 ##### Take-home exercise: pairwise distances between geographic locations
 
@@ -368,8 +376,9 @@ lon2 = lon[jArray]
 
 and then all that remains is to feed these four arrays to the `@vectorize` function.
 
-Put all these pieces together and time your code on the CPU and GPU for `n = 1000`, `n = 2000`, and so on. How
-far can you scale, and why do you run into a limit?
+Put all these pieces together and time your code on the CPU and the GPU for `n = 1000`, `n = 2000`, and so on,
+every time doubling the number of points. How far can you scale, and why do you run into a limit? Does the
+limit come from the CPU or GPU side? Can you go past this limit?
 
 You can use the standard Python `time.time()` function to benchmark your code -- there is an example later in
 these notes.
@@ -386,7 +395,7 @@ element. This will give you additional `ndarray` features such as reduction, acc
 more general functions, you will want to use the `@cuda.jit` decorator.
 
 ::: {.callout-note}
-You can also pass `nopython=True` to the decorator to ensure the generated code does not fallback to slow
+You can also pass `nopython=True` to the decorator to ensure the generated code does not fall back to slow
 object mode.
 :::
 
@@ -434,7 +443,8 @@ print(result)   # [15. 20. 30. 40. 50. 55.]
 Numba supports CUDA GPU programming by directly compiling a *restricted subset* of Python code into CUDA
 kernels. It does *not yet* implement the full CUDA API, but CUDA support in Numba is being actively developed.
 
-A *kernel function* is a GPU function that is called from a CPU. It has two fundamental characteristics:
+A <font style="color:blue">*kernel function*</font> is a GPU function that is called from a CPU. It has two
+fundamental characteristics:
 
 1. kernels cannot return a value; all results must be written to an array passed to the function, and
 1. kernels must declare their thread hierarchy: the number of blocks and the number of threads per block.
@@ -454,7 +464,7 @@ The input/output array `data` can be defined both on the CPU and the GPU. We wil
 :::
 
 Let's assume we are processing a large number of `data` elements on a GPU. We'll be doing this on a massively
-parallel scale, with each thread on a GPU applying the same calculation to its own array element. There are
+parallel scale, with **each thread on a GPU applying the same calculation to its own array element**. There are
 other ways to divide the workload, e.g. using a fixed number of tasks (each processing multiple `data`
 elements) and then having each task run on a separate thread.
 
