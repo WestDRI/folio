@@ -408,14 +408,16 @@ window.Quarto = {
 </header>
 
 
-<p><strong>June 5<sup>th</sup>, 9:30am-4:30pm Pacific Time</strong></p>
-<p><strong>Abstract</strong>: In our second GPU Python course this month, participants learn how to use the Numba compiler to harness the full power of NVIDIA GPUs without leaving the Python ecosystem. We cover high-level array acceleration, writing CUDA kernels, managing data transfer and on-device memory, and basic performance tuning techniques. As a capstone exercise, we implement prime factorization on a GPU, with a focus on monitoring and optimizing GPU utilization on a cluster.</p>
+<p><strong>November 19<sup>th</sup>, 10:00am-noon Pacific Time</strong></p>
+<p><strong>Abstract</strong>: In this GPU Python course, participants learn how to use the Numba compiler to harness the full power of NVIDIA GPUs without leaving the Python ecosystem. We cover high-level array acceleration, writing CUDA kernels, managing data transfer and on-device memory, and basic performance tuning techniques. As a capstone exercise, we implement prime factorization on a GPU, with a focus on monitoring and optimizing GPU utilization on a cluster.</p>
 <section id="introduction-to-numba-and-gpu-architecture" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-to-numba-and-gpu-architecture">Introduction to Numba and GPU Architecture</h2>
 <!-- The Numba JIT Compiler: How Numba translates Python to LLVM IR and machine code. -->
 <!-- CPU vs. GPU Execution: SIMT (Single Instruction, Multiple Threads) architecture. -->
 <!-- Environment Setup: Verifying CUDA drivers and toolkits within a Python environment. -->
-<p>In the CuPy course last week, Marie-Hélène Burle gave an introduction to the GPU architecture, the available GPU programming frameworks, and using GPUs on our clusters. For more details, see these sections:</p>
+<!-- In the CuPy course last week, Marie-Hélène Burle gave an introduction to the GPU architecture, the available -->
+<!-- GPU programming frameworks, and using GPUs on our clusters. For more details, see these sections: -->
+<p>For a high-level introduction to GPU architecture and the available GPU programming frameworks, we refer you to the following sections:</p>
 <ul>
 <li><a href="https://mint.westdri.ca/python/gpu_clusters" target="_blank">Using GPUs on the Alliance clusters</a></li>
 <li><a href="https://mint.westdri.ca/python/gpu_cuda" target="_blank">A brief introduction to CUDA</a></li>
@@ -538,10 +540,10 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The CUDA simulator runs your Numba-compiled code much slower than the same Numba code compiled for a CPU, and ~4-5 orders of magnitude slower than on a physical GPU.</p>
+<p>The CUDA simulator runs your Numba-compiled code much slower than the same Numba code compiled for a CPU, and ~4-5 orders of magnitude slower than a physical GPU. It may be fine for testing and development, but it would be painfully slow for any real computing.</p>
+<p>Furthermore, the simulator does <em>not</em> support CPU multithreading. Since it was designed for testing, not performance, it runs on a single thread. With a bit of extra code, you can wrap it in a multithreaded function call, to speed up testing without access to a physical GPU.</p>
 </div>
 </div>
-<p>You cannot use CPU multithreading in this mode, as the simulator was designed for testing and debugging, not for performance, so it runs on a single thread. With a bit of extra code, you can wrap the simulator into a multi-threaded function call, but this is only useful if you really want to speed up testing and don’t have access to a physical GPU.</p>
 </section>
 </section>
 <section id="high-level-array-acceleration-with-vectorize-and-guvectorize" class="level2">
@@ -655,7 +657,7 @@ Note
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>lat2 <span class="op">=</span> lat[jArray]</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>lon2 <span class="op">=</span> lon[jArray]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and then all that remains is to feed these four arrays to the <code>@vectorize</code> function.</p>
-<p>Put all these pieces together and time your code on the CPU and GPU for <code>n = 1000</code>, <code>n = 2000</code>, and so on. How far can you scale, and why do you run into a limit?</p>
+<p>Put all these pieces together and time your code on the CPU and the GPU for <code>n = 1000</code>, <code>n = 2000</code>, and so on, every time doubling the number of points. How far can you scale, and why do you run into a limit? Does the limit come from the CPU or GPU side? Can you go past this limit?</p>
 <p>You can use the standard Python <code>time.time()</code> function to benchmark your code – there is an example later in these notes.</p>
 </div>
 </div>
@@ -670,7 +672,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>You can also pass <code>nopython=True</code> to the decorator to ensure the generated code does not fallback to slow object mode.</p>
+<p>You can also pass <code>nopython=True</code> to the decorator to ensure the generated code does not fall back to slow object mode.</p>
 </div>
 </div>
 <p>While <code>@vectorize</code> is for element-by-element math, a more general <code>@guvectorize</code> decorator allows you to build functions that operate on <span style="color: blue;">entire array slices</span>. A good example is a <em>moving average</em> (or <em>blur</em>) calculation – you can’t implement it with a standard ufunc because computing each point requires access to its neighbouring values.</p>
@@ -700,7 +702,7 @@ Note
 <!-- Thread Hierarchy: Mastering the Grid, Block, and Thread relationship. -->
 <!-- Indexing Logic: Using cuda.grid(1) and cuda.grid(2) for 1D and 2D data processing. -->
 <p>Numba supports CUDA GPU programming by directly compiling a <em>restricted subset</em> of Python code into CUDA kernels. It does <em>not yet</em> implement the full CUDA API, but CUDA support in Numba is being actively developed.</p>
-<p>A <em>kernel function</em> is a GPU function that is called from a CPU. It has two fundamental characteristics:</p>
+<p>A <font style="color:blue"><em>kernel function</em></font> is a GPU function that is called from a CPU. It has two fundamental characteristics:</p>
 <ol type="1">
 <li>kernels cannot return a value; all results must be written to an array passed to the function, and</li>
 <li>kernels must declare their thread hierarchy: the number of blocks and the number of threads per block.</li>
@@ -724,7 +726,7 @@ Note
 <p>The input/output array <code>data</code> can be defined both on the CPU and the GPU. We will see the examples of both.</p>
 </div>
 </div>
-<p>Let’s assume we are processing a large number of <code>data</code> elements on a GPU. We’ll be doing this on a massively parallel scale, with each thread on a GPU applying the same calculation to its own array element. There are other ways to divide the workload, e.g.&nbsp;using a fixed number of tasks (each processing multiple <code>data</code> elements) and then having each task run on a separate thread.</p>
+<p>Let’s assume we are processing a large number of <code>data</code> elements on a GPU. We’ll be doing this on a massively parallel scale, with <strong>each thread on a GPU applying the same calculation to its own array element</strong>. There are other ways to divide the workload, e.g.&nbsp;using a fixed number of tasks (each processing multiple <code>data</code> elements) and then having each task run on a separate thread.</p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
