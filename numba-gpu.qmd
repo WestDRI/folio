@@ -733,10 +733,15 @@ startEvent, endEvent = cuda.event(), cuda.event()   # create event variables
 # benchmark the kernel
 startEvent.record()
 logs[blocksPerGrid, threadsPerBlock](data)
-endEvent.record()
+endEvent.record()   # place a timestamp marker into the GPU stream after the kernel
 endEvent.synchronize()   # pause the CPU until endEvent.record() is done
 print("Time in ms:", cuda.event_elapsed_time(startEvent, endEvent))   # 80.928ms 80.723ms 80.208ms
 ```
+
+::: {.callout-note}
+`endEvent.record()` runs only after the CUDA kernel finishes, and the last block `endEvent.synchronize()` is
+placed correctly because we print the timing result only after measuring it.
+:::
 
 ### 2. on the CPU
 
@@ -896,6 +901,12 @@ def primes(result):
     if i < result.size:
         result[i] = primeFactorizationSum(i+2)
 
+# warm-up
+n = 10
+device_array = cuda.device_array(n-1, dtype=np.int64)   # allocate memory on the GPU
+primes[1, 9](device_array)   # launch the kernel
+cuda.synchronize()           # ensure GPU finishes before proceeding
+
 n = 1_000_000
 device_array = cuda.device_array(n-1, dtype=np.int64)   # allocate memory on the GPU
 threadsPerBlock = 256   # thread hierarchy
@@ -937,10 +948,15 @@ cuda.synchronize()
 
 Then our runtime becomes 754μs 752μs 752μs.
 
+| n | Python loops, 1 CPU core | Numba compilation, 1 CPU core | Numba to CUDA, no warm-up | Numba to CUDA with warm-up |
+|----------|----------|----------|-------------|-------------|
+| 1_000_000 | 7.877s | 368ms | 1.230s | 5.8ms |
+: Run times on the training cluster during the last workshop
+
 ::: {.callout-caution collapse="true"}
 ##### Bigger calculation
-1. Run the same prime factorization problem on the GPU increasing the problem size to `n=10_000_000` and
-   `n=100_000_000`. Do you see a linear speedup, and why do you think that is?
+1. Expand in this table, running the same prime factorization increasing the problem size
+   to `n=10_000_000` and `n=100_000_000`. Do you see a linear speedup, and why do you think that is?
 1. Try running `n=1_000_000_000` -- you can run out of memory both on the host and on the device. How would
    you solve these two separate problems?
 :::
@@ -974,7 +990,8 @@ memory usage per slice. They show GPU utilization only if you schedule a full GP
 
 Here is how you would use `nvidia-smi`:
 
-1. connect to a currently running job with `srun --jobid=... --pty bash`
+1. connect to a currently running job with `srun --overlap --jobid=... --pty bash`
+    - `--overlap` is needed to enable multiple `srun` instances within the same job to share resources
 1. run `watch -n 1 nvidia-smi` to execute `nvidia-smi` every second, refreshing the terminal output each time
 1. press Ctrl-C to go back to the prompt on the login node
 
