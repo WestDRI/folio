@@ -83,9 +83,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-3a66dc3e77ecaf49071402044b212588.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-1895d770650154722f7722018adbf507.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ea5cf2a5e90c3ae677599e21642e315d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-50d3d39457cc013a48467697e914b183.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-ea5cf2a5e90c3ae677599e21642e315d.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -368,10 +368,10 @@ window.Quarto = {
   <li><a href="#writing-custom-kernels-with-cuda.jit" id="toc-writing-custom-kernels-with-cuda.jit" class="nav-link" data-scroll-target="#writing-custom-kernels-with-cuda.jit">Writing custom kernels with <span class="citation" data-cites="cuda.jit">@cuda.jit</span></a></li>
   <li><a href="#thread-positioning" id="toc-thread-positioning" class="nav-link" data-scroll-target="#thread-positioning">Thread positioning</a></li>
   <li><a href="#memory-management-and-data-transfer" id="toc-memory-management-and-data-transfer" class="nav-link" data-scroll-target="#memory-management-and-data-transfer">Memory management and data transfer</a></li>
-  <li><a href="#benchmarking" id="toc-benchmarking" class="nav-link" data-scroll-target="#benchmarking">Benchmarking …</a>
+  <li><a href="#benchmarking" id="toc-benchmarking" class="nav-link" data-scroll-target="#benchmarking">Benchmarking</a>
   <ul class="collapse">
-  <li><a href="#on-the-gpu-with-cuda-events" id="toc-on-the-gpu-with-cuda-events" class="nav-link" data-scroll-target="#on-the-gpu-with-cuda-events">… on the GPU with CUDA events</a></li>
-  <li><a href="#on-the-cpu" id="toc-on-the-cpu" class="nav-link" data-scroll-target="#on-the-cpu">… on the CPU</a></li>
+  <li><a href="#on-the-gpu-with-cuda-events" id="toc-on-the-gpu-with-cuda-events" class="nav-link" data-scroll-target="#on-the-gpu-with-cuda-events">1. on the GPU with CUDA events</a></li>
+  <li><a href="#on-the-cpu" id="toc-on-the-cpu" class="nav-link" data-scroll-target="#on-the-cpu">2. on the CPU</a></li>
   </ul></li>
   <li><a href="#prime-factorization" id="toc-prime-factorization" class="nav-link" data-scroll-target="#prime-factorization">Prime factorization</a></li>
   <li><a href="#gpu-utilization-monitoring" id="toc-gpu-utilization-monitoring" class="nav-link" data-scroll-target="#gpu-utilization-monitoring">GPU utilization monitoring</a></li>
@@ -381,6 +381,7 @@ window.Quarto = {
   <li><a href="#cpu-gpu-data-transfer" id="toc-cpu-gpu-data-transfer" class="nav-link" data-scroll-target="#cpu-gpu-data-transfer">CPU ⇄ GPU data transfer</a></li>
   <li><a href="#other-best-practices" id="toc-other-best-practices" class="nav-link" data-scroll-target="#other-best-practices">Other best practices</a></li>
   </ul></li>
+  <li><a href="#on-your-own-how-many-cuda-threads-do-you-need" id="toc-on-your-own-how-many-cuda-threads-do-you-need" class="nav-link" data-scroll-target="#on-your-own-how-many-cuda-threads-do-you-need">On your own: how many CUDA threads do you need?</a></li>
   <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
   </ul>
 </nav>
@@ -552,7 +553,7 @@ Note
 <!-- The target="cuda" Decorator: Converting standard NumPy-style logic into accelerated kernels. -->
 <!-- Broadcasting on the GPU: Handling mismatched array dimensions automatically. -->
 <p>We start with high-level element-wise array functions that run on a GPU, and in the next chapter we’ll talk about writing custom CUDA kernels.</p>
-<p>You might have come across numpy <em>ufuncs</em> (universal functions) that operate on <code>ndarrays</code> in an element-by-element fashion. Numba’s <code>@vectorize</code> compiles Python functions taking scalar input arguments into NumPy ufuncs that run as fast as traditional ufuncs written in C.</p>
+<p>You might have come across NumPy’s <em>ufuncs</em> (universal functions) that operate on <code>ndarrays</code> in an element-by-element fashion. Numba’s <code>@vectorize</code> compiles Python functions taking scalar input arguments into NumPy ufuncs that run as fast as traditional ufuncs written in C.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -661,7 +662,7 @@ Note
 <p>You can use the standard Python <code>time.time()</code> function to benchmark your code – there is an example later in these notes.</p>
 </div>
 </div>
-<p><code>@vectorize</code> is useful for creating fast, compiled functions that operate on numpy arrays element by element. This will give you additional <code>ndarray</code> features such as reduction, accumulation or broadcasting. For more general functions, you will want to use the <code>@cuda.jit</code> decorator.</p>
+<p><code>@vectorize</code> is useful for creating fast, compiled functions that operate on NumPy arrays element by element. This will give you additional <code>ndarray</code> features such as reduction, accumulation or broadcasting. For more general functions, you will want to use the <code>@cuda.jit</code> decorator.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -770,16 +771,16 @@ Note
 <p>A kernel launch is a non-blocking (asynchronous) operation: the function returns control to the caller before the kernel finishes executing or the data is synchronized back. If you want the CPU to wait for the GPU to finish, e.g.&nbsp;to time your GPU code, insert <code>cuda.synchronize()</code> after the kernel launch. Transferring data back to the CPU with <code>result = deviceArray.copy_to_host()</code> also forces synchronization: the CPU waits for the GPU to complete all pending work before the data can be safely copied into system memory.</p>
 </div>
 </div>
-<p>Besides CUDA kernels, you can also define so-called <em>device functions</em>. These are functions that execute on the GPU and can only be called from other GPU code, such as a kernel or another device function. Unlike CUDA kernels, device functions can accept scalar arguments. We will see an example of a device function in the prime factorization section.</p>
+<p>Besides CUDA kernels, you can also define so-called <font style="color:blue"><em>device functions</em></font>. These are functions that execute on the GPU and can only be called from other GPU code, such as a kernel or another device function. Unlike CUDA kernels, device functions can accept scalar arguments. We will see an example of a device function in the prime factorization section.</p>
 </section>
 <section id="thread-positioning" class="level2">
 <h2 class="anchored" data-anchor-id="thread-positioning">Thread positioning</h2>
 <p>The kernel function is executed by every thread once. From inside the kernel function, you likely want to calculate the thread ID to know which <code>data</code> element(s) this thread is responsible for.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="at">@cuda.jit</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> increment(data):        <span class="co"># kernel function processing a 1D array</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    tx <span class="op">=</span> cuda.threadIdx.x   <span class="co"># threadID in the current thread block, between 0..cuda.blockDim.x-1</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    bx <span class="op">=</span> cuda.blockIdx.x    <span class="co"># blockID in a 1D grid</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    bw <span class="op">=</span> cuda.blockDim.x    <span class="co"># number of threads per block (block width)</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    bw <span class="op">=</span> cuda.blockDim.x    <span class="co"># number of threads per block (block width)</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    tx <span class="op">=</span> cuda.threadIdx.x   <span class="co"># threadID in the current block, between 0..cuda.blockDim.x-1</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    bx <span class="op">=</span> cuda.blockIdx.x    <span class="co"># blockID in a 1D grid</span></span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> bx <span class="op">*</span> bw <span class="op">+</span> tx      <span class="co"># flattened index inside the array</span></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pos <span class="op">&lt;</span> data.size:     <span class="co"># check array boundaries, in case there are more threads than data.size</span></span>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>        data[pos] <span class="op">+=</span> <span class="dv">1</span>      <span class="co"># do the computation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -794,7 +795,7 @@ Note
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> np.ones(<span class="dv">1_000</span>)</span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>threadsPerBlock <span class="op">=</span> <span class="dv">256</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>blocksPerGrid <span class="op">=</span> (data.size <span class="op">+</span> (threadsPerBlock <span class="op">-</span> <span class="dv">1</span>)) <span class="op">//</span> threadsPerBlock</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>blocksPerGrid <span class="op">=</span> (data.size <span class="op">+</span> (threadsPerBlock <span class="op">-</span> <span class="dv">1</span>)) <span class="op">//</span> threadsPerBlock   <span class="co"># 4 blocks</span></span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>increment[blocksPerGrid, threadsPerBlock](data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -844,16 +845,34 @@ Note
 <div class="callout-body-container callout-body">
 <p>Try running the last example removing any reference to <code>data</code>, i.e.&nbsp;the kernel-launching line will be:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>test[blocksPerGrid, threadsPerBlock]()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>and the function will be defined as <code>def test()</code>. CUDA’ll still launch 1000 threads, just without processing any data.</p>
 </div>
 </div>
 </div>
 <!-- Answer: the function will compile and run and produce the same output. -->
 <p>You can simplify the last <code>increment(data)</code> to:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="at">@cuda.jit</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> increment(data):   <span class="co"># 1D example</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> cuda.grid(<span class="dv">1</span>)      <span class="co"># absolute position of the current thread in the entire grid of threads</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> increment(data):     <span class="co"># 1D example</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> cuda.grid(<span class="dv">1</span>)   <span class="co"># absolute global thread index (in the entire grid of threads)</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pos <span class="op">&lt;</span> data.size:</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        data[pos] <span class="op">+=</span> <span class="dv">1</span>      <span class="co"># do the computation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        data[pos] <span class="op">+=</span> <span class="dv">1</span>   <span class="co"># do the computation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><code>cuda.grid(1)</code> returns a single integer representing the 1D global thread index</li>
+<li><code>cuda.grid(2)</code> returns a tuple (x, y) representing the 2D global coordinates</li>
+<li><code>cuda.grid(3)</code> returns a tuple (x, y, z) representing the 3D global coordinates</li>
+</ul>
+</div>
+</div>
 <p>Let’s check out a working 2D example:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> cuda</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -878,14 +897,14 @@ Note
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>square[blocksPerGrid, threadsPerBlock](data)</span>
 <span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In this example, CUDA will launch <code>blocksPerGrid[0] * blocksPerGrid[1] * threadsPerBlock[0] * threadsPerBlock[1] = 2*2*16*16 = 1024</code> threads which is more than the <span class="math inline">\(30^2=900\)</span> array elements, i.e.&nbsp;some of the threads won’t be doing any real computation. This is because 30 is not divisible by 16.</p>
-<p>Similarly to the 1D example, if we remove the array bounds check <code>if i &lt; rows and j &lt; cols</code> inside the CUDA kernel, some of the threads with local (inside their block) indices <code>cuda.threadIdx.x=2</code> or <code>cuda.threadIdx.y=2</code> that do not have any computation to do would try to write into memory that doesn’t exist, leading to either an “out of bounds” runtime error or memory corruption.</p>
+<p>Similarly to the 1D example, if we remove the array bounds check <code>if i &lt; rows and j &lt; cols</code> inside the CUDA kernel, some of the threads with local (inside their block) indices <code>cuda.threadIdx.x=2</code> or <code>cuda.threadIdx.y=2</code> that do not have any computation to do would try to write into memory that doesn’t exist, leading to either an <em>“out of bounds”</em> runtime error or memory corruption.</p>
 </section>
 <section id="memory-management-and-data-transfer" class="level2">
 <h2 class="anchored" data-anchor-id="memory-management-and-data-transfer">Memory management and data transfer</h2>
 <!-- Host-to-Device Transfers: Moving NumPy arrays to GPU memory using cuda.to_device. -->
 <!-- Managing Output: Pre-allocating device arrays with cuda.device_array. -->
 <!-- Reducing Latency: Strategies to minimize the overhead of moving data across the PCIe bus. -->
-<p>In our previous examples, we would pass a data array to a CUDA kernel, which at the end of the computation would return a modified array back to the host. In other ways, when launching a kernel, data was automatically passed between the host and the device.</p>
+<p>In our previous examples, we would initialize a NumPy data array on the host, pass it to a CUDA kernel, which at the end of the computation would return a modified array back to the host. In other ways, when launching a kernel, data was automatically passed between the host and the device.</p>
 <p>In some cases you might want to have more precise control over data movement. For example, you might be launching multiple kernels and want to avoid unnecessary data transfer. In such cases you can allocate an array directly on the GPU with <code>cuda.device_array()</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>device_array <span class="op">=</span> cuda.device_array(<span class="dv">1_000_000</span>, dtype<span class="op">=</span>np.int32)    <span class="co"># allocate memory on the GPU</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>kernelFunction[blocksPerGrid, threadsPerBlock](device_array)   <span class="co"># launch the kernel without copying data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -905,17 +924,19 @@ Note
 <p>Alternatively, you can declare an array on a CPU and then move it manually to the GPU with <code>cuda.to_device</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.zeros(<span class="dv">1_000_000</span>, dtype<span class="op">=</span>np.int32)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>device_array <span class="op">=</span> cuda.to_device(a)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>kernelFunction[blocksPerGrid, threadsPerBlock](device_array)   <span class="co"># launch the kernel without copying data</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>kernelFunction1[blocksPerGrid, threadsPerBlock](device_array)   <span class="co"># launch the kernel without copying data</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>kernelFunction2[blocksPerGrid, threadsPerBlock](device_array)   <span class="co"># launch another kernel</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>After the computation, the modified array is still on the GPU, so you can copy it back to the host:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> device_array.copy_to_host()   <span class="co"># copy the result back to the host</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- "Shared memory and thread synchronization" from https://nyu-cds.github.io/python-numba/05-cuda/ -->
 </section>
 <section id="benchmarking" class="level2">
-<h2 class="anchored" data-anchor-id="benchmarking">Benchmarking …</h2>
+<h2 class="anchored" data-anchor-id="benchmarking">Benchmarking</h2>
 <p>Unlike in CuPy with its <code>cupyx.profiler.benchmark</code>, Numba does not have a single “one-stop” convenience function that handles warm-ups and multiple kernel launches (to get an accurate estimate) automatically. Having said that, you have several options.</p>
 <section id="on-the-gpu-with-cuda-events" class="level3">
-<h3 class="anchored" data-anchor-id="on-the-gpu-with-cuda-events">… on the GPU with CUDA events</h3>
+<h3 class="anchored" data-anchor-id="on-the-gpu-with-cuda-events">1. on the GPU with CUDA events</h3>
 <p>The most precise way to time a Numba kernel is using CUDA Events. This method measures time directly on the GPU hardware, avoiding the CPU-GPU communication + Python overheads.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> cuda</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -923,7 +944,7 @@ Note
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="at">@cuda.jit</span></span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> logs(data):</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    i, j <span class="op">=</span> cuda.grid(<span class="dv">2</span>)   <span class="co"># x, y position of this thread in the entire 2D grid of threads</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    i, j <span class="op">=</span> cuda.grid(<span class="dv">2</span>)   <span class="co"># 2D coordinates of this thread</span></span>
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    rows, cols <span class="op">=</span> data.shape</span>
 <span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> i <span class="op">&lt;</span> rows <span class="kw">and</span> j <span class="op">&lt;</span> cols:</span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>        data[i,j] <span class="op">=</span> math.log10(i<span class="op">+</span>j<span class="op">+</span><span class="dv">1</span>)</span>
@@ -950,7 +971,7 @@ Note
 <span id="cb29-31"><a href="#cb29-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Time in ms:"</span>, cuda.event_elapsed_time(startEvent, endEvent))   <span class="co"># 80.928ms 80.723ms 80.208ms</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="on-the-cpu" class="level3">
-<h3 class="anchored" data-anchor-id="on-the-cpu">… on the CPU</h3>
+<h3 class="anchored" data-anchor-id="on-the-cpu">2. on the CPU</h3>
 <p>To time from the CPU side, you must use <code>cuda.synchronize()</code> to ensure the GPU has actually finished its work before you stop the clock. In the following example we launch the kernel several times and compute the average time per run:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode py code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> cuda</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1089,7 +1110,7 @@ Note
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>cuda.synchronize()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then our runtime becomes 754μs 752μs 752μs.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1098,7 +1119,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <ol type="1">
 <li>Run the same prime factorization problem on the GPU increasing the problem size to <code>n=10_000_000</code> and <code>n=100_000_000</code>. Do you see a linear speedup, and why do you think that is?</li>
@@ -1132,7 +1153,7 @@ Note
 <li>press Ctrl-C to go back to the prompt on the login node</li>
 </ol>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1141,14 +1162,14 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Write a bash function <code>job-nvidia-smi()</code> that lists all your currently running jobs, picks the latest (highest jobID) job from that list, connects to that job and automatically runs <code>watch -n 1 nvidia-smi</code>. You can also try running <code>nvidia-smi -l 2</code> for a scrolling output style. Try this command on a long-running GPU code. How’s your GPU compute and memory utilization?</p>
 </div>
 </div>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
@@ -1157,7 +1178,7 @@ Note
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Next, write a bash function <code>job-nvtop()</code> that runs <code>nvtop</code> instead. This will show a graph of GPU’s compute and memory utilization vs.&nbsp;time inside the terminal.</p>
 </div>
@@ -1257,6 +1278,7 @@ Note
 <li>Use <code>float32</code> math rather than <code>float64</code> whenever possible.</li>
 <li>Minimize heavy <code>if</code> branching in the code (leading to load imbalance), or at least write your code in such a way that each thread has roughly the same amount of computing to do.</li>
 <li>If using more threads than data elements, don’t forget to check for array boundaries.</li>
+<li>Using too many or too few CUDA threads can hurt performance. The best number depends on factors such as the work per thread, occupancy, and memory access patterns.</li>
 </ol>
 <!-- ## Misc notes -->
 <!-- ```py -->
@@ -1297,6 +1319,30 @@ Note
 <!--     Exercise 2: Implementing a 2D Heat Equation solver using custom @cuda.jit kernels. -->
 <!--     Exercise 3: Optimizing a matrix-vector product using shared memory tiling. -->
 </section>
+</section>
+<section id="on-your-own-how-many-cuda-threads-do-you-need" class="level2">
+<h2 class="anchored" data-anchor-id="on-your-own-how-many-cuda-threads-do-you-need">On your own: how many CUDA threads do you need?</h2>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>Take-home exercise: slow series
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Implement the slow series problem in Numba for GPU. Check out <a href="https://folio.vastcloud.org/pythonhpc#slow-series" target="_blank">the description of this problem</a> in our Python HPC course. Your numerical result should be the same as on CPU, and the runtime should be much better.</p>
+<p><img src="./fig/slow.png" class="img-fluid"></p>
+<p>There are different ways to implement this problem as CUDA kernels, but keep this in mind:</p>
+<ul>
+<li>for the target <code>n = 100_000_000</code>, you don’t want to launch 100 million threads: that would create too much overhead and leave too little work for each thread</li>
+<li>the total number of CUDA threads should be a tunable parameter so you can easily find the best value; start with a number roughly halfway on a logarithmic scale between the number of CUDA cores in your allocated vGPU (typically several thousand) and <code>n = 100_000_000</code></li>
+<li>each CUDA thread will compute a partial sum, which you’ll then add up on the CPU</li>
+<li>what is your best runtime?</li>
+</ul>
+</div>
+</div>
 </section>
 <section id="links" class="level2">
 <h2 class="anchored" data-anchor-id="links">Links</h2>
