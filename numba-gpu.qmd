@@ -238,7 +238,7 @@ call, to speed up testing without access to a physical GPU.
 We start with high-level element-wise array functions that run on a GPU, and in the next chapter we'll talk
 about writing custom CUDA kernels.
 
-You might have come across numpy *ufuncs* (universal functions) that operate on `ndarrays` in an
+You might have come across NumPy's *ufuncs* (universal functions) that operate on `ndarrays` in an
 element-by-element fashion. Numba's `@vectorize` compiles Python functions taking scalar input arguments into
 NumPy ufuncs that run as fast as traditional ufuncs written in C.
 
@@ -390,7 +390,7 @@ these notes.
 
 
 
-`@vectorize` is useful for creating fast, compiled functions that operate on numpy arrays element by
+`@vectorize` is useful for creating fast, compiled functions that operate on NumPy arrays element by
 element. This will give you additional `ndarray` features such as reduction, accumulation or broadcasting. For
 more general functions, you will want to use the `@cuda.jit` decorator.
 
@@ -503,10 +503,10 @@ back to the CPU with `result = deviceArray.copy_to_host()` also forces synchroni
 GPU to complete all pending work before the data can be safely copied into system memory.
 :::
 
-Besides CUDA kernels, you can also define so-called *device functions*. These are functions that execute on
-the GPU and can only be called from other GPU code, such as a kernel or another device function. Unlike CUDA
-kernels, device functions can accept scalar arguments. We will see an example of a device function in the
-prime factorization section.
+Besides CUDA kernels, you can also define so-called <font style="color:blue">*device functions*</font>. These
+are functions that execute on the GPU and can only be called from other GPU code, such as a kernel or another
+device function. Unlike CUDA kernels, device functions can accept scalar arguments. We will see an example of
+a device function in the prime factorization section.
 
 
 
@@ -522,9 +522,9 @@ calculate the thread ID to know which `data` element(s) this thread is responsib
 ```py
 @cuda.jit
 def increment(data):        # kernel function processing a 1D array
-    tx = cuda.threadIdx.x   # threadID in the current thread block, between 0..cuda.blockDim.x-1
-    bx = cuda.blockIdx.x    # blockID in a 1D grid
     bw = cuda.blockDim.x    # number of threads per block (block width)
+    tx = cuda.threadIdx.x   # threadID in the current block, between 0..cuda.blockDim.x-1
+    bx = cuda.blockIdx.x    # blockID in a 1D grid
     pos = bx * bw + tx      # flattened index inside the array
     if pos < data.size:     # check array boundaries, in case there are more threads than data.size
         data[pos] += 1      # do the computation
@@ -545,7 +545,7 @@ def increment(data):        # kernel function processing a 1D array
 data = np.ones(1_000)
 
 threadsPerBlock = 256
-blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock
+blocksPerGrid = (data.size + (threadsPerBlock - 1)) // threadsPerBlock   # 4 blocks
 
 increment[blocksPerGrid, threadsPerBlock](data)
 ```
@@ -582,6 +582,8 @@ Try running the last example removing any reference to `data`, i.e. the kernel-l
 ```py
 test[blocksPerGrid, threadsPerBlock]()
 ```
+and the function will be defined as `def test()`. CUDA'll still launch 1000 threads, just without processing
+any data.
 :::
 
 <!-- Answer: the function will compile and run and produce the same output. -->
@@ -590,11 +592,17 @@ You can simplify the last `increment(data)` to:
 
 ```py
 @cuda.jit
-def increment(data):   # 1D example
-    pos = cuda.grid(1)      # absolute position of the current thread in the entire grid of threads
+def increment(data):     # 1D example
+    pos = cuda.grid(1)   # absolute global thread index (in the entire grid of threads)
     if pos < data.size:
-        data[pos] += 1      # do the computation
+        data[pos] += 1   # do the computation
 ```
+
+::: {.callout-note}
+- `cuda.grid(1)` returns a single integer representing the 1D global thread index
+- `cuda.grid(2)` returns a tuple (x, y) representing the 2D global coordinates
+- `cuda.grid(3)` returns a tuple (x, y, z) representing the 3D global coordinates
+:::
 
 Let's check out a working 2D example:
 
@@ -630,7 +638,7 @@ the threads won't be doing any real computation. This is because 30 is not divis
 Similarly to the 1D example, if we remove the array bounds check `if i < rows and j < cols` inside the CUDA
 kernel, some of the threads with local (inside their block) indices `cuda.threadIdx.x=2` or
 `cuda.threadIdx.y=2` that do not have any computation to do would try to write into memory that doesn't exist,
-leading to either an "out of bounds" runtime error or memory corruption.
+leading to either an *"out of bounds"* runtime error or memory corruption.
 
 
 
@@ -644,9 +652,9 @@ leading to either an "out of bounds" runtime error or memory corruption.
 <!-- Managing Output: Pre-allocating device arrays with cuda.device_array. -->
 <!-- Reducing Latency: Strategies to minimize the overhead of moving data across the PCIe bus. -->
 
-In our previous examples, we would pass a data array to a CUDA kernel, which at the end of the computation
-would return a modified array back to the host. In other ways, when launching a kernel, data was automatically
-passed between the host and the device.
+In our previous examples, we would initialize a NumPy data array on the host, pass it to a CUDA kernel, which
+at the end of the computation would return a modified array back to the host. In other ways, when launching a
+kernel, data was automatically passed between the host and the device.
 
 In some cases you might want to have more precise control over data movement. For example, you might be
 launching multiple kernels and want to avoid unnecessary data transfer. In such cases you can allocate an
@@ -666,7 +674,9 @@ Alternatively, you can declare an array on a CPU and then move it manually to th
 ```py
 a = np.zeros(1_000_000, dtype=np.int32)
 device_array = cuda.to_device(a)
-kernelFunction[blocksPerGrid, threadsPerBlock](device_array)   # launch the kernel without copying data
+kernelFunction1[blocksPerGrid, threadsPerBlock](device_array)   # launch the kernel without copying data
+kernelFunction2[blocksPerGrid, threadsPerBlock](device_array)   # launch another kernel
+...
 ```
 
 After the computation, the modified array is still on the GPU, so you can copy it back to the host:
@@ -683,13 +693,13 @@ print(A)
 
 
 
-## Benchmarking ...
+## Benchmarking
 
 Unlike in CuPy with its `cupyx.profiler.benchmark`, Numba does not have a single "one-stop" convenience
 function that handles warm-ups and multiple kernel launches (to get an accurate estimate)
 automatically. Having said that, you have several options.
 
-### ... on the GPU with CUDA events
+### 1. on the GPU with CUDA events
 
 The most precise way to time a Numba kernel is using CUDA Events. This method measures time directly on the
 GPU hardware, avoiding the CPU-GPU communication + Python overheads.
@@ -701,7 +711,7 @@ import math
 
 @cuda.jit
 def logs(data):
-    i, j = cuda.grid(2)   # x, y position of this thread in the entire 2D grid of threads
+    i, j = cuda.grid(2)   # 2D coordinates of this thread
     rows, cols = data.shape
     if i < rows and j < cols:
         data[i,j] = math.log10(i+j+1)
@@ -728,7 +738,7 @@ endEvent.synchronize()   # pause the CPU until endEvent.record() is done
 print("Time in ms:", cuda.event_elapsed_time(startEvent, endEvent))   # 80.928ms 80.723ms 80.208ms
 ```
 
-### ... on the CPU
+### 2. on the CPU
 
 To time from the CPU side, you must use `cuda.synchronize()` to ensure the GPU has actually finished its work
 before you stop the clock. In the following example we launch the kernel several times and compute the average
@@ -1101,8 +1111,8 @@ stream2.synchronize()
 1. Minimize heavy `if` branching in the code (leading to load imbalance), or at least write your code in such
    a way that each thread has roughly the same amount of computing to do.
 1. If using more threads than data elements, don't forget to check for array boundaries.
-
-
+1. Using too many or too few CUDA threads can hurt performance. The best number depends on factors such as the
+   work per thread, occupancy, and memory access patterns.
 
 
 
@@ -1169,6 +1179,26 @@ stream2.synchronize()
 
 
 
+## On your own: how many CUDA threads do you need?
+
+::: {.callout-caution}
+##### Take-home exercise: slow series
+Implement the slow series problem in Numba for GPU. Check out [the description of this
+problem](https://folio.vastcloud.org/pythonhpc#slow-series){target="_blank"} in our Python HPC course. Your
+numerical result should be the same as on CPU, and the runtime should be much better.
+
+![](/fig/slow.png)
+
+There are different ways to implement this problem as CUDA kernels, but keep this in mind:
+
+- for the target `n = 100_000_000`, you don't want to launch 100 million threads: that would create too much
+  overhead and leave too little work for each thread
+- the total number of CUDA threads should be a tunable parameter so you can easily find the best value; start
+  with a number roughly halfway on a logarithmic scale between the number of CUDA cores in your allocated vGPU
+  (typically several thousand) and `n = 100_000_000`
+- each CUDA thread will compute a partial sum, which you'll then add up on the CPU
+- what is your best runtime?
+:::
 
 
 
